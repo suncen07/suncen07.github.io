@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI健康计算器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        danger: '#EF4444',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .card-shadow {
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+            .scale-hover {
+                transition: transform 0.2s ease;
+            }
+            .scale-hover:hover {
+                transform: scale(1.02);
+            }
+            .gradient-bg {
+                background: linear-gradient(135deg, #3B82F6 0%, #10B981 100%);
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-heartbeat text-primary text-2xl"></i>
+                <h1 class="text-xl font-bold text-primary">健康计算器</h1>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#" class="text-gray-600 hover:text-primary transition-all-300">首页</a>
+                <a href="#" class="text-gray-600 hover:text-primary transition-all-300">BMI计算器</a>
+                <a href="#" class="text-gray-600 hover:text-primary transition-all-300">健康建议</a>
+                <a href="#" class="text-gray-600 hover:text-primary transition-all-300">关于我们</a>
+            </div>
+            <button class="md:hidden text-gray-600" id="menuToggle">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+        <!-- 移动端菜单 -->
+        <div class="md:hidden hidden bg-white border-t" id="mobileMenu">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="#" class="text-gray-600 hover:text-primary py-2 transition-all-300">首页</a>
+                <a href="#" class="text-gray-600 hover:text-primary py-2 transition-all-300">BMI计算器</a>
+                <a href="#" class="text-gray-600 hover:text-primary py-2 transition-all-300">健康建议</a>
+                <a href="#" class="text-gray-600 hover:text-primary py-2 transition-all-300">关于我们</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <!-- 英雄区域 -->
+        <section class="mb-12 text-center">
+            <h2 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-dark mb-4">BMI健康计算器</h2>
+            <p class="text-gray-600 max-w-3xl mx-auto text-lg mb-8">
+                计算您的身体质量指数(BMI)，并获取基于中国和国际标准的健康评估和专业建议。
+            </p>
+            <div class="flex justify-center space-x-4 mb-8">
+                <a href="#calculator" class="px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg shadow-lg transition-all-300 flex items-center">
+                    <i class="fa fa-calculator mr-2"></i> 开始计算
+                </a>
+                <a href="#about-bmi" class="px-6 py-3 bg-white hover:bg-gray-50 text-primary border border-primary rounded-lg shadow transition-all-300 flex items-center">
+                    <i class="fa fa-info-circle mr-2"></i> 了解更多
+                </a>
+            </div>
+            <div class="bg-white rounded-xl shadow-xl p-6 max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-blue-50 p-4 rounded-lg text-center scale-hover">
+                        <i class="fa fa-balance-scale text-primary text-3xl mb-3"></i>
+                        <h3 class="font-bold text-lg mb-2">BMI计算</h3>
+                        <p class="text-gray-600">使用国际或中国标准评估您的体重状况</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg text-center scale-hover">
+                        <i class="fa fa-heartbeat text-secondary text-3xl mb-3"></i>
+                        <h3 class="font-bold text-lg mb-2">健康建议</h3>
+                        <p class="text-gray-600">基于您的BMI值获取个性化健康和饮食建议</p>
+                    </div>
+                    <div class="bg-orange-50 p-4 rounded-lg text-center scale-hover">
+                        <i class="fa fa-cutlery text-accent text-3xl mb-3"></i>
+                        <h3 class="font-bold text-lg mb-2">饮食计划</h3>
+                        <p class="text-gray-600">根据您的目标制定专属卡路里和饮食计划</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 计算器部分 -->
+        <section id="calculator" class="mb-16">
+            <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 max-w-4xl mx-auto card-shadow">
+                <h3 class="text-2xl font-bold text-dark mb-6 flex items-center">
+                    <i class="fa fa-calculator text-primary mr-3"></i> BMI计算器
+                </h3>
+                
+                <form id="bmiForm" class="space-y-6">
+                    <!-- 单位选择 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">身高单位</label>
+                            <div class="flex">
+                                <button type="button" class="flex-1 py-2 px-4 bg-primary text-white rounded-l-lg" id="heightCm">厘米</button>
+                                <button type="button" class="flex-1 py-2 px-4 bg-gray-100 text-gray-700 rounded-r-lg" id="heightInch">英寸</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">体重单位</label>
+                            <div class="flex">
+                                <button type="button" class="flex-1 py-2 px-4 bg-primary text-white rounded-l-lg" id="weightKg">公斤</button>
+                                <button type="button" class="flex-1 py-2 px-4 bg-gray-100 text-gray-700 rounded-r-lg" id="weightLbs">磅</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 输入字段 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="height" class="block text-sm font-medium text-gray-700 mb-2">身高</label>
+                            <div class="relative">
+                                <input type="number" id="height" name="height" placeholder="请输入身高" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all-300" required>
+                                <span class="absolute right-3 top-3 text-gray-500" id="heightUnit">cm</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="weight" class="block text-sm font-medium text-gray-700 mb-2">体重</label>
+                            <div class="relative">
+                                <input type="number" id="weight" name="weight" placeholder="请输入体重" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all-300" required>
+                                <span class="absolute right-3 top-3 text-gray-500" id="weightUnit">kg</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">年龄</label>
+                        <input type="number" id="age" name="age" placeholder="请输入年龄" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all-300" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">性别</label>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="gender" value="male" class="w-4 h-4 text-primary focus:ring-primary border-gray-300" checked>
+                                <span>男</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="gender" value="female" class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
+                                <span>女</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4">
+                        <button type="submit" class="w-full py-3 px-6 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg shadow-lg transition-all-300 flex items-center justify-center">
+                            <i class="fa fa-calculator mr-2"></i> 计算BMI
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- 结果部分 (初始隐藏) -->
+        <section id="results" class="mb-16 hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 max-w-6xl mx-auto card-shadow">
+                <h3 class="text-2xl font-bold text-dark mb-6 flex items-center">
+                    <i class="fa fa-bar-chart text-primary mr-3"></i> 您的健康评估结果
+                </h3>
+                
+                <!-- BMI结果卡片 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-gradient-to-br from-primary to-blue-400 rounded-xl p-6 text-white shadow-lg">
+                        <h4 class="text-lg font-medium mb-2">您的BMI值</h4>
+                        <div class="text-4xl font-bold mb-2" id="bmiValue">-</div>
+                        <div class="text-sm opacity-90" id="bmiCategory">-</div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-secondary to-green-400 rounded-xl p-6 text-white shadow-lg">
+                        <h4 class="text-lg font-medium mb-2">建议体重范围</h4>
+                        <div class="text-4xl font-bold mb-2" id="healthyWeightRange">-</div>
+                        <div class="text-sm opacity-90">基于国际BMI标准</div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-accent to-orange-400 rounded-xl p-6 text-white shadow-lg">
+                        <h4 class="text-lg font-medium mb-2">基础代谢率</h4>
+                        <div class="text-4xl font-bold mb-2" id="metabolicRate">-</div>
+                        <div class="text-sm opacity-90">千卡/天</div>
+                    </div>
+                </div>
+                
+                <!-- 对比图表 -->
+                <div class="bg-gray-50 rounded-xl p-6 mb-8">
+                    <h4 class="text-lg font-bold text-dark mb-4">BMI分类对比</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- 国际标准 -->
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <h5 class="font-bold text-center mb-3 text-dark">国际标准</h5>
+                            <div class="space-y-2" id="internationalChart">
+                                <!-- 图表将通过JavaScript生成 -->
+                            </div>
+                        </div>
+                        
+                        <!-- 中国标准 -->
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <h5 class="font-bold text-center mb-3 text-dark">中国标准</h5>
+                            <div class="space-y-2" id="chineseChart">
+                                <!-- 图表将通过JavaScript生成 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 健康建议 -->
+                <div class="bg-gray-50 rounded-xl p-6 mb-8">
+                    <h4 class="text-lg font-bold text-dark mb-4">健康建议</h4>
+                    <div id="healthTips" class="prose max-w-none">
+                        <!-- 建议将通过JavaScript生成 -->
+                    </div>
+                </div>
+                
+                <!-- 目标设定 -->
+                <div class="bg-gray-50 rounded-xl p-6 mb-8">
+                    <h4 class="text-lg font-bold text-dark mb-4">设定您的健康目标</h4>
+                    <form id="goalForm" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">您的目标</label>
+                            <div class="flex space-x-4">
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="radio" name="goal" value="lose" class="w-4 h-4 text-primary focus:ring-primary border-gray-300" checked>
+                                    <span>减重</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="radio" name="goal" value="maintain" class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
+                                    <span>维持现状</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="radio" name="goal" value="gain" class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
+                                    <span>增重</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">期望时间</label>
+                            <input type="number" id="goalTime" name="goalTime" placeholder="请输入周数" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all-300" required>
+                        </div>
+                        
+                        <div class="pt-4">
+                            <button type="submit" class="w-full py-3 px-6 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg shadow-lg transition-all-300 flex items-center justify-center">
+                                <i class="fa fa-bullseye mr-2"></i> 获取个性化计划
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 饮食计划结果 (初始隐藏) -->
+        <section id="dietPlan" class="mb-16 hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 max-w-6xl mx-auto card-shadow">
+                <h3 class="text-2xl font-bold text-dark mb-6 flex items-center">
+                    <i class="fa fa-cutlery text-primary mr-3"></i> 您的个性化饮食计划
+                </h3>
+                
+                <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl p-6 mb-8">
+                    <h4 class="text-xl font-bold text-dark mb-4">目标: <span id="goalType">-</span></h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <h5 class="font-medium text-gray-600 mb-1">建议每日卡路里</h5>
+                            <div class="text-2xl font-bold text-primary" id="dailyCalories">-</div>
+                            <div class="text-sm text-gray-500">千卡/天</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <h5 class="font-medium text-gray-600 mb-1">预期每周变化</h5>
+                            <div class="text-2xl font-bold" id="weeklyChange">-</div>
+                            <div class="text-sm text-gray-500">体重变化</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <h5 class="font-medium text-gray-600 mb-1">预计达成时间</h5>
+                            <div class="text-2xl font-bold" id="expectedTime">-</div>
+                            <div class="text-sm text-gray-500">周</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <h4 class="text-xl font-bold text-dark mb-4">营养建议</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-lg p-4 shadow-sm border-l-4 border-primary">
+                            <h5 class="font-bold text-primary mb-2">蛋白质</h5>
+                            <div class="text-lg font-medium" id="proteinIntake">-</div>
+                            <div class="text-sm text-gray-500">克/天 (占比30%)</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 shadow-sm border-l-4 border-accent">
+                            <h5 class="font-bold text-accent mb-2">碳水化合物</h5>
+                            <div class="text-lg font-medium" id="carbIntake">-</div>
+                            <div class="text-sm text-gray-500">克/天 (占比50%)</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 shadow-sm border-l-4 border-secondary">
+                            <h5 class="font-bold text-secondary mb-2">脂肪</h5>
+                            <div class="text-lg font-medium" id="fatIntake">-</div>
+                            <div class="text-sm text-gray-500">克/天 (占比20%)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <h4 class="text-xl font-bold text-dark mb-4">一日饮食建议</h4>
+                    <div class="space-y-4" id="mealPlan">
+                        <!-- 饮食计划将通过JavaScript生成 -->
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <h4 class="text-lg font-bold text-dark mb-3">健康小贴士</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700" id="dietTips">
+                        <!-- 小贴士将通过JavaScript生成 -->
+                    </ul>
+                </div>
+                
+                <div class="mt-8 text-center">
+                    <button id="recalculateBtn" class="py-3 px-6 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg shadow-lg transition-all-300 flex items-center mx-auto">
+                        <i class="fa fa-refresh mr-2"></i> 重新计算
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 关于BMI部分 -->
+        <section id="about-bmi" class="mb-16">
+            <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 max-w-4xl mx-auto card-shadow">
+                <h3 class="text-2xl font-bold text-dark mb-6 flex items-center">
+                    <i class="fa fa-info-circle text-primary mr-3"></i> 关于BMI
+                </h3>
+                
+                <div class="prose max-w-none">
+                    <p class="mb-4">
+                        身体质量指数（BMI）是一个常见的健康指标，通过体重和身高的比例来评估一个人的健康体重范围。虽然BMI不能直接测量身体脂肪，但它是一个广泛使用的筛查工具，可以帮助识别可能的体重问题。
+                    </p>
+                    
+                    <h4 class="text-xl font-bold mb-3 mt-6">如何计算BMI</h4>
+                    <p class="mb-4">
+                        BMI的计算公式是：体重（公斤）除以身高（米）的平方。
+                        例如，一个人体重70公斤，身高1.75米，他的BMI计算如下：
+                    </p>
+                    <div class="bg-gray-100 p-4 rounded-lg mb-4 text-center">
+                        <code class="text-lg font-mono">BMI = 70 / (1.75 × 1.75) = 22.86</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-bold mb-3 mt-6">BMI的局限性</h4>
+                    <p class="mb-4">
+                        虽然BMI是一个有用的工具，但它也有一些局限性：
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 mb-4">
+                        <li>它不能区分肌肉和脂肪，因此运动员或肌肉发达的人可能被错误地归类为超重或肥胖</li>
+                        <li>它没有考虑脂肪分布的位置，而腹部脂肪比臀部和大腿的脂肪更健康风险</li>
+                        <li>它可能不适用于某些人群，如孕妇、儿童和老年人</li>
+                    </ul>
+                    
+                    <h4 class="text-xl font-bold mb-3 mt-6">健康生活方式建议</h4>
+                    <p class="mb-4">
+                        除了BMI，保持健康的生活方式也很重要，包括：
+                    </p>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li>均衡饮食，多吃水果、蔬菜、全谷物和瘦肉</li>
+                        <li>定期进行体育锻炼，每周至少150分钟中等强度有氧运动或75分钟高强度有氧运动</li>
+                        <li>保持充足的睡眠，每晚7-9小时</li>
+                        <li>减少压力，保持心理健康</li>
+                        <li>定期体检，监测健康指标</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h4 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-heartbeat text-primary mr-2"></i> 健康计算器
+                    </h4>
+                    <p class="text-gray-400 mb-4">
+                        提供专业的健康评估工具和建议，帮助您了解自己的身体状况，制定合理的健康目标。
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-all-300">
+                            <i class="fa fa-facebook"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-all-300">
+                            <i class="fa fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-all-300">
+                            <i class="fa fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-all-300">
+                            <i class="fa fa-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">快速链接</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">首页</a></li>
+                        <li><a href="#calculator" class="text-gray-400 hover:text-white transition-all-300">BMI计算器</a></li>
+                        <li><a href="#about-bmi" class="text-gray-400 hover:text-white transition-all-300">关于BMI</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">健康建议</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">联系我们</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">联系我们</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <i class="fa fa-map-marker text-primary mt-1 mr-3"></i>
+                            <span class="text-gray-400">北京市海淀区中关村大街1号</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-phone text-primary mt-1 mr-3"></i>
+                            <span class="text-gray-400">+86 10 8888 8888</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-envelope text-primary mt-1 mr-3"></i>
+                            <span class="text-gray-400">contact@healthcalculator.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-500">
+                <p>&copy; 2025 健康计算器. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到顶部按钮 -->
+    <button id="backToTop" class="fixed bottom-6 right-6 bg-primary text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-primary/90">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // 全局变量
+        let heightUnit = 'cm';
+        let weightUnit = 'kg';
+        
+        // DOM元素
+        const bmiForm = document.getElementById('bmiForm');
+        const goalForm = document.getElementById('goalForm');
+        const resultsSection = document.getElementById('results');
+        const dietPlanSection = document.getElementById('dietPlan');
+        const backToTopBtn = document.getElementById('backToTop');
+        const navbar = document.getElementById('navbar');
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const recalculateBtn = document.getElementById('recalculateBtn');
+        
+        // 单位切换
+        document.getElementById('heightCm').addEventListener('click', () => {
+            heightUnit = 'cm';
+            document.getElementById('heightCm').classList.remove('bg-gray-100', 'text-gray-700');
+            document.getElementById('heightCm').classList.add('bg-primary', 'text-white');
+            document.getElementById('heightInch').classList.remove('bg-primary', 'text-white');
+            document.getElementById('heightInch').classList.add('bg-gray-100', 'text-gray-700');
+            document.getElementById('heightUnit').textContent = 'cm';
+        });
+        
+        document.getElementById('heightInch').addEventListener('click', () => {
+            heightUnit = 'inch';
+            document.getElementById('heightInch').classList.remove('bg-gray-100', 'text-gray-700');
+            document.getElementById('heightInch').classList.add('bg-primary', 'text-white');
+            document.getElementById('heightCm').classList.remove('bg-primary', 'text-white');
+            document.getElementById('heightCm').classList.add('bg-gray-100', 'text-gray-700');
+            document.getElementById('heightUnit').textContent = 'inch';
+        });
+        
+        document.getElementById('weightKg').addEventListener('click', () => {
+            weightUnit = 'kg';
+            document.getElementById('weightKg').classList.remove('bg-gray-100', 'text-gray-700');
+            document.getElementById('weightKg').classList.add('bg-primary', 'text-white');
+            document.getElementById('weightLbs').classList.remove('bg-primary', 'text-white');
+            document.getElementById('weightLbs').classList.add('bg-gray-100', 'text-gray-700');
+            document.getElementById('weightUnit').textContent = 'kg';
+        });
+        
+        document.getElementById('weightLbs').addEventListener('click', () => {
+            weightUnit = 'lbs';
+            document.getElementById('weightLbs').classList.remove('bg-gray-100', 'text-gray-700');
+            document.getElementById('weightLbs').classList.add('bg-primary', 'text-white');
+            document.getElementById('weightKg').classList.remove('bg-primary', 'text-white');
+            document.getElementById('weightKg').classList.add('bg-gray-100', 'text-gray-700');
+            document.getElementById('weightUnit').textContent = 'lbs';
+        });
+        
+        // 表单提交处理
+        bmiForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            calculateBMI();
+        });
+        
+        goalForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            generateDietPlan();
+        });
+        
+        // 计算BMI
+        function calculateBMI() {
+            const height = parseFloat(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const age = parseInt(document.getElementById('age').value);
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            
+            if (isNaN(height) || isNaN(weight) || isNaN(age)) {
+                alert('请输入有效的身高、体重和年龄');
+                return;
+            }
+            
+            // 转换为标准单位
+            let heightInMeters = heightUnit === 'cm' ? height / 100 : height * 0.0254;
+            let weightInKg = weightUnit === 'kg' ? weight : weight * 0.453592;
+            
+            // 计算BMI
+            const bmi = weightInKg / (heightInMeters * heightInMeters);
+            
+            // 计算基础代谢率 (BMR) - Harris-Benedict方程
+            let bmr;
+            if (gender === 'male') {
+                bmr = 88.362 + (13.397 * weightInKg) + (4.799 * heightInMeters * 100) - (5.677 * age);
+            } else {
+                bmr = 447.593 + (9.247 * weightInKg) + (3.098 * heightInMeters * 100) - (4.330 * age);
+            }
+            
+            // 计算健康体重范围
+            const healthyMin = 18.5 * heightInMeters * heightInMeters;
+            const healthyMax = 24.9 * heightInMeters * heightInMeters;
+            
+            // 显示结果
+            document.getElementById('bmiValue').textContent = bmi.toFixed(1);
+            document.getElementById('bmiCategory').textContent = getBMICategory(bmi);
+            document.getElementById('healthyWeightRange').textContent = 
+                `${healthyMin.toFixed(1)} - ${healthyMax.toFixed(1)} kg`;
+            document.getElementById('metabolicRate').textContent = Math.round(bmr);
+            
+            // 生成对比图表
+            generateComparisonCharts(bmi);
+            
+            // 生成健康建议
+            generateHealthTips(bmi, gender);
+            
+            // 显示结果部分
+            resultsSection.classList.remove('hidden');
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+            
+            // 保存计算数据
+            sessionStorage.setItem('bmiData', JSON.stringify({
+                bmi,
+                weightInKg,
+                heightInMeters,
+                age,
+                gender,
+                bmr
+            }));
+        }
+        
+        // 获取BMI分类
+        function getBMICategory(bmi) {
+            if (bmi < 18.5) return '体重过轻';
+            if (bmi < 24) return '正常范围';
+            if (bmi < 28) return '超重';
+            if (bmi < 30) return '轻度肥胖';
+            if (bmi < 35) return '中度肥胖';
+            return '重度肥胖';
+        }
+        
+        // 生成对比图表
+        function generateComparisonCharts(bmi) {
+            const internationalRanges = [
+                { min: 0, max: 18.5, label: '体重过轻', color: '#3B82F6' },
+                { min: 18.5, max: 25, label: '正常范围', color: '#10B981' },
+                { min: 25, max: 30, label: '超重', color: '#F59E0B' },
+                { min: 30, max: 35, label: 'I级肥胖', color: '#EF4444' },
+                { min: 35, max: 40, label: 'II级肥胖', color: '#DC2626' },
+                { min: 40, max: Infinity, label: 'III级肥胖', color: '#B91C1C' }
+            ];
+            
+            const chineseRanges = [
+                { min: 0, max: 18.5, label: '体重过轻', color: '#3B82F6' },
+                { min: 18.5, max: 24, label: '正常范围', color: '#10B981' },
+                { min: 24, max: 28, label: '超重', color: '#F59E0B' },
+                { min: 28, max: 30, label: 'I级肥胖', color: '#EF4444' },
+                { min: 30, max: 35, label: 'II级肥胖', color: '#DC2626' },
+                { min: 35, max: Infinity, label: 'III级肥胖', color: '#B91C1C' }
+            ];
+            
+            generateChart('internationalChart', internationalRanges, bmi);
+            generateChart('chineseChart', chineseRanges, bmi);
+        }
+        
+        // 生成图表
+        function generateChart(containerId, ranges, bmi) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            ranges.forEach(range => {
+                const isInRange = bmi >= range.min && bmi < range.max;
+                const barWidth = (range.max === Infinity ? 10 : (range.max - range.min)) * 10;
+                
+                const bar = document.createElement('div');
+                bar.className = `flex items-center`;
+                
+                const colorBar = document.createElement('div');
+                colorBar.className = `h-6 rounded-l-lg ${isInRange ? 'ring-2 ring-offset-2 ring-primary' : ''}`;
+                colorBar.style.backgroundColor = range.color;
+                colorBar.style.width = `${barWidth}px`;
+                
+                const label = document.createElement('div');
+                label.className = `ml-3 text-sm font-medium ${isInRange ? 'font-bold text-primary' : 'text-gray-700'}`;
+                label.textContent = `${range.label} (${range.min}-${range.max === Infinity ? '∞' : range.max})`;
+                
+                bar.appendChild(colorBar);
+                bar.appendChild(label);
+                container.appendChild(bar);
+            });
+        }
+        
+        // 生成健康建议
+        function generateHealthTips(bmi, gender) {
+            const tipsContainer = document.getElementById('healthTips');
+            tipsContainer.innerHTML = '';
+            
+            const tips = document.createElement('div');
+            
+            if (bmi < 18.5) {
+                tips.innerHTML = `
+                    <p class="mb-3">您的BMI值显示您体重过轻，这可能会影响您的免疫力和整体健康。</p>
+                    <h5 class="font-bold mb-2">建议：</h5>
+                    <ul class="list-disc list-inside space-y-1 mb-3">
+                        <li>增加热量摄入，选择营养密集的食物，如坚果、牛油果、全脂乳制品等</li>
+                        <li>进行力量训练，增加肌肉质量</li>
+                        <li>每天吃5-6小餐，而不是3大餐</li>
+                        <li>咨询营养师，制定个性化的增重计划</li>
+                    </ul>
+                    <p>如果您有任何健康问题或难以增重，请咨询医生。</p>
+                `;
+            } else if (bmi < 24) {
+                tips.innerHTML = `
+                    <p class="mb-3">您的BMI值显示您的体重处于健康范围内。保持良好的生活习惯！</p>
+                    <h5 class="font-bold mb-2">建议：</h5>
+                    <ul class="list-disc list-inside space-y-1 mb-3">
+                        <li>保持均衡饮食，包括蛋白质、碳水化合物和健康脂肪</li>
+                        <li>每周进行至少150分钟的中等强度有氧运动或75分钟的高强度有氧运动</li>
+                        <li>包括力量训练，以维持肌肉质量</li>
+                        <li>保持充足的睡眠和管理压力</li>
+                    </ul>
+                    <p>继续保持健康的生活方式，定期体检以监测您的健康状况。</p>
+                `;
+            } else if (bmi < 28) {
+                tips.innerHTML = `
+                    <p class="mb-3">您的BMI值显示您超重，这可能增加患某些疾病的风险，如心脏病和糖尿病。</p>
+                    <h5 class="font-bold mb-2">建议：</h5>
+                    <ul class="list-disc list-inside space-y-1 mb-3">
+                        <li>减少精制碳水化合物和加工食品的摄入</li>
+                        <li>增加水果、蔬菜和高纤维食物的摄入</li>
+                        <li>每周进行至少150分钟的中等强度有氧运动，如快走、游泳或骑自行车</li>
+                        <li>包括力量训练，以帮助增加肌肉质量和提高新陈代谢</li>
+                        <li>考虑减少每日卡路里摄入约500-1000千卡，以实现每周减重0.5-1公斤</li>
+                    </ul>
+                    <p>即使是轻微的体重减轻也能改善您的健康状况。如有需要，请咨询医生或营养师。</p>
+                `;
+            } else {
+                tips.innerHTML = `
+                    <p class="mb-3">您的BMI值显示您肥胖，这会显著增加患多种疾病的风险，如心脏病、糖尿病和高血压。</p>
+                    <h5 class="font-bold mb-2">建议：</h5>
+                    <ul class="list-disc list-inside space-y-1 mb-3">
+                        <li>咨询医生或营养师，制定个性化的减重计划</li>
+                        <li>采用均衡的低卡路里饮食，增加水果、蔬菜和全谷物的摄入</li>
+                        <li>每周进行至少150分钟的中等强度有氧运动和力量训练</li>
+                        <li>考虑记录饮食和运动，以帮助监控进展</li>
+                        <li>设定现实的目标，如每周减重0.5-1公斤</li>
+                    </ul>
+                    <p>减重对您的健康非常重要。请咨询医疗专业人员以获取支持和指导。</p>
+                `;
+            }
+            
+            tipsContainer.appendChild(tips);
+        }
+        
+        // 生成饮食计划
+        function generateDietPlan() {
+            const bmiData = JSON.parse(sessionStorage.getItem('bmiData'));
+            const goal = document.querySelector('input[name="goal"]:checked').value;
+            const goalTime = parseInt(document.getElementById('goalTime').value);
+            
+            if (!bmiData || isNaN(goalTime)) {
+                alert('请先计算BMI或输入有效的周数');
+                return;
+            }
+            
+            let goalType, dailyCalories, weeklyChange, proteinIntake, carbIntake, fatIntake;
+            
+            // 根据目标计算每日卡路里
+            if (goal === 'lose') {
+                goalType = '减重';
+                dailyCalories = Math.round(bmiData.bmr * 1.2 - 500); // 轻度减重
+                weeklyChange = '-0.5公斤';
+            } else if (goal === 'maintain') {
+                goalType = '维持现状';
+                dailyCalories = Math.round(bmiData.bmr * 1.2); // 轻度活动水平
+                weeklyChange = '0公斤';
+            } else {
+                goalType = '增重';
+                dailyCalories = Math.round(bmiData.bmr * 1.2 + 500); // 轻度增重
+                weeklyChange = '+0.5公斤';
+            }
+            
+            // 计算营养摄入
+            proteinIntake = Math.round((dailyCalories * 0.3) / 4); // 30%蛋白质
+            carbIntake = Math.round((dailyCalories * 0.5) / 4);   // 50%碳水化合物
+            fatIntake = Math.round((dailyCalories * 0.2) / 9);    // 20%脂肪
+            
+            // 显示结果
+            document.getElementById('goalType').textContent = goalType;
+            document.getElementById('dailyCalories').textContent = dailyCalories;
+            document.getElementById('weeklyChange').textContent = weeklyChange;
+            document.getElementById('expectedTime').textContent = goalTime;
+            document.getElementById('proteinIntake').textContent = `${proteinIntake}g`;
+            document.getElementById('carbIntake').textContent = `${carbIntake}g`;
+            document.getElementById('fatIntake').textContent = `${fatIntake}g`;
+            
+            // 生成一日饮食计划
+            generateMealPlan(goal);
+            
+            // 生成饮食小贴士
+            generateDietTips(goal);
+            
+            // 显示饮食计划部分
+            dietPlanSection.classList.remove('hidden');
+            dietPlanSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 生成一日饮食计划
+        function generateMealPlan(goal) {
+            const mealPlanContainer = document.getElementById('mealPlan');
+            mealPlanContainer.innerHTML = '';
+            
+            let meals;
+            
+            if (goal === 'lose') {
+                meals = [
+                    { name: '早餐', description: '燕麦片50克 + 蓝莓100克 + 杏仁20克 + 脱脂牛奶200毫升', calories: 350 },
+                    { name: '上午加餐', description: '希腊酸奶150克 + 草莓100克', calories: 180 },
+                    { name: '午餐', description: '烤鸡胸肉150克 + 糙米100克 + 蒸西兰花200克 + 橄榄油5克', calories: 420 },
+                    { name: '下午加餐', description: '苹果1个 + 低脂奶酪30克', calories: 150 },
+                    { name: '晚餐', description: '烤三文鱼150克 + 藜麦100克 + 炒菠菜200克 + 橄榄油5克', calories: 450 },
+                    { name: '睡前小吃', description: '煮鸡蛋1个 + 黄瓜100克', calories: 80 }
+                ];
+            } else if (goal === 'maintain') {
+                meals = [
+                    { name: '早餐', description: '全麦面包2片 + 鸡蛋2个 + 牛油果30克 + 番茄1个', calories: 400 },
+                    { name: '上午加餐', description: '混合坚果30克 + 香蕉1根', calories: 220 },
+                    { name: '午餐', description: '瘦牛肉150克 + 红薯150克 + 凉拌生菜200克 + 橄榄油10克', calories: 500 },
+                    { name: '下午加餐', description: '希腊酸奶150克 + 格兰诺拉麦片30克', calories: 200 },
+                    { name: '晚餐', description: '烤虾150克 + 意大利面100克 + 番茄酱100克 + 橄榄油10克', calories: 480 },
+                    { name: '睡前小吃', description: '酪乳100克 + 杏仁15克', calories: 120 }
+                ];
+            } else {
+                meals = [
+                    { name: '早餐', description: '燕麦片70克 + 花生酱30克 + 香蕉1根 + 全脂牛奶250毫升', calories: 550 },
+                    { name: '上午加餐', description: '蛋白质奶昔（蛋白粉30克 + 香蕉1根 + 全脂牛奶200毫升）', calories: 350 },
+                    { name: '午餐', description: '瘦牛肉200克 + 糙米150克 + 烤蔬菜200克 + 橄榄油15克', calories: 650 },
+                    { name: '下午加餐', description: '希腊酸奶200克 + 混合坚果50克 + 蜂蜜15克', calories: 400 },
+                    { name: '晚餐', description: '烤鸡200克 + 红薯200克 + 鳄梨沙拉200克 + 橄榄油15克', calories: 680 },
+                    { name: '睡前小吃', description: '酪乳150克 + 花生酱20克 + 全麦饼干2片', calories: 250 }
+                ];
+            }
+            
+            meals.forEach(meal => {
+                const mealCard = document.createElement('div');
+                mealCard.className = 'bg-white rounded-lg p-4 shadow-sm border-l-4 border-primary';
+                
+                const mealHeader = document.createElement('div');
+                mealHeader.className = 'flex justify-between items-center mb-2';
+                
+                const mealName = document.createElement('h5');
+                mealName.className = 'font-bold text-lg text-primary';
+                mealName.textContent = meal.name;
+                
+                const mealCalories = document.createElement('span');
+                mealCalories.className = 'text-sm bg-primary/10 text-primary px-2 py-1 rounded-full';
+                mealCalories.textContent = `${meal.calories}千卡`;
+                
+                mealHeader.appendChild(mealName);
+                mealHeader.appendChild(mealCalories);
+                
+                const mealDesc = document.createElement('p');
+                mealDesc.className = 'text-gray-700';
+                mealDesc.textContent = meal.description;
+                
+                mealCard.appendChild(mealHeader);
+                mealCard.appendChild(mealDesc);
+                mealPlanContainer.appendChild(mealCard);
+            });
+        }
+        
+        // 生成饮食小贴士
+        function generateDietTips(goal) {
+            const tipsContainer = document.getElementById('dietTips');
+            tipsContainer.innerHTML = '';
+            
+            let tips;
+            
+            if (goal === 'lose') {
+                tips = [
+                    '保持充足的水分，每天至少喝8杯水',
+                    '避免含糖饮料和酒精',
+                    '控制份量，使用较小的盘子和碗',
+                    '慢慢吃，给大脑时间感受饱腹感',
+                    '避免深夜进食',
+                    '增加膳食纤维摄入，帮助控制食欲'
+                ];
+            } else if (goal === 'maintain') {
+                tips = [
+                    '保持规律的饮食时间，避免长时间空腹',
+                    '确保每餐包含蛋白质、碳水化合物和健康脂肪',
+                    '限制加工食品和精制糖的摄入',
+                    '定期进行体育锻炼，保持能量平衡',
+                    '注意零食选择，优先选择营养丰富的食物',
+                    '定期监测体重，及时调整饮食'
+                ];
+            } else {
+                tips = [
+                    '每天吃5-6小餐，而不是3大餐',
+                    '选择高热量但营养密集的食物，如坚果、牛油果、全脂乳制品',
+                    '在两餐之间喝高蛋白奶昔或果汁',
+                    '增加力量训练，促进肌肉生长',
+                    '在食物中添加健康脂肪，如橄榄油、椰子油',
+                    '不要跳过早餐，这是一天中最重要的一餐'
+                ];
+            }
+            
+            tips.forEach(tip => {
+                const li = document.createElement('li');
+                li.textContent = tip;
+                tipsContainer.appendChild(li);
+            });
+        }
+        
+        // 回到顶部按钮
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.remove('opacity-0', 'invisible');
+                backToTopBtn.classList.add('opacity-100', 'visible');
+                navbar.classList.add('shadow-md');
+            } else {
+                backToTopBtn.classList.remove('opacity-100', 'visible');
+                backToTopBtn.classList.add('opacity-0', 'invisible');
+                navbar.classList.remove('shadow-md');
+            }
+        });
+        
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 移动端菜单切换
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 重新计算按钮
+        recalculateBtn.addEventListener('click', () => {
+            dietPlanSection.classList.add('hidden');
+            resultsSection.classList.add('hidden');
+            bmiForm.reset();
+            window.scrollTo({
+                top: document.getElementById('calculator').offsetTop - 100,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 平滑滚动导航
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    
+                    // 如果是移动端，点击导航后关闭菜单
+                    if (window.innerWidth < 768) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
