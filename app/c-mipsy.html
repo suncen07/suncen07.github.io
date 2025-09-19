@@ -1,129 +1,138 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C to MIPS Converter</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts for "Inter" -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-        }
-        .container {
-            max-width: 1024px;
-        }
-        textarea {
-            resize: none;
-            font-family: monospace;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>C → MIPSy Learner (standalone)</title>
+  <style>
+    body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin: 0; background: #f6f7fb; }
+    .app { max-width: 1100px; margin: 28px auto; padding: 20px; }
+    textarea { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace; }
+    pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace; }
+    .mips-line { position: relative; padding-right: 280px; }
+    .explain { position: absolute; right: 0; top: 0; opacity: 0; transition: opacity .12s ease; background: white; border: 1px solid #e5e7eb; padding: 8px; width: 260px; box-shadow: 0 6px 18px rgba(2,6,23,0.06); font-size: 12px; }
+    .mips-line:hover .explain { opacity: 1; }
+    button { cursor: pointer; }
+  </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<body>
+  <div id="root"></div>
 
-    <div class="container bg-white shadow-xl rounded-2xl p-8 flex flex-col items-center w-full">
-        <!-- Header Section -->
-        <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 text-center mb-4">
-            C to MIPS Assembly Converter
-        </h1>
-        <p class="text-gray-500 text-center mb-8">
-            This tool provides a user interface to simulate the conversion of C code to MIPS.
-            Paste your C code and click "Convert".
-        </p>
+  <!-- React + ReactDOM + Babel (for in-browser JSX transpile) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-        <!-- Main Conversion Area -->
-        <div class="flex flex-col sm:flex-row gap-6 w-full">
-            <!-- C Code Input -->
-            <div class="flex-1">
-                <label for="c-code" class="block text-gray-700 font-semibold mb-2">C Code</label>
-                <textarea id="c-code" rows="15" class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200" placeholder="Paste your C code here...">
-// Simple C function to add two numbers
-int add(int a, int b) {
-    return a + b;
-}
-                </textarea>
-            </div>
+  <!-- Inlined app. This duplicates the component from the React file but allows a single-file HTML app. -->
+  <script type="text/babel">
+  const { useState, useMemo } = React;
 
-            <!-- MIPS Code Output -->
-            <div class="flex-1">
-                <label for="mips-code" class="block text-gray-700 font-semibold mb-2">MIPS Assembly</label>
-                <textarea id="mips-code" rows="15" readonly class="w-full p-4 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 pointer-events-none" placeholder="MIPS output will appear here..."></textarea>
-            </div>
-        </div>
+  function CToMipsyLearnerStandalone(){
+    const [cCode, setCCode] = useState(`// Example: compute factorial\n#include <stdio.h>\n\nint factorial(int n) {\n  int i, res = 1;\n  for (i = 2; i <= n; i++) {\n    res = res * i;\n  }\n  return res;\n}\n\nint main() {\n  int x;\n  scanf("%d", &x);\n  printf("%d\\n", factorial(x));\n  return 0;\n}`);
+    const [mips, setMips] = useState('');
+    const [explainMap, setExplainMap] = useState([]);
+    const [log, setLog] = useState('');
 
-        <!-- Action Button and Status -->
-        <div class="flex flex-col items-center mt-8">
-            <button onclick="convertCode()" class="bg-blue-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-blue-700 transition-colors duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                Convert to MIPS
-            </button>
-            <div id="status-message" class="mt-4 text-sm text-gray-600 font-medium"></div>
-        </div>
-    </div>
+    let uidCounter = 0;
+    const uid = ()=>`id${++uidCounter}`;
 
-    <script>
-        // Function to handle the "conversion" process
-        function convertCode() {
-            const cCodeTextarea = document.getElementById('c-code');
-            const mipsCodeTextarea = document.getElementById('mips-code');
-            const statusMessage = document.getElementById('status-message');
+    function translate(){
+      const lines = cCode.split('\n');
+      const out = [];
+      const explanations = [];
+      const stackFrame = {};
+      let nextOffset = -4;
+      function allocVar(n){ if(!(n in stackFrame)){ stackFrame[n]=nextOffset; nextOffset-=4;} return stackFrame[n]; }
 
-            // Show a loading message
-            statusMessage.textContent = 'Converting... Please wait.';
-            statusMessage.classList.remove('text-gray-600');
-            statusMessage.classList.add('text-blue-600');
-            mipsCodeTextarea.value = '';
-
-            // Simulate a conversion delay
-            setTimeout(() => {
-                const inputCode = cCodeTextarea.value.trim();
-
-                // Check if the input is a valid C function to provide a mock MIPS output.
-                // This is a simplified check for demonstration purposes.
-                if (inputCode.includes('int add(') || inputCode.includes('return') || inputCode.includes('int main(')) {
-                    // Pre-written MIPS code for a simple addition function
-                    const mipsOutput = `# MIPS Assembly Code
-# File: add.s
-# Purpose: A simple function to add two numbers.
-# int add(int a, int b) { return a + b; }
-
-.text
-.globl main
-
-# Main program entry point
-main:
-    li $a0, 5       # Load integer 5 into argument register $a0
-    li $a1, 10      # Load integer 10 into argument register $a1
-    jal add         # Jump and link to the 'add' function
-    move $s0, $v0   # Move the return value from $v0 to $s0 (result)
-    
-    li $v0, 10      # System call code for exit
-    syscall         # Exit the program
-
-# Function to add two numbers
-# Arguments: $a0 (a), $a1 (b)
-# Returns: $v0 (a + b)
-add:
-    add $v0, $a0, $a1   # $v0 = $a0 + $a1
-    jr $ra              # Jump back to the caller
-`;
-                    mipsCodeTextarea.value = mipsOutput;
-                    statusMessage.textContent = 'Conversion successful!';
-                    statusMessage.classList.remove('text-blue-600');
-                    statusMessage.classList.add('text-green-600');
-                } else {
-                    statusMessage.textContent = 'Error: Only simple C functions can be converted in this demo.';
-                    statusMessage.classList.remove('text-blue-600');
-                    statusMessage.classList.add('text-red-600');
-                    mipsCodeTextarea.value = '# Error: Could not convert the provided C code.';
-                }
-
-            }, 1000); // 1-second delay to simulate processing
+      for(let raw of lines){
+        const line = raw.replace(/\/\/.*$/,'').trim();
+        if(!line || line.startsWith('#')){ continue; }
+        if(/^int\s+[a-zA-Z_]/.test(line) && line.includes(';')){
+          const decl = line.replace(/^int\s+/,'').replace(/;$/,'');
+          const parts = decl.split(',').map(s=>s.trim());
+          for(const p of parts){ if(p.includes('=')){ const [name,val]=p.split('='); const off=allocVar(name.trim()); out.push(`  li $t0, ${val.trim()}`); out.push(`  sw $t0, ${off}($sp)`); explanations.push({id:uid(), text:`Declare ${name.trim()} init ${val.trim()}`, src:raw}); } else { const off=allocVar(p.trim()); out.push(`# alloc ${p.trim()} at ${off}($sp)`); explanations.push({id:uid(), text:`Declare ${p.trim()}`, src:raw}); } }
+          continue;
         }
-    </script>
+        if(/^[a-zA-Z_][a-zA-Z0-9_]*\s*=/.test(line)){
+          const [left, right] = line.split('='); const L=left.trim(); const R=right.replace(/;$/,'').trim();
+          if(/^[0-9]+$/.test(R)){
+            const off=allocVar(L); out.push(`  li $t0, ${R}`); out.push(`  sw $t0, ${off}($sp)`); explanations.push({id:uid(), text:`Assign ${R} to ${L}`, src:raw});
+          } else if(/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(R)){
+            const offL=allocVar(L); const offR=allocVar(R); out.push(`  lw $t0, ${offR}($sp)`); out.push(`  sw $t0, ${offL}($sp)`); explanations.push({id:uid(), text:`Copy ${R} -> ${L}`, src:raw});
+          } else {
+            out.push(`# [UNSUPPORTED assign] ${raw}`); explanations.push({id:uid(), text:`Complex assign not supported`, src:raw});
+          }
+          continue;
+        }
+        if(/^return\s+/.test(line)){
+          const expr=line.replace(/^return\s+/,'').replace(/;$/,'').trim();
+          if(/^[0-9]+$/.test(expr)){ out.push(`  li $v0, ${expr}`); explanations.push({id:uid(), text:`Return ${expr}`, src:raw}); }
+          else { const off=allocVar(expr); out.push(`  lw $v0, ${off}($sp)`); explanations.push({id:uid(), text:`Return ${expr} via $v0`, src:raw}); }
+          continue;
+        }
+        if(/scanf\s*\(/.test(line)){
+          const m = raw.match(/scanf\s*\(\s*"%d"\s*,\s*&([a-zA-Z_][a-zA-Z0-9_]*)\s*\)/);
+          if(m){ const v=m[1]; const off=allocVar(v); out.push(`  li $v0, 5`); out.push(`  syscall`); out.push(`  sw $v0, ${off}($sp)`); explanations.push({id:uid(), text:`scanf -> read int to ${v}`, src:raw}); }
+          else { out.push(`# [UNSUPPORTED scanf] ${raw}`); explanations.push({id:uid(), text:`Unsupported scanf pattern`, src:raw}); }
+          continue;
+        }
+        if(/printf\s*\(/.test(line)){
+          const m = raw.match(/printf\s*\(\s*"%d(.*?)"\s*,\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\)/);
+          if(m){ const varname=m[2]; const off=allocVar(varname); out.push(`  lw $a0, ${off}($sp)`); out.push(`  li $v0, 1`); out.push(`  syscall`); if(m[1] && m[1].includes('\\n')){ out.push(`  li $a0, 10`); out.push(`  li $v0, 11`); out.push(`  syscall`); } explanations.push({id:uid(), text:`printf int -> print syscall for ${varname}`, src:raw}); }
+          else { out.push(`# [UNSUPPORTED printf] ${raw}`); explanations.push({id:uid(), text:`Unsupported printf`, src:raw}); }
+          continue;
+        }
+        out.push(`# [UNTRANSLATED] ${raw}`); explanations.push({id:uid(), text:`Could not translate`, src:raw});
+      }
+      setMips(out.join('\n'));
+      setExplainMap(explanations);
+      setLog(`Translated ${lines.length} lines`);
+    }
+
+    function renderMips(){
+      if(!mips) return <div style={{color:'#6b7280'}}>No translation yet. Click Convert.</div>;
+      const lines = mips.split('\n');
+      return lines.map((ln,i)=>{
+        const e = explainMap[i] || null;
+        return (
+          <div key={i} className="mips-line" style={{padding:'6px 8px', borderBottom:'1px solid #f1f5f9'}}>
+            <pre style={{margin:0}}>{ln}</pre>
+            {e && <div className="explain"><strong>Conversion note</strong><div style={{marginTop:6}}>{e.text}</div><div style={{marginTop:6, color:'#6b7280'}}>Original: <code>{e.src.trim()}</code></div></div>}
+          </div>
+        );
+      });
+    }
+
+    return (
+      <div className="app" style={{background:'#fff', padding:18, borderRadius:10}}>
+        <h1 style={{marginTop:0}}>C → MIPSy Learner (standalone)</h1>
+        <div style={{display:'flex', gap:12}}>
+          <div style={{flex:1}}>
+            <label style={{fontWeight:600}}>C source</label>
+            <textarea value={cCode} onChange={e=>setCCode(e.target.value)} rows={18} style={{width:'100%', marginTop:8, padding:10}} />
+            <div style={{marginTop:8}}>
+              <button onClick={translate} style={{marginRight:8}}>Convert</button>
+              <button onClick={()=>{setCCode(''); setMips(''); setExplainMap([]); setLog('');}}>Clear</button>
+              <button onClick={()=>setCCode('// paste your C code here')}>Load Example</button>
+            </div>
+            <div style={{marginTop:8, color:'#6b7280'}}>Log: {log}</div>
+          </div>
+          <div style={{flex:1, maxWidth:560}}>
+            <label style={{fontWeight:600}}>MIPSy assembly (hover lines to see notes)</label>
+            <div style={{marginTop:8, background:'#f8fafc', border:'1px solid #eef2f7', borderRadius:6, height:430, overflow:'auto'}}>
+              {renderMips()}
+            </div>
+          </div>
+        </div>
+        <div style={{marginTop:12, fontSize:13, color:'#6b7280'}}>
+          <strong>Notes:</strong> heuristic translator for learning. Not a production compiler. Supports many simple integer patterns.
+        </div>
+      </div>
+    );
+  }
+
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(<CToMipsyLearnerStandalone />);
+  </script>
 </body>
 </html>
