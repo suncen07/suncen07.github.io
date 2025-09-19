@@ -1,0 +1,64 @@
+body {
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  margin: 0;
+  background: #f6f7fb;
+}
+
+.app {
+  max-width: 1100px;
+  margin: 28px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+}
+
+textarea, pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace;
+}
+
+textarea {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  resize: vertical;
+}
+
+button {
+  cursor: pointer;
+  margin-right: 8px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #f1f5f9;
+}
+
+button:hover {
+  background: #e2e8f0;
+}
+
+.mips-line {
+  position: relative;
+  padding: 6px 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.explain {
+  position: absolute;
+  right: 0;
+  top: 0;
+  opacity: 0;
+  transition: opacity .12s ease;
+  background: white;
+  border: 1px solid #e5e7eb;
+  padding: 8px;
+  width: 260px;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+  font-size: 12px;
+}
+
+.mips-line:hover .explain {
+  opacity: 1;
+}
