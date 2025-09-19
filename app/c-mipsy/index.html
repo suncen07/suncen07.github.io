@@ -1,17 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>C → MIPSy Learner</title>
+  <meta charset="UTF-8">
+  <title>C → MIPSy Converter</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://suncen07.github.io/app/c-mipsy/style.css" />
-  <!-- React & Babel CDN -->
+  <style>
+    body {
+      font-family: monospace;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 20px;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 400px;
+      padding: 10px;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      resize: none;
+    }
+
+    .output {
+      width: 100%;
+      height: 400px;
+      padding: 10px;
+      background: #fff;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      overflow-y: auto;
+      white-space: pre;
+    }
+
+    button {
+      margin: 20px auto;
+      display: block;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 </head>
 <body>
   <div id="root"></div>
-  <script type="text/babel" src="https://suncen07.github.io/app/c-mipsy/script.js"></script>
+  <script type="text/babel">
+    function App() {
+      const [cCode, setCCode] = React.useState(`int main() {
+    int a = 5, b = 3;
+    int c = a + b;
+    if (c > 5) {
+        c = c - 1;
+    }
+    return c;
+}`);
+      const [mips, setMips] = React.useState("");
+
+      const convertLine = (line) => {
+        const trimmed = line.trim();
+
+        if (trimmed.startsWith("int main")) return "main:   # " + trimmed;
+        if (/int\s+\w+\s*=/.test(trimmed)) {
+          // variable assignment
+          const matches = trimmed.match(/int\s+(\w+)\s*=\s*(\d+)/);
+          if (matches) {
+            const [, varName, value] = matches;
+            return `li $t0, ${value}   # ${trimmed}`;
+          }
+        }
+        if (/\w+\s*=\s*\w+\s*\+\s*\w+/.test(trimmed)) {
+          return `add $t2, $t0, $t1   # ${trimmed}`;
+        }
+        if (/\w+\s*=\s*\w+\s*-\s*\d+/.test(trimmed)) {
+          return `subi $t2, $t2, 1   # ${trimmed}`;
+        }
+        if (trimmed.startsWith("if")) {
+          return `# if statement (pseudo)   # ${trimmed}`;
+        }
+        if (trimmed.startsWith("return")) {
+          return `move $v0, $t2   # ${trimmed}`;
+        }
+        if (trimmed.startsWith("{") || trimmed.startsWith("}")) return "";
+
+        return "# " + trimmed;
+      };
+
+      const convertCode = () => {
+        const lines = cCode.split("\n");
+        const output = lines.map(convertLine).join("\n");
+        setMips(output);
+      };
+
+      return (
+        <div>
+          <h1>C → MIPSy Converter</h1>
+          <div className="container">
+            <textarea value={cCode} onChange={(e) => setCCode(e.target.value)} />
+            <div className="output">{mips}</div>
+          </div>
+          <button onClick={convertCode}>Convert</button>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
 </body>
 </html>
