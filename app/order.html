@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ice Cream Collection Manager</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom style for the canvas border -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7; /* Light background for a clean look */
+        }
+        .container-card {
+            background: white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 1rem;
+            padding-bottom: 8rem; /* Add padding to bottom to avoid bulk action bar overlap */
+        }
+        #qr-canvas {
+            border: 2px solid #3b82f6; /* Blue border for scanner */
+            border-radius: 0.5rem;
+            width: 100%;
+            height: auto;
+        }
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+        /* Style for the sticky bulk action bar */
+        #bulk-action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            transition: transform 0.3s ease-in-out;
+            transform: translateY(100%); /* Start hidden */
+        }
+        #bulk-action-bar.visible {
+            transform: translateY(0); /* Slide in */
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 flex justify-center items-start">
+
+    <div id="app" class="w-full max-w-4xl">
+        <!-- Navigation Tabs (Role-Based) -->
+        <nav id="role-navigation" class="flex justify-center mb-6 space-x-2 md:space-x-4 flex-wrap">
+            <!-- Buttons dynamically inserted/hidden based on role -->
+        </nav>
+
+        <!-- Main Application Content Area -->
+        <div id="content" class="container-card p-6 md:p-10">
+            <div id="loading-screen" class="text-center p-12">
+                <svg class="animate-spin h-8 w-8 text-indigo-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="mt-4 text-gray-600">Initializing database and authentication...</p>
+            </div>
+        </div>
+
+        <!-- Notification/Modal Area -->
+        <div id="notification-area" class="fixed bottom-20 md:bottom-4 right-4 z-50"></div>
+        <div id="modal-area" class="fixed inset-0 hidden z-50 flex items-center justify-center modal-overlay p-4"></div>
+
+        <!-- Bulk Action Bar (Hidden by default) -->
+        <div id="bulk-action-bar" class="w-full bg-gray-800 text-white p-4 shadow-2xl z-40">
+            <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                <span id="bulk-action-count" class="font-semibold text-lg">0 orders selected</span>
+                <div class="flex gap-3">
+                    <select id="bulk-action-select" class="p-2 rounded-lg text-gray-900">
+                        <option value="">Select Action...</option>
+                        <option value="mark_collected">Mark as COLLECTED</option>
+                        <option value="mark_pending_collection">Mark as PENDING (Collection)</option>
+                        <option value="mark_paid">Mark as PAID</option>
+                        <option value="mark_pending_payment">Mark as PENDING (Payment)</option>
+                    </select>
+                    <button onclick="handleBulkAction()" class="py-2 px-4 bg-indigo-600 font-semibold rounded-lg hover:bg-indigo-700 transition">
+                        Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, updateDoc, onSnapshot, collection, getDoc, getDocs, writeBatch, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Expose Firebase functions globally for use in the main script block
+        window.firebase = {
+            initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged,
+            getFirestore, doc, setDoc, updateDoc, onSnapshot, collection, getDoc, getDocs, writeBatch, query, where
+        };
+    </script>
+    <!-- QR Code Generation Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <!-- QR Code Scanning Library -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+    <script>
+        // --- GLOBAL VARIABLES & CONFIGURATION ---
+        let app, db, auth;
+        let userId = null;
+        let isAuthReady = false;
+        let orderListener = null; // Listener for the management view
+        let allOrderDocs = []; // Cache for live search
+        const COLLECTION_NAME = 'ice_cream_orders';
+        const NOTIFICATION_DURATION = 4000;
+        const STAFF_PIN = '2024'; // Hardcoded PIN for staff access
+
+        // Configuration for item options with prices
+        const PRODUCT_OPTIONS = [
+            { name: 'Single Scoop', price: 4.50 },
+            { name: 'Double Scoop', price: 6.00 },
+            { name: 'Waffle Cone', price: 1.50 },
+            { name: 'Small Pint', price: 8.00 },
+            { name: 'Large Pint', price: 12.00 },
+            { name: 'Milkshake', price: 7.50 },
+            { name: 'Sundae', price: 9.00 }
+        ];
+        const FLAVOR_OPTIONS = [
+            'Vanilla', 'Chocolate', 'Strawberry', 'Mint Chip', 'Cookie Dough', 'Pistachio', 'Espresso'
+        ];
+        const COLLECTION_TYPE_OPTIONS = [
+            'Eat-In', 'Takeout'
+        ];
+
+        // --- FIREBASE AND AUTH INITIALIZATION ---
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+
+        async function initFirebase() {
+            try {
+                if (!firebaseConfig) {
+                    throw new Error("Firebase config not found. Cannot initialize application.");
+                }
+
+                app = window.firebase.initializeApp(firebaseConfig);
+                db = window.firebase.getFirestore(app);
+                auth = window.firebase.getAuth(app);
+                window.db = db; // Expose for easier global use
+
+                await new Promise((resolve) => {
+                    window.firebase.onAuthStateChanged(auth, async (user) => {
+                        if (user) {
+                            userId = user.uid;
+                        } else {
+                            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                                await window.firebase.signInWithCustomToken(auth, __initial_auth_token);
+                                userId = auth.currentUser.uid;
+                            } else {
+                                await window.firebase.signInAnonymously(auth);
+                                userId = auth.currentUser.uid;
+                            }
+                        }
+                        isAuthReady = true;
+                        document.getElementById('loading-screen').classList.add('hidden');
+                        showNotification(`Authenticated as ${userId.substring(0, 8)}...`, 'success');
+                        resolve();
+                    });
+                });
+
+                // Determine the role and route
+                checkRoleAndRoute();
+
+            } catch (error) {
+                console.error("Firebase Initialization or Authentication Failed:", error);
+                document.getElementById('loading-screen').innerHTML = `<p class="text-red-500">Error: Could not initialize app. Check console for details.</p>`;
+            }
+        }
+
+        // --- ROLE MANAGEMENT & NAVIGATION ---
+
+        function isStaff() {
+            return sessionStorage.getItem('isStaff') === 'true';
+        }
+
+        function setStaffMode(status) {
+            if (status) {
+                sessionStorage.setItem('isStaff', 'true');
+            } else {
+                sessionStorage.removeItem('isStaff');
+            }
+        }
+
+        function checkRoleAndRoute() {
+            const currentRoute = window.location.hash.substring(1);
+            const navContainer = document.getElementById('role-navigation');
+            navContainer.innerHTML = '';
+
+            if (isStaff()) {
+                // Staff Navigation
+                navContainer.innerHTML = `
+                    <button onclick="router('submission')" id="nav-submission" class="px-4 py-2 text-sm md:text-base md:px-6 rounded-full font-semibold transition bg-gray-200 text-gray-700 hover:bg-gray-300 shadow-md">
+                        Buyer Form
+                    </button>
+                    <button onclick="router('collection')" id="nav-collection" class="px-4 py-2 text-sm md:text-base md:px-6 rounded-full font-semibold transition bg-gray-200 text-gray-700 hover:bg-gray-300 shadow-md">
+                        Scan & Collect
+                    </button>
+                    <button onclick="router('management')" id="nav-management" class="px-4 py-2 text-sm md:text-base md:px-6 rounded-full font-semibold transition bg-gray-200 text-gray-700 hover:bg-gray-300 shadow-md">
+                        Manage Data
+                    </button>
+                    <button onclick="logoutStaff()" class="px-4 py-2 text-sm md:text-base md:px-6 rounded-full font-semibold transition bg-red-100 text-red-600 hover:bg-red-200 shadow-md">
+                        Logout
+                    </button>
+                `;
+                // If staff tries to access confirmation, redirect to collection, otherwise load route
+                router(currentRoute === 'confirmation' ? 'collection' : (currentRoute || 'collection'));
+
+            } else {
+                // Buyer Navigation
+                navContainer.innerHTML = `
+                    <button onclick="router('submission')" id="nav-submission" class="px-6 py-2 rounded-full font-semibold transition bg-indigo-500 text-white hover:bg-indigo-600 shadow-md">
+                        New Order
+                    </button>
+                    <button onclick="showStaffLoginModal()" class="px-6 py-2 rounded-full font-semibold transition bg-gray-200 text-gray-700 hover:bg-gray-300 shadow-md">
+                        Staff Login
+                    </button>
+                `;
+                // Buyers should only see submission or confirmation pages
+                router(currentRoute === 'collection' ? 'submission' : (currentRoute || 'submission'));
+            }
+        }
+        
+        // Expose to global
+        window.logoutStaff = function() {
+            setStaffMode(false);
+            showNotification("Logged out of Staff Mode.", 'info');
+            checkRoleAndRoute();
+        }
+
+
+        // --- UTILITY FUNCTIONS ---
+
+        function showNotification(message, type = 'info') {
+            const area = document.getElementById('notification-area');
+            let color = {
+                'success': 'bg-green-500',
+                'error': 'bg-red-500',
+                'info': 'bg-blue-500'
+            }[type] || 'bg-gray-500';
+
+            const notification = document.createElement('div');
+            notification.className = `${color} text-white px-4 py-3 rounded-lg shadow-xl mb-3 transition-all duration-300 transform translate-y-2 opacity-0`;
+            notification.innerHTML = `<p>${message}</p>`;
+
+            area.appendChild(notification);
+
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            // Animate out and remove
+            setTimeout(() => {
+                notification.classList.add('translate-y-2', 'opacity-0');
+                notification.addEventListener('transitionend', () => notification.remove());
+            }, NOTIFICATION_DURATION);
+        }
+
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return 'N/A';
+            if (typeof timestamp.toDate === 'function') {
+                return timestamp.toDate().toLocaleString();
+            }
+            return new Date(timestamp).toLocaleString();
+        }
+        
+        function formatPrice(price) {
+            return `$${(price || 0).toFixed(2)}`;
+        }
+
+        const getOrderCollection = () => {
+            // Public path for collaborative/shared data
+            return window.firebase.collection(db, `/artifacts/${appId}/public/data/${COLLECTION_NAME}`);
+        }
+
+        // --- STAFF LOGIN MODAL ---
+
+        // Expose to global
+        window.showStaffLoginModal = function() {
+            const modalArea = document.getElementById('modal-area');
+            modalArea.classList.remove('hidden');
+
+            modalArea.innerHTML = `
+                <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-sm transform transition-all duration-300">
+                    <h3 class="text-2xl font-bold mb-4 text-indigo-700">Staff Access Required</h3>
+                    <p class="text-gray-600 mb-6">Enter the Staff PIN to access order management tools.</p>
+                    <form id="staff-pin-form" class="space-y-4">
+                        <input type="password" id="staffPinInput" placeholder="Enter PIN (e.g., 2024)" required maxlength="4"
+                            class="w-full p-3 border-2 border-gray-300 rounded-lg text-center text-xl tracking-widest focus:ring-indigo-500 focus:border-indigo-500">
+                        <button type="submit" class="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition">
+                            Log In
+                        </button>
+                        <button type="button" onclick="closeModal()" class="w-full py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                            Cancel
+                        </button>
+                    </form>
+                </div>
+            `;
+
+            document.getElementById('staff-pin-form').addEventListener('submit', handleStaffLogin);
+        }
+
+        function handleStaffLogin(e) {
+            e.preventDefault();
+            const pin = document.getElementById('staffPinInput').value;
+            if (pin === STAFF_PIN) {
+                setStaffMode(true);
+                closeModal();
+                showNotification("Staff login successful. Accessing collection view.", 'success');
+                checkRoleAndRoute(); // Re-render navigation and content
+            } else {
+                showNotification("Invalid PIN. Access denied.", 'error');
+                document.getElementById('staffPinInput').value = '';
+            }
+        }
+
+        // Expose to global
+        window.closeModal = function() {
+            document.getElementById('modal-area').classList.add('hidden');
+            document.getElementById('modal-area').innerHTML = '';
+        }
+
+        // --- VIEW RENDERING / ROUTING ---
+
+        // Expose to global
+        window.router = function(route) {
+            const content = document.getElementById('content');
+            
+            // Cleanup scanner interval on route change
+            if (window.qrScannerInterval) {
+                clearInterval(window.qrScannerInterval);
+                window.qrScannerInterval = null;
+                // If camera is active, stop tracks
+                if (window.video && window.video.srcObject) {
+                    window.video.srcObject.getTracks().forEach(track => track.stop());
+                }
+            }
+            
+            // Cleanup order listener on route change
+            if (orderListener) {
+                orderListener(); // This is the unsubscribe function
+                orderListener = null;
+            }
+            
+            // Hide bulk action bar on navigation
+            updateBulkActionBar();
+            
+            allOrderDocs = []; // Clear search cache on navigation
+
+            content.innerHTML = ''; // Clear content
+            window.location.hash = route;
+
+            // Update active navigation button style
+            document.querySelectorAll('#role-navigation button').forEach(btn => {
+                btn.classList.remove('bg-indigo-500', 'text-white', 'hover:bg-indigo-600');
+                if (!btn.classList.contains('bg-red-100')) {
+                    btn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+                }
+            });
+            const activeBtn = document.getElementById(`nav-${route}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+                activeBtn.classList.add('bg-indigo-500', 'text-white', 'hover:bg-indigo-600');
+            }
+
+
+            switch (route) {
+                case 'submission':
+                    renderSubmissionForm(content);
+                    break;
+                case 'confirmation':
+                    // This route is only navigated to internally after a submission
+                    if (!sessionStorage.getItem('lastOrderId')) {
+                        router('submission');
+                        return;
+                    }
+                    renderConfirmation(content, sessionStorage.getItem('lastOrderId'));
+                    break;
+                case 'collection':
+                    if (isStaff()) {
+                        renderCollectionScanner(content);
+                    } else {
+                        // Redirect non-staff attempts back to submission
+                        router('submission');
+                        showStaffLoginModal();
+                    }
+                    break;
+                case 'management':
+                    if (isStaff()) {
+                        renderManagementView(content);
+                    } else {
+                        router('submission');
+                        showStaffLoginModal();
+                    }
+                    break;
+                default:
+                    router(isStaff() ? 'collection' : 'submission');
+            }
+        }
+
+        // --- SUBMISSION LOGIC (Buyer View) ---
+
+        function renderSubmissionForm(container) {
+            const collectionOptions = COLLECTION_TYPE_OPTIONS.map(c => `<option value="${c}">${c}</option>`).join('');
+
+            container.innerHTML = `
+                <h2 class="text-3xl font-bold mb-6 text-indigo-700">🍦 New Ice Cream Order</h2>
+                <p class="text-gray-500 mb-8">Enter the customer's order details to generate a unique collection QR code.</p>
+                <form id="order-form" class="space-y-6">
+                    <div class="space-y-4 border-b pb-4">
+                        <label class="block text-lg font-medium text-gray-700">Buyer Contact Information</label>
+                        <div>
+                            <input type="text" id="buyerName" name="buyerName" placeholder="Customer Name (Required)" required
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <input type="tel" id="buyerPhone" name="buyerPhone" placeholder="Phone Number (Required)" required
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <input type="email" id="buyerEmail" name="buyerEmail" placeholder="Email (Optional)"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 border-b pb-4">
+                        <label for="orderCollectionType" class="block text-lg font-medium text-gray-700">Order Collection Type (Required)</label>
+                        <select id="orderCollectionType" name="orderCollectionType" required
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="" disabled selected>Select Collection Preference</option>
+                            ${collectionOptions}
+                        </select>
+                    </div>
+
+                    <div class="space-y-4">
+                        <label class="block text-lg font-medium text-gray-700">Items Ordered</label>
+                        <div id="item-list" class="space-y-3">
+                            <!-- Dynamic item rows go here -->
+                        </div>
+                        <button type="button" id="addItemBtn" class="w-full py-2 px-4 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition">
+                            + Add Another Item
+                        </button>
+                    </div>
+
+                    <!-- Order Total -->
+                    <div class="text-right text-3xl font-bold my-4 pt-4 border-t">
+                        Total: <span id="order-total" class="text-indigo-600">$0.00</span>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition shadow-lg">
+                        Submit Order & Generate QR Code
+                    </button>
+                </form>
+            `;
+
+            document.getElementById('addItemBtn').addEventListener('click', addItemRow);
+            document.getElementById('order-form').addEventListener('submit', handleFormSubmit);
+            // Add change listener to the form to update total
+            document.getElementById('order-form').addEventListener('change', updateOrderTotal);
+
+            // Add initial item row
+            addItemRow();
+        }
+
+        function addItemRow(initialProduct = '') {
+            const list = document.getElementById('item-list');
+            const itemRow = document.createElement('div');
+            // Grid for Name, Flavor, Qty, Remove
+            itemRow.className = 'grid grid-cols-1 md:grid-cols-4 gap-2 items-center p-3 border border-gray-200 rounded-lg bg-white shadow-sm';
+
+            // Use object array with prices
+            const productOptions = PRODUCT_OPTIONS.map(p => 
+                `<option value="${p.name}" data-price="${p.price}">${p.name} (${formatPrice(p.price)})</option>`
+            ).join('');
+            
+            const flavorOptions = FLAVOR_OPTIONS.map(f => `<option value="${f}">${f}</option>`).join('');
+            
+            itemRow.innerHTML = `
+                <select data-name="item-name" required
+                    class="p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 col-span-4 md:col-span-1">
+                    <option value="" data-price="0" disabled selected>Select Product</option>
+                    ${productOptions}
+                </select>
+                
+                <select data-name="item-flavor" required
+                    class="p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 col-span-2 md:col-span-1">
+                    <option value="" disabled selected>Select Flavor</option>
+                    ${flavorOptions}
+                </select>
+                
+                <input type="number" data-name="item-qty" placeholder="Qty" required min="1" value="1"
+                    class="p-2 border border-gray-300 rounded-lg text-center focus:ring-green-500 focus:border-green-500 col-span-1">
+                
+                <button type="button" onclick="removeItemRow(this)"
+                    class="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition col-span-1">
+                    Remove
+                </button>
+            `;
+            list.appendChild(itemRow);
+        }
+
+        // Calculate total price
+        function updateOrderTotal() {
+            const itemRows = document.querySelectorAll('#item-list > .grid');
+            let total = 0;
+
+            itemRows.forEach(row => {
+                const nameInput = row.querySelector('[data-name="item-name"]');
+                const qtyInput = row.querySelector('[data-name="item-qty"]');
+                
+                const selectedOption = nameInput.options[nameInput.selectedIndex];
+                const price = parseFloat(selectedOption.dataset.price || 0);
+                const qty = parseInt(qtyInput.value || 0);
+                
+                if (!isNaN(price) && !isNaN(qty)) {
+                    total += price * qty;
+                }
+            });
+
+            document.getElementById('order-total').textContent = formatPrice(total);
+        }
+
+        // Expose to global
+        window.removeItemRow = function(button) {
+            button.closest('.grid').remove();
+            // Ensure at least one item row remains
+            const list = document.getElementById('item-list');
+            if (list.children.length === 0) {
+                addItemRow();
+            }
+            // Update total when row is removed
+            updateOrderTotal();
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const buyerName = form.buyerName.value.trim();
+            const buyerPhone = form.buyerPhone.value.trim();
+            const buyerEmail = form.buyerEmail.value.trim();
+            const orderCollectionType = form.orderCollectionType.value; // Get the order-level type
+
+            // Get total price
+            const totalPrice = parseFloat(document.getElementById('order-total').textContent.replace('$', ''));
+
+            const itemInputs = document.querySelectorAll('#item-list > .grid');
+            const items = [];
+
+            itemInputs.forEach(row => {
+                const nameInput = row.querySelector('[data-name="item-name"]');
+                const flavorInput = row.querySelector('[data-name="item-flavor"]');
+                const qtyInput = row.querySelector('[data-name="item-qty"]');
+                
+                // Get price data
+                const selectedOption = nameInput.options[nameInput.selectedIndex];
+                const price = parseFloat(selectedOption.dataset.price || 0);
+                
+                if (nameInput.value.trim() && flavorInput.value && parseInt(qtyInput.value) > 0) {
+                    items.push({
+                        name: nameInput.value.trim(), 
+                        flavor: flavorInput.value,
+                        qty: parseInt(qtyInput.value),
+                        price: price // Store price per item
+                    });
+                }
+            });
+
+            if (items.length === 0 || !buyerName || !buyerPhone || !orderCollectionType) {
+                showNotification("Please fill in the customer name, phone, collection type, and at least one item.", 'error');
+                return;
+            }
+
+            const uniqueId = crypto.randomUUID();
+            const orderData = {
+                buyerName,
+                buyerPhone,
+                buyerEmail,
+                collectionType: orderCollectionType,
+                items,
+                totalPrice: totalPrice, // Store total price
+                submissionTimestamp: new Date(),
+                status: 'PENDING',
+                paymentStatus: 'PENDING',
+                itemsSummary: items.map(i => `${i.qty}x ${i.name} (${i.flavor})`).join(', '), // For Gemini
+                // The QR code IS the uniqueId
+            };
+
+            try {
+                // Set the document using the UUID as the ID for fast lookup
+                const orderDocRef = window.firebase.doc(getOrderCollection(), uniqueId);
+                await window.firebase.setDoc(orderDocRef, orderData);
+
+                sessionStorage.setItem('lastOrderId', uniqueId);
+                showNotification(`Order ${uniqueId.substring(0, 8)}... created successfully!`, 'success');
+
+                // Navigate to confirmation view
+                router('confirmation');
+
+            } catch (error) {
+                console.error("Error writing document: ", error);
+                showNotification("Error saving order. Please check the console.", 'error');
+            }
+        }
+
+        // --- CONFIRMATION LOGIC (Buyer View) ---
+
+        function renderConfirmation(container, orderId) {
+            // Display only the first 8 chars for simplicity, but the QR code contains the FULL ID.
+            const displayId = orderId.substring(0, 8).toUpperCase();
+            
+            container.innerHTML = `
+                <h2 class="text-3xl font-bold mb-4 text-green-700">✅ Order Confirmed!</h2>
+                <p class="mb-6 text-gray-600">Please save this QR code. It is your unique ticket for collection. Staff can also look up your order using the ID below.</p>
+
+                <div class="flex flex-col items-center space-y-4">
+                    <div id="qrcode-container" class="p-4 border-4 border-indigo-500 rounded-xl bg-white shadow-xl">
+                        <!-- QR Code Canvas will be inserted here -->
+                    </div>
+                    <p class="text-lg font-mono p-2 bg-gray-100 rounded-lg">
+                        Order ID: <span id="display-order-id" class="font-bold text-indigo-700">${displayId}</span>
+                    </p>
+                    <button onclick="router('submission')" class="py-2 px-6 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition">
+                        Start New Order
+                    </button>
+                    <div id="order-details-summary" class="w-full max-w-sm text-sm p-4 mt-4 bg-gray-50 rounded-lg">
+                        <p class="font-semibold text-gray-700 mb-2">Order Summary:</p>
+                        <!-- Summary will be populated via a quick fetch -->
+                    </div>
+                </div>
+            `;
+
+            // Generate QR Code with the FULL orderId
+            window.QRCode.toCanvas(document.getElementById('qrcode-container'), orderId, {
+                errorCorrectionLevel: 'H',
+                margin: 1,
+                width: 256
+            }, function (error) {
+                if (error) console.error(error);
+            });
+
+            // Fetch summary details
+            getSummaryDetails(orderId);
+        }
+
+        async function getSummaryDetails(orderId) {
+            const summaryDiv = document.getElementById('order-details-summary');
+            if (!summaryDiv) return;
+
+            try {
+                const docRef = window.firebase.doc(getOrderCollection(), orderId);
+                const docSnap = await window.firebase.getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    let itemsHtml = data.items.map(item => `
+                        <li class="ml-4 list-disc">
+                            ${item.qty}x ${item.name} (${item.flavor}) - ${formatPrice(item.price * item.qty)}
+                        </li>
+                    `).join('');
+                    
+                    summaryDiv.innerHTML = `
+                        <p class="font-semibold text-gray-700 mb-2">Order Summary for ${data.buyerName}:</p>
+                        <p class="text-xs mb-2 font-semibold">Collection: <span class="text-indigo-600">${data.collectionType}</span></p>
+                        <p class="text-xs mb-2">Contact: ${data.buyerPhone}</p>
+                        <ul class="space-y-1">${itemsHtml}</ul>
+                        <!-- Display Total Price -->
+                        <p class="font-bold text-lg mt-2 pt-2 border-t">Total: <span class="text-indigo-600">${formatPrice(data.totalPrice)}</span></p>
+                    `;
+                }
+            } catch (e) {
+                console.error("Error fetching order summary:", e);
+            }
+        }
+
+        // --- COLLECTION LOGIC (Staff View) ---
+
+        let video;
+        let qrScannerInterval;
+        window.video = video; // Expose globally for cleanup
+        window.qrScannerInterval = qrScannerInterval; // Expose globally for cleanup
+
+        function renderCollectionScanner(container) {
+            container.innerHTML = `
+                <h2 class="text-3xl font-bold mb-6 text-indigo-700">🔍 Scan & Collect Orders</h2>
+                <div class="flex flex-col md:flex-row gap-6">
+                    <!-- Left Column: Scanner + Manual Lookup -->
+                    <div class="md:w-1/2 space-y-6">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-3">Place the QR code within the view to scan.</p>
+                            <div class="relative">
+                                <video id="video-stream" class="w-full rounded-xl shadow-lg" playsinline></video>
+                                <canvas id="qr-canvas" class="w-full rounded-xl absolute top-0 left-0"></canvas>
+                            </div>
+                            <div id="scan-status" class="mt-4 text-center p-2 bg-indigo-50 text-indigo-700 rounded-lg">
+                                Awaiting camera access...
+                            </div>
+                        </div>
+
+                        <!-- Manual Order Lookup -->
+                        <div class="pt-6 border-t">
+                            <h3 class="text-lg font-semibold text-gray-800">Manual Order Lookup</h3>
+                            <p class="text-sm text-gray-600 mb-3">If scan fails, enter the 8-character Order ID.</p>
+                            <form id="manual-lookup-form" class="flex gap-2">
+                                <input type="text" id="manual-order-id" placeholder="Enter Order ID"
+                                    class="flex-grow p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                                    maxlength="36"> <!-- Allow full UUID just in case -->
+                                <button type="submit" class="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition">
+                                    Find
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Verification -->
+                    <div id="order-verification" class="md:w-1/2 p-4 bg-gray-50 rounded-xl shadow-inner">
+                        <p class="text-lg font-semibold text-gray-600">Scan or look up an Order QR Code to Verify</p>
+                    </div>
+                </div>
+            `;
+            
+            video = document.getElementById('video-stream');
+            window.video = video; // Update global reference
+            const canvas = document.getElementById('qr-canvas');
+            const context = canvas.getContext('2d');
+
+            // Add listener for manual lookup
+            document.getElementById('manual-lookup-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const orderIdInput = document.getElementById('manual-order-id');
+                const orderId = orderIdInput.value.trim();
+                if (orderId) {
+                    // We must find the full ID if only the partial is given
+                    findFullOrderIdAndProcess(orderId);
+                } else {
+                    showNotification("Please enter an Order ID.", 'error');
+                }
+            });
+
+            // Clear previous interval if any
+            if (window.qrScannerInterval) {
+                clearInterval(window.qrScannerInterval);
+                window.qrScannerInterval = null;
+            }
+
+            // Start camera and scanning loop
+            startScanner(video, canvas, context);
+        }
+        
+        async function findFullOrderIdAndProcess(partialId) {
+            const verificationDiv = document.getElementById('order-verification');
+            verificationDiv.innerHTML = `<div class="text-center p-8"><p class="text-indigo-500">Searching for Order ID: ${partialId}...</p></div>`;
+            
+            // 1. Try direct lookup first (in case full ID was pasted)
+            try {
+                const docRef = window.firebase.doc(getOrderCollection(), partialId);
+                const docSnap = await window.firebase.getDoc(docRef);
+                if (docSnap.exists()) {
+                    showNotification("Full Order ID found.", 'success');
+                    processScannedCode(partialId, verificationDiv);
+                    return;
+                }
+            } catch (e) { 
+                 console.error("Error during direct ID lookup:", e);
+                 /* Ignore error, proceed to search */ 
+            }
+            
+            // 2. If direct lookup fails, search for partial ID (first 8 chars)
+            // This is a client-side search across all documents.
+            try {
+                const q = window.firebase.query(getOrderCollection()); 
+                const querySnapshot = await window.firebase.getDocs(q);
+                
+                let foundDoc = null;
+                querySnapshot.forEach(doc => {
+                    if (doc.id.startsWith(partialId)) {
+                        foundDoc = doc;
+                    }
+                });
+
+                if (foundDoc) {
+                    showNotification(`Found matching order: ${foundDoc.id.substring(0, 8)}...`, 'success');
+                    processScannedCode(foundDoc.id, verificationDiv);
+                } else {
+                    verificationDiv.innerHTML = `<p class="text-xl font-bold text-red-500">❌ Order Not Found</p><p class="mt-2 text-gray-600">The ID does not match any existing order record.</p>`;
+                    showNotification("Order ID not found.", 'error');
+                }
+
+            } catch(e) {
+                console.error("Error searching for order during manual lookup:", e);
+                verificationDiv.innerHTML = `<p class="text-xl font-bold text-red-500">🚨 Database Error</p><p class="mt-2 text-gray-600">Could not perform search. (See console for details)</p>`;
+                showNotification("Database search failed. See console.", 'error');
+            }
+        }
+
+
+        async function startScanner(video, canvas, context) {
+            const statusDiv = document.getElementById('scan-status');
+            const verificationDiv = document.getElementById('order-verification');
+            
+            try {
+                // Request camera access
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                video.srcObject = stream;
+                video.setAttribute("playsinline", true);
+                video.play();
+                statusDiv.textContent = 'Camera ready. Searching for QR code...';
+
+                video.addEventListener('loadedmetadata', () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    video.classList.add('hidden'); // Hide video, draw feed on canvas
+                    
+                    // Start scanning loop
+                    window.qrScannerInterval = setInterval(() => {
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                        
+                        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                            inversionAttempts: "dontInvert",
+                        });
+
+                        if (code) {
+                            clearInterval(window.qrScannerInterval); // Stop scanning loop
+                            window.qrScannerInterval = null;
+
+                            statusDiv.textContent = `QR Code Found: ${code.data.substring(0, 8)}...`;
+                            processScannedCode(code.data, verificationDiv);
+                            
+                            // Highlight the QR code area
+                            drawQrHighlight(context, code);
+
+                        }
+                    }, 100); // Scan 10 times per second
+                });
+
+            } catch (err) {
+                console.error("Error accessing camera: ", err);
+                statusDiv.textContent = 'Error: Cannot access camera. Ensure permissions are granted.';
+                verificationDiv.innerHTML = `<p class="text-red-500">Could not start camera. Please check device permissions.</p>`;
+            }
+        }
+
+        function drawQrHighlight(context, code) {
+            context.strokeStyle = "rgb(255,0,0)";
+            context.lineWidth = 4;
+            context.beginPath();
+            context.moveTo(code.location.topLeftCorner.x, code.location.topLeftCorner.y);
+            context.lineTo(code.location.topRightCorner.x, code.location.topRightCorner.y);
+            context.lineTo(code.location.bottomRightCorner.x, code.location.bottomRightCorner.y);
+            context.lineTo(code.location.bottomLeftCorner.x, code.location.bottomLeftCorner.y);
+            context.lineTo(code.location.topLeftCorner.x, code.location.topLeftCorner.y);
+            context.stroke();
+        }
+
+        async function processScannedCode(orderId, container) {
+            // Order Lookup & Verification
+            container.innerHTML = `<div class="text-center p-8"><p class="text-indigo-500">Verifying Order ID: ${orderId.substring(0, 8)}...</p></div>`;
+
+            try {
+                const docRef = window.firebase.doc(getOrderCollection(), orderId);
+                const docSnap = await window.firebase.getDoc(docRef);
+
+                if (!docSnap.exists()) {
+                    container.innerHTML = `<p class="text-xl font-bold text-red-500">❌ Order Not Found</p><p class="mt-2 text-gray-600">The QR code does not match any existing order record.</p>`;
+                    showNotification("Order ID not found.", 'error');
+                    // Restart scanning
+                    setTimeout(() => router('collection'), 3000);
+                    return;
+                }
+
+                const order = docSnap.data();
+                renderVerificationDetails(container, orderId, order);
+
+            } catch (error) {
+                console.error("Error fetching order details:", error);
+                container.innerHTML = `<p class="text-xl font-bold text-red-500">🚨 Database Error</p><p class="mt-2 text-gray-600">Could not retrieve data. Check connection.</p>`;
+                showNotification("Database error occurred.", 'error');
+                // Restart scanning
+                setTimeout(() => router('collection'), 3000);
+            }
+        }
+
+        function renderVerificationDetails(container, orderId, order) {
+            const collectionStatusColor = order.status === 'PENDING' ? 'text-yellow-600 bg-yellow-100' : 'text-green-600 bg-green-100';
+            
+            // NEW: Payment Status Check
+            const paymentStatusColor = order.paymentStatus === 'PENDING' ? 'text-red-600 bg-red-100' : 'text-blue-600 bg-blue-100';
+            const isPaid = order.paymentStatus === 'PAID';
+
+            let actionButton = '';
+            if (order.status === 'COLLECTED') {
+                actionButton = `<div class="p-4 ${collectionStatusColor} rounded-lg mt-4 font-bold text-center">ALREADY COLLECTED</div>`;
+            } else if (isPaid) {
+                // Payment is PAID, show normal green button
+                actionButton = `<button onclick="markCollected('${orderId}')" class="w-full py-3 px-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition shadow-lg mt-4">
+                    ✔ Mark as Collected
+                   </button>`;
+            } else {
+                // Payment is PENDING, show warning button
+                actionButton = `<button onclick="showPaymentWarningModal('${orderId}')" class="w-full py-3 px-4 bg-yellow-500 text-white font-semibold rounded-lg hover:bg-yellow-600 transition shadow-lg mt-4">
+                    ⚠️ Mark as Collected (Payment Pending)
+                   </button>`;
+            }
+
+
+            const itemsHtml = order.items.map(item => `
+                <li class="ml-4 list-disc font-semibold">
+                    ${item.qty}x ${item.name} (${item.flavor}) - ${formatPrice(item.price * item.qty)}
+                </li>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center p-3 rounded-lg ${collectionStatusColor}">
+                            <span class="block text-xs font-medium">Collection</span>
+                            <span class="text-xl font-extrabold">${order.status}</span>
+                        </div>
+                        <div class="text-center p-3 rounded-lg ${paymentStatusColor}">
+                            <span class="block text-xs font-medium">Payment</span>
+                            <span class="text-xl font-extrabold">${order.paymentStatus}</span>
+                        </div>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-indigo-700">${order.buyerName}</h3>
+                    <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-200">
+                        <p class="text-lg font-extrabold text-indigo-600">Collection Type: ${order.collectionType}</p>
+                    </div>
+                    
+                    <p class="text-sm text-gray-600">
+                        <span class="font-semibold">Phone:</span> ${order.buyerPhone || 'N/A'}
+                        ${order.buyerEmail ? `<span class="ml-4 font-semibold">Email:</span> ${order.buyerEmail}` : ''}
+                    </p>
+                    <p class="text-sm font-mono text-gray-500">Order ID: ${orderId.substring(0, 8)}...</p>
+
+                    <div class="bg-white p-4 rounded-lg border">
+                        <p class="font-semibold text-gray-700 mb-2">Items Ordered:</p>
+                        <ul class="space-y-2 text-sm">${itemsHtml}</ul>
+                        <!-- Display Total Price -->
+                        <p class="font-bold text-lg mt-2 pt-2 border-t">Total: <span class="text-indigo-600">${formatPrice(order.totalPrice)}</span></p>
+                    </div>
+
+                    <div class="text-xs text-gray-500 space-y-1">
+                        <p>Submitted: ${formatTimestamp(order.submissionTimestamp)}</p>
+                        ${order.status === 'COLLECTED' ? `<p>Collected: ${formatTimestamp(order.collectionTimestamp)} by Staff ID: ${order.collectorUserId.substring(0, 8)}...</p>` : ''}
+                    </div>
+
+                    ${actionButton}
+                </div>
+                <button onclick="router('collection')" class="py-2 px-4 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition mt-4 w-full">
+                    Scan Next Order
+                </button>
+            `;
+        }
+
+        // NEW: Modal to warn about pending payment
+        window.showPaymentWarningModal = function(orderId) {
+            const modalArea = document.getElementById('modal-area');
+            modalArea.classList.remove('hidden');
+            modalArea.innerHTML = `
+                <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
+                    <h3 class="text-2xl font-bold mb-4 text-yellow-600">⚠️ Payment Pending</h3>
+                    <p class="text-gray-600 mb-6">This order is still marked as 'PENDING' payment. Do you want to force collection anyway?</p>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="closeModal()" class="py-2 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">Cancel</button>
+                        <button type="button" onclick="markCollected('${orderId}')" class="py-2 px-4 bg-yellow-600 text-white font-semibold rounded-lg hover:bg-yellow-700 transition">Force Collect</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Expose to global
+        window.markCollected = async function(orderId) {
+            if (!isAuthReady || !userId) {
+                showNotification("Authentication not complete. Cannot mark as collected.", 'error');
+                return;
+            }
+            
+            closeModal(); // NEW: Close the warning modal if it was open
+
+            try {
+                const docRef = window.firebase.doc(getOrderCollection(), orderId);
+                await window.firebase.updateDoc(docRef, {
+                    status: 'COLLECTED',
+                    collectionTimestamp: new Date(),
+                    collectorUserId: userId,
+                });
+                showNotification(`Order ${orderId.substring(0, 8)}... marked as COLLECTED!`, 'success');
+                
+                // Re-render the verification screen with the new status
+                const container = document.getElementById('order-verification');
+                if (container) { // Only re-render if we are on the collection page
+                    const docSnap = await window.firebase.getDoc(docRef);
+                    if (docSnap.exists()) {
+                        renderVerificationDetails(container, orderId, docSnap.data());
+                    }
+                }
+            } catch (error) {
+                console.error("Error marking order as collected:", error);
+                showNotification("Failed to update status. Check console.", 'error');
+            }
+        }
+
+        // --- MANAGEMENT LOGIC (Staff View) ---
+
+        function renderManagementView(container) {
+            container.innerHTML = `
+                <h2 class="text-3xl font-bold mb-6 text-indigo-700">📊 Order Management</h2>
+                <p class="text-gray-600 mb-6">View all submitted orders in real-time. Click 'Edit' to manually update an order's details or status.</p>
+                
+                <!-- Gemini Summary Section -->
+                <div class="mb-4">
+                    <button id="gemini-summary-btn" onclick="generateDailySummary()" class="w-full md:w-auto py-2 px-5 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-semibold rounded-lg hover:from-purple-600 hover:to-indigo-700 transition shadow-lg">
+                        ✨ Get Daily Summary
+                    </button>
+                    <div id="gemini-summary-output" class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-700 hidden">
+                        <!-- Summary will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="mb-4">
+                    <input type="text" id="order-search-input" oninput="filterOrderTable()" 
+                           placeholder="Search by Name, Phone, or ID..."
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+
+                <div class="w-full overflow-x-auto bg-white rounded-lg shadow">
+                    <div id="order-list-container">
+                        <p class="p-6 text-gray-500">Loading order data...</p>
+                    </div>
+                </div>
+            `;
+            // Add event listener for bulk action checkboxes
+            container.addEventListener('change', (e) => {
+                if (e.target.classList.contains('order-checkbox') || e.target.id === 'select-all-checkbox') {
+                    updateBulkActionBar();
+                }
+            });
+
+            // Start listening to the database
+            listenToAllOrders();
+        }
+
+        function listenToAllOrders() {
+            const container = document.getElementById('order-list-container');
+            
+            // Unsubscribe from any previous listener
+            if (orderListener) {
+                orderListener();
+            }
+
+            // Create a new listener and store the unsubscribe function
+            orderListener = window.firebase.onSnapshot(getOrderCollection(), (snapshot) => {
+                if (snapshot.empty) {
+                    container.innerHTML = `<p class="p-6 text-gray-500">No orders found.</p>`;
+                    return;
+                }
+                
+                // Store all docs globally
+                allOrderDocs = snapshot.docs;
+                
+                // Render the table using the filter function
+                filterOrderTable(); 
+                
+                // Update the summary button to have access to the latest data
+                const summaryBtn = document.getElementById('gemini-summary-btn');
+                if (summaryBtn) {
+                    summaryBtn.dataset.docs = JSON.stringify(snapshot.docs.map(doc => doc.data()));
+                }
+                // Refresh selection count
+                updateBulkActionBar();
+
+            }, (error) => {
+                console.error("Error listening to orders:", error);
+                container.innerHTML = `<p class="p-6 text-red-500">Error loading orders. Check console.</p>`;
+            });
+        }
+        
+        // Filter function for search bar
+        // Expose to global
+        window.filterOrderTable = function() {
+            const searchInput = document.getElementById('order-search-input');
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+            
+            const filteredDocs = allOrderDocs.filter(doc => {
+                const order = doc.data();
+                const orderId = doc.id;
+                return (
+                    order.buyerName.toLowerCase().includes(searchTerm) ||
+                    order.buyerPhone.includes(searchTerm) ||
+                    orderId.startsWith(searchTerm.toLowerCase())
+                );
+            });
+            
+            const container = document.getElementById('order-list-container');
+            if(container) {
+                renderOrderTable(container, filteredDocs);
+            }
+        }
+
+        function renderOrderTable(container, docs) {
+            let tableHtml = `
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left">
+                                <input type="checkbox" id="select-all-checkbox" onclick="toggleAllCheckboxes(this.checked)"
+                                       class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Price</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Collection Status</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
+                            <th scope="col" class="relative px-6 py-3"><span class="sr-only">Edit</span></th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+            `;
+            
+            if (docs.length === 0) {
+                 tableHtml += `<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">No orders match your search.</td></tr>`;
+            }
+
+            const sortedDocs = docs.sort((a, b) => b.data().submissionTimestamp.toDate() - a.data().submissionTimestamp.toDate());
+
+            sortedDocs.forEach(doc => {
+                const order = doc.data();
+                const orderId = doc.id;
+                // Encode the order data to pass to the modal
+                const orderDataString = encodeURIComponent(JSON.stringify({ id: orderId, ...order }));
+
+                const collectionStatus = order.status === 'PENDING'
+                    ? `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>`
+                    : `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Collected</span>`;
+
+                const paymentStatus = order.paymentStatus === 'PENDING'
+                    ? `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Pending</span>`
+                    : `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Paid</span>`;
+
+                tableHtml += `
+                    <tr>
+                        <td class="px-6 py-4">
+                            <input type="checkbox" class="order-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" data-order-id="${orderId}">
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">${order.buyerName}</div>
+                            <div class="text-sm text-gray-500">${order.buyerPhone} (ID: ${orderId.substring(0,8)})</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatTimestamp(order.submissionTimestamp)}</td>
+                        <!-- Total Price Column -->
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">${formatPrice(order.totalPrice)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">${collectionStatus}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">${paymentStatus}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button onclick="showEditModal('${orderDataString}')" class="text-indigo-600 hover:text-indigo-900">Edit</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableHtml += `</tbody></table>`;
+            container.innerHTML = tableHtml;
+        }
+        
+        // Expose to global
+        window.toggleAllCheckboxes = function(checked) {
+            document.querySelectorAll('.order-checkbox').forEach(checkbox => {
+                checkbox.checked = checked;
+            });
+            updateBulkActionBar();
+        }
+
+        function updateBulkActionBar() {
+            const actionBar = document.getElementById('bulk-action-bar');
+            const countSpan = document.getElementById('bulk-action-count');
+            const selectedCount = document.querySelectorAll('.order-checkbox:checked').length;
+            
+            if (actionBar && countSpan) { // Add defensive check
+                if (selectedCount > 0) {
+                    countSpan.textContent = `${selectedCount} order${selectedCount > 1 ? 's' : ''} selected`;
+                    actionBar.classList.add('visible');
+                } else {
+                    actionBar.classList.remove('visible');
+                    countSpan.textContent = '0 orders selected';
+                    // Uncheck "select all" if no individuals are checked
+                    const selectAll = document.getElementById('select-all-checkbox');
+                    if (selectAll) selectAll.checked = false;
+                }
+            }
+        }
+        
+        // Expose to global
+        window.handleBulkAction = async function() {
+            const selectedIds = [...document.querySelectorAll('.order-checkbox:checked')].map(cb => cb.dataset.orderId);
+            const action = document.getElementById('bulk-action-select').value;
+            
+            if (selectedIds.length === 0) {
+                showNotification("No orders selected.", 'error');
+                return;
+            }
+            if (!action) {
+                showNotification("Please select an action to apply.", 'error');
+                return;
+            }
+            if (!isAuthReady || !userId) {
+                showNotification("Authentication not ready. Please wait.", 'error');
+                return;
+            }
+            
+            let updateData = {};
+            switch(action) {
+                case 'mark_collected':
+                    updateData = { status: 'COLLECTED', collectionTimestamp: new Date(), collectorUserId: userId };
+                    break;
+                case 'mark_pending_collection':
+                    updateData = { status: 'PENDING' }; // Note: This doesn't clear timestamp/collector
+                    break;
+                case 'mark_paid':
+                    updateData = { paymentStatus: 'PAID' };
+                    break;
+                case 'mark_pending_payment':
+                    updateData = { paymentStatus: 'PENDING' };
+                    break;
+            }
+
+            try {
+                const batch = window.firebase.writeBatch(db);
+                selectedIds.forEach(id => {
+                    const docRef = window.firebase.doc(getOrderCollection(), id);
+                    batch.update(docRef, updateData);
+                });
+                
+                await batch.commit();
+                showNotification(`Successfully updated ${selectedIds.length} orders.`, 'success');
+                // The onSnapshot listener will refresh the table automatically.
+                // We just need to clear the selection.
+                toggleAllCheckboxes(false);
+
+            } catch (error) {
+                console.error("Error during bulk update:", error);
+                showNotification("Failed to apply bulk action. Check console.", 'error');
+            }
+        }
+
+        // --- NEW: Functions for the dynamic Edit Modal ---
+
+        // Adds a row to the modal's item list
+        window.addModalItemRow = function(name = '', flavor = '', qty = 1) {
+            const list = document.getElementById('modal-item-list');
+            if (!list) return;
+            const itemRow = document.createElement('div');
+            itemRow.className = 'grid grid-cols-1 md:grid-cols-4 gap-2 items-center p-3 border border-gray-200 rounded-lg bg-white';
+            
+            const productOptions = PRODUCT_OPTIONS.map(p => 
+                `<option value="${p.name}" data-price="${p.price}" ${p.name === name ? 'selected' : ''}>${p.name} (${formatPrice(p.price)})</option>`
+            ).join('');
+            
+            const flavorOptions = FLAVOR_OPTIONS.map(f => 
+                `<option value="${f}" ${f === flavor ? 'selected' : ''}>${f}</option>`
+            ).join('');
+            
+            itemRow.innerHTML = `
+                <select data-name="item-name" required class="p-2 border border-gray-300 rounded-lg col-span-4 md:col-span-1">
+                    <option value="" data-price="0" ${name === '' ? 'selected' : ''} disabled>Select Product</option>
+                    ${productOptions}
+                </select>
+                <select data-name="item-flavor" required class="p-2 border border-gray-300 rounded-lg col-span-2 md:col-span-1">
+                    <option value="" ${flavor === '' ? 'selected' : ''} disabled>Select Flavor</option>
+                    ${flavorOptions}
+                </select>
+                <input type="number" data-name="item-qty" value="${qty}" required min="1" class="p-2 border border-gray-300 rounded-lg text-center col-span-1">
+                <button type="button" onclick="removeModalItemRow(this)" class="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition col-span-1">
+                    Remove
+                </button>
+            `;
+            list.appendChild(itemRow);
+            // Add listener to update modal total
+            list.closest('form').addEventListener('change', updateModalOrderTotal);
+        }
+
+        // Removes a row from the modal's item list
+        window.removeModalItemRow = function(button) {
+            button.closest('.grid').remove();
+            const list = document.getElementById('modal-item-list');
+            if (list && list.children.length === 0) {
+                addModalItemRow();
+            }
+            updateModalOrderTotal();
+        }
+        
+        // Calculates the total price for the items in the edit modal
+        function updateModalOrderTotal() {
+            const itemRows = document.querySelectorAll('#modal-item-list > .grid');
+            let total = 0;
+            
+            itemRows.forEach(row => {
+                const nameInput = row.querySelector('[data-name="item-name"]');
+                const qtyInput = row.querySelector('[data-name="item-qty"]');
+                
+                const selectedOption = nameInput.options[nameInput.selectedIndex];
+                const price = parseFloat(selectedOption.dataset.price || 0);
+                const qty = parseInt(qtyInput.value || 0);
+                
+                if (!isNaN(price) && !isNaN(qty)) {
+                    total += price * qty;
+                }
+            });
+
+            const totalEl = document.getElementById('modal-order-total');
+            if (totalEl) totalEl.textContent = formatPrice(total);
+        }
+
+
+        // Expose to global
+        window.showEditModal = async function(orderDataString) {
+            const order = JSON.parse(decodeURIComponent(orderDataString));
+            const orderId = order.id;
+
+            const modalArea = document.getElementById('modal-area');
+            modalArea.classList.remove('hidden');
+            
+            // NEW: Fully editable modal
+            modalArea.innerHTML = `
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl w-full max-w-2xl transform transition-all duration-300">
+                    <form id="edit-order-form" class="space-y-4 max-h-[90vh] overflow-y-auto">
+                        <h3 class="text-2xl font-bold mb-4 text-indigo-700">Edit Order: ${orderId.substring(0, 8)}...</h3>
+                        
+                        <fieldset class="border p-4 rounded-lg">
+                            <legend class="text-lg font-medium text-gray-700 px-2">Customer Details</legend>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Customer Name</label>
+                                    <input type="text" id="editBuyerName" value="${order.buyerName}" class="w-full p-2 border border-gray-300 rounded-lg mt-1">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Phone Number</label>
+                                    <input type="tel" id="editBuyerPhone" value="${order.buyerPhone}" class="w-full p-2 border border-gray-300 rounded-lg mt-1">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                                    <input type="email" id="editBuyerEmail" value="${order.buyerEmail || ''}" class="w-full p-2 border border-gray-300 rounded-lg mt-1">
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="border p-4 rounded-lg">
+                            <legend class="text-lg font-medium text-gray-700 px-2">Order Status</legend>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Collection Type</label>
+                                    <select id="editCollectionType" class="w-full p-2 border border-gray-300 rounded-lg mt-1">
+                                        ${COLLECTION_TYPE_OPTIONS.map(c => `<option value="${c}" ${order.collectionType === c ? 'selected' : ''}>${c}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Collection Status</label>
+                                    <select id="editCollectionStatus" class="w-full p-2 border border-gray-300 rounded-lg mt-1">
+                                        <option value="PENDING" ${order.status === 'PENDING' ? 'selected' : ''}>Pending</option>
+                                        <option value="COLLECTED" ${order.status === 'COLLECTED' ? 'selected' : ''}>Collected</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Payment Status</label>
+                                    <select id="editPaymentStatus" class="w-full p-2 border border-gray-300 rounded-lg mt-1">
+                                        <option value="PENDING" ${order.paymentStatus === 'PENDING' ? 'selected' : ''}>Pending</option>
+                                        <option value="PAID" ${order.paymentStatus === 'PAID' ? 'selected' : ''}>Paid</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="border p-4 rounded-lg">
+                            <legend class="text-lg font-medium text-gray-700 px-2">Items</legend>
+                            <div id="modal-item-list" class="space-y-3 mt-2">
+                                <!-- Dynamic item rows will be injected here -->
+                            </div>
+                            <button type="button" onclick="addModalItemRow()" class="w-full mt-3 py-2 px-4 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition">
+                                + Add Item
+                            </button>
+                            <div class="text-right text-xl font-bold my-2 pt-2 border-t">Total: <span id="modal-order-total" class="text-indigo-600">${formatPrice(order.totalPrice)}</span></div>
+                        </fieldset>
+
+                        <!-- Gemini Tools -->
+                        <div class="pt-4 border-t space-y-2">
+                            <button type="button" id="gemini-sms-btn" onclick="generateSmsReminder(this)" 
+                                    data-order-name="${order.buyerName}" data-order-items="${order.itemsSummary}"
+                                    class="w-full py-2 px-4 bg-gradient-to-r from-teal-400 to-blue-500 text-white font-semibold rounded-lg hover:from-teal-500 hover:to-blue-600 transition shadow">
+                                ✨ Draft SMS Reminder
+                            </button>
+                            <div id="gemini-sms-output" class="mt-3 hidden space-y-2">
+                                <textarea id="sms-textarea" class="w-full p-2 border border-gray-300 rounded-lg" rows="4"></textarea>
+                                <button type="button" onclick="copyToClipboard('sms-textarea')" class="w-full py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
+                                    Copy to Clipboard
+                                </button>
+                            </div>
+
+                            <button type="button" id="gemini-email-btn" onclick="generateEmailReminder(this)" 
+                                    data-order-name="${order.buyerName}" 
+                                    data-order-email="${order.buyerEmail || ''}"
+                                    data-order-items="${order.itemsSummary}"
+                                    data-order-total="${order.totalPrice}"
+                                    data-order-payment-status="${order.paymentStatus}"
+                                    class="w-full py-2 px-4 bg-gradient-to-r from-green-400 to-cyan-500 text-white font-semibold rounded-lg hover:from-green-500 hover:to-cyan-600 transition shadow">
+                                📧 Draft Email Reminder
+                            </button>
+                            <div id="gemini-email-output" class="mt-3 hidden space-y-2">
+                                <!-- Email draft button will appear here -->
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-3 pt-4 border-t">
+                            <button type="button" onclick="closeModal()" class="py-2 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                                Cancel
+                            </button>
+                            <button type="submit" class="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            // Programmatically populate the item list
+            const modalList = document.getElementById('modal-item-list');
+            if (order.items && order.items.length > 0) {
+                order.items.forEach(item => {
+                    addModalItemRow(item.name, item.flavor, item.qty);
+                });
+            } else {
+                addModalItemRow(); // Add one empty row if none exist
+            }
+            updateModalOrderTotal(); // Set initial total
+
+            document.getElementById('edit-order-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                handleUpdateOrder(orderId);
+            });
+        }
+
+        async function handleUpdateOrder(orderId) {
+            
+            // NEW: Read all fields from the full edit modal
+            const updatedBuyerName = document.getElementById('editBuyerName').value;
+            const updatedBuyerPhone = document.getElementById('editBuyerPhone').value;
+            const updatedBuyerEmail = document.getElementById('editBuyerEmail').value;
+            const updatedCollectionType = document.getElementById('editCollectionType').value;
+            const updatedStatus = document.getElementById('editCollectionStatus').value;
+            const updatedPaymentStatus = document.getElementById('editPaymentStatus').value;
+            const updatedTotalPrice = parseFloat(document.getElementById('modal-order-total').textContent.replace('$', ''));
+
+            const itemInputs = document.querySelectorAll('#modal-item-list > .grid');
+            const updatedItems = [];
+
+            itemInputs.forEach(row => {
+                const nameInput = row.querySelector('[data-name="item-name"]');
+                const flavorInput = row.querySelector('[data-name="item-flavor"]');
+                const qtyInput = row.querySelector('[data-name="item-qty"]');
+                
+                const selectedOption = nameInput.options[nameInput.selectedIndex];
+                const price = parseFloat(selectedOption.dataset.price || 0);
+                
+                if (nameInput.value.trim() && flavorInput.value && parseInt(qtyInput.value) > 0) {
+                    updatedItems.push({
+                        name: nameInput.value.trim(), 
+                        flavor: flavorInput.value,
+                        qty: parseInt(qtyInput.value),
+                        price: price
+                    });
+                }
+            });
+
+            const updatedItemsSummary = updatedItems.map(i => `${i.qty}x ${i.name} (${i.flavor})`).join(', ');
+
+            const updatedData = {
+                buyerName: updatedBuyerName,
+                buyerPhone: updatedBuyerPhone,
+                buyerEmail: updatedBuyerEmail,
+                collectionType: updatedCollectionType,
+                status: updatedStatus,
+                paymentStatus: updatedPaymentStatus,
+                totalPrice: updatedTotalPrice,
+                items: updatedItems,
+                itemsSummary: updatedItemsSummary
+            };
+
+            try {
+                const docRef = window.firebase.doc(getOrderCollection(), orderId);
+                await window.firebase.updateDoc(docRef, updatedData);
+                showNotification("Order updated successfully!", 'success');
+                closeModal();
+                // The onSnapshot listener will automatically refresh the table
+            } catch (error) {
+                console.error("Error updating document:", error);
+                showNotification("Failed to update order. Check console.", 'error');
+            }
+        }
+
+        // --- GEMINI API FUNCTIONS ---
+
+        // Expose to global
+        window.copyToClipboard = function(elementId) {
+            const textarea = document.getElementById(elementId);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showNotification('Copied to clipboard!', 'success');
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+                showNotification('Could not copy text.', 'error');
+            }
+        }
+
+        /**
+         * Calls the Gemini API with exponential backoff.
+         */
+        async function callGemini(systemPrompt, userPrompt, retries = 3, delay = 1000) {
+            const apiKey = ""; // Leave empty, will be handled by the environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    if (response.status === 429 && retries > 0) {
+                        await new Promise(res => setTimeout(res, delay));
+                        return callGemini(systemPrompt, userPrompt, retries - 1, delay * 2);
+                    }
+                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
+
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    return candidate.content.parts[0].text;
+                } else {
+                    throw new Error("Invalid response structure from Gemini API.");
+                }
+
+            } catch (error) {
+                console.error("Gemini API call failed:", error);
+                if (retries > 0) {
+                    await new Promise(res => setTimeout(res, delay));
+                    return callGemini(systemPrompt, userPrompt, retries - 1, delay * 2);
+                }
+                throw error; // Re-throw after final retry
+            }
+        }
+
+        // Expose to global
+        window.generateDailySummary = async function() {
+            const summaryBtn = document.getElementById('gemini-summary-btn');
+            const outputDiv = document.getElementById('gemini-summary-output');
+            
+            const docsData = summaryBtn.dataset.docs;
+            if (!docsData) {
+                showNotification("No order data loaded yet.", 'info');
+                return;
+            }
+
+            summaryBtn.disabled = true;
+            summaryBtn.textContent = '🧠 Analyzing...';
+            outputDiv.classList.remove('hidden');
+            outputDiv.innerHTML = '<p class="text-center text-gray-500">Generating insights, please wait...</p>';
+
+            const systemPrompt = "You are an ice cream shop manager's assistant. You provide concise, friendly, and insightful summaries of order data. Be positive and use bullet points.";
+            const userPrompt = `Based on the following JSON data of today's orders, provide a short summary for the staff. Include: 
+- Total number of orders.
+- A breakdown of orders by collection status (Pending vs. Collected).
+- A breakdown of orders by payment status (Pending vs. Paid).
+- The most popular flavor (by counting occurrences in the 'itemsSummary' field).
+Here is the data: ${docsData}`;
+
+            try {
+                const summaryText = await callGemini(systemPrompt, userPrompt);
+                // Format with simple line breaks for HTML
+                outputDiv.innerHTML = summaryText.replace(/\n/g, '<br>');
+            } catch (error) {
+                outputDiv.innerHTML = '<p class="text-center text-red-500">Error generating summary. Please try again.</p>';
+                showNotification("Failed to get Gemini summary.", 'error');
+            } finally {
+                summaryBtn.disabled = false;
+                summaryBtn.textContent = '✨ Get Daily Summary';
+            }
+        }
+
+        // Expose to global
+        window.generateSmsReminder = async function(button) {
+            const customerName = button.dataset.orderName;
+            const itemsSummary = button.dataset.orderItems;
+            const outputDiv = document.getElementById('gemini-sms-output');
+            const textarea = document.getElementById('sms-textarea');
+
+            button.disabled = true;
+            button.textContent = '✍️ Drafting...';
+            outputDiv.classList.remove('hidden');
+            textarea.value = 'Generating reminder...';
+
+            const systemPrompt = "You are a friendly ice cream shop assistant. You write concise and polite SMS reminders (under 160 characters) for customers. The shop is called 'The Scoop Shop'.";
+            const userPrompt = `Generate a short SMS reminder for a customer named '${customerName}' to let them know their order ('${itemsSummary}') is ready for collection at The Scoop Shop.`;
+
+            try {
+                const smsText = await callGemini(systemPrompt, userPrompt);
+                textarea.value = smsText;
+            } catch (error) {
+                textarea.value = 'Error generating SMS. Please try again.';
+                showNotification("Failed to get Gemini draft.", 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = '✨ Draft SMS Reminder';
+            }
+        }
+
+        // NEW: Generate Email Reminder
+        window.generateEmailReminder = async function(button) {
+            const customerName = button.dataset.orderName;
+            const itemsSummary = button.dataset.orderItems;
+            const customerEmail = button.dataset.orderEmail;
+            const totalPrice = button.dataset.orderTotal;
+            const paymentStatus = button.dataset.orderPaymentStatus;
+            
+            const outputDiv = document.getElementById('gemini-email-output');
+            
+            if (!customerEmail) {
+                showNotification("No customer email on file for this order.", 'error');
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = '✍️ Drafting Email...';
+            outputDiv.classList.remove('hidden');
+            outputDiv.innerHTML = '<p class="text-center text-gray-500">Generating email...</p>';
+
+            const systemPrompt = "You are a friendly ice cream shop assistant for 'The Scoop Shop'. Your task is to generate a full email (Subject and Body) for a customer. Format your response ONLY as:\nSubject: [Your Subject]\n---\n[Your Email Body]";
+            
+            let paymentInfo = paymentStatus === 'PENDING' 
+                ? `Please note that your payment of ${formatPrice(totalPrice)} is still pending. You can pay upon collection.` 
+                : `Your payment of ${formatPrice(totalPrice)} has been successfully received.`;
+            
+            const userPrompt = `Generate a friendly email reminder for '${customerName}' to let them know their order ('${itemsSummary}') is ready for collection. ${paymentInfo} Sign off as 'The Scoop Shop Team'.`;
+
+            try {
+                const fullEmailText = await callGemini(systemPrompt, userPrompt);
+                
+                const parts = fullEmailText.split('\n---\n');
+                const subject = parts[0].replace('Subject: ', '').trim();
+                const body = parts.slice(1).join('\n---\n').trim();
+                
+                // URL-encode newlines for mailto link
+                const mailtoBody = body.replace(/\n/g, '%0A');
+
+                const mailtoLink = `mailto:${customerEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(mailtoBody)}`;
+                
+                outputDiv.innerHTML = `
+                    <p class="text-sm font-semibold mb-2">Subject: ${subject}</p>
+                    <a href="${mailtoLink}" target="_blank" class="block w-full text-center py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        Open in Email Client
+                    </a>
+                `;
+
+            } catch (error) {
+                outputDiv.innerHTML = '<p class="text-center text-red-500">Error generating email.</p>';
+                showNotification("Failed to get Gemini draft.", 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = '📧 Draft Email Reminder';
+            }
+        }
+
+
+        // --- START APPLICATION ---
+        // Changed to use window.onload to ensure the Firebase module script is fully executed
+        // and window.firebase is defined before attempting initialization.
+        window.onload = initFirebase;
+    </script>
+</body>
+</html>
