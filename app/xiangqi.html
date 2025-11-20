@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>中国象棋 (Xiangqi)</title>
+    <style>
+        :root {
+            --board-bg: #eecfa1;
+            --line-color: #5c3a18;
+            --piece-size: 44px;
+            --cell-size: 50px;
+        }
+
+        body {
+            font-family: "KaiTi", "STKaiti", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #333;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        h2 { margin: 10px 0 5px 0; font-weight: normal; }
+
+        .controls {
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 6px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            background: #d4a066;
+            border: none;
+            border-radius: 4px;
+            color: #3e2723;
+            font-family: inherit;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        button:active { background: #bcaaa4; }
+        button.active-mode { 
+            background: #ff9800; 
+            color: #fff; 
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+        }
+
+        /* 功能按钮特殊颜色 */
+        #btn-lang { background: #607d8b; color: white; }
+        #btn-rules { background: #8d6e63; color: white; }
+
+        #status-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 10px;
+            height: 50px;
+            justify-content: center;
+        }
+
+        #status {
+            height: 28px;
+            color: #ffeb3b;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        #mode-display {
+            font-size: 0.9em;
+            color: #aaa;
+            margin-top: 2px;
+        }
+
+        .board-container {
+            position: relative;
+            width: 460px;
+            height: 510px;
+            background-color: var(--board-bg);
+            border: 5px solid #5d4037;
+            border-radius: 4px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .grid {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            width: 400px;
+            height: 450px;
+            border: 2px solid var(--line-color);
+            box-sizing: border-box;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .row-line { position: absolute; left: 0; width: 100%; height: 1px; background-color: var(--line-color); }
+        .col-line { position: absolute; top: 0; height: 100%; width: 1px; background-color: var(--line-color); }
+
+        .river {
+            position: absolute; top: 200px; left: 1px; width: 396px; height: 48px;
+            background-color: var(--board-bg);
+            display: flex; justify-content: space-around; align-items: center;
+            color: var(--line-color); font-size: 24px; z-index: 1;
+            font-family: "KaiTi", "STKaiti", serif;
+        }
+
+        .palace-line { position: absolute; width: 1px; background-color: var(--line-color); transform-origin: top center; }
+
+        .piece {
+            width: var(--piece-size); height: var(--piece-size);
+            border-radius: 50%; position: absolute;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: bold;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+            cursor: pointer; z-index: 10;
+            background: #fdf5e6; border: 2px solid #6d4c41;
+            transition: transform 0.2s, box-shadow 0.2s;
+            will-change: top, left;
+        }
+        
+        .piece.lang-zh { font-size: 24px; font-family: "KaiTi", "STKaiti", serif; }
+        .piece.lang-en { font-size: 14px; font-family: Arial, sans-serif; }
+        .piece.red { color: #c00; border-color: #c00; }
+        .piece.black { color: #222; border-color: #222; }
+        .piece.selected {
+            background-color: #81d4fa; transform: scale(1.15);
+            box-shadow: 0 0 15px #03a9f4; z-index: 100;
+        }
+
+        .last-move {
+            position: absolute; width: 10px; height: 10px;
+            background-color: rgba(0, 128, 0, 0.6);
+            border-radius: 50%; z-index: 5; pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+
+        #click-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; }
+
+        .toast {
+            position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8); color: white; padding: 15px 30px;
+            border-radius: 8px; font-size: 20px; z-index: 2000;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none; text-align: center;
+        }
+        .toast.show { opacity: 1; }
+
+        /* --- 规则弹窗样式 --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 3000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            backdrop-filter: blur(3px);
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        
+        .modal-content {
+            background: #fffbf0; color: #3e2723;
+            width: 90%; max-width: 600px; max-height: 80vh;
+            padding: 25px; border-radius: 8px;
+            border: 4px solid #5d4037;
+            overflow-y: auto; position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            font-family: "KaiTi", "STKaiti", serif; /* 保持中式风格 */
+        }
+
+        .close-btn {
+            position: absolute; top: 10px; right: 15px;
+            font-size: 28px; font-weight: bold; color: #5d4037;
+            cursor: pointer; background: none; border: none; padding: 0;
+        }
+        .close-btn:hover { color: #d32f2f; }
+
+        /* 规则文本排版 */
+        .rules-container h3 {
+            border-bottom: 2px solid #d4a066;
+            padding-bottom: 5px; margin-top: 20px; margin-bottom: 10px;
+            color: #8d5524; font-size: 1.2em;
+        }
+        .rules-container h3:first-child { margin-top: 0; }
+        .rules-container p { line-height: 1.6; font-size: 16px; margin: 8px 0; }
+        .rules-container ul { padding-left: 20px; margin: 10px 0; }
+        .rules-container li { margin-bottom: 5px; line-height: 1.5; }
+        .rules-container strong { color: #bf360c; }
+
+        @media (max-width: 500px) {
+            .board-container { transform: scale(0.75); margin-top: -50px; }
+            h2 { font-size: 1.2rem; }
+            .controls { width: 100%; padding: 0 10px; box-sizing: border-box; }
+        }
+    </style>
+</head>
+<body>
+
+    <h2 id="game-title">中国象棋</h2>
+    
+    <div id="status-bar">
+        <div id="status">红方走棋</div>
+        <div id="mode-display">当前模式: AI 对战</div>
+    </div>
+
+    <div class="controls">
+        <button id="btn-lang" onclick="game.toggleLang()">English</button>
+        <button id="btn-rules" onclick="game.toggleRules()">规则介绍</button>
+        <button id="btn-ai" onclick="game.setMode('ai')" class="active-mode">AI 对战</button>
+        <button id="btn-pvp" onclick="game.setMode('pvp')">双人对战</button>
+        <button id="btn-undo" onclick="game.undo()">悔棋</button>
+        <button id="btn-restart" onclick="game.restart()">重置</button>
+    </div>
+
+    <div class="board-container" id="board">
+        <div class="grid">
+            <div class="river"><span>楚河</span><span>汉界</span></div>
+        </div>
+        <div id="click-layer"></div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- 规则弹窗 -->
+    <div id="rules-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-btn" onclick="game.toggleRules()">×</button>
+            <div id="rules-text" class="rules-container">
+                <!-- JS动态插入内容 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const RED = 1, BLACK = -1;
+        const PIECE_TYPE = {
+            KING: 0, ADVISOR: 1, ELEPHANT: 2, HORSE: 3, CHARIOT: 4, CANNON: 5, SOLDIER: 6
+        };
+        const PIECE_VALUE = [10000, 20, 20, 40, 90, 45, 10]; 
+
+        // 双语字典
+        const I18N = {
+            zh: {
+                title: "中国象棋",
+                statusRedTurn: "红方走棋",
+                statusBlackTurn: "黑方走棋",
+                statusCheck: "将军！",
+                statusCheckmate: "绝杀！{winner}获胜",
+                statusStalemate: "困毙！{winner}获胜",
+                modeAI: "当前模式: AI 对战",
+                modePVP: "当前模式: 双人对战",
+                btnLang: "English",
+                btnRules: "规则介绍",
+                btnAI: "AI 对战",
+                btnPVP: "双人对战",
+                btnUndo: "悔棋",
+                btnRestart: "重置",
+                toastNoSuicide: "不能送将！",
+                winnerRed: "红方",
+                winnerBlack: "黑方",
+                aiThinking: "电脑思考中...",
+                pieces: {
+                    red: ['帅','仕','相','马','车','炮','兵'],
+                    black: ['将','士','象','马','车','炮','卒']
+                },
+                // 规则内容 (HTML格式)
+                rulesContent: `
+                    <h3>简介</h3>
+                    <p>中国象棋是起源于中国的双人策略棋类游戏，模拟古代战争中两军对垒的场面。红方通常先走。</p>
+                    
+                    <h3>基本走法</h3>
+                    <ul>
+                        <li><strong>将/帅 (General):</strong> 只能在“九宫格”内移动，每步一格，横竖均可。双方将帅不能照面（中间无子）。</li>
+                        <li><strong>士/仕 (Advisor):</strong> 只能在“九宫格”内移动，每步沿斜线走一格，负责护卫将帅。</li>
+                        <li><strong>象/相 (Elephant):</strong> 走“田”字（对角线走两格），不能过河。如果“田”字中心有子，则不能飞（塞象眼）。</li>
+                        <li><strong>马 (Horse):</strong> 走“日”字。如果移动方向前方有子挡住，则不能跳（蹩马腿）。</li>
+                        <li><strong>车 (Chariot):</strong> 横竖均可走，无距离限制，只要中间无阻隔。是威力最大的棋子。</li>
+                        <li><strong>炮 (Cannon):</strong> 移动同车。吃子时必须隔一个棋子（炮打隔山）。</li>
+                        <li><strong>卒/兵 (Soldier):</strong> 只能向前走。过河前每次一步；过河后可向前或左右移动，每次一步。不能后退。</li>
+                    </ul>
+
+                    <h3>胜负判定</h3>
+                    <ul>
+                        <li><strong>绝杀 (Checkmate):</strong> 一方的将/帅被攻击（将军），且无路可逃。</li>
+                        <li><strong>困毙 (Stalemate):</strong> 轮到一方走棋，虽未被将军，但全盘无合法棋步可走，该方判负。</li>
+                    </ul>
+
+                    <h3>游戏模式</h3>
+                    <ul>
+                        <li><strong>AI 对战:</strong> 挑战电脑智能，适合单人练习。</li>
+                        <li><strong>双人对战:</strong> 两人共用一台设备轮流下棋（同屏对战）。</li>
+                    </ul>
+                `
+            },
+            en: {
+                title: "Chinese Chess",
+                statusRedTurn: "Red's Turn",
+                statusBlackTurn: "Black's Turn",
+                statusCheck: "Check!",
+                statusCheckmate: "Checkmate! {winner} Wins",
+                statusStalemate: "Stalemate! {winner} Wins",
+                modeAI: "Mode: AI vs Player",
+                modePVP: "Mode: PvP (Hotseat)",
+                btnLang: "中文",
+                btnRules: "Rules & Intro",
+                btnAI: "AI Mode",
+                btnPVP: "PvP Mode",
+                btnUndo: "Undo",
+                btnRestart: "Restart",
+                toastNoSuicide: "Cannot expose General!",
+                winnerRed: "Red",
+                winnerBlack: "Black",
+                aiThinking: "AI Thinking...",
+                pieces: {
+                    red: ['King','Adv','Ele','Hrs','Rook','Can','Pawn'],
+                    black: ['King','Adv','Ele','Hrs','Rook','Can','Pawn']
+                },
+                // Rules Content (HTML)
+                rulesContent: `
+                    <h3>Introduction</h3>
+                    <p>Xiangqi (Chinese Chess) is a strategy board game for two players, representing a battle between two armies. Red usually moves first.</p>
+                    
+                    <h3>Piece Movements</h3>
+                    <ul>
+                        <li><strong>General (King):</strong> Moves one step orthogonally within the 3x3 "Palace". Generals cannot face each other directly without a piece in between.</li>
+                        <li><strong>Advisor:</strong> Moves one step diagonally within the "Palace". Defensive piece.</li>
+                        <li><strong>Elephant:</strong> Moves two steps diagonally. Cannot cross the central "River". Can be blocked by an "eye" (a piece in the center of the move).</li>
+                        <li><strong>Horse:</strong> Moves in an "L" shape. Can be blocked by a "leg" (a piece adjacent to it in the direction of movement).</li>
+                        <li><strong>Chariot (Rook):</strong> Moves any distance orthogonally. The strongest piece.</li>
+                        <li><strong>Cannon:</strong> Moves like a Chariot but captures by jumping over exactly one piece (the "screen").</li>
+                        <li><strong>Soldier (Pawn):</strong> Moves forward one step. After crossing the River, it can also move sideways. Cannot move backward.</li>
+                    </ul>
+
+                    <h3>Winning Conditions</h3>
+                    <ul>
+                        <li><strong>Checkmate:</strong> The General is under attack (Check) and has no legal moves to escape.</li>
+                        <li><strong>Stalemate:</strong> The current player has no legal moves but is not in Check. In Xiangqi, this is a loss for the stalemated player.</li>
+                    </ul>
+
+                    <h3>Game Modes</h3>
+                    <ul>
+                        <li><strong>AI Mode:</strong> Play against the computer.</li>
+                        <li><strong>PvP Mode:</strong> Two players play on the same device (Hotseat).</li>
+                    </ul>
+                `
+            }
+        };
+
+        const INITIAL_BOARD = [
+            [-14, -13, -12, -11, -10, -11, -12, -13, -14], 
+            [  0,   0,   0,   0,   0,   0,   0,   0,   0], 
+            [  0, -15,   0,   0,   0,   0,   0, -15,   0], 
+            [-16,   0, -16,   0, -16,   0, -16,   0, -16], 
+            [  0,   0,   0,   0,   0,   0,   0,   0,   0], 
+            [  0,   0,   0,   0,   0,   0,   0,   0,   0], 
+            [ 16,   0,  16,   0,  16,   0,  16,   0,  16], 
+            [  0,  15,   0,   0,   0,   0,   0,  15,   0], 
+            [  0,   0,   0,   0,   0,   0,   0,   0,   0], 
+            [ 14,  13,  12,  11,  10,  11,  12,  13,  14]  
+        ];
+
+        class XiangqiGame {
+            constructor() {
+                this.mode = 'ai';
+                this.lang = 'zh'; 
+                this.board = []; 
+                this.turn = RED;
+                this.selected = null; 
+                this.history = []; 
+                this.gameOver = false;
+                this.aiThinking = false;
+                
+                // DOM Elements
+                this.domBoard = document.getElementById('board');
+                this.domLayer = document.getElementById('click-layer');
+                this.statusEl = document.getElementById('status');
+                this.modeEl = document.getElementById('mode-display');
+                this.toastEl = document.getElementById('toast');
+                this.rulesModal = document.getElementById('rules-modal');
+                this.rulesText = document.getElementById('rules-text');
+                
+                // Buttons & Labels
+                this.titleEl = document.getElementById('game-title');
+                this.btnLang = document.getElementById('btn-lang');
+                this.btnRules = document.getElementById('btn-rules');
+                this.btnAi = document.getElementById('btn-ai');
+                this.btnPvp = document.getElementById('btn-pvp');
+                this.btnUndo = document.getElementById('btn-undo');
+                this.btnRestart = document.getElementById('btn-restart');
+                
+                this.initUI();
+                this.restart();
+            }
+
+            // 切换语言
+            toggleLang() {
+                this.lang = this.lang === 'zh' ? 'en' : 'zh';
+                this.updateUIText();
+                this.render(); 
+            }
+
+            // 显示/隐藏规则
+            toggleRules() {
+                this.rulesModal.classList.toggle('show');
+            }
+
+            // 更新界面所有静态文本
+            updateUIText() {
+                const t = I18N[this.lang];
+                this.titleEl.innerText = t.title;
+                this.btnLang.innerText = t.btnLang;
+                this.btnRules.innerText = t.btnRules;
+                this.btnAi.innerText = t.btnAI;
+                this.btnPvp.innerText = t.btnPVP;
+                this.btnUndo.innerText = t.btnUndo;
+                this.btnRestart.innerText = t.btnRestart;
+                
+                // 更新规则文本
+                this.rulesText.innerHTML = t.rulesContent;
+                
+                this.modeEl.innerText = this.mode === 'ai' ? t.modeAI : t.modePVP;
+                this.updateStatus();
+            }
+
+            updateStatus(customMsg) {
+                const t = I18N[this.lang];
+                if (this.gameOver) return; 
+                if (customMsg) {
+                    this.statusEl.innerText = customMsg;
+                    return;
+                }
+                if (this.aiThinking) {
+                    this.statusEl.innerText = t.aiThinking;
+                    this.statusEl.style.color = "#ffeb3b";
+                    return;
+                }
+                
+                const label = this.turn === RED ? t.statusRedTurn : t.statusBlackTurn;
+                this.statusEl.innerText = label;
+                this.statusEl.style.color = this.turn === RED ? "#ffeb3b" : "#ccc";
+            }
+
+            showToast(msgKey) {
+                const t = I18N[this.lang];
+                const msg = t[msgKey] || msgKey;
+                this.toastEl.innerText = msg;
+                this.toastEl.classList.add('show');
+                setTimeout(() => this.toastEl.classList.remove('show'), 2000);
+            }
+
+            setMode(newMode) {
+                if (this.mode === newMode) return;
+                this.mode = newMode;
+                if (newMode === 'ai') {
+                    this.btnAi.classList.add('active-mode');
+                    this.btnPvp.classList.remove('active-mode');
+                } else {
+                    this.btnPvp.classList.add('active-mode');
+                    this.btnAi.classList.remove('active-mode');
+                }
+                this.updateUIText();
+                this.restart();
+            }
+
+            initUI() {
+                const grid = document.querySelector('.grid');
+                for(let i=1; i<9; i++) {
+                    let line = document.createElement('div');
+                    line.className = 'row-line'; line.style.top = (i*50) + 'px';
+                    grid.appendChild(line);
+                }
+                for(let i=1; i<8; i++) {
+                    let line = document.createElement('div');
+                    line.className = 'col-line'; line.style.left = (i*50) + 'px';
+                    if(i>0 && i<8) { 
+                        let l1 = line.cloneNode(); l1.style.height = '200px'; grid.appendChild(l1);
+                        let l2 = line.cloneNode(); l2.style.height = '200px'; l2.style.top = '250px'; grid.appendChild(l2);
+                        continue; 
+                    }
+                    grid.appendChild(line);
+                }
+                this.drawLine(grid, 3*50, 0, 5*50, 2*50);
+                this.drawLine(grid, 5*50, 0, 3*50, 2*50);
+                this.drawLine(grid, 3*50, 7*50, 5*50, 9*50);
+                this.drawLine(grid, 5*50, 7*50, 3*50, 9*50);
+
+                this.domLayer.addEventListener('click', (e) => {
+                    if (this.gameOver || this.aiThinking) return;
+                    const rect = this.domBoard.getBoundingClientRect();
+                    const x = e.clientX - rect.left - 30; 
+                    const y = e.clientY - rect.top - 30;
+                    const c = Math.round(x / 50);
+                    const r = Math.round(y / 50);
+                    if (r >= 0 && r <= 9 && c >= 0 && c <= 8) {
+                        this.handleClick(r, c);
+                    }
+                });
+            }
+
+            drawLine(parent, x1, y1, x2, y2) {
+                const len = Math.sqrt((x1-x2)**2 + (y1-y2)**2);
+                const angle = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+                const line = document.createElement('div');
+                line.className = 'palace-line'; line.style.height = len + 'px';
+                line.style.left = x1 + 'px'; line.style.top = y1 + 'px';
+                line.style.transform = `rotate(${angle-90}deg)`;
+                parent.appendChild(line);
+            }
+
+            restart() {
+                this.board = JSON.parse(JSON.stringify(INITIAL_BOARD));
+                this.turn = RED;
+                this.selected = null;
+                this.gameOver = false;
+                this.history = [];
+                this.updateUIText();
+                this.render();
+            }
+
+            render() {
+                const oldPieces = document.querySelectorAll('.piece');
+                oldPieces.forEach(p => p.remove());
+                const dots = document.querySelectorAll('.last-move');
+                dots.forEach(d => d.remove());
+
+                for (let r = 0; r < 10; r++) {
+                    for (let c = 0; c < 9; c++) {
+                        const val = this.board[r][c];
+                        if (val !== 0) {
+                            this.createPieceDom(r, c, val);
+                        }
+                    }
+                }
+
+                if (this.selected) {
+                    const sel = document.querySelector(`.piece[data-r="${this.selected.r}"][data-c="${this.selected.c}"]`);
+                    if (sel) sel.classList.add('selected');
+                }
+
+                if (this.history.length > 0) {
+                    const last = this.history[this.history.length - 1];
+                    this.createDot(last.from.r, last.from.c);
+                    this.createDot(last.to.r, last.to.c);
+                }
+            }
+
+            createPieceDom(r, c, val) {
+                const div = document.createElement('div');
+                const typeIdx = Math.abs(val) - 10;
+                const colorKey = val > 0 ? 'red' : 'black';
+                const pieceName = I18N[this.lang].pieces[colorKey][typeIdx];
+
+                div.className = `piece ${colorKey} lang-${this.lang}`;
+                div.innerText = pieceName;
+                div.style.top = (r * 50 + 30 - 22) + 'px';
+                div.style.left = (c * 50 + 30 - 22) + 'px';
+                div.dataset.r = r;
+                div.dataset.c = c;
+                this.domBoard.appendChild(div);
+            }
+
+            createDot(r, c) {
+                const dot = document.createElement('div');
+                dot.className = 'last-move';
+                dot.style.top = (r * 50 + 30) + 'px';
+                dot.style.left = (c * 50 + 30) + 'px';
+                this.domBoard.appendChild(dot);
+            }
+
+            handleClick(r, c) {
+                const val = this.board[r][c];
+                const isSelf = (this.turn === RED && val > 0) || (this.turn === BLACK && val < 0);
+
+                if (isSelf) {
+                    this.selected = {r, c};
+                    this.render();
+                    return;
+                }
+
+                if (this.selected) {
+                    const fromR = this.selected.r;
+                    const fromC = this.selected.c;
+                    if (this.isValidMove(fromR, fromC, r, c, this.board)) {
+                        if (this.isMoveSafe(fromR, fromC, r, c, this.turn, this.board)) {
+                            this.move(fromR, fromC, r, c);
+                            if (this.mode === 'ai' && !this.gameOver && this.turn === BLACK) {
+                                this.aiThinking = true;
+                                this.updateStatus();
+                                setTimeout(() => this.aiMove(), 50);
+                            }
+                        } else {
+                            this.showToast("toastNoSuicide");
+                        }
+                    }
+                }
+            }
+
+            move(fr, fc, tr, tc) {
+                const captured = this.board[tr][tc];
+                this.history.push({
+                    from: {r: fr, c: fc}, to: {r: tr, c: tc}, captured: captured
+                });
+
+                this.board[tr][tc] = this.board[fr][fc];
+                this.board[fr][fc] = 0;
+                this.selected = null;
+                this.turn = -this.turn;
+                this.render();
+                this.checkGameState();
+            }
+
+            checkGameState() {
+                const t = I18N[this.lang];
+                const isChecked = this.isChecked(this.board, this.turn);
+                const hasMoves = this.hasValidMoves(this.board, this.turn);
+
+                if (isChecked && !hasMoves) {
+                    this.gameOver = true;
+                    const w = this.turn === BLACK ? t.winnerRed : t.winnerBlack;
+                    const msg = t.statusCheckmate.replace('{winner}', w);
+                    this.statusEl.innerText = msg;
+                    this.statusEl.style.color = "#ff5555";
+                    alert(msg);
+                } else if (!isChecked && !hasMoves) {
+                    this.gameOver = true;
+                    const w = this.turn === BLACK ? t.winnerRed : t.winnerBlack;
+                    const msg = t.statusStalemate.replace('{winner}', w);
+                    this.statusEl.innerText = msg;
+                    this.statusEl.style.color = "#ff5555";
+                    alert(msg);
+                } else {
+                    if (isChecked) {
+                        this.statusEl.innerText = t.statusCheck;
+                        this.statusEl.style.color = "#ff5555";
+                        this.showToast(t.statusCheck);
+                    } else {
+                        this.updateStatus();
+                    }
+                }
+            }
+
+            undo() {
+                if (this.history.length === 0 || this.gameOver || this.aiThinking) return;
+                let steps = (this.mode === 'ai' && this.history.length >= 2) ? 2 : 1;
+                if (this.mode === 'ai' && this.history.length < 2) steps = 0;
+                if (this.mode === 'pvp') steps = 1;
+                if (steps === 0) return;
+
+                for(let i=0; i<steps; i++) {
+                    const last = this.history.pop();
+                    this.board[last.from.r][last.from.c] = this.board[last.to.r][last.to.c];
+                    this.board[last.to.r][last.to.c] = last.captured;
+                    this.turn = -this.turn;
+                }
+                this.gameOver = false;
+                this.updateStatus();
+                this.render();
+            }
+
+            findKing(board, color) {
+                const target = color === RED ? 10 : -10;
+                for(let r=0; r<10; r++) {
+                    for(let c=0; c<9; c++) {
+                        if (board[r][c] === target) return {r, c};
+                    }
+                }
+                return null;
+            }
+
+            isChecked(board, color) {
+                const kingPos = this.findKing(board, color);
+                if (!kingPos) return true;
+                const enemyColor = -color;
+                for(let r=0; r<10; r++) {
+                    for(let c=0; c<9; c++) {
+                        const piece = board[r][c];
+                        if (this.isSameColor(piece, enemyColor)) {
+                            if (this.isValidMove(r, c, kingPos.r, kingPos.c, board)) return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            isMoveSafe(fr, fc, tr, tc, color, board) {
+                const tempBoard = board.map(row => [...row]);
+                tempBoard[tr][tc] = tempBoard[fr][fc];
+                tempBoard[fr][fc] = 0;
+                if (this.kingsFacing(tempBoard)) return false;
+                if (this.isChecked(tempBoard, color)) return false;
+                return true;
+            }
+
+            hasValidMoves(board, color) {
+                const moves = this.generateAllMoves(color, false);
+                return moves.length > 0;
+            }
+
+            isValidMove(fr, fc, tr, tc, board) {
+                if (fr === tr && fc === tc) return false;
+                const mover = board[fr][fc];
+                const target = board[tr][tc];
+                const type = Math.abs(mover) - 10;
+                if (this.isSameColor(mover, target)) return false;
+
+                switch(type) {
+                    case PIECE_TYPE.KING: 
+                        if (tc < 3 || tc > 5) return false;
+                        if (mover > 0) { if (tr < 7) return false; } else { if (tr > 2) return false; }
+                        const distK = Math.abs(tr - fr) + Math.abs(tc - fc);
+                        return distK === 1;
+                    case PIECE_TYPE.ADVISOR: 
+                        if (tc < 3 || tc > 5) return false;
+                        if (mover > 0) { if (tr < 7) return false; } else { if (tr > 2) return false; }
+                        return Math.abs(tr - fr) === 1 && Math.abs(tc - fc) === 1;
+                    case PIECE_TYPE.ELEPHANT: 
+                        if (mover > 0 && tr < 5) return false; 
+                        if (mover < 0 && tr > 4) return false;
+                        if (Math.abs(tr - fr) !== 2 || Math.abs(tc - fc) !== 2) return false;
+                        if (board[(fr+tr)/2][(fc+tc)/2] !== 0) return false;
+                        return true;
+                    case PIECE_TYPE.HORSE: 
+                        const dr = Math.abs(tr - fr);
+                        const dc = Math.abs(tc - fc);
+                        if (!((dr === 2 && dc === 1) || (dr === 1 && dc === 2))) return false;
+                        if (dr === 2) { if (board[(fr+tr)/2][fc] !== 0) return false; } 
+                        else { if (board[fr][(fc+tc)/2] !== 0) return false; }
+                        return true;
+                    case PIECE_TYPE.CHARIOT: 
+                        return this.countObstacles(fr, fc, tr, tc, board) === 0;
+                    case PIECE_TYPE.CANNON: 
+                        const obs = this.countObstacles(fr, fc, tr, tc, board);
+                        if (target === 0) return obs === 0; else return obs === 1;
+                    case PIECE_TYPE.SOLDIER: 
+                        const forward = mover > 0 ? -1 : 1;
+                        if (mover > 0 && tr > fr) return false;
+                        if (mover < 0 && tr < fr) return false;
+                        const crossedRiver = mover > 0 ? fr <= 4 : fr >= 5;
+                        if (!crossedRiver) { return fc === tc && (tr - fr) === forward; } 
+                        else { const d = Math.abs(tr - fr) + Math.abs(tc - fc); return d === 1; }
+                }
+                return false;
+            }
+
+            countObstacles(fr, fc, tr, tc, board) {
+                if (fr !== tr && fc !== tc) return -1;
+                let count = 0;
+                if (fr === tr) {
+                    const min = Math.min(fc, tc); const max = Math.max(fc, tc);
+                    for (let c = min + 1; c < max; c++) { if (board[fr][c] !== 0) count++; }
+                } else {
+                    const min = Math.min(fr, tr); const max = Math.max(fr, tr);
+                    for (let r = min + 1; r < max; r++) { if (board[r][fc] !== 0) count++; }
+                }
+                return count;
+            }
+
+            isSameColor(v1, v2) {
+                if (v1 === 0 || v2 === 0) return false;
+                return (v1 > 0 && v2 > 0) || (v1 < 0 && v2 < 0);
+            }
+
+            kingsFacing(board) {
+                let rKingR, rKingC, bKingR, bKingC;
+                for(let r=0; r<10; r++) {
+                    for(let c=3; c<=5; c++) {
+                        if (board[r][c] === 10) { rKingR = r; rKingC = c; }
+                        if (board[r][c] === -10) { bKingR = r; bKingC = c; }
+                    }
+                }
+                if (rKingC !== bKingC) return false;
+                for(let r = bKingR + 1; r < rKingR; r++) { if (board[r][rKingC] !== 0) return false; }
+                return true;
+            }
+
+            aiMove() {
+                const best = this.minimax(3, -Infinity, Infinity, true);
+                if (best.move) {
+                    this.move(best.move.from.r, best.move.from.c, best.move.to.r, best.move.to.c);
+                } else {
+                    this.checkGameState();
+                }
+                this.aiThinking = false;
+            }
+
+            evaluate(board) {
+                let score = 0;
+                for(let r=0; r<10; r++) {
+                    for(let c=0; c<9; c++) {
+                        const val = board[r][c];
+                        if (val === 0) continue;
+                        let s = PIECE_VALUE[Math.abs(val) - 10];
+                        if (Math.abs(val) === 16) { 
+                            if (val > 0 && r < 5) s += 20;
+                            if (val < 0 && r > 4) s += 20;
+                        }
+                        score += val > 0 ? s : -s;
+                    }
+                }
+                return score;
+            }
+
+            minimax(depth, alpha, beta, isMaximizing) {
+                if (depth === 0) return { score: this.evaluate(this.board) };
+                const color = isMaximizing ? BLACK : RED;
+                const moves = this.generateAllMoves(color, true); 
+                
+                if (moves.length === 0) {
+                    return { score: isMaximizing ? 20000 : -20000 };
+                }
+
+                let bestMove = null;
+
+                if (isMaximizing) {
+                    let minEval = Infinity;
+                    for (let m of moves) {
+                        const captured = this.board[m.to.r][m.to.c];
+                        this.board[m.to.r][m.to.c] = this.board[m.from.r][m.from.c];
+                        this.board[m.from.r][m.from.c] = 0;
+                        const evalObj = this.minimax(depth - 1, alpha, beta, false);
+                        this.board[m.from.r][m.from.c] = this.board[m.to.r][m.to.c];
+                        this.board[m.to.r][m.to.c] = captured;
+                        if (evalObj.score < minEval) { minEval = evalObj.score; bestMove = m; }
+                        beta = Math.min(beta, evalObj.score);
+                        if (beta <= alpha) break;
+                    }
+                    return { score: minEval, move: bestMove };
+                } else {
+                    let maxEval = -Infinity;
+                    for (let m of moves) {
+                        const captured = this.board[m.to.r][m.to.c];
+                        this.board[m.to.r][m.to.c] = this.board[m.from.r][m.from.c];
+                        this.board[m.from.r][m.from.c] = 0;
+                        const evalObj = this.minimax(depth - 1, alpha, beta, true);
+                        this.board[m.from.r][m.from.c] = this.board[m.to.r][m.to.c];
+                        this.board[m.to.r][m.to.c] = captured;
+                        if (evalObj.score > maxEval) { maxEval = evalObj.score; bestMove = m; }
+                        alpha = Math.max(alpha, evalObj.score);
+                        if (beta <= alpha) break;
+                    }
+                    return { score: maxEval, move: bestMove };
+                }
+            }
+
+            generateAllMoves(color, sort) { 
+                const moves = [];
+                for(let r=0; r<10; r++) {
+                    for(let c=0; c<9; c++) {
+                        const piece = this.board[r][c];
+                        if (piece === 0) continue;
+                        if (this.isSameColor(piece, color)) {
+                            this.getMovesForPiece(r, c, piece, moves, color);
+                        }
+                    }
+                }
+                if (sort) {
+                    moves.sort((a, b) => {
+                        const valA = Math.abs(this.board[a.to.r][a.to.c]);
+                        const valB = Math.abs(this.board[b.to.r][b.to.c]);
+                        return valB - valA;
+                    });
+                }
+                return moves;
+            }
+
+            getMovesForPiece(r, c, piece, moves, color) {
+                const targets = [];
+                const type = Math.abs(piece) - 10;
+                if (type === PIECE_TYPE.KING || type === PIECE_TYPE.ADVISOR) {
+                    for(let i=r-1; i<=r+1; i++) for(let j=c-1; j<=c+1; j++) targets.push({r:i, c:j});
+                } else if (type === PIECE_TYPE.ELEPHANT) {
+                    targets.push({r:r-2,c:c-2},{r:r-2,c:c+2},{r:r+2,c:c-2},{r:r+2,c:c+2});
+                } else if (type === PIECE_TYPE.HORSE) {
+                    targets.push({r:r-2,c:c-1},{r:r-2,c:c+1},{r:r+2,c:c-1},{r:r+2,c:c+1},
+                                 {r:r-1,c:c-2},{r:r-1,c:c+2},{r:r+1,c:c-2},{r:r+1,c:c+2});
+                } else { 
+                    for(let i=0; i<10; i++) targets.push({r:i, c:c});
+                    for(let j=0; j<9; j++) targets.push({r:r, c:j});
+                }
+                for (let t of targets) {
+                    if (t.r>=0 && t.r<10 && t.c>=0 && t.c<9) {
+                        if (this.isValidMove(r, c, t.r, t.c, this.board)) {
+                            if (this.isMoveSafe(r, c, t.r, t.c, color, this.board)) {
+                                moves.push({from:{r,c}, to:{r:t.r, c:t.c}});
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        const game = new XiangqiGame();
+    </script>
+</body>
+</html>
