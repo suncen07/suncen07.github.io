@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Aetheria Nexus | Gesture-Controlled Particle Manifold</title>
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- MediaPipe Hands -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <style>
+        :root {
+            --primary: #00f3ff;
+            --secondary: #bc13fe;
+            --alert: #ff0055;
+            --bg: #020202;
+            --glass: rgba(0, 20, 40, 0.7);
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: var(--bg);
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--primary);
+            user-select: none;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* --- VIDEO INPUT FEED (Hidden logic) --- */
+        .input_video {
+            display: none;
+        }
+        
+        /* --- HUD LAYER --- */
+        .hud-layer {
+            position: absolute;
+            z-index: 10;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            grid-template-rows: auto 1fr auto;
+        }
+
+        /* --- LEFT PANEL: CAMERA PREVIEW & STATS --- */
+        .hud-left {
+            grid-column: 1;
+            grid-row: 1 / span 3;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            pointer-events: auto;
+        }
+
+        .cam-feed-container {
+            width: 100%;
+            height: 200px;
+            border: 1px solid var(--primary);
+            position: relative;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .cam-feed-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+            filter: grayscale(100%) contrast(1.2) drop-shadow(0 0 5px var(--primary));
+            transform: scaleX(-1); /* Mirror effect */
+        }
+
+        .cam-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(0deg, rgba(0,243,255,0.1) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0,243,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        .status-badge {
+            background: var(--glass);
+            border-left: 3px solid var(--secondary);
+            padding: 10px;
+            font-size: 0.8rem;
+        }
+
+        .gesture-indicator {
+            margin-top: 10px;
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 0 0 5px var(--secondary);
+            height: 20px;
+        }
+
+        /* --- RIGHT PANEL: HISTORICAL CONTEXT --- */
+        .hud-right {
+            grid-column: 3;
+            grid-row: 1 / span 3;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: right;
+        }
+
+        .info-panel {
+            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.8));
+            border-right: 2px solid var(--primary);
+            padding: 20px;
+            margin-bottom: 20px;
+            transform: translateX(20px);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0; 
+        }
+
+        .info-panel.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .info-title {
+            font-size: 1.5rem;
+            color: #fff;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px var(--secondary);
+        }
+
+        .info-body {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #ccc;
+        }
+
+        .info-meta {
+            margin-top: 10px;
+            font-size: 0.7rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- CENTER: START BUTTON --- */
+        .center-overlay {
+            grid-column: 2;
+            grid-row: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: auto;
+        }
+
+        #start-btn {
+            background: rgba(0,0,0,0.8);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 20px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            box-shadow: 0 0 20px var(--primary);
+            transition: all 0.3s;
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+        }
+
+        #start-btn:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* --- LOADING SPINNER --- */
+        .loader {
+            border: 4px solid rgba(0, 243, 255, 0.1);
+            border-left: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: none; /* Hidden by default */
+            margin: 0 auto;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 900px) {
+            .hud-layer {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto 1fr;
+            }
+            .hud-left { grid-row: 1; width: 100%; flex-direction: row; align-items: center; }
+            .cam-feed-container { width: 100px; height: 75px; }
+            .hud-right { grid-row: 3; text-align: left; border-right: none; border-left: 2px solid var(--primary); }
+            .info-panel { text-align: left; padding-left: 20px; border-right: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Video Element for MediaPipe (Hidden from layout, used in canvas) -->
+    <video class="input_video"></video>
+
+    <!-- HUD -->
+    <div class="hud-layer">
+        
+        <!-- Left: Sensor Feed -->
+        <div class="hud-left">
+            <div class="cam-feed-container">
+                <video id="preview-video" muted playsinline></video>
+                <div class="cam-overlay"></div>
+            </div>
+            <div class="status-badge">
+                <div>SYS.STATUS: <span id="sys-status">STANDBY</span></div>
+                <div class="gesture-indicator" id="gesture-log">WAITING FOR INPUT...</div>
+                <div style="font-size:0.7em; margin-top:5px; opacity:0.7">HANDS DETECTED: <span id="hand-count">0</span></div>
+            </div>
+        </div>
+
+        <!-- Center: Start Interaction -->
+        <div class="center-overlay" id="intro-screen">
+            <div style="text-align: center;">
+                <h1 style="text-shadow: 0 0 20px var(--primary);">AETHERIA NEXUS</h1>
+                <p>Allow camera access for neural hand tracking</p>
+                <div class="loader" id="loader"></div>
+                <button id="start-btn">INITIALIZE SENSORS</button>
+            </div>
+        </div>
+
+        <!-- Right: Math History -->
+        <div class="hud-right">
+            <div class="info-panel visible" id="math-info">
+                <div class="info-title" id="info-title">The Sphere</div>
+                <div class="info-body" id="info-desc">
+                    The set of all points equidistant from a center. In 3D Euclidean space, it is the fundamental surface of revolution.
+                </div>
+                <div class="info-meta" id="info-meta">
+                    Origin: Antiquity // Pythagoras (c. 570 BC)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3D Canvas -->
+    <div id="canvas-container"></div>
+
+    <script>
+        // --- CONSTANTS & DATA ---
+        const PARTICLE_COUNT = 20000;
+        const PARTICLE_SIZE = 0.12;
+        const SWIPE_THRESHOLD = 0.08; 
+        
+        const MATH_DATA = {
+            sphere: {
+                title: "The 2-Sphere",
+                desc: "Perfect symmetry. Historically regarded by Pythagoras and Plato as the most beautiful form. A 2-manifold where every point is equidistant from the origin.",
+                meta: "ORIGIN: CLASSICAL GREECE // C. 500 BC"
+            },
+            torus: {
+                title: "Torus Knot",
+                desc: "A product of two circles. In topology, a torus has Genus 1 (one hole). The specific form shown is a (p,q)-torus knot, which winds around the surface of a torus.",
+                meta: "ORIGIN: TOPOLOGY // 19TH CENTURY"
+            },
+            mobius: {
+                title: "Möbius Strip",
+                desc: "A non-orientable surface with only one side and one boundary. An ant walking along it would traverse both 'sides' before returning to the start.",
+                meta: "DISCOVERY: AUGUST MÖBIUS // 1858"
+            },
+            nebula: {
+                title: "Strange Attractor",
+                desc: "A representation of Chaos Theory. Systems that are deterministic but highly sensitive to initial conditions, forming fractal patterns in phase space.",
+                meta: "ORIGIN: EDWARD LORENZ // 1963"
+            }
+        };
+
+        const SHAPE_KEYS = ['sphere', 'torus', 'mobius', 'nebula'];
+        let currentShapeIndex = 0;
+
+        // --- GLOBAL STATE ---
+        let isRunning = false;
+        let handL = null;
+        let handR = null;
+        let numHands = 0;
+        
+        // Gesture Logic
+        let lastPalmX = 0;
+        let swipeCooldown = 0;
+        let scaleFactor = 1;
+        
+        // --- THREE.JS SETUP ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x000000, 0.03);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.z = 25;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        // Texture Gen
+        function createGlowTexture() {
+            const c = document.createElement('canvas');
+            c.width = 32; c.height = 32;
+            const ctx = c.getContext('2d');
+            const g = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+            g.addColorStop(0, 'rgba(255, 255, 255, 1)');
+            g.addColorStop(0.2, 'rgba(255, 255, 255, 0.8)');
+            g.addColorStop(0.5, 'rgba(0, 243, 255, 0.2)');
+            g.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, 32, 32);
+            return new THREE.CanvasTexture(c);
+        }
+
+        // Particles
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(PARTICLE_COUNT * 3);
+        const targetPositions = new Float32Array(PARTICLE_COUNT * 3);
+        const velocities = new Float32Array(PARTICLE_COUNT * 3);
+        const colors = new Float32Array(PARTICLE_COUNT * 3);
+        
+        const c1 = new THREE.Color(0x00f3ff);
+        const c2 = new THREE.Color(0xbc13fe);
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            positions[i*3] = (Math.random()-0.5)*50;
+            positions[i*3+1] = (Math.random()-0.5)*50;
+            positions[i*3+2] = (Math.random()-0.5)*50;
+            const mc = c1.clone().lerp(c2, Math.random());
+            colors[i*3] = mc.r;
+            colors[i*3+1] = mc.g;
+            colors[i*3+2] = mc.b;
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        const material = new THREE.PointsMaterial({
+            size: PARTICLE_SIZE,
+            map: createGlowTexture(),
+            vertexColors: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            transparent: true,
+            opacity: 0.8
+        });
+
+        const particleSystem = new THREE.Points(geometry, material);
+        scene.add(particleSystem);
+
+        // --- MATH GENERATORS ---
+        const shapes = {
+            sphere: (i) => {
+                const phi = Math.acos(1 - 2 * (i / PARTICLE_COUNT));
+                const theta = Math.sqrt(PARTICLE_COUNT * Math.PI) * phi;
+                const r = 10;
+                return { x: r*Math.sin(phi)*Math.cos(theta), y: r*Math.sin(phi)*Math.sin(theta), z: r*Math.cos(phi) };
+            },
+            torus: (i) => {
+                const t = (i/PARTICLE_COUNT)*Math.PI*2*3; 
+                const p=2, q=3, scale=3.5;
+                const r = Math.cos(q*t) + 2;
+                return { x: scale*r*Math.cos(p*t), y: scale*r*Math.sin(p*t), z: scale*-Math.sin(q*t) };
+            },
+            mobius: (i) => {
+                const t = (i/PARTICLE_COUNT)*Math.PI*2;
+                const w = 4;
+                const v = ((i%100)/50 - 1)*w; 
+                const r = 10;
+                return { 
+                    x: (r + v/2*Math.cos(t/2))*Math.cos(t), 
+                    y: (r + v/2*Math.cos(t/2))*Math.sin(t), 
+                    z: v/2*Math.sin(t/2) 
+                };
+            },
+            nebula: (i) => {
+                const r = Math.random()*15;
+                const theta = Math.random()*Math.PI*2*5; 
+                const y = (Math.random()-0.5)*4;
+                return { x: r*Math.cos(theta+r*0.5), y: y+Math.sin(r)*2, z: r*Math.sin(theta+r*0.5) };
+            }
+        };
+
+        function updateShapeTarget(shapeName) {
+            const gen = shapes[shapeName];
+            for(let i=0; i<PARTICLE_COUNT; i++){
+                const pos = gen(i);
+                targetPositions[i*3] = pos.x;
+                targetPositions[i*3+1] = pos.y;
+                targetPositions[i*3+2] = pos.z;
+            }
+            
+            // UI Update
+            const data = MATH_DATA[shapeName];
+            const panel = document.getElementById('math-info');
+            panel.classList.remove('visible'); // Fade out
+            
+            setTimeout(() => {
+                document.getElementById('info-title').innerText = data.title;
+                document.getElementById('info-desc').innerText = data.desc;
+                document.getElementById('info-meta').innerText = data.meta;
+                panel.classList.add('visible'); // Fade in
+            }, 300);
+        }
+
+        updateShapeTarget('sphere');
+
+        // --- MEDIAPIPE HAND TRACKING ---
+        const videoElement = document.getElementsByClassName('input_video')[0];
+        const previewVideo = document.getElementById('preview-video');
+        
+        function onResults(results) {
+            if (!results.multiHandLandmarks) return;
+
+            numHands = results.multiHandLandmarks.length;
+            document.getElementById('hand-count').innerText = numHands;
+
+            handL = null;
+            handR = null;
+
+            if(results.multiHandLandmarks.length > 0) handL = results.multiHandLandmarks[0];
+            if(results.multiHandLandmarks.length > 1) handR = results.multiHandLandmarks[1];
+
+            processGestures();
+        }
+
+        const hands = new Hands({locateFile: (file) => {
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+        }});
+
+        hands.setOptions({
+            maxNumHands: 2,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+        });
+
+        hands.onResults(onResults);
+
+        // --- GESTURE PROCESSING ENGINE ---
+        
+        // Helper to check if hand is gripping (fist) or open
+        function isGripping(hand) {
+            if(!hand) return false;
+            // Measure distance between Thumb tip [4] and Index tip [8]
+            const thumb = hand[4];
+            const index = hand[8];
+            const dist = Math.sqrt(Math.pow(thumb.x - index.x, 2) + Math.pow(thumb.y - index.y, 2));
+            return dist < 0.05; // Threshold for pinch/grip
+        }
+
+        function processGestures() {
+            const statusLog = document.getElementById('gesture-log');
+
+            // 1. SWIPE DETECTION (For Morphing) - Needs Open Hand
+            if (handL && !isGripping(handL)) {
+                const palmX = handL[9].x; 
+                if (swipeCooldown <= 0) {
+                    const velocity = palmX - lastPalmX;
+                    // Note: Camera is mirrored
+                    if (Math.abs(velocity) > SWIPE_THRESHOLD) {
+                        currentShapeIndex = (currentShapeIndex + 1) % SHAPE_KEYS.length;
+                        updateShapeTarget(SHAPE_KEYS[currentShapeIndex]);
+                        statusLog.innerText = "GESTURE: MORPHING";
+                        statusLog.style.color = "#bc13fe";
+                        
+                        // Shockwave
+                        for(let i=0; i<PARTICLE_COUNT*3; i++) velocities[i] += (Math.random()-0.5)*2;
+                        
+                        swipeCooldown = 30; 
+                    }
+                } else {
+                    swipeCooldown--;
+                }
+                lastPalmX = palmX;
+            }
+
+            // 2. STRETCH / PINCH (Two Hands) - Global Scale
+            if (handL && handR) {
+                const p1 = handL[9];
+                const p2 = handR[9];
+                const dist = Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+                
+                const targetScale = 0.5 + (dist * 2.0); 
+                scaleFactor += (targetScale - scaleFactor) * 0.1;
+
+                statusLog.innerText = "GESTURE: EXPANDING";
+                statusLog.style.color = "#00f3ff";
+            } else {
+                scaleFactor += (1.0 - scaleFactor) * 0.05; // Return to 1.0
+                
+                // If not two hands, check single hand states for UI feedback
+                if(handL) {
+                    if (isGripping(handL)) {
+                        statusLog.innerText = "GESTURE: CATCHING";
+                        statusLog.style.color = "#ffaa00";
+                    } else if (swipeCooldown <= 0) {
+                        statusLog.innerText = "GESTURE: SPREADING";
+                        statusLog.style.color = "#00ff88";
+                    }
+                } else {
+                    if(swipeCooldown <= 0) {
+                        statusLog.innerText = "TRACKING...";
+                        statusLog.style.color = "#fff";
+                    }
+                }
+            }
+        }
+
+        // --- MAIN ANIMATION LOOP ---
+        const clock = new THREE.Clock();
+        const raycaster = new THREE.Raycaster();
+        // Adjust the plane Z position to be closer to the center of the camera view for interaction
+        const plane = new THREE.Plane(new THREE.Vector3(0,0,1), 5); // Z=5 plane for interaction
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = clock.getDelta();
+            
+            // Visual rotation
+            particleSystem.rotation.y += 0.002;
+            
+            // Apply Global Scale (Two Hand Interaction)
+            particleSystem.scale.setScalar(scaleFactor);
+
+            const positionsArr = geometry.attributes.position.array;
+            
+            // Prepare Hand Forces
+            const handForces = [];
+            
+            [handL, handR].forEach(hand => {
+                if(hand) {
+                    // Map hand point [9] (wrist center) from normalized 0-1 to screen space (-1 to 1)
+                    // Note: x is flipped (1-x) because MediaPipe mirrors the video
+                    const ndc = new THREE.Vector2((1 - hand[9].x) * 2 - 1, -hand[9].y * 2 + 1);
+                    raycaster.setFromCamera(ndc, camera);
+                    const target = new THREE.Vector3();
+                    // Intersect with the interaction plane to get 3D hand position in the scene
+                    raycaster.ray.intersectPlane(plane, target);
+                    
+                    handForces.push({
+                        pos: target,
+                        gripping: isGripping(hand)
+                    });
+                }
+            });
+
+            // Update Particles
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const idx = i * 3;
+                let px = positionsArr[idx];
+                let py = positionsArr[idx+1];
+                let pz = positionsArr[idx+2];
+                
+                // 1. Seek Shape Target
+                const tx = targetPositions[idx];
+                const ty = targetPositions[idx+1];
+                const tz = targetPositions[idx+2];
+
+                velocities[idx]   += (tx - px) * 0.08 * delta * 20;
+                velocities[idx+1] += (ty - py) * 0.08 * delta * 20;
+                velocities[idx+2] += (tz - pz) * 0.08 * delta * 20;
+
+                // 2. Drag/Damping
+                velocities[idx]   *= 0.92;
+                velocities[idx+1] *= 0.92;
+                velocities[idx+2] *= 0.92;
+
+                // 3. Hand Interaction
+                for(let force of handForces) {
+                    const dx = px - force.pos.x;
+                    const dy = py - force.pos.y;
+                    const dz = pz - force.pos.z;
+                    const distSq = dx*dx + dy*dy + dz*dz;
+                    
+                    if (force.gripping) {
+                        // CATCH / MOVE: Strong Attraction to Hand (FIST/PINCH gesture)
+                        // Increased range and force for "coming together"
+                        if(distSq < 225) { // Radius 15 (was 10)
+                            const dist = Math.sqrt(distSq);
+                            const range = 15;
+                            const f = (range - dist) / range; // 0 to 1
+                            
+                            // Stronger pull towards hand center (was 5.0)
+                            velocities[idx] -= dx * f * 8.0 * delta; 
+                            velocities[idx+1] -= dy * f * 8.0 * delta;
+                            velocities[idx+2] -= dz * f * 8.0 * delta;
+                            
+                            // Keep particles tightly packed when caught
+                            velocities[idx] *= 0.8;
+                            velocities[idx+1] *= 0.8;
+                            velocities[idx+2] *= 0.8;
+                        }
+                    } else {
+                        // SPREAD: Strong Repulsion / Push Away (OPEN HAND gesture)
+                        // Increased range and force for "spreading out"
+                        if(distSq < 64) { // Radius 8 (was ~5.5)
+                            const dist = Math.sqrt(distSq);
+                            const range = 8;
+                            const f = (range - dist) / range;
+                            
+                            // Much stronger push away (was 15.0)
+                            velocities[idx] += dx * f * 25.0 * delta;
+                            velocities[idx+1] += dy * f * 25.0 * delta;
+                            velocities[idx+2] += dz * f * 25.0 * delta;
+                        }
+                    }
+                }
+
+                positionsArr[idx] += velocities[idx];
+                positionsArr[idx+1] += velocities[idx+1];
+                positionsArr[idx+2] += velocities[idx+2];
+            }
+
+            geometry.attributes.position.needsUpdate = true;
+            renderer.render(scene, camera);
+        }
+
+        // --- INIT CAMERA ---
+        document.getElementById('start-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('start-btn');
+            const loader = document.getElementById('loader');
+            
+            btn.style.display = 'none';
+            loader.style.display = 'block';
+            document.getElementById('sys-status').innerText = "INITIALIZING OPTICS...";
+
+            
+            try {
+                // Request media stream first
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                previewVideo.srcObject = stream;
+                
+                // Wait for the video to load metadata and start playing
+                await new Promise((resolve) => {
+                    previewVideo.onloadedmetadata = () => {
+                        previewVideo.play().then(resolve).catch(e => {
+                            console.error("Error playing preview video:", e);
+                            resolve(); // Resolve even if play fails to proceed with tracking init
+                        });
+                    };
+                });
+
+
+                // Now initialize MediaPipe Camera utility
+                const cameraUtils = new Camera(videoElement, {
+                    onFrame: async () => {
+                        await hands.send({image: videoElement});
+                    },
+                    width: 640,
+                    height: 480
+                });
+
+                await cameraUtils.start();
+
+                document.getElementById('intro-screen').style.display = 'none';
+                document.getElementById('sys-status').innerText = "ONLINE // TRACKING ACTIVE";
+                document.getElementById('sys-status').style.color = "#00f3ff";
+                
+                isRunning = true;
+                animate();
+            } catch (e) {
+                console.error(e);
+                // The Fix: Replaced 'var(--alert)' with the string literal '#ff0055'
+                const errorMessage = document.getElementById('gesture-log');
+                errorMessage.innerText = "ERROR: Camera access denied. Refresh and allow camera to interact.";
+                errorMessage.style.color = '#ff0055'; 
+                loader.style.display = 'none';
+                btn.style.display = 'block';
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+    </script>
+</body>
+</html>
