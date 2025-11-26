@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>中国象棋 (Xiangqi)</title>
+    <style>
+        :root {
+            --board-bg: #eecfa1;
+            --line-color: #5c3a18;
+            --piece-size: 44px;
+            --cell-size: 50px;
+        }
+
+        body {
+            font-family: "KaiTi", "STKaiti", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #2c2c2c;
+            /* Slightly darker for contrast */
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: #f0f0f0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            overflow-x: hidden;
+        }
+
+        /* Compact Header */
+        h2 {
+            margin: 8px 0 4px 0;
+            font-weight: normal;
+            text-align: center;
+            font-size: 1.5rem;
+            color: #d4a066;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Compact Controls */
+        .controls {
+            margin-bottom: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            width: 100%;
+            padding: 0 5px;
+            box-sizing: border-box;
+            z-index: 100;
+            max-width: 600px;
+            /* Keep buttons together on desktop */
+        }
+
+        button {
+            padding: 5px 12px;
+            /* Smaller padding */
+            font-size: 13px;
+            /* Compact font */
+            cursor: pointer;
+            background: #d4a066;
+            border: none;
+            border-radius: 15px;
+            /* Pill shape */
+            color: #3e2723;
+            font-family: inherit;
+            font-weight: bold;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        button:active {
+            background: #bcaaa4;
+            transform: translateY(1px);
+        }
+
+        button.active-mode {
+            background: #ff9800;
+            color: #fff;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Special Buttons */
+        #btn-lang {
+            background: #546e7a;
+            color: white;
+        }
+
+        #btn-rules {
+            background: #795548;
+            color: white;
+        }
+
+        #btn-sensei {
+            background: linear-gradient(135deg, #673ab7, #9c27b0);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #status-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2px;
+            min-height: 40px;
+            /* Reduced height */
+            justify-content: center;
+            width: 100%;
+        }
+
+        #status {
+            height: 24px;
+            color: #ffeb3b;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        #mode-display {
+            font-size: 0.8em;
+            color: #bbb;
+            margin-top: 0;
+        }
+
+        /* Responsive Wrapper */
+        #board-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 5px;
+            padding-bottom: 10px;
+        }
+
+        .board-container {
+            position: relative;
+            width: 460px;
+            height: 510px;
+            background-color: var(--board-bg);
+            border: 4px solid #5d4037;
+            border-radius: 4px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-origin: top center;
+            touch-action: none;
+        }
+
+        /* Board grid lines refinement */
+        .grid {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            width: 400px;
+            height: 450px;
+            border: 2px solid var(--line-color);
+            box-sizing: border-box;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .row-line {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: var(--line-color);
+        }
+
+        .col-line {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 1px;
+            background-color: var(--line-color);
+        }
+
+        .river {
+            position: absolute;
+            top: 200px;
+            left: 1px;
+            width: 396px;
+            height: 48px;
+            background-color: var(--board-bg);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            color: var(--line-color);
+            font-size: 26px;
+            z-index: 1;
+            font-family: "KaiTi", "STKaiti", serif;
+            font-weight: bold;
+        }
+
+        .palace-line {
+            position: absolute;
+            width: 1px;
+            background-color: var(--line-color);
+            transform-origin: top center;
+        }
+
+        .piece {
+            width: var(--piece-size);
+            height: var(--piece-size);
+            border-radius: 50%;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.4), inset 0 2px 5px rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            z-index: 10;
+            background: #fdf5e6;
+            border: 2px solid #6d4c41;
+            transition: transform 0.2s, box-shadow 0.2s, top 0.2s, left 0.2s;
+            /* Smooth movement */
+            will-change: top, left;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .piece.lang-zh {
+            font-size: 24px;
+            font-family: "KaiTi", "STKaiti", serif;
+        }
+
+        .piece.lang-en {
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+        }
+
+        .piece.red {
+            color: #c00;
+            border-color: #a00;
+        }
+
+        .piece.black {
+            color: #222;
+            border-color: #333;
+        }
+
+        .piece.selected {
+            background-color: #b3e5fc;
+            transform: scale(1.15);
+            box-shadow: 0 0 15px #03a9f4;
+            z-index: 100;
+            border-color: #0288d1;
+        }
+
+        .last-move {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: rgba(0, 150, 0, 0.7);
+            border-radius: 50%;
+            z-index: 5;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+        }
+
+        #click-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .toast {
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-size: 18px;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            text-align: center;
+            width: auto;
+            max-width: 80%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* --- Modal Styles --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 3000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: #fffbf0;
+            color: #3e2723;
+            width: 90%;
+            max-width: 550px;
+            max-height: 80vh;
+            /* Ensure it fits on screen */
+            border-radius: 12px;
+            border: 4px solid #5d4037;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            font-family: "KaiTi", "STKaiti", serif;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #d4a066;
+            padding: 15px 20px;
+            background: #f0e0c0;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .modal-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #5d4037;
+        }
+
+        .close-btn {
+            font-size: 24px;
+            font-weight: bold;
+            color: #5d4037;
+            cursor: pointer;
+            background: none;
+            border: 2px solid #5d4037;
+            border-radius: 50%;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            line-height: 28px;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #5d4037;
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            line-height: 1.6;
+        }
+
+        /* Rich Content Styling */
+        .modal-body h3 {
+            margin: 20px 0 10px 0;
+            color: #8d5524;
+            font-size: 1.2em;
+            border-left: 5px solid #d4a066;
+            padding-left: 10px;
+            background: rgba(212, 160, 102, 0.1);
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            margin: 8px 0;
+            font-size: 15px;
+            color: #4a3b32;
+            text-align: justify;
+        }
+
+        .modal-body ul {
+            padding-left: 20px;
+            margin: 10px 0;
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 8px;
+            padding: 10px 10px 10px 30px;
+        }
+
+        .modal-body li {
+            margin-bottom: 6px;
+            font-size: 15px;
+        }
+
+        .modal-body strong {
+            color: #bf360c;
+        }
+
+        /* AI Response Specifics */
+        .ai-response {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 15px;
+        }
+
+        .ai-response strong {
+            color: #673ab7;
+        }
+
+        @media (max-width: 360px) {
+            h2 {
+                font-size: 1.2rem;
+            }
+
+            .controls button {
+                padding: 4px 10px;
+                font-size: 12px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 0;
+            }
+
+            .settings-input {
+                width: 100%;
+                padding: 10px;
+                margin: 10px 0;
+                box-sizing: border-box;
+                border: 2px solid #d4a066;
+                border-radius: 4px;
+                font-family: inherit;
+                font-size: 16px;
+            }
+
+            .save-btn {
+                background: #4caf50;
+                color: white;
+                width: 100%;
+                padding: 10px;
+                margin-top: 10px;
+                border: none;
+                border-radius: 4px;
+                font-size: 16px;
+                cursor: pointer;
+            }
+
+            .save-btn:active {
+                background: #388e3c;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2 id="game-title">中国象棋</h2>
+
+    <div id="status-bar">
+        <div id="status">红方走棋</div>
+        <div id="mode-display">当前模式: AI 对战</div>
+    </div>
+
+    <div class="controls">
+        <button id="btn-settings" onclick="game.openModal('settings')">⚙️ 设置</button>
+        <button id="btn-sensei" onclick="game.askSensei()">✨ AI 军师</button>
+        <button id="btn-rules" onclick="game.openModal('rules')">游戏规则</button>
+        <button id="btn-ai" onclick="game.setMode('ai')" class="active-mode">AI 对战</button>
+        <button id="btn-pvp" onclick="game.setMode('pvp')">双人对战</button>
+        <button id="btn-undo" onclick="game.undo()">悔棋</button>
+        <button id="btn-restart" onclick="game.restart()">重置</button>
+        <button id="btn-lang" onclick="game.toggleLang()">English</button>
+    </div>
+
+    <!-- Wrapper for scaling -->
+    <div id="board-wrapper">
+        <div class="board-container" id="board">
+            <div class="grid">
+                <div class="river"><span>楚河</span><span>汉界</span></div>
+            </div>
+            <div id="click-layer"></div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- Generic Modal -->
+    <div id="generic-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title">标题</div>
+                <button class="close-btn" onclick="game.closeModal()">×</button>
+            </div>
+            <div id="modal-body" class="modal-body">
+                <!-- Content injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const RED = 1, BLACK = -1;
+        // apiKey is now managed via Settings in localStorage
+
+        const PIECE_TYPE = {
+            KING: 0, ADVISOR: 1, ELEPHANT: 2, HORSE: 3, CHARIOT: 4, CANNON: 5, SOLDIER: 6
+        };
+        const PIECE_VALUE = [10000, 20, 20, 40, 90, 45, 10];
+
+        // I18N
+        const I18N = {
+            zh: {
+                title: "中国象棋",
+                statusRedTurn: "红方走棋",
+                statusBlackTurn: "黑方走棋",
+                statusCheck: "将军！",
+                statusCheckmate: "绝杀！{winner}获胜",
+                statusStalemate: "困毙！{winner}获胜",
+                statusDraw: "和棋！三步重复，对局终止。", // Added Draw status
+                modeAI: "模式: AI 对战",
+                modePVP: "模式: 双人对战",
+                btnSettings: "⚙️ 设置",
+                settingsTitle: "游戏设置",
+                apiKeyLabel: "Gemini API Key (用于 AI 军师):",
+                apiKeyPlaceholder: "在此粘贴您的 API Key...",
+                saveBtn: "保存设置",
+                apiKeySaved: "设置已保存！",
+                apiKeyMissing: "请先在设置中配置 Gemini API Key！",
+                btnLang: "English",
+                btnRules: "规则百科",
+                btnSensei: "✨ AI 军师",
+                btnAI: "AI 对战",
+                btnPVP: "双人对战",
+                btnUndo: "悔棋",
+                btnRestart: "重置",
+                toastNoSuicide: "不能送将！",
+                winnerRed: "红方",
+                winnerBlack: "黑方",
+                aiThinking: "电脑思考中...",
+                senseiTitle: "AI 军师锦囊",
+                senseiLoading: "军师正在审视棋局...",
+                senseiError: "连接军师失败，请重试。请检查 API Key 是否正确。",
+                pieces: {
+                    red: ['帅', '仕', '相', '马', '车', '炮', '兵'],
+                    black: ['将', '士', '象', '马', '车', '炮', '卒']
+                },
+                rulesContent: `
+                    <h3>📜 历史渊源</h3>
+                    <p>中国象棋历史悠久，起源可追溯至战国时期，定型于宋代。棋盘上的“楚河汉界”象征着楚汉相争的历史典故。作为中国传统文化瑰宝，它模拟了古代战争中军团作战的宏大场面。</p>
+                    
+                    <h3>♟️ 棋子走法详解</h3>
+                    <ul>
+                        <li><strong>将/帅 (General):</strong> 统帅三军，位居九宫。只能在九宫格内横向或纵向移动，每次一步。<strong>特殊规则：</strong>双方将帅不能在同一直线上直接面对面（“飞将”），中间必须有棋子遮挡。</li>
+                        <li><strong>士/仕 (Advisor):</strong> 贴身护卫，九宫内斜走，每次一步。</li>
+                        <li><strong>象/相 (Elephant):</strong> 军团护盾，飞“田”字（对角线两格）。<strong>限制：</strong>不能过河；若田字中心有棋子挡路（“塞象眼”），则不能飞过去。</li>
+                        <li><strong>马 (Horse):</strong> 骑兵突袭，走“日”字（先横/竖一格，再斜一格）。<strong>限制：</strong>若前进方向紧邻有棋子（“蹩马腿”），则不能跳过去。</li>
+                        <li><strong>车 (Chariot):</strong> 战车冲锋，横冲直撞。只要无子阻挡，横竖均可行走任意距离，威力最大。</li>
+                        <li><strong>炮 (Cannon):</strong> 远程火器。移动方式同“车”，但<strong>吃子时</strong>必须隔着一个棋子（“炮打隔山”）。</li>
+                        <li><strong>卒/兵 (Soldier):</strong> 步兵冲锋，只能向前。<strong>过河前</strong>只能向前走一步；<strong>过河后</strong>可以向前、向左或向右走一步，但永远不能后退。</li>
+                    </ul>
+
+                    <h3>🏆 胜负判定</h3>
+                    <ul>
+                        <li><strong>绝杀 (Checkmate):</strong> 一方的将/帅被对方棋子攻击（将军），且无论如何移动、防御都无法解围。</li>
+                        <li><strong>困毙 (Stalemate):</strong> 轮到一方走棋时，虽然未被将军，但全盘没有合法的步数可走。在象棋中，无路可走判负。</li>
+                        <li><strong>和棋 (Draw / Repetition):</strong> 出现三次完全相同的局面（包括轮到谁走棋），则判为和棋。</li>
+                        <li><strong>长将/长捉:</strong> 禁止单方面长久不停地将军或捉子，违者判负或需变着。</li>
+                    </ul>
+
+                    <h3>🎮 游戏模式</h3>
+                    <ul>
+                        <li><strong>AI 对战:</strong> 独自挑战电脑智能，适合磨练棋艺。</li>
+                        <li><strong>双人对战:</strong> 适合两人同屏切磋，还原线下对弈体验。</li>
+                    </ul>
+
+                    <h3>💡 新手锦囊</h3>
+                    <ul>
+                        <li><strong>得子得先:</strong> 开局尽量把大子（车、马、炮）尽快开出。</li>
+                        <li><strong>控制中路:</strong> “中炮”是强力攻势，但也容易暴露防守空档。</li>
+                        <li><strong>马炮配合:</strong> 马后炮、重炮等组合杀伤力巨大。</li>
+                        <li><strong>切勿轻进:</strong> 孤军深入容易被围捕，讲究子力配合。</li>
+                    </ul>
+                `
+            },
+            en: {
+                title: "Chinese Chess",
+                statusRedTurn: "Red's Turn",
+                statusBlackTurn: "Black's Turn",
+                statusCheck: "Check!",
+                statusCheckmate: "Checkmate! {winner} Wins",
+                statusStalemate: "Stalemate! {winner} Wins",
+                statusDraw: "Draw! Three-fold repetition.", // Added Draw status
+                modeAI: "Mode: AI vs Player",
+                modePVP: "Mode: PvP (Hotseat)",
+                btnSettings: "⚙️ Settings",
+                settingsTitle: "Game Settings",
+                apiKeyLabel: "Gemini API Key (for AI Sensei):",
+                apiKeyPlaceholder: "Paste your API Key here...",
+                saveBtn: "Save Settings",
+                apiKeySaved: "Settings Saved!",
+                apiKeyMissing: "Please configure Gemini API Key in Settings first!",
+                btnLang: "中文",
+                btnRules: "Encyclopedia",
+                btnSensei: "✨ AI Sensei",
+                btnAI: "AI Mode",
+                btnPVP: "PvP Mode",
+                btnUndo: "Undo",
+                btnRestart: "Restart",
+                toastNoSuicide: "Cannot expose General!",
+                winnerRed: "Red",
+                winnerBlack: "Black",
+                aiThinking: "AI Thinking...",
+                senseiTitle: "AI Sensei Analysis",
+                senseiLoading: "Analyzing the battlefield...",
+                senseiError: "Failed to reach the Sensei. Check API Key.",
+                pieces: {
+                    red: ['King', 'Adv', 'Ele', 'Hrs', 'Rook', 'Can', 'Pawn'],
+                    black: ['King', 'Adv', 'Ele', 'Hrs', 'Rook', 'Can', 'Pawn']
+                },
+                rulesContent: `
+                    <h3>📜 History</h3>
+                    <p>Xiangqi simulates ancient warfare between two armies, represented by the "River" dividing the board. It dates back to the Warring States period and Han Dynasty.</p>
+                    
+                    <h3>♟️ Movement Rules</h3>
+                    <ul>
+                        <li><strong>General (King):</strong> Moves 1 step orthogonally within the 3x3 Palace. <strong>Rule:</strong> Generals cannot face each other directly without a piece in between ("Flying General").</li>
+                        <li><strong>Advisor:</strong> Moves 1 step diagonally within the Palace.</li>
+                        <li><strong>Elephant:</strong> Moves 2 steps diagonally (Field shape). Cannot cross the river. Blocked if a piece is in the center of the move ("Elephant's Eye").</li>
+                        <li><strong>Horse:</strong> Moves in an "L" shape. Blocked if a piece is adjacent in the direction of movement ("Horse Leg").</li>
+                        <li><strong>Chariot (Rook):</strong> Moves any distance orthogonally. Strongest piece.</li>
+                        <li><strong>Cannon:</strong> Moves like a Chariot, but captures by jumping over exactly one piece (the "Screen").</li>
+                        <li><strong>Soldier (Pawn):</strong> Moves forward 1 step. After crossing the river, can also move sideways. Never backward.</li>
+                    </ul>
+
+                    <h3>🏆 Winning Conditions</h3>
+                    <ul>
+                        <li><strong>Checkmate:</strong> The General is under attack and cannot escape.</li>
+                        <li><strong>Stalemate:</strong> The current player has no legal moves. In Xiangqi, this is a <strong>LOSS</strong> for the stalemated player.</li>
+                        <li><strong>Draw (Repetition):</strong> A position that occurs three times (with the same player to move) is declared a draw.</li>
+                    </ul>
+
+                    <h3>💡 Strategy Tips</h3>
+                    <ul>
+                        <li><strong>Open Fast:</strong> Develop Chariots and Horses early.</li>
+                        <li><strong>Control Center:</strong> The central file is critical for attack.</li>
+                        <li><strong>Coordination:</strong> Use Cannons and Horses together for complex attacks.</li>
+                    </ul>
+                `
+            }
+        };
+
+        const INITIAL_BOARD = [
+            [-14, -13, -12, -11, -10, -11, -12, -13, -14],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, -15, 0, 0, 0, 0, 0, -15, 0],
+            [-16, 0, -16, 0, -16, 0, -16, 0, -16],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [16, 0, 16, 0, 16, 0, 16, 0, 16],
+            [0, 15, 0, 0, 0, 0, 0, 15, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [14, 13, 12, 11, 10, 11, 12, 13, 14]
+        ];
+
+        class XiangqiGame {
+            constructor() {
+                this.mode = 'ai';
+                this.lang = 'zh';
+                this.board = [];
+                this.turn = RED;
+                this.selected = null;
+                this.history = [];
+                this.gameOver = false;
+                this.aiThinking = false;
+                this.positionHistory = new Map(); // Tracks board state repetition
+                this.apiKey = localStorage.getItem('xiangqi_gemini_api_key') || "";
+
+                // DOM Elements
+                this.domBoard = document.getElementById('board');
+                this.domLayer = document.getElementById('click-layer');
+                this.statusEl = document.getElementById('status');
+                this.modeEl = document.getElementById('mode-display');
+                this.toastEl = document.getElementById('toast');
+                this.modalEl = document.getElementById('generic-modal');
+                this.modalTitle = document.getElementById('modal-title');
+                this.modalBody = document.getElementById('modal-body');
+
+                // Buttons & Labels
+                this.titleEl = document.getElementById('game-title');
+                this.btnSettings = document.getElementById('btn-settings');
+                this.btnLang = document.getElementById('btn-lang');
+                this.btnRules = document.getElementById('btn-rules');
+                this.btnSensei = document.getElementById('btn-sensei');
+                this.btnAi = document.getElementById('btn-ai');
+                this.btnPvp = document.getElementById('btn-pvp');
+                this.btnUndo = document.getElementById('btn-undo');
+                this.btnRestart = document.getElementById('btn-restart');
+
+                this.initUI();
+                this.setupInputHandlers();
+                this.setupResizer();
+                this.restart();
+            }
+
+            // --- Position History / Hash Logic for Draw Detection ---
+
+            getBoardHash(board, turn) {
+                let hash = "";
+                for (let r = 0; r < 10; r++) {
+                    hash += board[r].join(',');
+                }
+                // Important: Include whose turn it is in the hash
+                hash += `|${turn}`;
+                return hash;
+            }
+
+            recordPosition(board, turn) {
+                const hash = this.getBoardHash(board, turn);
+                const count = this.positionHistory.get(hash) || 0;
+                this.positionHistory.set(hash, count + 1);
+            }
+
+            // --- Mobile Scaling Logic ---
+            setupResizer() {
+                const resizeBoard = () => {
+                    const wrapper = document.getElementById('board-wrapper');
+                    const board = this.domBoard;
+                    const availableWidth = wrapper.clientWidth;
+                    // Calculate available height: Window - header - controls - status - padding
+                    const otherHeight = this.titleEl.offsetHeight +
+                        document.getElementById('status-bar').offsetHeight +
+                        document.querySelector('.controls').offsetHeight +
+                        25; // margins
+                    const availableHeight = window.innerHeight - otherHeight;
+
+                    const baseWidth = 460;
+                    const baseHeight = 510;
+                    const scaleX = (availableWidth - 10) / baseWidth;
+                    const scaleY = (availableHeight - 10) / baseHeight;
+
+                    let scale = Math.min(scaleX, scaleY);
+                    if (scale > 1) scale = 1;
+
+                    board.style.transform = `scale(${scale})`;
+                };
+                window.addEventListener('resize', resizeBoard);
+                resizeBoard();
+                setTimeout(resizeBoard, 100);
+            }
+
+            setupInputHandlers() {
+                this.domLayer.addEventListener('click', (e) => this.handleInput(e));
+                this.domLayer.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    if (e.touches.length > 0) {
+                        const touch = e.touches[0];
+                        this.handleInput({ clientX: touch.clientX, clientY: touch.clientY });
+                    }
+                }, { passive: false });
+            }
+
+            handleInput(e) {
+                if (this.gameOver || this.aiThinking) return;
+                const rect = this.domBoard.getBoundingClientRect();
+                const currentScale = rect.width / 460;
+                const visualX = e.clientX - rect.left;
+                const visualY = e.clientY - rect.top;
+                const internalX = (visualX / currentScale) - 30;
+                const internalY = (visualY / currentScale) - 30;
+                const c = Math.round(internalX / 50);
+                const r = Math.round(internalY / 50);
+
+                if (r >= 0 && r <= 9 && c >= 0 && c <= 8) {
+                    this.handleClick(r, c);
+                }
+            }
+
+            // --- Gemini API Feature: AI Sensei (Unchanged) ---
+
+            async askSensei() {
+                if (this.aiThinking) return;
+
+                if (!this.apiKey) {
+                    this.showToast('apiKeyMissing');
+                    setTimeout(() => this.openModal('settings'), 1000);
+                    return;
+                }
+
+                const t = I18N[this.lang];
+                this.openModal('custom', t.senseiTitle, `<p>${t.senseiLoading}</p>`);
+
+                const boardString = this.getBoardString();
+                const turnStr = this.turn === RED ? "RED" : "BLACK";
+                const userLanguage = this.lang === 'zh' ? 'Chinese' : 'English';
+
+                const prompt = `
+                    You are a Grandmaster of Chinese Chess (Xiangqi).
+                    Analyze the following board state.
+                    
+                    Board Representation (Upppercase=Red, Lowercase=Black, .=Empty):
+                    ${boardString}
+                    
+                    Current Turn: ${turnStr}
+                    
+                    Task:
+                    1. Identify who is currently in a better position and why.
+                    2. Provide 2-3 specific strategic tips or candidate moves for the current player (${turnStr}).
+                    
+                    Keep the response concise (under 120 words).
+                    Answer in ${userLanguage}.
+                    Format with simple HTML (<b> for bold, <br> for break, <ul><li> for lists).
+                    Do NOT use markdown symbols like ** or ##, use HTML tags.
+                `;
+
+                try {
+                    const response = await this.callGemini(prompt);
+                    this.openModal('custom', t.senseiTitle, `<div class="ai-response">${response}</div>`);
+                } catch (error) {
+                    console.error(error);
+                    this.openModal('custom', t.senseiTitle, `<p style="color:red">${t.senseiError}</p>`);
+                }
+            }
+
+            getBoardString() {
+                const map = {
+                    10: 'K', 11: 'A', 12: 'E', 13: 'H', 14: 'R', 15: 'C', 16: 'P',
+                    '-10': 'k', '-11': 'a', '-12': 'e', '-13': 'h', '-14': 'r', '-15': 'c', '-16': 'p',
+                    0: '.'
+                };
+                let s = "";
+                for (let r = 0; r < 10; r++) {
+                    for (let c = 0; c < 9; c++) {
+                        const val = this.board[r][c];
+                        s += (map[val] || '?') + " ";
+                    }
+                    s += "\n";
+                }
+                return s;
+            }
+
+            async callGemini(prompt) {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${this.apiKey}`;
+                const payload = {
+                    contents: [{ parts: [{ text: prompt }] }]
+                };
+
+                // Simple exponential backoff implementation for robustness
+                const maxRetries = 3;
+                let delay = 1000;
+                for (let i = 0; i < maxRetries; i++) {
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            // On non-OK response, throw error to trigger retry or final catch
+                            throw new Error(`API returned status ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        return data.candidates[0].content.parts[0].text;
+
+                    } catch (error) {
+                        // If it's the last attempt, re-throw the error
+                        if (i === maxRetries - 1) {
+                            throw error;
+                        }
+                        // Wait before retrying
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2; // Exponential backoff
+                    }
+                }
+            }
+
+            // --- Game Logic ---
+
+            toggleLang() {
+                this.lang = this.lang === 'zh' ? 'en' : 'zh';
+                this.updateUIText();
+                this.render();
+            }
+
+            openModal(type, title, content) {
+                const t = I18N[this.lang];
+                if (type === 'rules') {
+                    this.modalTitle.innerText = t.btnRules;
+                    this.modalBody.innerHTML = t.rulesContent;
+                } else if (type === 'custom') {
+                    this.modalTitle.innerText = title;
+                    this.modalBody.innerHTML = content;
+                } else if (type === 'settings') {
+                    this.modalTitle.innerText = t.settingsTitle;
+                    this.modalBody.innerHTML = `
+                        <p>${t.apiKeyLabel}</p>
+                        <input type="password" id="api-key-input" class="settings-input" value="${this.apiKey}" placeholder="${t.apiKeyPlaceholder}">
+                        <button class="save-btn" onclick="game.saveSettings()">${t.saveBtn}</button>
+                        <p style="font-size: 0.9em; color: #666; margin-top: 15px;">
+                            <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: #d4a066;">Get API Key</a>
+                        </p>
+                    `;
+                }
+                this.modalEl.classList.add('show');
+            }
+
+            saveSettings() {
+                const input = document.getElementById('api-key-input');
+                if (input) {
+                    this.apiKey = input.value.trim();
+                    localStorage.setItem('xiangqi_gemini_api_key', this.apiKey);
+                    this.showToast('apiKeySaved');
+                    setTimeout(() => this.closeModal(), 500);
+                }
+            }
+
+            closeModal() {
+                this.modalEl.classList.remove('show');
+            }
+
+            updateUIText() {
+                const t = I18N[this.lang];
+                this.titleEl.innerText = t.title;
+                this.btnSettings.innerText = t.btnSettings;
+                this.btnLang.innerText = t.btnLang;
+                this.btnRules.innerText = t.btnRules;
+                this.btnSensei.innerText = t.btnSensei;
+                this.btnAi.innerText = t.btnAI;
+                this.btnPvp.innerText = t.btnPVP;
+                this.btnUndo.innerText = t.btnUndo;
+                this.btnRestart.innerText = t.btnRestart;
+                this.modeEl.innerText = this.mode === 'ai' ? t.modeAI : t.modePVP;
+                this.updateStatus();
+            }
+
+            updateStatus(customMsg) {
+                const t = I18N[this.lang];
+                if (this.gameOver) return;
+                if (customMsg) {
+                    this.statusEl.innerText = customMsg;
+                    return;
+                }
+                if (this.aiThinking) {
+                    this.statusEl.innerText = t.aiThinking;
+                    this.statusEl.style.color = "#ffeb3b";
+                    return;
+                }
+
+                const label = this.turn === RED ? t.statusRedTurn : t.statusBlackTurn;
+                this.statusEl.innerText = label;
+                this.statusEl.style.color = this.turn === RED ? "#ffeb3b" : "#ccc";
+            }
+
+            showToast(msgKey) {
+                const t = I18N[this.lang];
+                const msg = t[msgKey] || msgKey;
+                this.toastEl.innerText = msg;
+                this.toastEl.classList.add('show');
+                setTimeout(() => this.toastEl.classList.remove('show'), 2000);
+            }
+
+            setMode(newMode) {
+                if (this.mode === newMode) return;
+                this.mode = newMode;
+                if (newMode === 'ai') {
+                    this.btnAi.classList.add('active-mode');
+                    this.btnPvp.classList.remove('active-mode');
+                } else {
+                    this.btnPvp.classList.add('active-mode');
+                    this.btnAi.classList.remove('active-mode');
+                }
+                this.updateUIText();
+                this.restart();
+            }
+
+            initUI() {
+                const grid = document.querySelector('.grid');
+                grid.innerHTML = '<div class="river"><span>楚河</span><span>汉界</span></div>'; // Reset
+                for (let i = 1; i < 9; i++) {
+                    let line = document.createElement('div');
+                    line.className = 'row-line'; line.style.top = (i * 50) + 'px';
+                    grid.appendChild(line);
+                }
+                for (let i = 1; i < 8; i++) {
+                    let line = document.createElement('div');
+                    line.className = 'col-line'; line.style.left = (i * 50) + 'px';
+                    // Horizontal river lines are handled by the single large grid border, only draw short vertical lines.
+                    if (i > 0 && i < 8) {
+                        let l1 = line.cloneNode(); l1.style.height = '200px'; grid.appendChild(l1);
+                        let l2 = line.cloneNode(); l2.style.height = '200px'; l2.style.top = '250px'; grid.appendChild(l2);
+                        continue;
+                    }
+                    grid.appendChild(line);
+                }
+                // Palace lines (diagonal)
+                this.drawLine(grid, 3 * 50, 0, 5 * 50, 2 * 50);
+                this.drawLine(grid, 5 * 50, 0, 3 * 50, 2 * 50);
+                this.drawLine(grid, 3 * 50, 7 * 50, 5 * 50, 9 * 50);
+                this.drawLine(grid, 5 * 50, 7 * 50, 3 * 50, 9 * 50);
+            }
+
+            drawLine(parent, x1, y1, x2, y2) {
+                const len = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+                const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                const line = document.createElement('div');
+                line.className = 'palace-line'; line.style.height = len + 'px';
+                line.style.left = x1 + 'px'; line.style.top = y1 + 'px';
+                line.style.transform = `rotate(${angle - 90}deg)`;
+                parent.appendChild(line);
+            }
+
+            restart() {
+                this.board = JSON.parse(JSON.stringify(INITIAL_BOARD));
+                this.turn = RED;
+                this.selected = null;
+                this.gameOver = false;
+                this.history = [];
+                this.positionHistory.clear(); // Clear repetition history
+                this.recordPosition(this.board, this.turn); // Record initial position
+                this.updateUIText();
+                this.render();
+            }
+
+            render() {
+                const oldPieces = document.querySelectorAll('.piece');
+                oldPieces.forEach(p => p.remove());
+                const dots = document.querySelectorAll('.last-move');
+                dots.forEach(d => d.remove());
+
+                for (let r = 0; r < 10; r++) {
+                    for (let c = 0; c < 9; c++) {
+                        const val = this.board[r][c];
+                        if (val !== 0) {
+                            this.createPieceDom(r, c, val);
+                        }
+                    }
+                }
+
+                if (this.selected) {
+                    const sel = document.querySelector(`.piece[data-r="${this.selected.r}"][data-c="${this.selected.c}"]`);
+                    if (sel) sel.classList.add('selected');
+                }
+
+                if (this.history.length > 0) {
+                    const last = this.history[this.history.length - 1];
+                    this.createDot(last.from.r, last.from.c);
+                    this.createDot(last.to.r, last.to.c);
+                }
+            }
+
+            createPieceDom(r, c, val) {
+                const div = document.createElement('div');
+                const typeIdx = Math.abs(val) - 10;
+                const colorKey = val > 0 ? 'red' : 'black';
+                const pieceName = I18N[this.lang].pieces[colorKey][typeIdx];
+
+                div.className = `piece ${colorKey} lang-${this.lang}`;
+                div.innerText = pieceName;
+                div.style.top = (r * 50 + 30 - 22) + 'px';
+                div.style.left = (c * 50 + 30 - 22) + 'px';
+                div.dataset.r = r;
+                div.dataset.c = c;
+                this.domBoard.appendChild(div);
+            }
+
+            createDot(r, c) {
+                const dot = document.createElement('div');
+                dot.className = 'last-move';
+                dot.style.top = (r * 50 + 30) + 'px';
+                dot.style.left = (c * 50 + 30) + 'px';
+                this.domBoard.appendChild(dot);
+            }
+
+            handleClick(r, c) {
+                const val = this.board[r][c];
+                const isSelf = (this.turn === RED && val > 0) || (this.turn === BLACK && val < 0);
+
+                if (isSelf) {
+                    this.selected = { r, c };
+                    this.render();
+                    return;
+                }
+
+                if (this.selected) {
+                    const fromR = this.selected.r;
+                    const fromC = this.selected.c;
+                    if (this.isValidMove(fromR, fromC, r, c, this.board)) {
+                        if (this.isMoveSafe(fromR, fromC, r, c, this.turn, this.board)) {
+                            this.move(fromR, fromC, r, c);
+                            if (this.mode === 'ai' && !this.gameOver && this.turn === BLACK) {
+                                this.aiThinking = true;
+                                this.updateStatus();
+                                setTimeout(() => this.aiMove(), 50);
+                            }
+                        } else {
+                            this.showToast("toastNoSuicide");
+                        }
+                    }
+                }
+            }
+
+            move(fr, fc, tr, tc) {
+                const captured = this.board[tr][tc];
+                this.history.push({
+                    from: { r: fr, c: fc }, to: { r: tr, c: tc }, captured: captured
+                });
+
+                // Temporarily update the board to calculate the hash for the *next* turn
+                this.board[tr][tc] = this.board[fr][fc];
+                this.board[fr][fc] = 0;
+                this.selected = null;
+                this.turn = -this.turn;
+
+                // Record the new position (hash includes the new 'this.turn')
+                this.recordPosition(this.board, this.turn);
+
+                this.render();
+                this.checkGameState();
+            }
+
+            // Note on undo: Undoing the hash map state is complex with the simple minimax AI.
+            // For simplicity and user convenience, we only update the board state here,
+            // and accept that a user may undo into a state that was previously marked as draw
+            // or that the history count might be slightly inaccurate after repeated undo/redo.
+            undo() {
+                if (this.history.length === 0 || this.gameOver || this.aiThinking) return;
+
+                // Determine how many steps to undo
+                let steps = (this.mode === 'ai' && this.history.length >= 2) ? 2 : 1;
+                if (this.mode === 'ai' && this.history.length < 2) steps = 0;
+                if (this.mode === 'pvp') steps = 1;
+                if (steps === 0) return;
+
+                // Simple undo implementation
+                for (let i = 0; i < steps; i++) {
+                    const last = this.history.pop();
+
+                    // Revert the turn change from move()
+                    this.turn = -this.turn;
+
+                    // Remove the current position count (before the last move) from history
+                    const currentHash = this.getBoardHash(this.board, this.turn);
+                    const currentCount = this.positionHistory.get(currentHash);
+                    if (currentCount > 1) {
+                        this.positionHistory.set(currentHash, currentCount - 1);
+                    } else {
+                        this.positionHistory.delete(currentHash);
+                    }
+
+                    // Revert board state
+                    this.board[last.from.r][last.from.c] = this.board[last.to.r][last.to.c];
+                    this.board[last.to.r][last.to.c] = last.captured;
+                }
+
+                this.gameOver = false;
+                this.updateStatus();
+                this.render();
+            }
+
+            checkGameState() {
+                const t = I18N[this.lang];
+
+                // 1. Check for Three-fold Repetition (Draw)
+                const currentHash = this.getBoardHash(this.board, this.turn);
+                const repeatCount = this.positionHistory.get(currentHash);
+
+                if (repeatCount >= 3) {
+                    this.gameOver = true;
+                    const msg = t.statusDraw;
+                    this.statusEl.innerText = msg;
+                    this.statusEl.style.color = "#4caf50"; // Green for draw
+                    this.showToast(msg);
+                    return;
+                }
+
+                // 2. Check for Checkmate / Stalemate (Loss)
+                const isChecked = this.isChecked(this.board, this.turn);
+                const hasMoves = this.hasValidMoves(this.board, this.turn);
+
+                if (isChecked && !hasMoves) {
+                    this.gameOver = true;
+                    const w = this.turn === BLACK ? t.winnerRed : t.winnerBlack;
+                    const msg = t.statusCheckmate.replace('{winner}', w);
+                    this.statusEl.innerText = msg;
+                    this.statusEl.style.color = "#ff5555";
+                    this.showToast(msg);
+                } else if (!isChecked && !hasMoves) {
+                    this.gameOver = true;
+                    const w = this.turn === BLACK ? t.winnerRed : t.winnerBlack;
+                    const msg = t.statusStalemate.replace('{winner}', w);
+                    this.statusEl.innerText = msg;
+                    this.statusEl.style.color = "#ff5555";
+                    this.showToast(msg);
+                } else {
+                    if (isChecked) {
+                        this.statusEl.innerText = t.statusCheck;
+                        this.statusEl.style.color = "#ff5555";
+                        this.showToast(t.statusCheck);
+                    } else {
+                        this.updateStatus();
+                    }
+                }
+            }
+
+            // --- Movement & Validation Logic (Unchanged) ---
+
+            findKing(board, color) {
+                const target = color === RED ? 10 : -10;
+                for (let r = 0; r < 10; r++) {
+                    for (let c = 0; c < 9; c++) {
+                        if (board[r][c] === target) return { r, c };
+                    }
+                }
+                return null;
+            }
+
+            isChecked(board, color) {
+                const kingPos = this.findKing(board, color);
+                if (!kingPos) return true;
+                const enemyColor = -color;
+                for (let r = 0; r < 10; r++) {
+                    for (let c = 0; c < 9; c++) {
+                        const piece = board[r][c];
+                        if (this.isSameColor(piece, enemyColor)) {
+                            if (this.isValidMove(r, c, kingPos.r, kingPos.c, board)) return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            isMoveSafe(fr, fc, tr, tc, color, board) {
+                const tempBoard = board.map(row => [...row]);
+                tempBoard[tr][tc] = tempBoard[fr][fc];
+                tempBoard[fr][fc] = 0;
+                if (this.kingsFacing(tempBoard)) return false;
+                if (this.isChecked(tempBoard, color)) return false;
+                return true;
+            }
+
+            hasValidMoves(board, color) {
+                const moves = this.generateAllMoves(color, false);
+                return moves.length > 0;
+            }
+
+            isValidMove(fr, fc, tr, tc, board) {
+                if (fr === tr && fc === tc) return false;
+                const mover = board[fr][fc];
+                const target = board[tr][tc];
+                const type = Math.abs(mover) - 10;
+                if (this.isSameColor(mover, target)) return false;
+
+                switch (type) {
+                    case PIECE_TYPE.KING:
+                        if (tc < 3 || tc > 5) return false;
+                        if (mover > 0) { if (tr < 7) return false; } else { if (tr > 2) return false; }
+                        const distK = Math.abs(tr - fr) + Math.abs(tc - fc);
+                        return distK === 1;
+                    case PIECE_TYPE.ADVISOR:
+                        if (tc < 3 || tc > 5) return false;
+                        if (mover > 0) { if (tr < 7) return false; } else { if (tr > 2) return false; }
+                        return Math.abs(tr - fr) === 1 && Math.abs(tc - fc) === 1;
+                    case PIECE_TYPE.ELEPHANT:
+                        if (mover > 0 && tr < 5) return false;
+                        if (mover < 0 && tr > 4) return false;
+                        if (Math.abs(tr - fr) !== 2 || Math.abs(tc - fc) !== 2) return false;
+                        if (board[(fr + tr) / 2][(fc + tc) / 2] !== 0) return false;
+                        return true;
+                    case PIECE_TYPE.HORSE:
+                        const dr = Math.abs(tr - fr);
+                        const dc = Math.abs(tc - fc);
+                        if (!((dr === 2 && dc === 1) || (dr === 1 && dc === 2))) return false;
+                        if (dr === 2) { if (board[(fr + tr) / 2][fc] !== 0) return false; }
+                        else { if (board[fr][(fc + tc) / 2] !== 0) return false; }
+                        return true;
+                    case PIECE_TYPE.CHARIOT:
+                        return this.countObstacles(fr, fc, tr, tc, board) === 0;
+                    case PIECE_TYPE.CANNON:
+                        const obs = this.countObstacles(fr, fc, tr, tc, board);
+                        if (target === 0) return obs === 0; else return obs === 1;
+                    case PIECE_TYPE.SOLDIER:
+                        const forward = mover > 0 ? -1 : 1;
+                        if (mover > 0 && tr > fr) return false;
+                        if (mover < 0 && tr < fr) return false;
+                        const crossedRiver = mover > 0 ? fr <= 4 : fr >= 5;
+                        if (!crossedRiver) { return fc === tc && (tr - fr) === forward; }
+                        else { const d = Math.abs(tr - fr) + Math.abs(tc - fc); return d === 1; }
+                }
+                return false;
+            }
+
+            countObstacles(fr, fc, tr, tc, board) {
+                if (fr !== tr && fc !== tc) return -1;
+                let count = 0;
+                if (fr === tr) {
+                    const min = Math.min(fc, tc); const max = Math.max(fc, tc);
+                    for (let c = min + 1; c < max; c++) { if (board[fr][c] !== 0) count++; }
+                } else {
+                    const min = Math.min(fr, tr); const max = Math.max(fr, tr);
+                    for (let r = min + 1; r < max; r++) { if (board[r][fc] !== 0) count++; }
+                }
+                return count;
+            }
+
+            isSameColor(v1, v2) {
+                if (v1 === 0 || v2 === 0) return false;
+                return (v1 > 0 && v2 > 0) || (v1 < 0 && v2 < 0);
+            }
+
+            kingsFacing(board) {
+                let rKingR, rKingC, bKingR, bKingC;
+                for (let r = 0; r < 10; r++) {
+                    for (let c = 3; c <= 5; c++) {
+                        if (board[r][c] === 10) { rKingR = r; rKingC = c; }
+                        if (board[r][c] === -10) { bKingR = r; bKingC = c; }
+                    }
+                }
+                if (rKingC !== bKingC) return false;
+                // Check for pieces between the Kings
+                for (let r = bKingR + 1; r < rKingR; r++) { if (board[r][rKingC] !== 0) return false; }
+                return true;
+            }
+
+            // --- AI Logic (Unchanged) ---
+
+            aiMove() {
+                // Ensure AI thinks for the correct color (BLACK)
+                const best = this.minimax(3, -Infinity, Infinity, true);
+                if (best.move) {
+                    this.move(best.move.from.r, best.move.from.c, best.move.to.r, best.move.to.c);
+                } else {
+                    this.checkGameState(); // If no moves, checkmate/stalemate should be handled
+                }
+                this.aiThinking = false;
+            }
+
+            evaluate(board) {
+                let score = 0;
+                for (let r = 0; r < 10; r++) {
+                    for (let c = 0; c < 9; c++) {
+                        const val = board[r][c];
+                        if (val === 0) continue;
+                        let s = PIECE_VALUE[Math.abs(val) - 10];
+                        if (Math.abs(val) === 16) {
+                            if (val > 0 && r < 5) s += 20;
+                            if (val < 0 && r > 4) s += 20;
+                        }
+                        score += val > 0 ? s : -s;
+                    }
+                }
+                return score;
+            }
+
+            minimax(depth, alpha, beta, isMaximizing) {
+                if (depth === 0) return { score: this.evaluate(this.board) };
+                const color = isMaximizing ? BLACK : RED;
+                const moves = this.generateAllMoves(color, true);
+
+                if (moves.length === 0) {
+                    // Checkmate/Stalemate condition for Minimax
+                    // Since it's the current player's turn (color), and they have no moves,
+                    // the other player wins, which is positive for MAX (Red) and negative for MIN (Black).
+                    return { score: isMaximizing ? 20000 : -20000 };
+                }
+
+                let bestMove = null;
+
+                if (isMaximizing) {
+                    let minEval = Infinity;
+                    for (let m of moves) {
+                        const captured = this.board[m.to.r][m.to.c];
+                        this.board[m.to.r][m.to.c] = this.board[m.from.r][m.from.c];
+                        this.board[m.from.r][m.from.c] = 0;
+                        const evalObj = this.minimax(depth - 1, alpha, beta, false);
+                        this.board[m.from.r][m.from.c] = this.board[m.to.r][m.to.c];
+                        this.board[m.to.r][m.to.c] = captured;
+                        if (evalObj.score < minEval) { minEval = evalObj.score; bestMove = m; }
+                        beta = Math.min(beta, evalObj.score);
+                        if (beta <= alpha) break;
+                    }
+                    return { score: minEval, move: bestMove };
+                } else {
+                    let maxEval = -Infinity;
+                    for (let m of moves) {
+                        const captured = this.board[m.to.r][m.to.c];
+                        this.board[m.to.r][m.to.c] = this.board[m.from.r][m.from.c];
+                        this.board[m.from.r][m.from.c] = 0;
+                        const evalObj = this.minimax(depth - 1, alpha, beta, true);
+                        this.board[m.from.r][m.from.c] = this.board[m.to.r][m.to.c];
+                        this.board[m.to.r][m.to.c] = captured;
+                        if (evalObj.score > maxEval) { maxEval = evalObj.score; bestMove = m; }
+                        alpha = Math.max(alpha, evalObj.score);
+                        if (beta <= alpha) break;
+                    }
+                    return { score: maxEval, move: bestMove };
+                }
+            }
+
+            generateAllMoves(color, sort) {
+                const moves = [];
+                for (let r = 0; r < 10; r++) {
+                    for (let c = 0; c < 9; c++) {
+                        const piece = this.board[r][c];
+                        if (piece === 0) continue;
+                        if (this.isSameColor(piece, color)) {
+                            this.getMovesForPiece(r, c, piece, moves, color);
+                        }
+                    }
+                }
+                if (sort) {
+                    moves.sort((a, b) => {
+                        const valA = Math.abs(this.board[a.to.r][a.to.c]);
+                        const valB = Math.abs(this.board[b.to.r][b.to.c]);
+                        return valB - valA;
+                    });
+                }
+                return moves;
+            }
+
+            getMovesForPiece(r, c, piece, moves, color) {
+                const targets = [];
+                const type = Math.abs(piece) - 10;
+                if (type === PIECE_TYPE.KING || type === PIECE_TYPE.ADVISOR) {
+                    for (let i = r - 1; i <= r + 1; i++) for (let j = c - 1; j <= c + 1; j++) targets.push({ r: i, c: j });
+                } else if (type === PIECE_TYPE.ELEPHANT) {
+                    targets.push({ r: r - 2, c: c - 2 }, { r: r - 2, c: c + 2 }, { r: r + 2, c: c - 2 }, { r: r + 2, c: c + 2 });
+                } else if (type === PIECE_TYPE.HORSE) {
+                    targets.push({ r: r - 2, c: c - 1 }, { r: r - 2, c: c + 1 }, { r: r + 2, c: c - 1 }, { r: r + 2, c: c + 1 },
+                        { r: r - 1, c: c - 2 }, { r: r - 1, c: c + 2 }, { r: r + 1, c: c - 2 }, { r: r + 1, c: c + 2 });
+                } else {
+                    for (let i = 0; i < 10; i++) targets.push({ r: i, c: c });
+                    for (let j = 0; j < 9; j++) targets.push({ r: r, c: j });
+                }
+                for (let t of targets) {
+                    if (t.r >= 0 && t.r < 10 && t.c >= 0 && t.c < 9) {
+                        if (this.isValidMove(r, c, t.r, t.c, this.board)) {
+                            if (this.isMoveSafe(r, c, t.r, t.c, color, this.board)) {
+                                moves.push({ from: { r, c }, to: { r: t.r, c: t.c } });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        const game = new XiangqiGame();
+    </script>
+</body>
+
+</html>
