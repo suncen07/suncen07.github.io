@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Writer Pro</title>
+    <style>
+        :root {
+            /* Light Mode (Default) */
+            --bg-color: #f4f4f9;
+            --sidebar-bg: #ffffff;
+            --text-color: #333333;
+            --accent-color: #6200ea;
+            --editor-bg: #ffffff;
+            --editor-border: #dddddd;
+            --stat-box-bg: #f0f0f0;
+            --sidebar-width: 300px;
+        }
+
+        /* Dark Mode Override */
+        body.dark-mode {
+            --bg-color: #121212;
+            --sidebar-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --accent-color: #bb86fc;
+            --editor-bg: #2c2c2c;
+            --editor-border: #444444;
+            --stat-box-bg: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Layout */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            max-width: calc(100% - var(--sidebar-width));
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-left: 1px solid var(--editor-border);
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+            transition: background-color 0.3s;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        h1 { margin: 0; font-size: 1.2rem; margin-right: auto; }
+
+        button {
+            padding: 8px 16px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s, opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.9; }
+        
+        button.secondary { background-color: #e0e0e0; color: #333; }
+        body.dark-mode button.secondary { background-color: #444; color: #fff; }
+        
+        button.secondary:hover { background-color: #d5d5d5; }
+        body.dark-mode button.secondary:hover { background-color: #555; }
+
+        button.icon-btn { 
+            background: none; 
+            font-size: 1.2rem; 
+            padding: 5px; 
+            color: var(--text-color);
+        }
+
+        /* Editor Area */
+        textarea {
+            flex: 1;
+            width: 100%;
+            padding: 30px;
+            border: 1px solid var(--editor-border);
+            border-radius: 8px;
+            resize: none;
+            font-size: 1.15rem;
+            line-height: 1.8;
+            outline: none;
+            box-sizing: border-box;
+            background: var(--editor-bg);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        textarea:focus { border-color: var(--accent-color); }
+
+        /* Suggestions Area */
+        .stat-box {
+            background: var(--stat-box-bg);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .suggestion-card {
+            background: var(--editor-bg);
+            border: 1px solid var(--editor-border);
+            border-left: 4px solid #ff9800;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .suggestion-card.good { border-left-color: #4caf50; }
+        .suggestion-card.bad { border-left-color: #f44336; }
+
+        #fileInput { display: none; }
+
+        /* HIDDEN PRINT DIV */
+        #print-area {
+            display: none;
+            white-space: pre-wrap;
+            font-family: 'Georgia', serif;
+            font-size: 12pt;
+            line-height: 2;
+            color: #000;
+            padding: 40px;
+        }
+
+        /* PRINT STYLES (PDF EXPORT) */
+        @media print {
+            body { background: white; color: black; display: block; height: auto; overflow: visible; }
+            .sidebar, .toolbar, textarea { display: none !important; }
+            #print-area { display: block !important; }
+            .main-content { max-width: 100%; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-content">
+        <div class="toolbar">
+            <h1>Writer's Pad</h1>
+            <button class="icon-btn" onclick="toggleTheme()" title="Toggle Dark Mode">🌓</button>
+            <input type="file" id="fileInput" accept=".txt,.md">
+            
+            <button class="secondary" onclick="document.getElementById('fileInput').click()">📂 Import</button>
+            <button class="secondary" onclick="downloadFile()">💾 Save .txt</button>
+            <button class="secondary" onclick="exportPDF()">📄 PDF</button>
+            
+            <button onclick="analyzeText()">✨ Analyze</button>
+        </div>
+        
+        <textarea id="editor" placeholder="Start writing here or import a file..."></textarea>
+        <div id="print-area"></div>
+    </div>
+
+    <div class="sidebar">
+        <h3>Analysis</h3>
+        <div class="stat-box">
+            <strong id="wordCount">0</strong> words<br>
+            <strong id="charCount">0</strong> characters
+        </div>
+        
+        <h4>Recommendations</h4>
+        <div id="recommendations">
+            <p style="color: #888; font-style: italic;">Click "Analyze" to get writing tips.</p>
+        </div>
+    </div>
+
+    <script>
+        const editor = document.getElementById('editor');
+        const fileInput = document.getElementById('fileInput');
+        const recBox = document.getElementById('recommendations');
+        const wordCountDisplay = document.getElementById('wordCount');
+        const charCountDisplay = document.getElementById('charCount');
+        const printArea = document.getElementById('print-area');
+
+        // 1. LIVE STATS
+        editor.addEventListener('input', () => {
+            const text = editor.value;
+            charCountDisplay.textContent = text.length;
+            wordCountDisplay.textContent = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+        });
+
+        // 2. THEME TOGGLE (Dark Mode)
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            // Optional: Save preference to localStorage
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        // Check local storage on load
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // 3. IMPORT
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                editor.value = e.target.result;
+                editor.dispatchEvent(new Event('input'));
+            };
+            reader.readAsText(file);
+        });
+
+        // 4. SAVE .TXT
+        function downloadFile() {
+            const text = editor.value;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const anchor = document.createElement('a');
+            anchor.download = 'my-writing.txt';
+            anchor.href = window.URL.createObjectURL(blob);
+            anchor.click();
+        }
+
+        // 5. EXPORT PDF
+        function exportPDF() {
+            const text = editor.value;
+            if(!text.trim()) { alert("Write something first!"); return; }
+            
+            // Copy text to the hidden print div
+            printArea.textContent = text;
+            
+            // Trigger browser print dialog
+            window.print();
+        }
+
+        // 6. ANALYSIS LOGIC
+        function analyzeText() {
+            const text = editor.value;
+            recBox.innerHTML = ''; 
+
+            if (!text.trim()) {
+                recBox.innerHTML = '<p>Please write something first!</p>';
+                return;
+            }
+
+            let suggestions = [];
+
+            // A. Weak Words
+            const weakWords = ['very', 'really', 'literally', 'basically', 'actually', 'stuff', 'things', 'just'];
+            let foundWeak = [];
+            weakWords.forEach(word => {
+                const regex = new RegExp(`\\b${word}\\b`, 'gi');
+                if (regex.test(text)) foundWeak.push(word);
+            });
+
+            if (foundWeak.length > 0) {
+                suggestions.push({
+                    type: 'bad',
+                    msg: `Avoid weak words: <b>${[...new Set(foundWeak)].join(', ')}</b>.`
+                });
+            }
+
+            // B. Sentence Length
+            const sentences = text.match(/[^\.!\?]+[\.!\?]+/g) || [];
+            let longSentences = sentences.filter(s => s.split(' ').length > 25).length;
+            
+            if (longSentences > 0) {
+                suggestions.push({
+                    type: 'bad',
+                    msg: `<b>${longSentences}</b> sentences are very long (25+ words).`
+                });
+            } else {
+                suggestions.push({
+                    type: 'good',
+                    msg: `Sentence flow is good.`
+                });
+            }
+
+            // C. Adverbs
+            const adverbs = (text.match(/\b\w+ly\b/gi) || []).length;
+            if (adverbs > 3) {
+                suggestions.push({
+                    type: 'bad',
+                    msg: `High usage of adverbs (<b>${adverbs}</b> found). Use stronger verbs.`
+                });
+            }
+
+            // D. Render
+            if (suggestions.length === 0) {
+                recBox.innerHTML = '<div class="suggestion-card good">Clean writing! No issues found.</div>';
+            } else {
+                suggestions.forEach(s => {
+                    const div = document.createElement('div');
+                    div.className = `suggestion-card ${s.type}`;
+                    div.innerHTML = s.msg;
+                    recBox.appendChild(div);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
