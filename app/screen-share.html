@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirShare - Secure Screen Sharing</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #4f46e5; 
+            --secondary: #10b981; 
+            --danger: #ef4444;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-main: #1f2937;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 2rem 1rem; 
+        }
+
+        /* UI Card */
+        .control-panel { 
+            background: var(--card-bg); 
+            padding: 2rem; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
+            width: 100%; 
+            max-width: 500px; 
+            text-align: center; 
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 { font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--primary); }
+        p.desc { color: #6b7280; font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+        .input-group { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem; }
+        input { 
+            padding: 0.8rem 1rem; border: 2px solid #e5e7eb; border-radius: 10px; 
+            font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+
+        .button-stack { display: flex; gap: 10px; }
+        button { 
+            flex: 1; padding: 0.8rem; border: none; border-radius: 10px; 
+            font-weight: 600; cursor: pointer; color: white; transition: 0.2s;
+        }
+        button:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        button:active { transform: translateY(0); }
+        button:disabled { background: #ccc !important; cursor: not-allowed; transform: none; }
+        
+        .btn-share { background: var(--primary); }
+        .btn-join { background: var(--secondary); }
+        .btn-stop { background: var(--danger); display: none; width: 100%; margin-top: 10px; }
+
+        /* Status Badge */
+        .status { 
+            display: inline-block; margin-top: 1.2rem; padding: 0.4rem 1rem; 
+            background: #f3f4f6; border-radius: 20px; font-size: 0.85rem; font-weight: 500;
+        }
+        .status.online { background: #dcfce7; color: #166534; }
+        .status.error { background: #fee2e2; color: #991b1b; }
+
+        /* Video Area */
+        .video-container {
+            width: 100%; max-width: 900px; position: relative;
+            background: #000; border-radius: 15px; overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center;
+        }
+        
+        video { width: 100%; height: 100%; object-fit: contain; display: none; }
+        
+        .placeholder { color: #4b5563; text-align: center; }
+        .placeholder svg { width: 50px; height: 50px; margin-bottom: 10px; opacity: 0.3; }
+
+        .fullscreen-btn {
+            position: absolute; bottom: 15px; right: 15px; z-index: 10;
+            background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.3);
+            padding: 5px 12px; border-radius: 5px; cursor: pointer; display: none;
+            font-size: 0.8rem; backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="control-panel">
+        <h1>AirShare</h1>
+        <p class="desc">Static P2P Screen Sharing (No Audio)</p>
+        
+        <div class="input-group">
+            <input type="text" id="roomName" placeholder="Room Name (e.g. MyMeeting)">
+            <input type="password" id="passcode" placeholder="Passcode">
+        </div>
+        
+        <div class="button-stack">
+            <button id="btnHost" class="btn-share">Share Screen</button>
+            <button id="btnJoin" class="btn-join">Join Room</button>
+        </div>
+        <button id="btnStop" class="btn-stop">Stop / Disconnect</button>
+
+        <div id="statusLabel" class="status">System Ready</div>
+    </div>
+
+    <div class="video-container" id="videoBox">
+        <div id="placeholder" class="placeholder">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            <p>No active stream</p>
+        </div>
+        <video id="remoteVideo" autoplay playsinline muted></video>
+        <button id="btnFullscreen" class="fullscreen-btn">Fullscreen</button>
+    </div>
+
+    <script>
+        let peer = null;
+        let localStream = null;
+        
+        const el = {
+            room: document.getElementById('roomName'),
+            pass: document.getElementById('passcode'),
+            btnHost: document.getElementById('btnHost'),
+            btnJoin: document.getElementById('btnJoin'),
+            btnStop: document.getElementById('btnStop'),
+            btnFull: document.getElementById('btnFullscreen'),
+            video: document.getElementById('remoteVideo'),
+            status: document.getElementById('statusLabel'),
+            placeholder: document.getElementById('placeholder')
+        };
+
+        function setStatus(msg, isError = false) {
+            el.status.innerText = msg;
+            el.status.className = isError ? 'status error' : 'status online';
+        }
+
+        function resetUI() {
+            if (localStream) {
+                localStream.getTracks().forEach(t => t.stop());
+                localStream = null;
+            }
+            if (peer) {
+                peer.destroy();
+                peer = null;
+            }
+            el.video.style.display = 'none';
+            el.placeholder.style.display = 'block';
+            el.btnFull.style.display = 'none';
+            el.btnStop.style.display = 'none';
+            el.btnHost.disabled = false;
+            el.btnJoin.disabled = false;
+            setStatus("Disconnected");
+        }
+
+        function getFullId() {
+            const r = el.room.value.trim();
+            const p = el.pass.value.trim();
+            if(!r || !p) { alert("Please fill Room and Passcode"); return null; }
+            return `as_${r}_${p}`;
+        }
+
+        // --- Host Logic ---
+        el.btnHost.onclick = async () => {
+            const id = getFullId();
+            if(!id) return;
+
+            try {
+                localStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+                peer = new Peer(id);
+
+                peer.on('open', () => {
+                    el.video.srcObject = localStream;
+                    el.video.style.display = 'block';
+                    el.placeholder.style.display = 'none';
+                    el.btnStop.style.display = 'block';
+                    el.btnHost.disabled = true;
+                    el.btnJoin.disabled = true;
+                    setStatus("Sharing Live: " + el.room.value);
+                });
+
+                peer.on('call', (call) => {
+                    call.answer(localStream);
+                });
+
+                peer.on('error', (err) => {
+                    if(err.type === 'id-taken') alert("Room occupied! Someone is already sharing.");
+                    resetUI();
+                });
+
+                localStream.getVideoTracks()[0].onended = () => resetUI();
+
+            } catch (e) {
+                console.error(e);
+                setStatus("Permission denied", true);
+            }
+        };
+
+        // --- Viewer Logic ---
+        el.btnJoin.onclick = () => {
+            const hostId = getFullId();
+            if(!hostId) return;
+
+            peer = new Peer(); // Random ID for viewer
+
+            peer.on('open', () => {
+                setStatus("Connecting...");
+                
+                // FIX: Send a dummy video track to trigger WebRTC handshake
+                const canvas = document.createElement('canvas');
+                canvas.width = canvas.height = 1;
+                const dummyStream = canvas.captureStream();
+                
+                const call = peer.call(hostId, dummyStream);
+                
+                call.on('stream', (remoteStream) => {
+                    el.video.srcObject = remoteStream;
+                    el.video.style.display = 'block';
+                    el.placeholder.style.display = 'none';
+                    el.btnFull.style.display = 'block';
+                    el.btnStop.style.display = 'block';
+                    el.btnHost.disabled = true;
+                    el.btnJoin.disabled = true;
+                    setStatus("Connected - Watching");
+                });
+
+                call.on('close', () => resetUI());
+            });
+
+            peer.on('error', (err) => {
+                setStatus("Room not found / error", true);
+                setTimeout(resetUI, 2000);
+            });
+        };
+
+        el.btnStop.onclick = () => resetUI();
+
+        el.btnFull.onclick = () => {
+            if (el.video.requestFullscreen) el.video.requestFullscreen();
+            else if (el.video.webkitRequestFullscreen) el.video.webkitRequestFullscreen();
+        };
+    </script>
+</body>
+</html>
