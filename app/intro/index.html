@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cen | A Day in the Life</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="sky-background"></div>
+    <div class="stars"></div>
+    <div class="celestial-body sun"></div>
+    <div class="celestial-body moon"></div>
+
+    <div class="landscape">
+        <div class="mountains"></div>
+        <div class="ground"></div>
+    </div>
+
+    <main class="scroll-container">
+        <!-- Morning: 06:00 - 09:00 -->
+        <section class="time-section" id="morning">
+            <div class="content-wrapper intro-card">
+                <div class="profile-header">
+                    <div class="profile-pic-container">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80"
+                            alt="Profile Picture" class="profile-img">
+                    </div>
+                    <div class="intro-text">
+                        <h1 class="fade-in">Good Morning.</h1>
+                        <p class="subtitle fade-in delay-1">I'm <span class="highlight">Suncen</span>.</p>
+                        <p class="bio">2nd Year CS Student. <br> Explorer of Digital & Physical Worlds.</p>
+                        <div class="interactive-element wake-up-btn">👋 Say Hi</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education Section -->
+        <section class="time-section" id="education">
+            <div class="content-wrapper">
+                <h2 class="fade-in">The Foundation.</h2>
+                <p class="subtitle">Education & Achievements</p>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">2023 - Present</div>
+                        <div class="timeline-content">
+                            <h3>Bachelor of Computer Science</h3>
+                            <p><strong>University of New South Wales (UNSW)</strong></p>
+                            <p>Specializing in Artificial Intelligence and Systems. <br> WAM: Distinction.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="achievements">
+                    <h3>Awards</h3>
+                    <ul class="styled-list">
+                        <li>🏆 Dean's List (2024)</li>
+                        <li>🥇 1st Place - UNSW CS Hackathon</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Late Morning: 09:00 - 12:00 (Serious Side) -->
+        <section class="time-section" id="late-morning">
+            <div class="content-wrapper dual-personality serious">
+                <h2 class="fade-in">The Grind.</h2>
+                <p class="subtitle">Computer Science Major @ UNSW</p>
+                <div class="tech-stack">
+                    <h3>Tech Arsenal</h3>
+                    <div class="tags">
+                        <span>Python 🐍</span>
+                        <span>React ⚛️</span>
+                        <span>Node.js 🟢</span>
+                        <span>C/C++ ⚙️</span>
+                        <span>AI/ML 🤖</span>
+                        <span>Rust 🦀</span>
+                        <span>MIPS 🛠️</span>
+                        <span>Java ☕</span>
+                    </div>
+                </div>
+                <div class="academic-focus">
+                    <h3>Focus</h3>
+                    <p>Building scalable systems and exploring agentic AI. <br> "I write clean code... mostly."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section class="time-section" id="experience">
+            <div class="content-wrapper wide">
+                <h2 class="fade-in">Building the Future.</h2>
+                <p class="subtitle">Experience & Projects</p>
+                <div class="experience-grid">
+                    <div class="experience-card">
+                        <div class="card-header">
+                            <h3>Software Engineer Intern</h3>
+                            <span class="company">TechCorp Inc.</span>
+                            <span class="date">Dec 2024 - Feb 2025</span>
+                        </div>
+                        <p>Developed internal tools using React and Node.js. Optimized database queries, reducing load
+                            time by 40%.</p>
+                    </div>
+                    <div class="experience-card">
+                        <div class="card-header">
+                            <h3>Frontend Developer</h3>
+                            <span class="company">Freelance</span>
+                            <span class="date">2022 - 2023</span>
+                        </div>
+                        <p>Built responsive websites for local businesses. Mastered the art of centering a div.</p>
+                    </div>
+                </div>
+
+                <div class="project-showcase">
+                    <h3>Featured Project: AI Chess Bot</h3>
+                    <p>A chess engine built with Rust and WebAssembly. Beating me since 2024.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Noon: 12:00 - 15:00 (Why this page / Fun Facts) -->
+        <section class="time-section" id="noon">
+            <div class="content-wrapper centered">
+                <h2>Why this page?</h2>
+                <p class="block-text">Standard resumes are boring. I wanted to build a world you can scroll through. A
+                    digital handshake that lasts 24 hours (or however long you scroll).</p>
+
+                <div class="fun-fact-container">
+                    <h3>Fun Fact #<span id="fact-number">1</span></h3>
+                    <div class="fact-ticker">
+                        <p id="fact-text">I once debugged a loop for 6 hours only to find a missing semicolon.</p>
+                    </div>
+                    <button id="next-fact-btn">Next Fact ➡️</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Side Quests (Civilian Life) -->
+        <section class="time-section" id="side-quests">
+            <div class="content-wrapper">
+                <h2 class="fade-in">Side Quests.</h2>
+                <p class="subtitle">Just for Fun</p>
+                <div class="quest-log">
+                    <div class="quest-item">
+                        <span class="quest-icon">⌨️</span>
+                        <div class="quest-text">
+                            <h3>Keyboard Enthusiast</h3>
+                            <p>Built a custom mechanical keyboard. It sounds like rain on a tin roof.</p>
+                        </div>
+                    </div>
+                    <div class="quest-item">
+                        <span class="quest-icon">🏃</span>
+                        <div class="quest-text">
+                            <h3>Marathon Runner</h3>
+                            <p>Completed my first half-marathon. Legs still recovering.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Afternoon: 15:00 - 18:00 (Funny Side) -->
+        <section class="time-section" id="afternoon">
+            <div class="content-wrapper dual-personality funny">
+                <h2 class="fade-in">Chaotic Energy.</h2>
+                <p class="subtitle">When I'm not coding, I'm probably:</p>
+                <ul class="chaos-list">
+                    <li>🍕 Trying to find the best pizza in town.</li>
+                    <li>🎮 Losing MMR in competitive games.</li>
+                    <li>meme.jpg</li>
+                </ul>
+                <div class="meme-placeholder">
+                    <!-- Placeholder using CSS -->
+                    <span>[Insert Funny Meme/GIF Here]</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sunset: 18:00 - 21:00 (Travel / Gallery) -->
+        <section class="time-section" id="sunset">
+            <div class="content-wrapper wide">
+                <h2 class="fade-in">Where I've Been.</h2>
+                <p class="subtitle">Chasing sunsets and new experiences.</p>
+                <div class="gallery-scroll">
+                    <!-- Placeholders for Travel Photos -->
+                    <div class="gallery-item" style="background: linear-gradient(45deg, #ff9a9e, #fad0c4);">Mountain 🏔️
+                    </div>
+                    <div class="gallery-item" style="background: linear-gradient(45deg, #a18cd1, #fbc2eb);">City 🌃
+                    </div>
+                    <div class="gallery-item" style="background: linear-gradient(45deg, #84fab0, #8fd3f4);">Beach 🏖️
+                    </div>
+                    <div class="gallery-item" style="background: linear-gradient(45deg, #fccb90, #d57eeb);">Forest 🌲
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Night: 21:00+ (Hobbies & Contact) -->
+        <section class="time-section" id="night"> <!-- 29 to wrap around effectively -->
+            <div class="content-wrapper">
+                <h2 class="fade-in">Dream State.</h2>
+                <p class="subtitle">Philosophy, Hobbies & The Future.</p>
+
+                <div class="hobbies-container">
+                    <span class="hobby-tag">Photography 📸</span>
+                    <span class="hobby-tag">Sci-Fi Novels 📚</span>
+                    <span class="hobby-tag">Stargazing 🔭</span>
+                    <span class="hobby-tag">Indie Rock 🎸</span>
+                </div>
+
+                <div class="contact-area">
+                    <p>Want to chat about code, life, or the universe?</p>
+                    <a href="mailto:contact@example.com" class="contact-btn">Get in Touch</a>
+                </div>
+
+                <div class="social-links">
+                    <a href="#">GitHub</a>
+                    <a href="#">Twitter</a>
+                    <a href="#">LinkedIn</a>
+                    <a href="#">Instagram</a>
+                </div>
+            </div>
+        </section>
+
+        <div class="scroll-prompt">
+            <span>Scroll the Day</span>
+            <div class="arrow-down"></div>
+        </div>
+    </main>
+
+    <div class="ui-controls">
+        <div class="clock">06:00</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
