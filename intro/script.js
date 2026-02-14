@@ -8,11 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Interactive Elements
     const facts = [
-        "I once debugged a loop for 6 hours only to find a missing semicolon.",
-        "I drink approximately 3 coffees for every 100 lines of code.",
-        "My favorite place to code is in a dark room with lo-fi beats.",
-        "I named my hard drive 'The Void'.",
-        "I can solve a Rubik's cube in under 2 minutes (slow, I know)."
+        "I once debugged a loop for 6 hours only to find a missing '='.",
+        "I drink approximately 3 teas for every 100 lines of code.",
+        "My favorite place to code is at outside under the sunshine.",
+        "I can solve a Rubik's cube in under 2 minutes (slow, I know).",
+        "I spend my days optimizing algorithms for milliseconds and my nights waiting for market volatility that happens in microseconds."
     ];
     let currentFactIndex = 0;
     const factText = document.getElementById('fact-text');
