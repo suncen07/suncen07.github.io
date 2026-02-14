@@ -303,6 +303,8 @@ p.subtitle {
     min-width: 250px;
     height: 350px;
     border-radius: 15px;
+    background-size: cover;
+    background-position: center;
     display: flex;
     align-items: center;
     justify-content: center;
