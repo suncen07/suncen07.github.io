@@ -127,6 +127,9 @@
         button.secondary { background-color: #e0e0e0; color: #333; }
         body.dark-mode button.secondary { background-color: #444; color: #fff; }
 
+        button.danger { background-color: #d32f2f; color: white; }
+        body.dark-mode button.danger { background-color: #b71c1c; color: white; }
+
         select {
             padding: 7px;
             border-radius: 6px;
@@ -205,6 +208,7 @@
         #print-area {
             display: none;
             white-space: pre-wrap;
+            word-wrap: break-word;
             font-family: 'Georgia', serif;
             font-size: 12pt;
             line-height: 1.8;
@@ -213,8 +217,17 @@
         }
 
         @media print {
+            @page { margin: 2cm; }
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area {
+                display: block !important;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
             .app-container, .sidebar, .toolbar, .header-section, textarea { display: none !important; }
-            #print-area { display: block !important; }
         }
     </style>
 </head>
@@ -232,13 +245,16 @@
                     <input type="file" id="fileInput" accept=".txt,.md">
                     <button class="secondary" onclick="document.getElementById('fileInput').click()">📂 <span>Import</span></button>
                     
+                    <button class="secondary" onclick="saveData()">💾 <span>Save</span></button>
+                    
                     <select id="exportFormat">
                         <option value="txt">.txt (Plain Text)</option>
                         <option value="md">.md (Markdown)</option>
                     </select>
                     
-                    <button class="secondary" onclick="downloadFile()">💾 <span>Save</span></button>
+                    <button class="secondary" onclick="downloadFile()">📥 <span>Download</span></button>
                     <button class="secondary" onclick="exportPDF()">📄 <span>PDF</span></button>
+                    <button class="danger" onclick="clearEditor()">🗑️ <span>Clear</span></button>
                     <button onclick="analyzeText()">✨ <span>Analyze</span></button>
                 </div>
             </div>
@@ -293,14 +309,12 @@
         function saveData() {
             localStorage.setItem('writer_pad_text', editor.value);
             localStorage.setItem('writer_pad_name', filenameInput.value);
+            showSimpleMessage("Saved to local storage!");
         }
 
         editor.addEventListener('input', () => {
-            saveData();
             updateStats();
         });
-
-        filenameInput.addEventListener('input', saveData);
 
         // --- 2. LIVE STATS ---
         function updateStats() {
@@ -359,6 +373,20 @@
             }
             printArea.textContent = text;
             window.print();
+        }
+
+        function clearEditor() {
+            if (confirm("Are you sure you want to clear the editor?")) {
+                editor.value = '';
+                updateStats();
+                if (confirm("Do you also want to clear the saved data in local storage?")) {
+                    localStorage.removeItem('writer_pad_text');
+                    localStorage.removeItem('writer_pad_name');
+                    showSimpleMessage("Editor and local storage cleared!");
+                } else {
+                    showSimpleMessage("Editor cleared!");
+                }
+            }
         }
 
         function showSimpleMessage(msg) {
