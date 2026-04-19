@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>训练计划中心</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Space+Mono:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg2: #111118;
+  --bg3: #18181f;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #e8e8f0;
+  --text2: #9999b0;
+  --text3: #666680;
+  --accent: #c8f060;
+  --accent2: #60d0f0;
+  --accent3: #f06090;
+  --accent4: #f0b060;
+  --accent5: #a060f0;
+  --red: #ff4466;
+  --card-bg: #141420;
+  --card-hover: #1a1a28;
+  --sidebar-w: 220px;
+  --radius: 12px;
+  --radius2: 8px;
+  --shadow: 0 4px 32px rgba(0,0,0,0.5);
+  --mono: 'Space Mono', monospace;
+  --serif: 'Noto Serif SC', serif;
+  --sans: 'Noto Sans SC', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.7;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
+
+/* ── ROOT LAYOUT ── */
+.app-shell{
+  display:flex;
+  min-height:100vh;
+  position:relative;
+}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);
+  flex-shrink:0;
+  position:fixed;
+  top:0; left:0;
+  height:100vh;
+  overflow-y:auto;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  z-index:50;
+}
+.sidebar::-webkit-scrollbar{width:3px}
+
+/* ── MAIN CONTENT ── */
+.main-content{
+  margin-left:var(--sidebar-w);
+  flex:1;
+  min-width:0;
+  overflow-x:hidden;
+}
+
+/* ── NAV LOGO ── */
+.nav-logo{
+  padding:22px 18px 14px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.nav-logo-title{
+  font-family:var(--serif);
+  font-size:13px;font-weight:600;
+  color:var(--accent);
+  letter-spacing:.04em;
+  line-height:1.4;
+}
+.nav-logo-sub{
+  display:block;
+  font-size:9px;
+  color:var(--text3);
+  font-family:var(--mono);
+  margin-top:3px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+/* ── PLAN SWITCHER in sidebar ── */
+.plan-switcher{
+  padding:10px 12px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.plan-switcher-label{
+  font-family:var(--mono);
+  font-size:8px;
+  letter-spacing:.15em;
+  color:var(--text3);
+  text-transform:uppercase;
+  margin-bottom:6px;
+  padding:0 6px;
+}
+.plan-switcher-btn{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--text2);
+  font-size:11px;
+  font-family:var(--sans);
+  cursor:pointer;
+  transition:all .18s;
+  text-align:left;
+  margin-bottom:4px;
+}
+.plan-switcher-btn:hover{
+  background:var(--bg3);
+  border-color:var(--border2);
+  color:var(--text);
+}
+.plan-switcher-btn.active{
+  background:rgba(200,240,96,.08);
+  border-color:rgba(200,240,96,.25);
+  color:var(--accent);
+}
+.plan-switcher-dot{
+  width:6px; height:6px;
+  border-radius:50%;
+  background:currentColor;
+  opacity:.6;
+  flex-shrink:0;
+}
+.plan-switcher-btn.active .plan-switcher-dot{opacity:1}
+.plan-switcher-name{flex:1;font-weight:500;font-size:12px}
+.plan-switcher-sub{
+  font-family:var(--mono);
+  font-size:9px;
+  color:var(--text3);
+  display:block;
+  margin-top:1px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* ── NAV SECTIONS ── */
+.nav-section{padding:8px 0}
+.nav-label{
+  padding:5px 18px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+  color:var(--text3);text-transform:uppercase;
+}
+.nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 18px;
+  cursor:pointer;
+  font-size:12px;color:var(--text2);
+  border-left:2px solid transparent;
+  transition:all .15s;
+  user-select:none;
+}
+.nav-item:hover{background:var(--bg3);color:var(--text);border-left-color:var(--border2)}
+.nav-item.active{background:rgba(200,240,96,.05);color:var(--accent);border-left-color:var(--accent)}
+.nav-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.5;flex-shrink:0}
+.nav-item.active .nav-dot{opacity:1}
+
+/* ── PAGES ── */
+.page{display:none;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── LOADING STATE ── */
+.loading-screen{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:60vh;
+  gap:16px;
+  color:var(--text3);
+}
+.loading-spinner{
+  width:32px;height:32px;
+  border:2px solid var(--border);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── ERROR STATE ── */
+.error-box{
+  background:rgba(255,68,102,.06);
+  border:1px solid rgba(255,68,102,.2);
+  border-radius:var(--radius);
+  padding:24px;
+  margin:40px 48px;
+  font-size:14px;
+  color:var(--text2);
+}
+.error-box strong{color:var(--red)}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:60px 52px;
+  position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(200,240,96,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 20% 80%, rgba(96,208,240,.03) 0%, transparent 60%);
+}
+.hero-eyebrow{
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+  color:var(--accent);text-transform:uppercase;margin-bottom:20px;
+}
+.hero-title{
+  font-family:var(--serif);
+  font-size:clamp(26px,3.5vw,50px);
+  font-weight:700;line-height:1.25;
+  color:var(--text);margin-bottom:12px;
+}
+.hero-title em{color:var(--accent);font-style:normal}
+.hero-sub{
+  font-size:15px;color:var(--text2);
+  max-width:520px;margin-bottom:36px;line-height:1.8;
+}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:6px;
+  font-size:13px;font-weight:500;
+  cursor:pointer;border:none;
+  transition:all .18s;user-select:none;
+  font-family:var(--sans);
+}
+.btn-primary{background:var(--accent);color:#0a0a0f;font-weight:700}
+.btn-primary:hover{background:#d8ff70;transform:translateY(-1px)}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+.btn-outline:hover{background:var(--bg3);color:var(--text)}
+.btn-sm{padding:6px 14px;font-size:11px}
+.btn-timer{
+  background:rgba(240,176,96,.1);color:var(--accent4);
+  border:1px solid rgba(240,176,96,.18);
+  font-family:var(--mono);font-size:11px;padding:4px 9px;border-radius:4px;
+  cursor:pointer;transition:all .15s;
+}
+.btn-timer:hover{background:rgba(240,176,96,.18)}
+
+/* ── SECTION ── */
+.section{padding:48px 52px}
+.section-title{
+  font-family:var(--serif);font-size:22px;font-weight:600;
+  color:var(--text);margin-bottom:6px;
+}
+.section-sub{font-size:12px;color:var(--text3);margin-bottom:28px;font-family:var(--mono);letter-spacing:.05em}
+.divider{height:1px;background:var(--border);margin:44px 0}
+
+/* ── SAFETY BLOCK ── */
+.safety-block{
+  background:linear-gradient(135deg,rgba(255,68,102,.07),rgba(255,68,102,.02));
+  border:1px solid rgba(255,68,102,.2);
+  border-radius:var(--radius);
+  padding:22px;margin:28px 0;
+}
+.safety-block-label{
+  font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+  color:var(--red);display:block;margin-bottom:10px;text-transform:uppercase;
+}
+.safety-list{list-style:none}
+.safety-list li{
+  padding:4px 0 4px 16px;position:relative;
+  font-size:13px;color:var(--text2);
+}
+.safety-list li::before{content:'—';position:absolute;left:0;color:var(--red);opacity:.5}
+
+/* ── WEEK GRID ── */
+.week-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+  gap:14px;
+}
+.day-card{
+  background:var(--card-bg);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px;
+  cursor:pointer;transition:all .2s;
+  position:relative;overflow:hidden;
+}
+.day-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--card-accent,var(--accent));opacity:.6;
+}
+.day-card:hover{background:var(--card-hover);border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shadow)}
+.day-card-day{font-family:var(--mono);font-size:9px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:8px}
+.day-card-title{font-family:var(--serif);font-size:15px;font-weight:600;margin-bottom:6px;color:var(--text);line-height:1.4}
+.day-card-dur{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:10px}
+
+/* ── TAGS ── */
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.tag{padding:2px 8px;border-radius:20px;font-size:9px;font-family:var(--mono);letter-spacing:.05em;background:rgba(255,255,255,.04);color:var(--text3);border:1px solid var(--border)}
+.tag.t-green{background:rgba(200,240,96,.07);color:var(--accent);border-color:rgba(200,240,96,.18)}
+.tag.t-blue{background:rgba(96,208,240,.07);color:var(--accent2);border-color:rgba(96,208,240,.18)}
+.tag.t-pink{background:rgba(240,96,144,.07);color:var(--accent3);border-color:rgba(240,96,144,.18)}
+.tag.t-orange{background:rgba(240,176,96,.07);color:var(--accent4);border-color:rgba(240,176,96,.18)}
+.tag.t-purple{background:rgba(160,96,240,.07);color:var(--accent5);border-color:rgba(160,96,240,.18)}
+
+/* ── DAY TABS ── */
+.day-tabs{
+  display:flex;gap:0;
+  border-bottom:1px solid var(--border);
+  overflow-x:auto;padding:0 52px;
+  scrollbar-width:none;position:sticky;top:0;
+  background:var(--bg);z-index:10;
+}
+.day-tabs::-webkit-scrollbar{display:none}
+.day-tab{
+  padding:13px 18px;
+  font-size:12px;color:var(--text3);
+  cursor:pointer;white-space:nowrap;
+  border-bottom:2px solid transparent;
+  transition:all .15s;flex-shrink:0;
+}
+.day-tab:hover{color:var(--text2)}
+.day-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ── PLAN HEADER ── */
+.plan-header{padding:32px 52px 22px;border-bottom:1px solid var(--border)}
+.plan-theme{font-family:var(--serif);font-size:22px;font-weight:600;margin-bottom:6px}
+.plan-meta{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:10px;color:var(--text3);flex-wrap:wrap}
+
+/* ── PLAN BODY ── */
+.plan-body{padding:28px 52px 48px}
+
+/* ── BLOCK ── */
+.block{margin-bottom:32px}
+.block-title{
+  font-family:var(--mono);font-size:9px;letter-spacing:.18em;
+  color:var(--text3);text-transform:uppercase;
+  margin-bottom:12px;
+  display:flex;align-items:center;gap:10px;
+}
+.block-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── EXERCISE CARD ── */
+.exercise-card{
+  background:var(--card-bg);border:1px solid var(--border);
+  border-radius:var(--radius);margin-bottom:10px;
+  overflow:hidden;transition:border-color .15s;
+}
+.exercise-card:hover{border-color:var(--border2)}
+.exercise-header{
+  display:flex;align-items:center;
+  padding:12px 16px;cursor:pointer;gap:10px;
+}
+.exercise-names{flex:1;min-width:0}
+.exercise-zh{font-size:13px;font-weight:500;color:var(--text)}
+.exercise-en{font-size:10px;color:var(--text3);font-family:var(--mono)}
+.exercise-sets{
+  font-family:var(--mono);font-size:11px;
+  color:var(--accent4);background:rgba(240,176,96,.07);
+  padding:3px 9px;border-radius:4px;flex-shrink:0;
+}
+.exercise-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;align-items:center}
+.exercise-chevron{color:var(--text3);font-size:9px;transition:transform .2s;flex-shrink:0}
+.exercise-card.open .exercise-chevron{transform:rotate(180deg)}
+.exercise-body{
+  display:none;
+  padding:12px 16px 14px 16px;
+  border-top:1px solid var(--border);
+}
+.exercise-card.open .exercise-body{display:block}
+.exercise-purpose{font-size:12px;color:var(--text2);margin-bottom:10px}
+.exercise-section-label{
+  font-family:var(--mono);font-size:8px;letter-spacing:.15em;
+  color:var(--text3);text-transform:uppercase;margin-bottom:5px;margin-top:10px;
+}
+.cues-list,.errors-list{list-style:none}
+.cues-list li{padding:3px 0 3px 12px;position:relative;font-size:12px;color:var(--text2)}
+.cues-list li::before{content:'›';position:absolute;left:0;color:var(--accent2)}
+.errors-list li{padding:3px 0 3px 12px;position:relative;font-size:12px;color:var(--text2)}
+.errors-list li::before{content:'×';position:absolute;left:0;color:var(--red);font-size:11px}
+
+/* ── VIDEO ITEMS ── */
+.video-section{margin-top:10px}
+.video-item{margin-bottom:8px;border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;background:var(--bg3)}
+.video-item-header{display:flex;align-items:center;gap:7px;padding:7px 11px;cursor:pointer;transition:background .13s}
+.video-item-header:hover{background:var(--card-hover)}
+.video-item-icon{width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;font-weight:700}
+.vi-yt{background:rgba(255,0,0,.13);color:#ff4444}
+.vi-bili{background:rgba(0,160,255,.1);color:#00a0ff}
+.vi-youku{background:rgba(0,200,100,.1);color:#00c864}
+.vi-other{background:rgba(255,255,255,.05);color:var(--text3)}
+.video-item-label{font-size:11px;color:var(--text2);flex:1;font-family:var(--mono)}
+.video-item-toggle{font-size:9px;color:var(--text3);padding:2px 7px;border-radius:3px;border:1px solid var(--border);background:none;cursor:pointer;font-family:var(--mono);transition:all .13s;flex-shrink:0}
+.video-item-toggle:hover,.video-item-toggle.open{border-color:var(--accent);color:var(--accent);background:rgba(200,240,96,.05)}
+.video-embed-wrap{display:none;padding:0 10px 8px}
+.video-embed-wrap.open{display:block}
+.video-embed-frame{position:relative;padding-top:56.25%;border-radius:5px;overflow:hidden;background:#000;margin-bottom:6px}
+.video-embed-frame iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.video-link-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.video-open-link{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:4px;font-size:10px;font-family:var(--mono);background:rgba(96,208,240,.05);color:var(--accent2);border:1px solid rgba(96,208,240,.13);text-decoration:none;transition:all .13s}
+.video-open-link:hover{background:rgba(96,208,240,.12)}
+.video-copy-link{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:4px;font-size:10px;font-family:var(--mono);background:rgba(255,255,255,.03);color:var(--text3);border:1px solid var(--border);cursor:pointer;transition:all .13s}
+.video-copy-link:hover{border-color:var(--border2);color:var(--text2)}
+
+/* ── WARMUP GRID ── */
+.warmup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.warmup-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius2);padding:10px 12px;font-size:12px;color:var(--text2)}
+.warmup-item .wi-title{font-size:11px;font-weight:500;color:var(--text);margin-bottom:3px}
+.warmup-item .wi-sets{font-family:var(--mono);font-size:9px;color:var(--accent4)}
+
+/* ── SUMMARY BOX ── */
+.summary-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:24px}
+.summary-box-title{font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.goals-list{display:flex;flex-wrap:wrap;gap:7px}
+.goal-item{padding:5px 12px;border-radius:20px;font-size:11px;background:var(--card-bg);border:1px solid var(--border);color:var(--text2)}
+
+/* ── TIPS BOX ── */
+.tips-box{background:rgba(200,240,96,.03);border:1px solid rgba(200,240,96,.1);border-radius:var(--radius2);padding:14px}
+.tips-box ul{list-style:none}
+.tips-box ul li{padding:3px 0 3px 14px;position:relative;font-size:12px;color:var(--text2)}
+.tips-box ul li::before{content:'✓';position:absolute;left:0;color:var(--accent);font-size:10px}
+
+/* ── NOTICE / CALLOUT ── */
+.notice{background:rgba(240,96,144,.05);border:1px solid rgba(240,96,144,.13);border-radius:var(--radius2);padding:14px;margin-bottom:18px;font-size:12px;color:var(--text2);line-height:1.8}
+.notice strong{color:var(--accent3)}
+.callout{background:rgba(96,208,240,.04);border-left:3px solid var(--accent2);padding:11px 14px;margin:14px 0;font-size:12px;color:var(--text2);line-height:1.8;border-radius:0 6px 6px 0}
+
+/* ── REC CARDS ── */
+.recovery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:32px}
+.rec-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.rec-card-icon{font-size:26px;margin-bottom:8px}
+.rec-card-title{font-family:var(--serif);font-size:15px;font-weight:600;margin-bottom:7px}
+.rec-card-content{font-size:12px;color:var(--text2);line-height:1.8}
+.rec-card-content ul{list-style:none;margin-top:7px}
+.rec-card-content ul li{padding:2px 0 2px 12px;position:relative}
+.rec-card-content ul li::before{content:'·';position:absolute;left:0;color:var(--accent)}
+
+/* ── MINI ROUTINE ── */
+.mini-routine{background:linear-gradient(135deg,rgba(200,240,96,.04),rgba(96,208,240,.03));border:1px solid rgba(200,240,96,.1);border-radius:var(--radius);padding:22px;margin-bottom:18px}
+.mini-routine-title{font-family:var(--serif);font-size:15px;font-weight:600;margin-bottom:12px;color:var(--accent)}
+.mini-routine-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:7px}
+.mr-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius2);padding:9px 12px;display:flex;justify-content:space-between;align-items:center}
+.mr-item-name{font-size:12px;color:var(--text)}
+.mr-item-sets{font-family:var(--mono);font-size:10px;color:var(--accent4);flex-shrink:0;margin-left:8px}
+
+/* ── PROGRESSION GRID ── */
+.progression-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.prog-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius2);padding:16px}
+.prog-card-week{font-family:var(--mono);font-size:8px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:5px}
+.prog-card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:7px}
+.prog-card-content{font-size:11px;color:var(--text2);line-height:1.7}
+
+/* ── TIME OPTIONS ── */
+.time-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+.time-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius2);padding:16px}
+.time-card-label{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.time-card-items{list-style:none}
+.time-card-items li{font-size:11px;color:var(--text2);padding:3px 0;display:flex;justify-content:space-between;border-bottom:1px solid var(--border)}
+.time-card-items li:last-child{border-bottom:none}
+.time-card-items li span:last-child{font-family:var(--mono);color:var(--accent4);font-size:10px}
+
+/* ── TECHNIQUE GRID ── */
+.technique-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.tech-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius2);padding:16px}
+.tech-card-title{font-family:var(--serif);font-size:14px;font-weight:600;margin-bottom:10px;color:var(--text)}
+.tech-cues{list-style:none;counter-reset:tc}
+.tech-cues li{counter-increment:tc;padding:4px 0 4px 22px;position:relative;font-size:12px;color:var(--text2)}
+.tech-cues li::before{content:counter(tc);position:absolute;left:0;font-family:var(--mono);font-size:9px;color:var(--accent);background:rgba(200,240,96,.1);width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;top:5px}
+
+/* ── LIBRARY ── */
+.lib-search{display:flex;gap:10px;align-items:center;margin-bottom:18px}
+.lib-search input{flex:1;padding:9px 14px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:13px;font-family:var(--sans);outline:none}
+.lib-search input:focus{border-color:var(--border2)}
+.lib-search input::placeholder{color:var(--text3)}
+.lib-filters{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:22px}
+.filter-btn{padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text3);font-size:11px;font-family:var(--mono);cursor:pointer;transition:all .13s}
+.filter-btn:hover,.filter-btn.active{background:rgba(200,240,96,.07);color:var(--accent);border-color:rgba(200,240,96,.2)}
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.lib-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .18s}
+.lib-card:hover{background:var(--card-hover);border-color:var(--border2)}
+.lib-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:7px}
+.lib-card-names .lc-zh{font-size:14px;font-weight:500;color:var(--text)}
+.lib-card-names .lc-en{font-size:10px;color:var(--text3);font-family:var(--mono)}
+.lib-card-sets{font-family:var(--mono);font-size:10px;color:var(--accent4);text-align:right;flex-shrink:0}
+.lib-card-purpose{font-size:12px;color:var(--text2);margin-bottom:8px}
+.lib-card-days{display:flex;flex-wrap:wrap;gap:4px}
+.day-badge{padding:2px 7px;border-radius:20px;font-size:9px;font-family:var(--mono);background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--text3)}
+
+/* ── TIMER ── */
+.timer-float{
+  position:fixed;right:20px;bottom:72px;
+  width:210px;
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:var(--radius);padding:14px;
+  z-index:200;box-shadow:var(--shadow);
+}
+.timer-float.hidden{display:none}
+.timer-drag-handle{display:flex;justify-content:center;padding-bottom:7px;margin-bottom:7px;border-bottom:1px solid var(--border);cursor:grab}
+.timer-drag-dots{display:flex;gap:3px;align-items:center}
+.timer-drag-dots span{width:3px;height:3px;border-radius:50%;background:var(--text3);opacity:.5}
+.timer-progress{width:100%;height:2px;border-radius:2px;background:var(--border);margin-bottom:12px;overflow:hidden}
+.timer-progress-bar{height:100%;background:var(--accent);transition:width .5s linear}
+.timer-display{font-family:var(--mono);font-size:32px;font-weight:700;color:var(--accent);text-align:center;margin-bottom:6px;letter-spacing:.05em}
+.timer-label{font-size:10px;color:var(--text3);text-align:center;margin-bottom:10px;font-family:var(--mono);min-height:14px}
+.timer-controls{display:flex;gap:7px;margin-bottom:10px}
+.timer-btn{flex:1;padding:7px;border-radius:5px;font-size:11px;font-family:var(--mono);border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;transition:all .13s}
+.timer-btn.play{background:rgba(200,240,96,.09);border-color:rgba(200,240,96,.18);color:var(--accent)}
+.timer-btn:hover{border-color:var(--border2);color:var(--text)}
+.timer-presets{display:flex;flex-wrap:wrap;gap:4px}
+.preset-btn{padding:3px 7px;border-radius:3px;font-size:9px;font-family:var(--mono);border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all .13s}
+.preset-btn:hover{border-color:var(--accent4);color:var(--accent4)}
+.timer-toggle{position:fixed;right:20px;bottom:20px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#0a0a0f;border:none;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(200,240,96,.28);z-index:201;transition:all .18s}
+.timer-toggle:hover{transform:scale(1.08)}
+.timer-toggle.hidden2{display:none}
+.timer-close-btn{position:absolute;top:7px;right:9px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:2px 5px}
+.timer-close-btn:hover{color:var(--text)}
+
+/* ── MOBILE NAV ── */
+.mobile-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--bg2);border-top:1px solid var(--border);
+  padding:7px 0 calc(7px + env(safe-area-inset-bottom));
+  z-index:300;
+}
+.mobile-nav-items{display:flex;justify-content:space-around}
+.mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:3px 10px;cursor:pointer;font-size:9px;color:var(--text3);font-family:var(--mono);transition:color .13s}
+.mobile-nav-item.active,.mobile-nav-item:hover{color:var(--accent)}
+.mobile-nav-icon{font-size:16px}
+
+/* ── PLAN SELECTOR on mobile ── */
+.mobile-plan-select{
+  display:none;
+  padding:10px 16px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg2);
+  position:sticky;top:0;z-index:10;
+}
+.mobile-plan-select select{
+  width:100%;padding:8px 12px;
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);font-size:13px;
+  border-radius:6px;outline:none;
+  font-family:var(--sans);
+}
+
+/* ── DAY COLORS ── */
+.mon{--card-accent:#c8f060}
+.tue{--card-accent:#60d0f0}
+.wed{--card-accent:#f06090}
+.thu{--card-accent:#f0b060}
+.fri{--card-accent:#a060f0}
+.sat{--card-accent:#60f0b0}
+.sun{--card-accent:#f0f060}
+
+/* ── RESPONSIVE ── */
+@media(max-width:860px){
+  :root{--sidebar-w:0px}
+  .sidebar{display:none}
+  .main-content{margin-left:0}
+  .mobile-nav{display:block}
+  .mobile-plan-select{display:block}
+  .main-content{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}
+  .hero{padding:40px 20px calc(80px + env(safe-area-inset-bottom,0px))}
+  .section{padding:28px 20px}
+  .plan-header{padding:22px 20px 16px}
+  .plan-body{padding:18px 20px 40px}
+  .day-tabs{padding:0 16px}
+  .time-options{grid-template-columns:repeat(3,1fr)}
+  .timer-float{right:10px;bottom:calc(68px + env(safe-area-inset-bottom,0px));width:190px}
+  .week-grid{grid-template-columns:1fr}
+  .recovery-grid,.technique-grid,.progression-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- ===== SIDEBAR ===== -->
+  <nav class="sidebar" id="sidebar">
+    <div class="nav-logo">
+      <div class="nav-logo-title" id="nav-logo-title">训练计划</div>
+      <span class="nav-logo-sub" id="nav-logo-sub">TRAINING CENTER</span>
+    </div>
+
+    <!-- Plan Switcher -->
+    <div class="plan-switcher" id="plan-switcher">
+      <div class="plan-switcher-label">切换计划</div>
+      <div id="plan-switcher-btns"></div>
+    </div>
+
+    <!-- Nav Links (dynamically updated) -->
+    <div id="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-label">入口</div>
+        <div class="nav-item active" onclick="showPage('home')"><div class="nav-dot"></div>首页 / 开始前须知</div>
+        <div class="nav-item" onclick="showPage('week')"><div class="nav-dot"></div>每周总览</div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">每日计划</div>
+        <div id="nav-days"></div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">工具</div>
+        <div class="nav-item" onclick="showPage('library')"><div class="nav-dot"></div>动作库</div>
+        <div class="nav-item" onclick="showPage('recovery')"><div class="nav-dot"></div>恢复与执行建议</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content" id="main-content">
+
+    <!-- Mobile plan selector -->
+    <div class="mobile-plan-select" id="mobile-plan-select" style="display:none">
+      <select id="mobile-plan-dropdown" onchange="switchPlan(this.value)">
+        <option value="">加载中…</option>
+      </select>
+    </div>
+
+    <!-- Loading -->
+    <div class="page active" id="page-loading">
+      <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div style="font-family:var(--mono);font-size:11px;letter-spacing:.1em">正在加载训练计划…</div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div class="page" id="page-error">
+      <div class="error-box">
+        <strong>⚠ 无法加载数据</strong><br><br>
+        <span id="error-message">无法读取 data.json，请检查文件是否存在并与 index.html 在同一目录。</span><br><br>
+        <code id="error-detail" style="font-size:11px;color:var(--text3);font-family:var(--mono)"></code>
+      </div>
+    </div>
+
+    <!-- ===== HOME PAGE ===== -->
+    <div class="page" id="page-home">
+      <div class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-eyebrow" id="hero-eyebrow"></div>
+        <h1 class="hero-title" id="hero-title"></h1>
+        <p class="hero-sub" id="hero-sub"></p>
+        <div class="cta-row">
+          <button class="btn btn-primary" onclick="showPage('week')">↗ 查看本周计划</button>
+          <button class="btn btn-outline" onclick="showPage('plan');switchDay(todayIndex())">开始今天训练</button>
+          <button class="btn btn-outline" onclick="showPage('library')">动作库</button>
+          <button class="btn btn-outline" onclick="showPage('recovery')">恢复建议</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <!-- SAFETY -->
+        <div class="safety-block" id="safety-block">
+          <span class="safety-block-label">⚠ 安全提醒</span>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:10px" id="safety-intro"></p>
+          <ul class="safety-list" id="safety-list"></ul>
+        </div>
+
+        <!-- PREREQUISITES -->
+        <div class="summary-box" id="prereq-box" style="display:none">
+          <div class="summary-box-title" id="prereq-title"></div>
+          <div class="goals-list" id="prereq-items"></div>
+        </div>
+
+        <!-- NOTICE -->
+        <div class="notice" id="teen-notice" style="display:none"></div>
+
+        <div class="divider"></div>
+
+        <!-- GOALS -->
+        <div id="goals-section" style="display:none">
+          <div class="section-title" id="goals-title"></div>
+          <div class="section-sub" id="goals-sub"></div>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.9" id="goals-intro"></p>
+          <div class="recovery-grid" id="goal-cards-grid"></div>
+          <div class="divider"></div>
+        </div>
+
+        <!-- PRINCIPLES -->
+        <div id="principles-section" style="display:none">
+          <div class="section-title" id="principles-title"></div>
+          <div class="section-sub" id="principles-sub"></div>
+          <div style="display:grid;gap:12px;max-width:640px" id="principles-list"></div>
+          <div class="divider"></div>
+        </div>
+
+        <!-- SESSION STRUCTURE -->
+        <div id="session-structure-section" style="display:none">
+          <div class="section-title" id="session-title"></div>
+          <div class="section-sub" id="session-sub"></div>
+          <div style="display:grid;gap:7px;max-width:380px" id="session-steps"></div>
+          <div id="session-callout"></div>
+          <div class="divider"></div>
+        </div>
+
+        <!-- TECHNIQUE CUES -->
+        <div id="technique-section" style="display:none">
+          <div class="section-title" id="tech-title"></div>
+          <div class="section-sub" id="tech-sub"></div>
+          <div class="technique-grid" id="tech-grid"></div>
+          <div class="divider"></div>
+        </div>
+
+        <!-- ONE-LINE SUMMARY -->
+        <div id="summary-section" style="display:none">
+          <div style="background:linear-gradient(135deg,rgba(200,240,96,.05),rgba(96,208,240,.04));border:1px solid rgba(200,240,96,.13);border-radius:var(--radius);padding:24px;max-width:660px">
+            <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--text3);text-transform:uppercase;margin-bottom:12px">One-Sentence Summary</div>
+            <p style="font-size:14px;color:var(--text);line-height:1.9" id="one-sentence-summary"></p>
+          </div>
+          <div class="divider"></div>
+        </div>
+
+        <!-- TIME OPTIONS -->
+        <div id="time-section" style="display:none">
+          <div class="section-title" id="time-title"></div>
+          <div class="section-sub" id="time-sub"></div>
+          <div class="time-options" id="time-options"></div>
+          <div class="divider"></div>
+        </div>
+
+        <!-- MINI ROUTINES -->
+        <div id="mini-routines-home"></div>
+
+        <div class="divider" id="mini-divider" style="display:none"></div>
+
+        <!-- DAILY HABITS -->
+        <div id="habits-section" style="display:none">
+          <div class="section-title" id="habits-title"></div>
+          <div class="tips-box" style="max-width:480px">
+            <ul id="daily-habits-list"></ul>
+          </div>
+          <div class="divider"></div>
+        </div>
+
+        <!-- 4-WEEK PROGRESSION -->
+        <div id="progression-section" style="display:none">
+          <div class="section-title" id="prog-title"></div>
+          <div class="section-sub" id="prog-sub"></div>
+          <div class="progression-grid" id="progression-grid"></div>
+          <div class="divider"></div>
+        </div>
+
+        <!-- EXECUTION ADVICE -->
+        <div id="exec-section" style="display:none">
+          <div class="section-title" id="exec-title"></div>
+          <div class="section-sub" id="exec-sub"></div>
+          <div style="display:grid;gap:12px;max-width:580px" id="exec-items"></div>
+          <div class="divider"></div>
+        </div>
+
+        <!-- STATUS CHECK -->
+        <div id="status-check-section" style="display:none">
+          <div class="section-title" id="status-title"></div>
+          <div class="section-sub" id="status-sub"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:620px">
+            <div style="background:linear-gradient(135deg,rgba(200,240,96,.05),rgba(200,240,96,.02));border:1px solid rgba(200,240,96,.15);border-radius:var(--radius);padding:16px">
+              <div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:10px">✓ 好的信号</div>
+              <ul id="good-signs-list" style="list-style:none;font-size:13px;color:var(--text2)"></ul>
+            </div>
+            <div style="background:linear-gradient(135deg,rgba(240,96,144,.05),rgba(240,96,144,.02));border:1px solid rgba(240,96,144,.15);border-radius:var(--radius);padding:16px">
+              <div style="font-size:13px;font-weight:600;color:var(--accent3);margin-bottom:10px">⚠ 过量信号</div>
+              <ul id="overload-signs-list" style="list-style:none;font-size:13px;color:var(--text2)"></ul>
+            </div>
+          </div>
+          <div class="divider"></div>
+        </div>
+
+        <!-- FINAL ADVICE -->
+        <div id="final-section" style="display:none">
+          <div style="background:linear-gradient(135deg,rgba(200,240,96,.04),rgba(96,208,240,.03));border:1px solid rgba(200,240,96,.09);border-radius:var(--radius);padding:24px;max-width:620px">
+            <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--text3);text-transform:uppercase;margin-bottom:14px">Practical Final Advice</div>
+            <ul style="list-style:none" id="final-advice-list"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== WEEK PAGE ===== -->
+    <div class="page" id="page-week">
+      <div class="section">
+        <div class="section-title" id="week-title">每周训练总览</div>
+        <div class="section-sub">WEEKLY SCHEDULE OVERVIEW</div>
+        <div class="week-grid" id="week-grid"></div>
+
+        <div class="divider"></div>
+
+        <!-- Warmup template (static, from plan data if present, else default) -->
+        <div id="warmup-template-section">
+          <div class="section-title">统一热身模板</div>
+          <div class="section-sub">DAILY WARM-UP TEMPLATE · 8–10 分钟 · 所有训练日通用</div>
+          <div id="warmup-phase1"></div>
+          <div id="warmup-phase2"></div>
+          <div id="warmup-phase3"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Cooldown template (static, from plan data if present) -->
+        <div id="cooldown-template-section" style="display:none">
+          <div class="section-title" id="cooldown-title"></div>
+          <div class="section-sub" id="cooldown-sub"></div>
+          <div id="cooldown-list"></div>
+        </div>
+
+        <div class="divider" id="cooldown-divider" style="display:none"></div>
+
+        <!-- Priority -->
+        <div id="priority-section"></div>
+      </div>
+    </div>
+
+    <!-- ===== PLAN PAGE ===== -->
+    <div class="page" id="page-plan">
+      <div class="day-tabs" id="day-tabs"></div>
+      <div id="plan-content"></div>
+    </div>
+
+    <!-- ===== LIBRARY PAGE ===== -->
+    <div class="page" id="page-library">
+      <div class="section">
+        <div class="section-title">动作库</div>
+        <div class="section-sub">EXERCISE LIBRARY · 按分类或关键词搜索</div>
+        <div class="lib-search">
+          <input type="text" id="lib-search-input" placeholder="搜索动作名称（中文或英文）…" oninput="filterLibrary()">
+        </div>
+        <div class="lib-filters" id="lib-filters"></div>
+        <div class="lib-grid" id="lib-grid"></div>
+      </div>
+    </div>
+
+    <!-- ===== RECOVERY PAGE ===== -->
+    <div class="page" id="page-recovery">
+      <div class="section">
+        <div class="section-title">恢复与执行建议</div>
+        <div class="section-sub">RECOVERY & EXECUTION GUIDANCE</div>
+        <div id="recovery-content"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Timer -->
+<div class="timer-float" id="timer-float">
+  <div class="timer-drag-handle" id="timer-drag-handle">
+    <div class="timer-drag-dots"><span></span><span></span><span></span><span></span><span></span></div>
+  </div>
+  <button class="timer-close-btn" onclick="toggleTimer()">✕</button>
+  <div class="timer-progress"><div class="timer-progress-bar" id="timer-bar" style="width:100%"></div></div>
+  <div class="timer-display" id="timer-display">00:00</div>
+  <div class="timer-label" id="timer-label">选择预设或点击动作卡</div>
+  <div class="timer-controls">
+    <button class="timer-btn play" id="timer-play" onclick="timerToggle()">▶ 开始</button>
+    <button class="timer-btn" onclick="timerReset()">↺ 重置</button>
+  </div>
+  <div class="timer-presets">
+    <button class="preset-btn" onclick="timerSet(10,'快速冲刺')">10s</button>
+    <button class="preset-btn" onclick="timerSet(15,'轻爆发')">15s</button>
+    <button class="preset-btn" onclick="timerSet(20,'静态保持')">20s</button>
+    <button class="preset-btn" onclick="timerSet(30,'Plank')">30s</button>
+    <button class="preset-btn" onclick="timerSet(45,'力量动作')">45s</button>
+    <button class="preset-btn" onclick="timerSet(60,'休息')">60s</button>
+    <button class="preset-btn" onclick="timerSet(90,'拳腿组合')">90s</button>
+    <button class="preset-btn" onclick="timerSet(120,'影拳回合')">2min</button>
+    <button class="preset-btn" onclick="timerSet(600,'轻有氧')">10min</button>
+    <button class="preset-btn" onclick="timerSet(1200,'游泳')">20min</button>
+  </div>
+</div>
+<button class="timer-toggle hidden2" id="timer-toggle" onclick="toggleTimer()" title="打开计时器">⏱</button>
+
+<!-- Mobile Nav -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-items">
+    <div class="mobile-nav-item" onclick="showPage('home')"><div class="mobile-nav-icon">🏠</div>首页</div>
+    <div class="mobile-nav-item" onclick="showPage('week')"><div class="mobile-nav-icon">📅</div>总览</div>
+    <div class="mobile-nav-item" onclick="showPage('plan');switchDay(todayIndex())"><div class="mobile-nav-icon">🏋</div>今天</div>
+    <div class="mobile-nav-item" onclick="showPage('library')"><div class="mobile-nav-icon">📚</div>动作库</div>
+    <div class="mobile-nav-item" onclick="showPage('recovery')"><div class="mobile-nav-icon">💤</div>恢复</div>
+  </div>
+</nav>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════════════════
+let PLANS = {};          // loaded from data.json
+let currentPlanId = '';  // active plan key
+let weekData = [];       // schedule array of active plan
+let currentDay = 0;
+let allExercises = [];
+let allCats = [];
+let libFilter = '全部';
+let libSearch = '';
+
+// ── Category color map ──────────────────────────────────────────────────────
+const catColors = {
+  '姿态/颈肩':'t-green','弹跳/灵敏':'t-blue','下肢':'t-orange',
+  '上背/上肢':'t-blue','核心':'t-purple','拳击':'t-pink',
+  '踢腿':'t-pink','健身房':'t-green','游泳':'t-blue','拉伸':'t-orange'
+};
+
+// Category lookup – first try plan's own catMap, fallback to built-in
+function getExerciseCat(zh, catMap) {
+  if (catMap && catMap[zh]) return catMap[zh];
+  const defaults = {
+    '原地小弹跳':'弹跳/灵敏','前后小跳':'弹跳/灵敏','左右小跳':'弹跳/灵敏',
+    '深蹲':'下肢','反向弓步':'下肢','单腿臀桥':'下肢','提踵':'下肢',
+    '靠墙静蹲':'下肢','深蹲停顿':'下肢','高脚杯深蹲':'下肢',
+    '提膝收腿':'踢腿','前踢慢控制':'踢腿','回旋踢动作分解':'踢腿',
+    '提膝爆发':'踢腿','前踢快收':'踢腿','拳腿组合影练':'拳击',
+    '死虫':'核心','前平板':'核心','侧桥':'核心','臀桥':'核心',
+    'Hollow Hold（简化版）':'核心','平板碰肩':'核心','俄罗斯转体（慢做）':'核心',
+    '侧桥抬髋':'核心','仰卧举腿（屈膝版）':'核心',
+    '水瓶俯身划船':'上背/上肢','俯卧 Y-T-W':'上背/上肢','墙天使':'姿态/颈肩',
+    '俯身反向飞鸟':'上背/上肢','俯卧撑':'上背/上肢','水瓶肩推':'上背/上肢',
+    '下巴回收':'姿态/颈肩','肩胛后缩':'姿态/颈肩','穿针引线':'姿态/颈肩',
+    '猫牛式':'姿态/颈肩','儿童式呼吸':'姿态/颈肩','鸟狗':'核心',
+    '站架 + 护架 + 脚步':'拳击','刺拳 + 直拳':'拳击','组合拳':'拳击',
+    '快打（可选）':'拳击','快速直拳冲刺':'拳击',
+    '半蹲跳':'弹跳/灵敏','快速提膝':'弹跳/灵敏','侧向小跨步跳':'弹跳/灵敏',
+    '前后快步':'弹跳/灵敏','左右滑步':'弹跳/灵敏','拳击步伐':'拳击',
+    '自然悬垂':'健身房','肩胛引体':'健身房','辅助引体 / 引体向上':'健身房',
+    '坐姿划船':'健身房','高位下拉':'健身房','面拉':'健身房',
+    '轻重量罗马尼亚硬拉':'健身房','绳索木劈':'健身房',
+    '单腿 RDL':'下肢','反向平板支撑':'核心',
+    '自由泳 + 蛙泳交替':'游泳',
+    '轻有氧（任选一种）':'弹跳/灵敏','散步':'姿态/颈肩',
+  };
+  return defaults[zh] || '其他';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DATA LOADING
+// ══════════════════════════════════════════════════════════════════════════════
+async function loadData() {
+  try {
+    const res = await fetch('./data.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+    const json = await res.json();
+    PLANS = json;
+    const planIds = Object.keys(PLANS);
+    if (!planIds.length) throw new Error('data.json 中没有找到任何训练计划');
+
+    buildPlanSwitcher(planIds);
+    switchPlan(planIds[0]);
+
+  } catch(err) {
+    console.error('Failed to load data.json:', err);
+    document.getElementById('error-message').textContent =
+      '无法读取 data.json。请确保文件与 index.html 在同一目录，且通过 HTTP 服务器访问（不能直接双击打开）。';
+    document.getElementById('error-detail').textContent = err.message;
+    showPage('error');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PLAN SWITCHER
+// ══════════════════════════════════════════════════════════════════════════════
+function buildPlanSwitcher(planIds) {
+  const container = document.getElementById('plan-switcher-btns');
+  const mobileDropdown = document.getElementById('mobile-plan-dropdown');
+
+  container.innerHTML = '';
+  mobileDropdown.innerHTML = '';
+
+  planIds.forEach(id => {
+    const plan = PLANS[id];
+    const title = plan.config?.navTitle || id;
+    const sub   = plan.config?.navSubtitle || '';
+
+    // Sidebar buttons
+    const btn = document.createElement('button');
+    btn.className = 'plan-switcher-btn';
+    btn.id = 'plan-btn-' + id;
+    btn.innerHTML = `
+      <div class="plan-switcher-dot"></div>
+      <div>
+        <div class="plan-switcher-name">${title}</div>
+        <span class="plan-switcher-sub">${sub}</span>
+      </div>`;
+    btn.onclick = () => switchPlan(id);
+    container.appendChild(btn);
+
+    // Mobile dropdown
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = title + (sub ? ` — ${sub}` : '');
+    mobileDropdown.appendChild(opt);
+  });
+
+  // Show mobile plan select if more than 1 plan
+  if (planIds.length > 1) {
+    document.getElementById('mobile-plan-select').style.display = 'block';
+  }
+}
+
+function switchPlan(planId) {
+  const plan = PLANS[planId];
+  if (!plan) return;
+
+  currentPlanId = planId;
+  currentDay = 0;
+
+  // Update switcher active state
+  document.querySelectorAll('.plan-switcher-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.getElementById('plan-btn-' + planId);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  const mdd = document.getElementById('mobile-plan-dropdown');
+  if (mdd) mdd.value = planId;
+
+  // Apply CSS vars
+  if (plan.config?.cssVars) {
+    const root = document.documentElement;
+    Object.entries(plan.config.cssVars).forEach(([p,v]) => root.style.setProperty(p,v));
+  }
+
+  // Rebuild everything
+  weekData = plan.data?.schedule || [];
+  rebuildExerciseLibrary(plan);
+  renderSidebarNav();
+  renderHomeContent(plan);
+  renderWeekContent(plan);
+  renderWeek();
+  renderDayTabs();
+  renderDayPlan();
+  renderLibrary();
+  renderRecovery(plan);
+
+  showPage('home');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SIDEBAR NAV
+// ══════════════════════════════════════════════════════════════════════════════
+function renderSidebarNav() {
+  const plan = PLANS[currentPlanId];
+  const navLogo = document.getElementById('nav-logo-title');
+  const navSub  = document.getElementById('nav-logo-sub');
+  if (navLogo) navLogo.textContent = plan.config?.navTitle || '训练计划';
+  if (navSub)  navSub.textContent  = plan.config?.navSubtitle || 'TRAINING CENTER';
+
+  const daysContainer = document.getElementById('nav-days');
+  daysContainer.innerHTML = weekData.map((d,i) =>
+    `<div class="nav-item" onclick="showPage('plan');switchDay(${i})">
+       <div class="nav-dot"></div>${d.day}
+     </div>`
+  ).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// HOME PAGE
+// ══════════════════════════════════════════════════════════════════════════════
+function renderHomeContent(plan) {
+  const cfg  = plan.config  || {};
+  const meta = plan.meta    || {};
+  const ui   = plan.homeUI  || {};
+
+  // Hero
+  setEl('hero-eyebrow',   cfg.heroEyebrow || '');
+  setHTML('hero-title',   cfg.heroTitle   || '');
+  setEl('hero-sub',       cfg.heroSub     || '');
+
+  // Safety block
+  const safetyIntro = document.getElementById('safety-intro');
+  if (safetyIntro) safetyIntro.textContent = meta.safetyIntro || ui.safetyIntro || '';
+  const safetyList = document.getElementById('safety-list');
+  if (safetyList) {
+    safetyList.innerHTML = (meta.notices || []).map(n =>
+      `<li>${n}</li>`).join('');
+  }
+  document.getElementById('safety-block').style.display =
+    (meta.notices?.length || meta.safetyIntro || ui.safetyIntro) ? '' : 'none';
+
+  // Prerequisites
+  const prereqBox   = document.getElementById('prereq-box');
+  const prereqTitle = document.getElementById('prereq-title');
+  const prereqItems = document.getElementById('prereq-items');
+  if (meta.prerequisites) {
+    prereqBox.style.display = '';
+    prereqTitle.textContent = meta.prerequisites.title || '本方案默认前提';
+    prereqItems.innerHTML = (meta.prerequisites.items || []).map(i =>
+      `<div class="goal-item">${i}</div>`).join('');
+  } else {
+    prereqBox.style.display = 'none';
+  }
+
+  // Teen notice
+  const teenNotice = document.getElementById('teen-notice');
+  if (meta.teenAvoid) {
+    teenNotice.style.display = '';
+    teenNotice.innerHTML = meta.teenAvoid;
+  } else {
+    teenNotice.style.display = 'none';
+  }
+
+  // Goals
+  const goalsSection = document.getElementById('goals-section');
+  if (meta.goalCards?.length) {
+    goalsSection.style.display = '';
+    setEl('goals-title', meta.goalsTitle || '训练目标');
+    setEl('goals-sub',   meta.goalsSub   || 'GOAL & DESIGN LOGIC');
+    setEl('goals-intro', meta.goalsIntro || '');
+    document.getElementById('goal-cards-grid').innerHTML = meta.goalCards.map(c => `
+      <div class="rec-card">
+        <div class="rec-card-icon">${c.icon || ''}</div>
+        <div class="rec-card-title">${c.title}</div>
+        <div class="rec-card-content">${c.body}</div>
+      </div>`).join('');
+  } else {
+    goalsSection.style.display = 'none';
+  }
+
+  // Principles
+  const principlesSection = document.getElementById('principles-section');
+  if (meta.principles?.length) {
+    principlesSection.style.display = '';
+    setEl('principles-title', meta.principlesTitle || '核心原则');
+    setEl('principles-sub',   meta.principlesSub   || 'CORE PRINCIPLES');
+    document.getElementById('principles-list').innerHTML = meta.principles.map(p => `
+      <div class="callout">
+        <strong style="color:var(--text)">${p.title}</strong><br>${p.body}
+      </div>`).join('');
+  } else {
+    principlesSection.style.display = 'none';
+  }
+
+  // Session Structure
+  const sessionSection = document.getElementById('session-structure-section');
+  if (meta.sessionStructure) {
+    sessionSection.style.display = '';
+    setEl('session-title', meta.sessionStructure.title || '每次训练的统一结构');
+    setEl('session-sub',   meta.sessionStructure.sub   || 'SESSION STRUCTURE');
+    document.getElementById('session-steps').innerHTML = (meta.sessionStructure.steps || []).map(s => `
+      <div class="mr-item">
+        <span class="mr-item-name">${s.name}</span>
+        <span class="mr-item-sets">${s.duration}</span>
+      </div>`).join('');
+    const calloutEl = document.getElementById('session-callout');
+    calloutEl.innerHTML = meta.sessionStructure.callout
+      ? `<p class="callout" style="margin-top:14px">${meta.sessionStructure.callout}</p>` : '';
+  } else {
+    sessionSection.style.display = 'none';
+  }
+
+  // Technique Cues
+  const techSection = document.getElementById('technique-section');
+  if (meta.techniqueCues?.length) {
+    techSection.style.display = '';
+    setEl('tech-title', meta.techniqueCuesTitle || '关键技术提醒');
+    setEl('tech-sub',   meta.techniqueCuesSub   || 'KEY TECHNIQUE CUES');
+    document.getElementById('tech-grid').innerHTML = meta.techniqueCues.map(tc => `
+      <div class="tech-card">
+        <div class="tech-card-title">${tc.title}</div>
+        <ol class="tech-cues">${tc.cues.map(c=>`<li>${c}</li>`).join('')}</ol>
+      </div>`).join('');
+  } else {
+    techSection.style.display = 'none';
+  }
+
+  // One-sentence summary
+  const summarySection = document.getElementById('summary-section');
+  if (meta.oneSentenceSummary) {
+    summarySection.style.display = '';
+    setHTML('one-sentence-summary', meta.oneSentenceSummary);
+  } else {
+    summarySection.style.display = 'none';
+  }
+
+  // Time Options
+  const timeSection = document.getElementById('time-section');
+  if (meta.timeOptions?.options?.length) {
+    timeSection.style.display = '';
+    setEl('time-title', meta.timeOptions.title || '时间不够时怎么压缩');
+    setEl('time-sub',   meta.timeOptions.sub   || '30 / 45 / 60 分钟版本');
+    document.getElementById('time-options').innerHTML = meta.timeOptions.options.map(o => `
+      <div class="time-card">
+        <div class="time-card-label">${o.label}</div>
+        <ul class="time-card-items">
+          ${o.items.map(i=>`<li><span>${i.name}</span><span>${i.value}</span></li>`).join('')}
+        </ul>
+      </div>`).join('');
+  } else {
+    timeSection.style.display = 'none';
+  }
+
+  // Mini Routines
+  const miniContainer = document.getElementById('mini-routines-home');
+  miniContainer.innerHTML = '';
+  const miniDivider = document.getElementById('mini-divider');
+  if (meta.miniRoutines?.length) {
+    miniDivider.style.display = '';
+    meta.miniRoutines.forEach(r => {
+      const wrap = document.createElement('div');
+      wrap.className = 'mini-routine';
+      if (r.wrapStyle) wrap.setAttribute('style', r.wrapStyle);
+      wrap.innerHTML = `
+        <div class="mini-routine-title" style="${r.titleStyle || ''}">${r.title}</div>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:12px">${r.intro || ''}</p>
+        <div class="mini-routine-list">
+          ${(r.items||[]).map(i=>`
+            <div class="mr-item">
+              <span class="mr-item-name">${i.name}</span>
+              <span class="mr-item-sets">${i.sets}</span>
+            </div>`).join('')}
+        </div>
+        ${r.footer ? `<p style="font-size:11px;color:var(--text3);margin-top:10px">${r.footer}</p>` : ''}
+        ${r.links?.length ? `<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:7px">
+          ${r.links.map(l=>`<a href="${l.url}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:4px;font-size:10px;font-family:var(--mono);background:rgba(96,208,240,.05);color:var(--accent2);border:1px solid rgba(96,208,240,.13);text-decoration:none">${l.label}</a>`).join('')}
+        </div>` : ''}`;
+      miniContainer.appendChild(wrap);
+    });
+  } else {
+    miniDivider.style.display = 'none';
+  }
+
+  // Daily Habits
+  const habitsSection = document.getElementById('habits-section');
+  if (meta.dailyHabits?.length) {
+    habitsSection.style.display = '';
+    setEl('habits-title', meta.habitsTitle || '日常习惯同样重要');
+    document.getElementById('daily-habits-list').innerHTML = meta.dailyHabits.map(h=>
+      `<li>${h}</li>`).join('');
+  } else {
+    habitsSection.style.display = 'none';
+  }
+
+  // Progression
+  const progSection = document.getElementById('progression-section');
+  if (meta.progressionWeeks?.length) {
+    progSection.style.display = '';
+    setEl('prog-title', meta.progressionTitle || '进阶方法');
+    setEl('prog-sub',   meta.progressionSub   || 'PROGRESSION');
+    document.getElementById('progression-grid').innerHTML = meta.progressionWeeks.map(w => `
+      <div class="prog-card" ${w.style ? `style="${w.style}"`:''}>
+        <div class="prog-card-week">${w.week}</div>
+        <div class="prog-card-title">${w.title}</div>
+        <div class="prog-card-content">${w.body}</div>
+      </div>`).join('');
+  } else {
+    progSection.style.display = 'none';
+  }
+
+  // Execution advice
+  const execSection = document.getElementById('exec-section');
+  if (meta.executionAdvice?.items?.length) {
+    execSection.style.display = '';
+    setEl('exec-title', meta.executionAdvice.title || '简单执行建议');
+    setEl('exec-sub',   meta.executionAdvice.sub   || 'HOW TO EXECUTE WELL');
+    document.getElementById('exec-items').innerHTML = meta.executionAdvice.items.map(i=>
+      `<div class="callout"><strong style="color:var(--text)">${i.title}</strong><br>${i.body}</div>`
+    ).join('');
+  } else {
+    execSection.style.display = 'none';
+  }
+
+  // Status Check
+  const statusCheckSection = document.getElementById('status-check-section');
+  if (meta.statusCheck?.goodSigns?.length || meta.statusCheck?.overloadSigns?.length) {
+    statusCheckSection.style.display = '';
+    setEl('status-title', '训练状态自查');
+    setEl('status-sub', 'TRAINING STATUS CHECK');
+    const goodList = document.getElementById('good-signs-list');
+    const overloadList = document.getElementById('overload-signs-list');
+    goodList.innerHTML = (meta.statusCheck.goodSigns || []).map(sign => `<li style="padding:4px 0 4px 16px;position:relative"><span style="position:absolute;left:0;color:var(--accent)">✓</span>${sign}</li>`).join('');
+    overloadList.innerHTML = (meta.statusCheck.overloadSigns || []).map(sign => `<li style="padding:4px 0 4px 16px;position:relative"><span style="position:absolute;left:0;color:var(--accent3)">!</span>${sign}</li>`).join('');
+  } else {
+    statusCheckSection.style.display = 'none';
+  }
+
+  // Final advice
+  const finalSection = document.getElementById('final-section');
+  if (meta.finalAdvice?.length) {
+    finalSection.style.display = '';
+    document.getElementById('final-advice-list').innerHTML = meta.finalAdvice.map(a => `
+      <li style="padding:5px 0 5px 16px;position:relative;font-size:13px;color:var(--text2)">
+        <span style="position:absolute;left:0;color:var(--accent)">→</span>${a}
+      </li>`).join('');
+  } else {
+    finalSection.style.display = 'none';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// WEEK CONTENT
+// ══════════════════════════════════════════════════════════════════════════════
+function renderWeekContent(plan) {
+  const meta = plan.meta || {};
+  const data = plan.data || {};
+
+  // Warmup template phases
+  // 优先从 data.generalWarmup 读取，其次从 meta.warmupTemplate 读取
+  let warmup = null;
+  const ph1 = document.getElementById('warmup-phase1');
+  const ph2 = document.getElementById('warmup-phase2');
+  const ph3 = document.getElementById('warmup-phase3');
+
+  if (data.generalWarmup?.exercises?.length) {
+    // 从 data.generalWarmup 转换格式
+    const exList = data.generalWarmup.exercises.map(item => `
+      <div class="warmup-item">
+        <div class="wi-title">${item.zh || item.name || ''}</div>
+        <div class="wi-sets">${item.sets || ''}</div>
+      </div>`).join('');
+    ph1.innerHTML = ph2.innerHTML = '';
+    ph3.innerHTML = `
+      <div class="block">
+        <div class="block-title">${data.generalWarmup.title || '固定热身'}</div>
+        <div class="warmup-grid">${exList}</div>
+      </div>`;
+  } else if (meta.warmupTemplate?.phases?.length) {
+    // 使用 meta.warmupTemplate 的格式
+    warmup = meta.warmupTemplate;
+    ph1.innerHTML = ph2.innerHTML = ph3.innerHTML = '';
+    warmup.phases.forEach((phase, idx) => {
+      const container = [ph1, ph2, ph3][idx] || ph3;
+      const grid = (phase.items || []).map(item => `
+        <div class="warmup-item">
+          <div class="wi-title">${item.name}</div>
+          <div class="wi-sets">${item.sets}</div>
+          ${item.note ? `<div style="font-size:9px;color:var(--text3);margin-top:3px">${item.note}</div>` : ''}
+        </div>`).join('');
+      container.innerHTML = `
+        <div class="block">
+          <div class="block-title">${phase.title}</div>
+          <div class="warmup-grid">${grid}</div>
+          ${phase.note ? `<p style="font-size:11px;color:var(--text3);margin-top:7px">${phase.note}</p>` : ''}
+        </div>`;
+    });
+  } else {
+    // Fallback: render from weekData warmupExercises
+    ph1.innerHTML = ph2.innerHTML = '';
+    ph3.innerHTML = `<p style="font-size:12px;color:var(--text3)">请查看每日计划中的热身部分。</p>`;
+  }
+
+  // Priority section
+  const prioritySection = document.getElementById('priority-section');
+  if (meta.weeklyPriority) {
+    const wp = meta.weeklyPriority;
+    prioritySection.innerHTML = `
+      <div class="section-title">${wp.title || '一周训练优先级'}</div>
+      <div class="section-sub">${wp.sub || 'WEEKLY PRIORITY ORDER'}</div>
+      <div style="display:grid;gap:7px;max-width:480px">
+        ${(wp.items||[]).map(i=>`
+          <div class="mr-item">
+            <span class="mr-item-name">${i.name}</span>
+            <span class="mr-item-sets" style="${i.highlight?'color:var(--accent)':''}">${i.level}</span>
+          </div>`).join('')}
+      </div>
+      ${wp.callout ? `<p class="callout" style="margin-top:14px;max-width:540px">${wp.callout}</p>` : ''}`;
+  } else {
+    prioritySection.innerHTML = '';
+  }
+
+  // Cooldown template
+  const cooldownSection = document.getElementById('cooldown-template-section');
+  const cooldownDivider = document.getElementById('cooldown-divider');
+  if (data.generalCooldown?.stretches?.length) {
+    cooldownSection.style.display = '';
+    cooldownDivider.style.display = '';
+    setEl('cooldown-title', data.generalCooldown.title || '固定练后拉伸');
+    setEl('cooldown-sub', `COOL-DOWN STRETCHING · ${data.generalCooldown.duration || '8–12 分钟'} · 所有训练日通用`);
+    const stretchList = data.generalCooldown.stretches.map(stretch => `
+      <div class="warmup-item">
+        <div class="wi-title">${stretch.zh || ''}</div>
+        <div class="wi-sets">${stretch.sets || ''}</div>
+        ${stretch.purpose ? `<div style="font-size:9px;color:var(--text3);margin-top:3px">${stretch.purpose}</div>` : ''}
+      </div>`).join('');
+    document.getElementById('cooldown-list').innerHTML = `
+      <div class="block">
+        <div class="warmup-grid">${stretchList}</div>
+      </div>`;
+  } else {
+    cooldownSection.style.display = 'none';
+    cooldownDivider.style.display = 'none';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// RECOVERY PAGE
+// ══════════════════════════════════════════════════════════════════════════════
+function renderRecovery(plan) {
+  const meta = plan.meta || {};
+  const container = document.getElementById('recovery-content');
+
+  if (meta.recoveryCards?.length) {
+    container.innerHTML = `
+      <div class="recovery-grid">
+        ${meta.recoveryCards.map(c=>`
+          <div class="rec-card">
+            <div class="rec-card-icon">${c.icon||''}</div>
+            <div class="rec-card-title">${c.title}</div>
+            <div class="rec-card-content">
+              ${c.intro||''}
+              ${c.items?.length ? `<ul>${c.items.map(i=>`<li>${i}</li>`).join('')}</ul>` : ''}
+            </div>
+          </div>`).join('')}
+      </div>`;
+  } else {
+    // Fallback static recovery content
+    container.innerHTML = `
+      <div class="recovery-grid">
+        <div class="rec-card"><div class="rec-card-icon">😴</div><div class="rec-card-title">睡眠（Sleep）</div><div class="rec-card-content">恢复、精力、学习与训练适应都与睡眠强相关。固定上床和起床时间，睡前少刷手机。</div></div>
+        <div class="rec-card"><div class="rec-card-icon">🥗</div><div class="rec-card-title">营养（Nutrition）</div><div class="rec-card-content">先把基础饮食做好：蛋白质、钙质、蔬菜水果，规律晒太阳。</div></div>
+        <div class="rec-card"><div class="rec-card-icon">💤</div><div class="rec-card-title">恢复节奏</div><div class="rec-card-content">训练和恢复是一对。恢复日不是偷懒，是让身体适应上次训练的刺激。</div></div>
+      </div>`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// WEEK GRID
+// ══════════════════════════════════════════════════════════════════════════════
+function renderWeek() {
+  const g = document.getElementById('week-grid');
+  if (!weekData.length) { g.innerHTML = ''; return; }
+  g.innerHTML = weekData.map((d,i) => `
+    <div class="day-card ${d.cls||''}" onclick="showPage('plan');switchDay(${i})">
+      <div class="day-card-day">${d.day} · ${d.dayEn||''}</div>
+      <div class="day-card-title">${d.theme}</div>
+      <div class="day-card-dur">⏱ ${d.duration||''}</div>
+      <div class="tags">${(d.tags||[]).map(t=>`<span class="tag ${t.c}">${t.l}</span>`).join('')}</div>
+      <div style="font-size:11px;color:var(--text3)">${d.focus||''}</div>
+      <div style="margin-top:12px">
+        <button class="btn btn-sm btn-outline" style="font-size:10px">查看详细训练 →</button>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DAY PLAN
+// ══════════════════════════════════════════════════════════════════════════════
+function renderDayTabs() {
+  const tabs = document.getElementById('day-tabs');
+  tabs.innerHTML = weekData.map((d,i) =>
+    `<div class="day-tab ${i===currentDay?'active':''}" onclick="switchDay(${i})">${d.day}</div>`
+  ).join('');
+}
+
+function switchDay(i) {
+  currentDay = i;
+  renderDayTabs();
+  renderDayPlan();
+}
+
+// Warmup exercises pulled from plan meta or fallback static
+function getWarmupExercises() {
+  const plan = PLANS[currentPlanId];
+  // 优先使用 data.json 中的热身（从 plan.data.generalWarmup.exercises）
+  if (plan?.data?.generalWarmup?.exercises?.length) return plan.data.generalWarmup.exercises;
+  // 其次检查 meta 中的热身
+  if (plan?.meta?.warmupExercises?.length) return plan.meta.warmupExercises;
+  // 最后才使用硬编码的默认热身
+  return [
+    {zh:'原地快走 / 小跑',en:'March / Easy Jog',sets:'1 分钟',purpose:'轻度升温',cues:['不需要很大幅度'],timer:60},
+    {zh:'开合步',en:'Step Jack',sets:'1 分钟',purpose:'轻度升温',cues:['目的是让身体"热起来"'],timer:60},
+    {zh:'颈部点头 + 左右转',en:'Neck Nod + Gentle Turn',sets:'各 8 次',purpose:'颈部关节活动',cues:['只做轻柔小幅','不要猛甩头'],timer:20},
+    {zh:'肩绕环',en:'Shoulder Circles',sets:'8 次',purpose:'肩关节活动',cues:['前后各做'],timer:15},
+    {zh:'胸椎转体',en:'Thoracic Rotation',sets:'8 次',purpose:'胸椎关节活动',cues:['可坐姿或跪姿'],timer:20},
+    {zh:'髋绕环 + 踝绕环',en:'Hip + Ankle Circles',sets:'各 8 次',purpose:'下肢关节活动',cues:['顺逆时针各做'],timer:20},
+    {zh:'臀桥',en:'Glute Bridge',sets:'2×12',purpose:'激活臀部，保护下背',cues:['感受臀发力','骨盆保持平稳'],timer:30},
+    {zh:'鸟狗',en:'Bird Dog',sets:'2×每侧8',purpose:'激活核心稳定',cues:['对侧手脚同时伸出','腰背保持平直'],timer:30},
+    {zh:'肩胛俯卧撑',en:'Scapular Push-up',sets:'2×10',purpose:'唤醒肩胛控制',cues:['只做肩胛前伸和后缩'],timer:20},
+    {zh:'下巴回收',en:'Chin Tuck',sets:'2×8，每次保持3秒',purpose:'改善头前伸',cues:['眼睛平视','下巴轻轻往后收'],timer:25},
+  ];
+}
+
+function renderDayPlan() {
+  const d = weekData[currentDay];
+  if (!d) return;
+  const content = document.getElementById('plan-content');
+  const warmup = getWarmupExercises();
+  const needWarmup = !d.warmupNote?.startsWith('无需热身');
+
+  content.innerHTML = `
+    <div class="plan-header">
+      <div class="tags" style="margin-bottom:7px">
+        ${(d.tags||[]).map(t=>`<span class="tag ${t.c}">${t.l}</span>`).join('')}
+      </div>
+      <div class="plan-theme">${d.day}：${d.theme}</div>
+      <div class="plan-meta">
+        <span>⏱ ${d.duration||''}</span>
+        <span>🎯 ${d.focus||''}</span>
+      </div>
+    </div>
+    <div class="plan-body">
+      <div class="summary-box">
+        <div class="summary-box-title">今日目标</div>
+        <div class="goals-list">
+          ${(d.goals||[]).map(g=>`<div class="goal-item">${g}</div>`).join('')}
+        </div>
+      </div>
+
+      ${needWarmup ? `
+      <div class="block">
+        <div class="block-title">热身 <span style="font-size:8px;color:var(--text3);font-weight:400;letter-spacing:.04em">WARM-UP · 8–10 分钟通用</span></div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:10px;font-family:var(--mono)">${d.warmupNote||''}</div>
+        ${warmup.map((e,ei)=>renderExerciseCard(e,'wu'+ei)).join('')}
+      </div>` : ''}
+
+      ${(d.sections||[]).map((s,si)=>`
+        <div class="block">
+          <div class="block-title">${s.title} <span style="font-size:8px;color:var(--text3);font-weight:400;letter-spacing:.04em">${s.en||''}</span></div>
+          ${(s.exercises||[]).map((e,ei)=>renderExerciseCard(e, si*100+ei)).join('')}
+        </div>`).join('')}
+
+      ${d.stretches?.length ? `
+      <div class="block">
+        <div class="block-title">拉伸放松 <span style="font-size:8px;color:var(--text3);font-weight:400;letter-spacing:.04em">POST-WORKOUT STRETCH</span></div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:10px">${d.stretchGoal||''}</div>
+        ${d.stretches.map((s,si)=>renderExerciseCard(s,'st'+si)).join('')}
+      </div>` : ''}
+
+      <div class="block">
+        <div class="block-title">今日注意事项</div>
+        <div class="tips-box">
+          <ul>${(d.notes||[]).map(n=>`<li>${n}</li>`).join('')}</ul>
+        </div>
+      </div>
+
+      <div class="notice" style="margin-top:6px">
+        <strong>今日总结：</strong>${d.summary||''}
+      </div>
+    </div>`;
+}
+
+function renderExerciseCard(e, id) {
+  const hasTimer = e.timer && e.timer > 0;
+  const cardId = 'ec-' + id;
+
+  let videoHTML = '';
+  if (e.videos?.length) {
+    videoHTML = `<div class="exercise-section-label">视频参考 Video References</div><div class="video-section">`;
+    e.videos.forEach((v, vi) => {
+      const embedId = cardId + '-v' + vi;
+      const info = parseVideoUrl(v.url);
+      const iconCls = info.platform === 'youtube' ? 'vi-yt' : info.platform === 'bilibili' ? 'vi-bili' : info.platform === 'youku' ? 'vi-youku' : 'vi-other';
+      const iconLabel = info.platform === 'youtube' ? 'YT' : info.platform === 'bilibili' ? 'B站' : info.platform === 'youku' ? 'YK' : '↗';
+      const canEmbed = !!info.embedUrl;
+      videoHTML += `
+        <div class="video-item">
+          <div class="video-item-header" onclick="toggleVideoItem('${embedId}')">
+            <div class="video-item-icon ${iconCls}">${iconLabel}</div>
+            <div class="video-item-label">${v.label}</div>
+            ${canEmbed ? `<button class="video-item-toggle" id="vtoggle-${embedId}" onclick="event.stopPropagation();toggleVideoItem('${embedId}')">展开</button>` : ''}
+          </div>
+          <div class="video-embed-wrap" id="vwrap-${embedId}">
+            ${canEmbed ? `<div class="video-embed-frame" id="vframe-${embedId}" data-embed-url="${info.embedUrl}"></div>` : ''}
+            <div class="video-link-row">
+              <a href="${v.url}" target="_blank" rel="noopener" class="video-open-link">↗ 在新标签页打开</a>
+              <button class="video-copy-link" onclick="copyLink('${v.url}',this)">⎘ 复制</button>
+            </div>
+          </div>
+        </div>`;
+    });
+    videoHTML += `</div>`;
+  }
+
+  const timerLabel = !hasTimer ? '' : e.timer >= 3600
+    ? Math.floor(e.timer/3600)+'h'
+    : e.timer >= 60 ? Math.floor(e.timer/60)+'分' : e.timer+'秒';
+
+  return `
+    <div class="exercise-card" id="${cardId}">
+      <div class="exercise-header" onclick="toggleCard('${cardId}')">
+        <div class="exercise-names">
+          <div class="exercise-zh">${e.zh}</div>
+          <div class="exercise-en">${e.en||''}</div>
+        </div>
+        <div class="exercise-sets">${e.sets||''}</div>
+        <div class="exercise-actions">
+          ${hasTimer ? `<button class="btn-timer" onclick="event.stopPropagation();setTimerFromCard(${e.timer},'${e.zh.replace(/'/g,"'")}')">⏱ ${timerLabel}</button>` : ''}
+        </div>
+        <div class="exercise-chevron">▼</div>
+      </div>
+      <div class="exercise-body">
+        ${e.purpose ? `<div class="exercise-purpose">🎯 ${e.purpose}</div>` : ''}
+        ${e.cues?.length ? `
+          <div class="exercise-section-label">关键提示 Key Cues</div>
+          <ul class="cues-list">${e.cues.map(c=>`<li>${c}</li>`).join('')}</ul>` : ''}
+        ${e.mistakes?.length ? `
+          <div class="exercise-section-label">常见错误 Common Mistakes</div>
+          <ul class="errors-list">${e.mistakes.map(m=>`<li>${m}</li>`).join('')}</ul>` : ''}
+        ${videoHTML}
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// EXERCISE LIBRARY
+// ══════════════════════════════════════════════════════════════════════════════
+function rebuildExerciseLibrary(plan) {
+  allExercises = [];
+  const seenEx = new Set();
+  const catMap = plan.exerciseCatMap || {};
+
+  weekData.forEach(d => {
+    (d.sections||[]).forEach(s => {
+      (s.exercises||[]).forEach(e => {
+        if (!seenEx.has(e.zh)) {
+          seenEx.add(e.zh);
+          allExercises.push({
+            ...e,
+            cat: getExerciseCat(e.zh, catMap),
+            days: weekData.filter(dd =>
+              (dd.sections||[]).some(ss =>
+                (ss.exercises||[]).some(ee => ee.zh === e.zh)
+              )
+            ).map(dd => dd.day)
+          });
+        }
+      });
+    });
+  });
+  allCats = [...new Set(allExercises.map(e => e.cat))].filter(Boolean);
+}
+
+function renderLibrary() {
+  const filters = document.getElementById('lib-filters');
+  filters.innerHTML = ['全部', ...allCats].map(c => `
+    <button class="filter-btn ${libFilter===c?'active':''}" onclick="setLibFilter('${c}')">${c}</button>
+  `).join('');
+
+  const grid = document.getElementById('lib-grid');
+  const filtered = allExercises.filter(e => {
+    const matchCat = libFilter === '全部' || e.cat === libFilter;
+    const q = libSearch.toLowerCase();
+    const matchSearch = !q || e.zh.toLowerCase().includes(q) || (e.en||'').toLowerCase().includes(q) || (e.purpose||'').toLowerCase().includes(q);
+    return matchCat && matchSearch;
+  });
+
+  grid.innerHTML = filtered.map((e,i) => `
+    <div class="lib-card" onclick="expandLibCard(${i})">
+      <div class="lib-card-head">
+        <div class="lib-card-names">
+          <div class="lc-zh">${e.zh}</div>
+          <div class="lc-en">${e.en||''}</div>
+        </div>
+        <div class="lib-card-sets">${e.sets||''}</div>
+      </div>
+      <div class="tags" style="margin-bottom:7px">
+        <span class="tag ${catColors[e.cat]||''}">${e.cat}</span>
+      </div>
+      ${e.purpose ? `<div class="lib-card-purpose">${e.purpose}</div>` : ''}
+      <div class="lib-card-days">${e.days.map(d=>`<span class="day-badge">${d}</span>`).join('')}</div>
+    </div>`).join('')
+  || '<div style="color:var(--text3);font-size:13px;padding:20px">没有找到相关动作</div>';
+}
+
+function setLibFilter(cat) { libFilter = cat; renderLibrary(); }
+function filterLibrary() { libSearch = document.getElementById('lib-search-input').value; renderLibrary(); }
+function expandLibCard(i) {
+  const e = allExercises[i];
+  alert(`${e.zh} (${e.en||'-'})\n\n目的：${e.purpose||'-'}\n组数：${e.sets||'-'}\n\n${(e.cues||[]).map((c,j)=>`${j+1}. ${c}`).join('\n')}\n\n出现在：${e.days.join('、')}`);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// VIDEO HELPERS
+// ══════════════════════════════════════════════════════════════════════════════
+function parseVideoUrl(url) {
+  if (!url) return { platform: 'other', embedUrl: null };
+  let m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  if (m) return { platform:'youtube', embedUrl:`https://www.youtube-nocookie.com/embed/${m[1]}?rel=0&modestbranding=1&playsinline=1` };
+  m = url.match(/bilibili\.com\/video\/((?:BV|av)[A-Za-z0-9]+)/i);
+  if (m) return { platform:'bilibili', embedUrl:`https://player.bilibili.com/player.html?bvid=${m[1]}&page=1&high_quality=1&danmaku=0` };
+  m = url.match(/youku\.com\/v_show\/id_([A-Za-z0-9=]+)/i);
+  if (m) return { platform:'youku', embedUrl:`https://player.youku.com/embed/${m[1]}` };
+  return { platform:'other', embedUrl:null };
+}
+
+function toggleVideoItem(embedId) {
+  const wrap = document.getElementById('vwrap-'+embedId);
+  const btn  = document.getElementById('vtoggle-'+embedId);
+  if (!wrap) return;
+  const isOpen = wrap.classList.contains('open');
+  if (isOpen) {
+    wrap.classList.remove('open');
+    const frame = document.getElementById('vframe-'+embedId);
+    if (frame) { const ifc = frame.querySelector('iframe'); if(ifc) ifc.remove(); }
+    if (btn) { btn.textContent='展开'; btn.classList.remove('open'); }
+  } else {
+    wrap.classList.add('open');
+    if (btn) { btn.textContent='收起'; btn.classList.add('open'); }
+    const frame = document.getElementById('vframe-'+embedId);
+    if (frame && !frame.querySelector('iframe')) {
+      const iframe = document.createElement('iframe');
+      iframe.src = frame.dataset.embedUrl;
+      iframe.allow = 'accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;fullscreen';
+      iframe.allowFullscreen = true;
+      iframe.loading = 'lazy';
+      iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none';
+      frame.appendChild(iframe);
+    }
+  }
+}
+
+function copyLink(url, btn) {
+  navigator.clipboard.writeText(url).then(() => {
+    const o = btn.textContent; btn.textContent='✓ 已复制';
+    setTimeout(()=>btn.textContent=o, 1400);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value=url; ta.style.cssText='position:fixed;opacity:0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    btn.textContent='✓ 已复制'; setTimeout(()=>btn.textContent='⎘ 复制',1400);
+  });
+}
+
+function toggleCard(id) { document.getElementById(id).classList.toggle('open'); }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PAGE NAVIGATION
+// ══════════════════════════════════════════════════════════════════════════════
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pg = document.getElementById('page-'+id);
+  if (pg) pg.classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.remove('active');
+    const oc = n.getAttribute('onclick') || '';
+    if (oc.includes("'"+id+"'")) n.classList.add('active');
+  });
+  window.scrollTo(0,0);
+}
+
+function todayIndex() {
+  const d = new Date().getDay();
+  return d===0 ? 6 : d-1;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TIMER
+// ══════════════════════════════════════════════════════════════════════════════
+let timerTotal=0, timerRemain=0, timerInterval=null, timerRunning=false, timerVisible=true;
+
+function timerSet(secs, label) {
+  timerStop(); timerTotal=secs; timerRemain=secs;
+  document.getElementById('timer-label').textContent = label||'';
+  updateTimerDisplay();
+}
+function timerToggle() {
+  if (timerRemain<=0) return;
+  if (timerRunning) timerStop();
+  else {
+    timerRunning=true;
+    document.getElementById('timer-play').textContent='⏸ 暂停';
+    timerInterval=setInterval(()=>{
+      timerRemain--; updateTimerDisplay();
+      if (timerRemain<=0) { timerStop(); document.getElementById('timer-display').style.color='var(--accent3)'; setTimeout(()=>document.getElementById('timer-display').style.color='var(--accent)',1000); }
+    },1000);
+  }
+}
+function timerStop() {
+  clearInterval(timerInterval); timerRunning=false;
+  document.getElementById('timer-play').textContent='▶ 开始';
+}
+function timerReset() { timerStop(); timerRemain=timerTotal; updateTimerDisplay(); }
+function updateTimerDisplay() {
+  const m=Math.floor(timerRemain/60), s=timerRemain%60;
+  document.getElementById('timer-display').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  const pct=timerTotal>0?(timerRemain/timerTotal*100):100;
+  document.getElementById('timer-bar').style.width=pct+'%';
+}
+function toggleTimer() {
+  timerVisible=!timerVisible;
+  document.getElementById('timer-float').classList.toggle('hidden',!timerVisible);
+  document.getElementById('timer-toggle').classList.toggle('hidden2',timerVisible);
+}
+function setTimerFromCard(secs, label) {
+  timerSet(secs, label);
+  if (!timerVisible) { timerVisible=true; document.getElementById('timer-float').classList.remove('hidden'); document.getElementById('timer-toggle').classList.add('hidden2'); }
+}
+
+// Timer drag
+(function(){
+  let dragging=false,ox=0,oy=0;
+  function init(){
+    const handle=document.getElementById('timer-drag-handle');
+    const float=document.getElementById('timer-float');
+    if(!handle||!float)return;
+    function start(ex,ey){dragging=true;const r=float.getBoundingClientRect();ox=ex-r.left;oy=ey-r.top;float.style.right='auto';float.style.bottom='auto';float.style.left=r.left+'px';float.style.top=r.top+'px';}
+    function move(ex,ey){if(!dragging)return;float.style.left=Math.max(0,Math.min(ex-ox,window.innerWidth-float.offsetWidth))+'px';float.style.top=Math.max(0,Math.min(ey-oy,window.innerHeight-float.offsetHeight))+'px';}
+    function end(){dragging=false;}
+    handle.addEventListener('mousedown',e=>{e.preventDefault();start(e.clientX,e.clientY);});
+    document.addEventListener('mousemove',e=>move(e.clientX,e.clientY));
+    document.addEventListener('mouseup',end);
+    handle.addEventListener('touchstart',e=>{e.preventDefault();start(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
+    document.addEventListener('touchmove',e=>{if(dragging){e.preventDefault();move(e.touches[0].clientX,e.touches[0].clientY);}},{passive:false});
+    document.addEventListener('touchend',end);
+  }
+  if(document.readyState!=='loading')setTimeout(init,50);
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+
+// ══════════════════════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════════════════════
+function setEl(id, text) { const el=document.getElementById(id); if(el) el.textContent=text; }
+function setHTML(id, html) { const el=document.getElementById(id); if(el) el.innerHTML=html; }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════════════════════════════════════════
+timerSet(0,'');
+loadData();
+</script>
+</body>
+</html>

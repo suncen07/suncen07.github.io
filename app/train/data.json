@@ -1,0 +1,4113 @@
+{
+  "height_friendly": {
+    "config": {
+      "navTitle": "青少年训练计划",
+      "navSubtitle": "HEIGHT-FRIENDLY TRAINING",
+      "heroEyebrow": "青少年 · 长高友好 · 拳腿基础",
+      "heroTitle": "<em>长高友好</em> + 体型优化<br>+ 拳腿基础训练",
+      "heroSub": "恢复优先、姿态优先、低量高质量训练；兼顾腿、腰腹、背、上肢、出拳与踢腿训练。",
+      "cssVars": {
+        "--accent": "#c8f060",
+        "--accent2": "#60d0f0",
+        "--accent3": "#f06090",
+        "--accent4": "#f0b060",
+        "--accent5": "#a060f0"
+      }
+    },
+    "meta": {
+      "notices": [
+        "疼痛越来越重，持续加重",
+        "手臂麻木、放射痛（radiating pain）",
+        "头晕、恶心",
+        "转头明显受限",
+        "夜间睡觉也痛",
+        "近期有明显外伤、扭伤、撞击史"
+      ],
+      "principles": [
+        {
+          "title": "原则1：训练量宁可稳，不要太狠",
+          "body": "规律、持续、恢复充分（consistent, sustainable, well-recovered）。训练结束应感觉：舒服的累，第二天还能正常学习活动。"
+        },
+        {
+          "title": "原则2：长高不是靠\"拉一拉就长\"",
+          "body": "关键是：睡眠 · 营养 · 规律运动 · 恢复 · 姿态。训练只是其中一部分，训练外的作息与饮食同样重要。"
+        },
+        {
+          "title": "原则3：体型优化 = 显高 + 挺拔 + 协调",
+          "body": "优先练上背、后肩、核心、臀腿、髋部灵活性，比只练胸和手臂更容易让你看起来挺、直、精神、比例更好。"
+        },
+        {
+          "title": "原则4：脖子酸的人，别用蛮力硬顶",
+          "body": "训练中避免：猛甩头 · 长时间耸肩 · 打拳时一直绷脖子 · 颈部额外负重 · 动作不稳还硬冲数量。"
+        },
+        {
+          "title": "原则5：青少年训练看重\"技术\"和\"质量\"",
+          "body": "跳跃、出拳、踢腿都可以练，但不追求很大冲击、很多回合数、很多爆发次数、每天都练到极限。"
+        }
+      ],
+      "goalCards": [
+        {
+          "icon": "📈",
+          "title": "更适合青春期发育",
+          "body": "growth-friendly · 以低量高质量跳跃刺激骨骼，避免过量冲击与高负重脊柱压迫"
+        },
+        {
+          "icon": "🏋",
+          "title": "体型优化",
+          "body": "physique optimization · 优先上背、后肩、核心、臀腿与髋部灵活性，让你看起来挺、直、精神、比例更好"
+        },
+        {
+          "icon": "🥊",
+          "title": "保留拳腿基础",
+          "body": "boxing & kicking basics · 保留出拳（punching）和踢腿（kicking）的训练感，不追求极限回合数"
+        },
+        {
+          "icon": "🔄",
+          "title": "恢复优先",
+          "body": "recovery first · 训练后感觉\"舒服的累\"，第二天还能正常学习、活动、走路，不会让脖子更紧、腰更酸"
+        },
+        {
+          "icon": "🏊",
+          "title": "健身房日重点",
+          "body": "游泳（swimming）+ 自然悬垂（dead hang）/ 引体向上进阶（pull-up progression）+ 拉力器械（pull machines）"
+        },
+        {
+          "icon": "🧘",
+          "title": "姿态修复",
+          "body": "posture correction · 兼顾脖子酸的恢复与改善，通过 Chin Tuck、Wall Angels、上背训练、臀桥改善头前伸、圆肩"
+        }
+      ],
+      "dailyHabits": [
+        "每坐 40–50 分钟起来活动 2–3 分钟",
+        "手机尽量别长期低头",
+        "屏幕高度尽量抬一点",
+        "尽量别趴睡",
+        "练拳时减少耸肩和咬牙硬憋"
+      ],
+      "progressionWeeks": [
+        {
+          "week": "第 1 周",
+          "title": "适应周 Adaptation",
+          "body": "每个动作按计划的下限做 · 重点是找动作感觉 · 出拳、踢腿只用 6–7 成力",
+          "style": ""
+        },
+        {
+          "week": "第 2 周",
+          "title": "增加训练量",
+          "body": "每个主要动作 +2 次，或选 2–3 个主要动作各多 1 组",
+          "style": ""
+        },
+        {
+          "week": "第 3 周",
+          "title": "提高动作质量",
+          "body": "深蹲/弓步下放更慢更稳 · 出拳更注意脚蹬地、转髋、回收 · 踢腿更强调站稳和收腿",
+          "style": ""
+        },
+        {
+          "week": "第 4 周",
+          "title": "小强化周",
+          "body": "主要力量动作增加 1 组 · 影拳/拳击体能回合增加到 4–5 回合 · 爆发动作仍保持\"低量高质量\"",
+          "style": ""
+        },
+        {
+          "week": "第 5 周",
+          "title": "微减量 Deload",
+          "body": "减少 20%–30% 的训练量 · 让身体恢复 · 再进入下一轮",
+          "style": "border-color:rgba(240,96,144,.2)"
+        }
+      ],
+      "miniRoutines": [
+        {
+          "title": "每日 10 分钟\"显高体态小套餐\"",
+          "titleStyle": "",
+          "wrapStyle": "",
+          "intro": "Daily 10-min Posture & Height-Friendly Mini Routine · 如果某天没空练主训练，就做这个\"保底版\"",
+          "items": [
+            {
+              "name": "下巴回收（Chin Tuck）",
+              "sets": "2×8"
+            },
+            {
+              "name": "墙天使（Wall Angels）",
+              "sets": "2×8"
+            },
+            {
+              "name": "臀桥（Glute Bridge）",
+              "sets": "2×12"
+            },
+            {
+              "name": "鸟狗（Bird Dog）",
+              "sets": "2×每侧8"
+            },
+            {
+              "name": "深蹲（Squat）",
+              "sets": "2×12"
+            },
+            {
+              "name": "原地小弹跳（Pogo Jump）",
+              "sets": "2×10"
+            },
+            {
+              "name": "髋屈肌拉伸",
+              "sets": "30秒/侧"
+            },
+            {
+              "name": "胸肌拉伸",
+              "sets": "30秒/侧"
+            }
+          ],
+          "footer": "",
+          "links": []
+        },
+        {
+          "title": "脖子酸时的额外 5 分钟小套餐",
+          "titleStyle": "color:var(--accent3)",
+          "wrapStyle": "border-color:rgba(240,96,144,.2);background:linear-gradient(135deg,rgba(240,96,144,.04),rgba(240,96,144,.02))",
+          "intro": "Neck-Friendly Daily Mini Routine · 如果最近脖子容易酸，这套可以每天做1次",
+          "items": [
+            {
+              "name": "下巴回收（Chin Tuck）",
+              "sets": "2×8，保持3秒"
+            },
+            {
+              "name": "肩胛后缩（Scapular Retraction）",
+              "sets": "2×12"
+            },
+            {
+              "name": "墙天使（Wall Angels）",
+              "sets": "2×8"
+            },
+            {
+              "name": "胸大肌拉伸（Pec Stretch）",
+              "sets": "2×20秒"
+            },
+            {
+              "name": "上斜方肌轻拉伸（Upper Trap Stretch）",
+              "sets": "每侧15秒"
+            }
+          ],
+          "footer": "注意：上斜方肌拉伸只做\"轻轻拉\"，不要猛拽头。",
+          "links": [
+            {
+              "label": "▶ Chin Tuck 视频",
+              "url": "https://www.youtube.com/watch?v=hYW0LNH7RdU"
+            },
+            {
+              "label": "▶ Wall Angel 视频",
+              "url": "https://www.youtube.com/watch?v=1UU4VvklQ44"
+            },
+            {
+              "label": "▶ Chin Tuck + Upper Trap Stretch",
+              "url": "https://www.youtube.com/watch?v=xlevlwvuIQo"
+            }
+          ]
+        }
+      ],
+      "finalAdvice": [
+        "先把动作做标准，再去加量。",
+        "先把恢复和睡眠做好，再去谈练得更猛。",
+        "想显高显挺拔，先练上背、核心、臀腿和姿态。",
+        "拳力和踢腿力量，最终都来自腿、髋和核心，而不是只靠胳膊和乱甩腿。",
+        "健身房那天，优先做你家里最做不了的：游泳、悬垂/引体、拉力器械。"
+      ]
+    },
+    "data": {
+      "schedule": [
+        {
+          "day": "周一",
+          "dayEn": "Monday",
+          "cls": "mon",
+          "theme": "弹跳 + 下肢力量 + 核心 + 踢腿基础",
+          "themeEn": "Jump + Lower Body Strength + Core + Kick Basics",
+          "duration": "40–50 分钟",
+          "tags": [
+            {
+              "l": "弹跳",
+              "c": "t-green"
+            },
+            {
+              "l": "下肢",
+              "c": "t-blue"
+            },
+            {
+              "l": "核心",
+              "c": "t-orange"
+            },
+            {
+              "l": "踢腿",
+              "c": "t-pink"
+            }
+          ],
+          "focus": "刺激骨骼、腿部力量、踢腿基础、核心控制",
+          "goals": [
+            "刺激骨骼",
+            "练腿部力量与稳定",
+            "建立踢腿底层控制",
+            "练核心"
+          ],
+          "warmupNote": "使用统一热身",
+          "sections": [
+            {
+              "title": "低量弹跳",
+              "en": "Low-volume Plyometrics",
+              "exercises": [
+                {
+                  "zh": "原地小弹跳",
+                  "en": "Pogo Jump",
+                  "sets": "3×12",
+                  "purpose": "低量骨骼刺激、踝部弹性",
+                  "cues": [
+                    "落地轻",
+                    "脚踝轻弹",
+                    "不追求跳得高"
+                  ],
+                  "mistakes": [
+                    "砸地",
+                    "膝盖内扣"
+                  ],
+                  "videos": [
+                    {
+                      "label": "Pogo Jump 教程1",
+                      "url": "https://www.youtube.com/watch?v=j0nl5dWuqN4"
+                    },
+                    {
+                      "label": "Pogo Jump 教程2",
+                      "url": "https://www.youtube.com/watch?v=c2LBofIzUqs"
+                    },
+                    {
+                      "label": "Pogo Jump B站参考",
+                      "url": "https://www.bilibili.com/video/BV1j7411K7Ej/"
+                    }
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "前后小跳",
+                  "en": "Front-Back Hops",
+                  "sets": "2×15秒",
+                  "purpose": "小范围弹跳与落地控制",
+                  "cues": [
+                    "小幅前后移动",
+                    "躯干稳定",
+                    "膝盖对齐脚尖"
+                  ],
+                  "timer": 15
+                },
+                {
+                  "zh": "左右小跳",
+                  "en": "Lateral Hops",
+                  "sets": "2×15秒",
+                  "purpose": "侧向控制与灵敏",
+                  "cues": [
+                    "动作小",
+                    "落地轻",
+                    "别晃上半身"
+                  ],
+                  "videos": [
+                    {
+                      "label": "Lateral Pogo 视频",
+                      "url": "https://www.youtube.com/watch?v=PXcLn_gPiCc"
+                    },
+                    {
+                      "label": "Lateral Hop B站参考",
+                      "url": "https://www.bilibili.com/video/BV1pQ4y1T7ZL/"
+                    }
+                  ],
+                  "timer": 15
+                }
+              ]
+            },
+            {
+              "title": "下肢力量",
+              "en": "Lower Body Strength",
+              "exercises": [
+                {
+                  "zh": "深蹲",
+                  "en": "Bodyweight Squat",
+                  "sets": "4×12",
+                  "purpose": "下肢力量基础",
+                  "cues": [
+                    "膝盖朝脚尖方向",
+                    "髋向后坐",
+                    "胸口保持打开"
+                  ],
+                  "mistakes": [
+                    "膝内扣",
+                    "含胸",
+                    "脚跟离地"
+                  ],
+                  "videos": [
+                    {
+                      "label": "深蹲 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1KM4y117Yb/"
+                    }
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "反向弓步",
+                  "en": "Reverse Lunge",
+                  "sets": "3×每腿10",
+                  "purpose": "单腿稳定、臀腿力量",
+                  "cues": [
+                    "后撤不要过大",
+                    "前脚踩稳",
+                    "躯干不要歪"
+                  ],
+                  "videos": [
+                    {
+                      "label": "Reverse Lunge 教程",
+                      "url": "https://www.youtube.com/watch?v=xrPteyQLGAo"
+                    },
+                    {
+                      "label": "深蹲 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1KM4y117Yb/"
+                    },
+                    {
+                      "label": "反向弓步 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1UN4y1d7Eo/"
+                    }
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "单腿臀桥",
+                  "en": "Single-leg Glute Bridge",
+                  "sets": "3×每腿10",
+                  "purpose": "臀部发力、骨盆控制",
+                  "cues": [
+                    "感受臀发力",
+                    "骨盆保持平稳",
+                    "不要用腰硬顶"
+                  ],
+                  "videos": [
+                    {
+                      "label": "单腿臀桥 视频",
+                      "url": "https://www.youtube.com/watch?v=_K_di6h2-Wg"
+                    },
+                    {
+                      "label": "单腿臀桥 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1J54y1G7gC/"
+                    }
+                  ],
+                  "timer": 40
+                },
+                {
+                  "zh": "提踵",
+                  "en": "Calf Raise",
+                  "sets": "3×20",
+                  "purpose": "小腿与踝部力量",
+                  "cues": [
+                    "顶端停顿",
+                    "慢下放"
+                  ],
+                  "videos": [
+                    {
+                      "label": "提踵 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1N7411i7Jq/"
+                    }
+                  ],
+                  "timer": 40
+                },
+                {
+                  "zh": "靠墙静蹲",
+                  "en": "Wall Sit",
+                  "sets": "2×35–45秒",
+                  "purpose": "股四头肌耐力与下肢稳定",
+                  "cues": [
+                    "下背贴墙",
+                    "膝盖稳"
+                  ],
+                  "videos": [
+                    {
+                      "label": "靠墙静蹲 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1UN4y1d7Eo/"
+                    }
+                  ],
+                  "timer": 45
+                }
+              ]
+            },
+            {
+              "title": "踢腿基础",
+              "en": "Kick Basics",
+              "exercises": [
+                {
+                  "zh": "提膝收腿",
+                  "en": "Chamber Drill",
+                  "sets": "3×每腿10",
+                  "purpose": "踢腿前的稳定提膝控制",
+                  "cues": [
+                    "先提膝",
+                    "站稳",
+                    "收腹"
+                  ],
+                  "timer": 40
+                },
+                {
+                  "zh": "前踢慢控制",
+                  "en": "Front Kick Control",
+                  "sets": "3×每腿8",
+                  "purpose": "前踢技术与控制",
+                  "cues": [
+                    "踢出后收回",
+                    "核心收紧",
+                    "别甩腿"
+                  ],
+                  "videos": [
+                    {
+                      "label": "前踢组合参考",
+                      "url": "https://www.youtube.com/watch?v=JGobdW7nS1c"
+                    },
+                    {
+                      "label": "前踢 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1sb4y1X78f/"
+                    }
+                  ],
+                  "timer": 40
+                },
+                {
+                  "zh": "回旋踢动作分解",
+                  "en": "Round Kick Breakdown",
+                  "sets": "2×每腿6",
+                  "purpose": "回旋踢基础分解",
+                  "cues": [
+                    "先提膝",
+                    "转髋",
+                    "支撑脚稳",
+                    "踢完收回"
+                  ],
+                  "videos": [
+                    {
+                      "label": "Round Kick 教程1",
+                      "url": "https://www.youtube.com/watch?v=sOPFUfXpxVI"
+                    },
+                    {
+                      "label": "Round Kick 教程2",
+                      "url": "https://www.youtube.com/watch?v=m9JjW0s_O0k"
+                    },
+                    {
+                      "label": "回旋踢 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1Et411z7W4/"
+                    }
+                  ],
+                  "timer": 45
+                }
+              ]
+            },
+            {
+              "title": "核心",
+              "en": "Core",
+              "exercises": [
+                {
+                  "zh": "死虫",
+                  "en": "Dead Bug",
+                  "sets": "3×每侧8",
+                  "purpose": "核心控制与脊柱稳定",
+                  "cues": [
+                    "腰背中立",
+                    "动作别快",
+                    "核心收紧"
+                  ],
+                  "videos": [
+                    {
+                      "label": "核心三件套视频1",
+                      "url": "https://www.youtube.com/watch?v=aFk1SjShgO4"
+                    },
+                    {
+                      "label": "核心三件套视频2",
+                      "url": "https://www.youtube.com/watch?v=T1h8n4YMonY"
+                    },
+                    {
+                      "label": "Dead Bug B站参考",
+                      "url": "https://www.bilibili.com/video/BV1CYrfYSE9m/"
+                    }
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "前平板",
+                  "en": "Front Plank",
+                  "sets": "3×30秒",
+                  "purpose": "核心稳定",
+                  "cues": [
+                    "全身一条线",
+                    "臀夹紧",
+                    "不塌腰"
+                  ],
+                  "videos": [
+                    {
+                      "label": "Plank B站参考",
+                      "url": "https://www.bilibili.com/video/BV1sU4y1E76b/"
+                    }
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "侧桥",
+                  "en": "Side Plank",
+                  "sets": "2×每侧25秒",
+                  "purpose": "侧核心稳定",
+                  "cues": [
+                    "不要塌髋",
+                    "肩膀稳定",
+                    "脚叠放或错开"
+                  ],
+                  "timer": 25
+                }
+              ]
+            }
+          ],
+          "stretchGoal": "放松腿前侧、腿后侧、髋、臀、小腿，缓解跑跳和踢腿后的紧张感。",
+          "stretches": [
+            {
+              "zh": "跪姿髋屈肌拉伸",
+              "en": "Kneeling Hip Flexor Stretch",
+              "sets": "每侧 30 秒",
+              "purpose": "放松髋前侧与腹股沟前侧",
+              "cues": [
+                "一脚在前，另侧膝跪地",
+                "骨盆轻轻向前推",
+                "上身保持直立",
+                "重点感受后腿大腿前上方被拉开"
+              ],
+              "videos": [
+                {
+                  "label": "髋屈肌拉伸 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1st421E7ec/"
+                }
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "站姿股四头肌拉伸",
+              "en": "Standing Quad Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松大腿前侧",
+              "cues": [
+                "单手扶墙保持平衡",
+                "同侧手抓脚踝拉向臀部",
+                "膝盖尽量并拢",
+                "不要把腰往前顶太多，保持骨盆中立"
+              ],
+              "videos": [
+                {
+                  "label": "股四头肌拉伸 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1JjNWztEwC/"
+                }
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "坐姿单腿前屈",
+              "en": "Seated Hamstring Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松大腿后侧（hamstrings）",
+              "cues": [
+                "一腿伸直，一腿弯曲",
+                "背挺直，从髋部前倾",
+                "双手去摸小腿/脚踝/脚尖",
+                "拉的是大腿后侧，不是弓背硬压"
+              ],
+              "videos": [
+                {
+                  "label": "腘绳肌拉伸 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1NGQWYyEcq/"
+                }
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "仰卧臀部拉伸",
+              "en": "Figure-4 Glute Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松臀部深层、梨状肌区域",
+              "cues": [
+                "仰卧，一脚踝搭在另腿膝盖上",
+                "双手抱住支撑腿大腿后侧",
+                "往胸口方向拉"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "靠墙小腿拉伸",
+              "en": "Wall Calf Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松小腿（gastrocnemius）",
+              "cues": [
+                "双手扶墙，一前一后",
+                "后脚脚跟踩实地面",
+                "身体往前压"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "猫牛式",
+              "en": "Cat-Cow",
+              "sets": "8 次",
+              "purpose": "脊柱和躯干温和放松收尾",
+              "cues": [
+                "四点支撑跪姿",
+                "吸气抬头塌背（Cow）",
+                "呼气低头拱背（Cat）"
+              ],
+              "videos": [
+                {
+                  "label": "猫牛式 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1nA411i766/"
+                },
+                {
+                  "label": "腘绳肌拉伸 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1NGQWYyEcq/"
+                }
+              ],
+              "timer": 30
+            }
+          ],
+          "notes": [
+            "落地一定轻，不要砸地",
+            "反向弓步不要歪斜",
+            "踢腿先提膝再出腿",
+            "踢腿不追求高度，先追求控制"
+          ],
+          "summary": "今天不要追求很累，重点是：跳轻、蹲稳、踢腿有控制。"
+        },
+        {
+          "day": "周二",
+          "dayEn": "Tuesday",
+          "cls": "tue",
+          "theme": "上背肩线 + 上肢 + 出拳技术",
+          "themeEn": "Upper Back/Shoulder Line + Upper Body + Punch Technique",
+          "duration": "40–50 分钟",
+          "tags": [
+            {
+              "l": "上背",
+              "c": "t-blue"
+            },
+            {
+              "l": "上肢",
+              "c": "t-purple"
+            },
+            {
+              "l": "影拳",
+              "c": "t-pink"
+            },
+            {
+              "l": "姿态",
+              "c": "t-green"
+            }
+          ],
+          "focus": "改善体态、肩线、上背、出拳基础",
+          "goals": [
+            "改善体态",
+            "打开肩线",
+            "加强上背与后肩",
+            "保留出拳技术"
+          ],
+          "warmupNote": "统一热身 + 手臂绕环快节奏",
+          "sections": [
+            {
+              "title": "上背肩线训练",
+              "en": "Upper Back & Shoulder Line",
+              "exercises": [
+                {
+                  "zh": "水瓶俯身划船",
+                  "en": "Bent-over Row",
+                  "sets": "4×15",
+                  "purpose": "上背、背阔、肩胛控制",
+                  "cues": [
+                    "不是耸肩",
+                    "肩胛向后向下带动",
+                    "背部尽量保持平直"
+                  ],
+                  "videos": [
+                    {
+                      "label": "水瓶划船 教程1",
+                      "url": "https://www.youtube.com/watch?v=ffL5Kn4-s9E"
+                    },
+                    {
+                      "label": "水瓶划船 教程2",
+                      "url": "https://www.youtube.com/watch?v=Db1tfYDBmh4"
+                    }
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "俯卧 Y-T-W",
+                  "en": "Prone Y-T-W",
+                  "sets": "2轮，每个8次",
+                  "purpose": "后肩、肩胛稳定、姿态修复",
+                  "cues": [
+                    "动作慢",
+                    "重量轻甚至可徒手"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "墙天使",
+                  "en": "Wall Angels",
+                  "sets": "2×8",
+                  "purpose": "胸椎伸展、肩胛控制、改善圆肩",
+                  "cues": [
+                    "下背别拱",
+                    "肋骨收住",
+                    "慢慢滑动"
+                  ],
+                  "videos": [
+                    {
+                      "label": "墙天使 教程1",
+                      "url": "https://www.youtube.com/watch?v=1UU4VvklQ44"
+                    },
+                    {
+                      "label": "墙天使 教程2",
+                      "url": "https://www.youtube.com/watch?v=4Fm0gLIeVcU"
+                    },
+                    {
+                      "label": "墙天使 B站参考",
+                      "url": "https://www.bilibili.com/video/BV19541127pw/"
+                    },
+                    {
+                      "label": "墙天使 备用",
+                      "url": "https://www.bilibili.com/video/BV1Se4y1Z7Wh/"
+                    }
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "俯身反向飞鸟",
+                  "en": "Rear Delt Raise",
+                  "sets": "3×12",
+                  "purpose": "后肩与上背线条",
+                  "cues": [
+                    "别甩",
+                    "轻重量控制"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "俯卧撑",
+                  "en": "Push-up",
+                  "sets": "3×8–12",
+                  "purpose": "上肢推力、胸肩手臂",
+                  "cues": [
+                    "身体一条线",
+                    "不塌腰",
+                    "肩颈别紧张"
+                  ],
+                  "mistakes": [
+                    "塌腰",
+                    "颈部前伸"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "水瓶肩推",
+                  "en": "Overhead Press",
+                  "sets": "3×12",
+                  "purpose": "肩部力量、上肢稳定",
+                  "cues": [
+                    "核心收紧",
+                    "不要塌腰",
+                    "动作垂直发力"
+                  ],
+                  "timer": 45
+                }
+              ]
+            },
+            {
+              "title": "出拳技术",
+              "en": "Punch Technique · 3–4回合 × 2分钟，回合间休息45秒",
+              "exercises": [
+                {
+                  "zh": "站架 + 护架 + 脚步",
+                  "en": "Stance + Guard + Footwork",
+                  "sets": "回合1 · 2分钟",
+                  "purpose": "站架稳定，保留移动感",
+                  "cues": [
+                    "站架稳定",
+                    "双手回护",
+                    "前进、后退、侧移",
+                    "下巴微收（chin down）"
+                  ],
+                  "videos": [
+                    {
+                      "label": "拳击步伐 教程",
+                      "url": "https://www.youtube.com/watch?v=DD9w2ZDdGN4"
+                    },
+                    {
+                      "label": "拳击站架步伐 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1XHijeJEdQ/"
+                    }
+                  ],
+                  "timer": 120
+                },
+                {
+                  "zh": "刺拳 + 直拳",
+                  "en": "Jab + Cross (1-2)",
+                  "sets": "回合2 · 2分钟",
+                  "purpose": "保留出拳基础技术",
+                  "cues": [
+                    "jab单练",
+                    "cross单练",
+                    "jab–cross（1–2）",
+                    "打出去立刻回收"
+                  ],
+                  "videos": [
+                    {
+                      "label": "Jab-Cross 教程",
+                      "url": "https://www.youtube.com/watch?v=vyTaKpylOcU"
+                    },
+                    {
+                      "label": "Jab/Cross B站参考",
+                      "url": "https://www.bilibili.com/video/BV1vy4y1S7Bq/"
+                    }
+                  ],
+                  "timer": 120
+                },
+                {
+                  "zh": "组合拳",
+                  "en": "Combination Punches",
+                  "sets": "回合3 · 2分钟",
+                  "purpose": "连贯性与节奏",
+                  "cues": [
+                    "1–2",
+                    "1–2 + 回护",
+                    "1–2 + 轻闪躲（slip）"
+                  ],
+                  "timer": 120
+                },
+                {
+                  "zh": "快打（可选）",
+                  "en": "Speed Punches (Optional)",
+                  "sets": "回合4 · 10–15秒冲刺 + 剩余恢复",
+                  "purpose": "速度感知",
+                  "cues": [
+                    "10–15秒快速直拳",
+                    "剩余时间轻移动恢复"
+                  ],
+                  "timer": 15
+                }
+              ]
+            }
+          ],
+          "stretchGoal": "放松胸、肩前侧、后肩、背阔肌，避免练完更圆肩或更紧。",
+          "stretches": [
+            {
+              "zh": "门框胸肌拉伸",
+              "en": "Doorway Chest Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "打开胸大肌与肩前侧",
+              "cues": [
+                "手臂放在门框上，肘约90度",
+                "身体轻轻向前跨一步",
+                "感受胸和肩前侧被打开"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "背阔肌拉伸",
+              "en": "Lat Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松腋下到侧腰这条线",
+              "cues": [
+                "一只手扶墙或高处",
+                "身体向同侧斜后方坐回去",
+                "感受腋下到侧腰被拉长"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "横向抱臂后肩拉伸",
+              "en": "Cross-body Rear Delt Stretch",
+              "sets": "每侧 25 秒",
+              "purpose": "放松后肩与肩后方",
+              "cues": [
+                "一只手横过胸前",
+                "另一只手轻轻把它抱近身体",
+                "感受后肩被拉伸"
+              ],
+              "timer": 25
+            },
+            {
+              "zh": "上斜方肌轻拉伸",
+              "en": "Upper Trap Stretch",
+              "sets": "每侧 15–20 秒",
+              "purpose": "缓解出拳后颈肩紧张",
+              "cues": [
+                "坐直或站直",
+                "头轻轻向一侧倾斜",
+                "同侧肩膀保持放松下沉",
+                "只做轻轻拉，不要猛拽头"
+              ],
+              "timer": 20
+            },
+            {
+              "zh": "下巴回收",
+              "en": "Chin Tuck",
+              "sets": "2×8，每次保持3秒",
+              "purpose": "练拳后脖子容易紧时的舒缓",
+              "cues": [
+                "眼睛平视",
+                "下巴轻轻往后收，像做\"小双下巴\""
+              ],
+              "videos": [
+                {
+                  "label": "墙天使 B站参考",
+                  "url": "https://www.bilibili.com/video/BV19541127pw/"
+                },
+                {
+                  "label": "墙天使 备用",
+                  "url": "https://www.bilibili.com/video/BV1Se4y1Z7Wh/"
+                }
+              ],
+              "timer": 25
+            },
+            {
+              "zh": "墙天使",
+              "en": "Wall Angels",
+              "sets": "2×8",
+              "purpose": "帮你把肩和胸重新\"打开\"",
+              "cues": [
+                "背靠墙站立",
+                "手臂贴墙缓慢上下滑动",
+                "下背不要过度拱起"
+              ],
+              "timer": 30
+            }
+          ],
+          "notes": [
+            "划船不是耸肩，是肩胛后缩下沉",
+            "俯卧撑保持全身一条线",
+            "出拳不要耸肩，不要把脖子绷死",
+            "Jab / Cross 要打出去立刻回收"
+          ],
+          "summary": "今天练的是\"显挺拔感\"的关键一天，不是手臂练爆日。"
+        },
+        {
+          "day": "周三",
+          "dayEn": "Wednesday",
+          "cls": "wed",
+          "theme": "恢复日 + 颈肩姿态 + 轻有氧",
+          "themeEn": "Recovery + Neck/Shoulder Posture + Light Cardio",
+          "duration": "30–40 分钟",
+          "tags": [
+            {
+              "l": "恢复",
+              "c": "t-pink"
+            },
+            {
+              "l": "姿态",
+              "c": "t-green"
+            },
+            {
+              "l": "核心",
+              "c": "t-orange"
+            },
+            {
+              "l": "轻有氧",
+              "c": "t-blue"
+            }
+          ],
+          "focus": "恢复、脖子友好、姿态修复、轻核心",
+          "goals": [
+            "恢复",
+            "改善脖子酸",
+            "改善头前伸、圆肩",
+            "让身体为后面训练做准备"
+          ],
+          "warmupNote": "无需热身，直接进入轻有氧",
+          "sections": [
+            {
+              "title": "轻有氧",
+              "en": "Light Cardio · 10–15分钟",
+              "exercises": [
+                {
+                  "zh": "轻有氧（任选一种）",
+                  "en": "Light Cardio Option",
+                  "sets": "10–15分钟",
+                  "purpose": "升温、保持活动度、轻度心肺",
+                  "cues": [
+                    "快走（brisk walk）",
+                    "轻松慢跑（easy jog）",
+                    "原地走 + 提膝（march with knee lift）",
+                    "模拟跳绳步（rope step without rope）"
+                  ],
+                  "videos": [
+                    {
+                      "label": "猫牛式 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1nA411i766/"
+                    }
+                  ],
+                  "timer": 600
+                }
+              ]
+            },
+            {
+              "title": "姿态修复",
+              "en": "Posture Reset",
+              "exercises": [
+                {
+                  "zh": "猫牛式",
+                  "en": "Cat-Cow",
+                  "sets": "2×8",
+                  "purpose": "脊柱活动与放松",
+                  "cues": [
+                    "吸气抬头塌腰（cow）",
+                    "呼气低头拱背（cat）",
+                    "慢慢做"
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "穿针引线",
+                  "en": "Thread the Needle",
+                  "sets": "2×每侧6",
+                  "purpose": "胸椎旋转与上背放松",
+                  "cues": [
+                    "保持髋部稳定",
+                    "旋转到舒适范围"
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "墙天使",
+                  "en": "Wall Angels",
+                  "sets": "2×8",
+                  "purpose": "胸椎伸展、肩胛控制",
+                  "cues": [
+                    "下背别拱",
+                    "肋骨收住",
+                    "慢慢滑动"
+                  ],
+                  "videos": [
+                    {
+                      "label": "墙天使 教程",
+                      "url": "https://www.youtube.com/watch?v=1UU4VvklQ44"
+                    },
+                    {
+                      "label": "Chin Tuck B站参考",
+                      "url": "https://www.bilibili.com/video/BV1F34y1Q75X/"
+                    },
+                    {
+                      "label": "Chin Tuck 备用",
+                      "url": "https://www.bilibili.com/video/BV1hM4y1A7kN/"
+                    },
+                    {
+                      "label": "墙天使 B站参考",
+                      "url": "https://www.bilibili.com/video/BV19541127pw/"
+                    },
+                    {
+                      "label": "墙天使 备用",
+                      "url": "https://www.bilibili.com/video/BV1Se4y1Z7Wh/"
+                    }
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "下巴回收",
+                  "en": "Chin Tuck",
+                  "sets": "2×8，每次保持3秒",
+                  "purpose": "改善头前伸，缓解颈部紧张",
+                  "cues": [
+                    "轻轻回收下巴",
+                    "不要抬头",
+                    "肩膀放松"
+                  ],
+                  "videos": [
+                    {
+                      "label": "Chin Tuck 教程",
+                      "url": "https://www.youtube.com/watch?v=hYW0LNH7RdU"
+                    }
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "肩胛后缩",
+                  "en": "Scapular Retraction",
+                  "sets": "2×12",
+                  "purpose": "改善圆肩，增强肩胛控制",
+                  "cues": [
+                    "两侧肩胛向中间夹紧",
+                    "保持2–3秒",
+                    "别耸肩"
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "儿童式呼吸",
+                  "en": "Child's Pose Breathing",
+                  "sets": "1–2分钟",
+                  "purpose": "脊柱放松，副交感神经激活",
+                  "cues": [
+                    "放松趴下",
+                    "深慢呼吸",
+                    "感受背部起伏"
+                  ],
+                  "timer": 90
+                }
+              ]
+            },
+            {
+              "title": "轻核心",
+              "en": "Light Core",
+              "exercises": [
+                {
+                  "zh": "鸟狗",
+                  "en": "Bird Dog",
+                  "sets": "2×每侧8",
+                  "purpose": "核心稳定与脊柱控制",
+                  "cues": [
+                    "对侧手脚同时伸出",
+                    "腰背保持平直",
+                    "慢做"
+                  ],
+                  "videos": [
+                    {
+                      "label": "核心三件套",
+                      "url": "https://www.youtube.com/watch?v=aFk1SjShgO4"
+                    },
+                    {
+                      "label": "鸟狗 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1dAZqYUEFX/"
+                    }
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "死虫",
+                  "en": "Dead Bug",
+                  "sets": "2×每侧8",
+                  "purpose": "核心深层稳定",
+                  "cues": [
+                    "下背贴地",
+                    "对侧手脚缓慢伸出",
+                    "呼气控制"
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "侧桥",
+                  "en": "Side Plank",
+                  "sets": "2×每侧20秒",
+                  "purpose": "侧核心",
+                  "cues": [
+                    "不要塌髋",
+                    "肩膀稳定"
+                  ],
+                  "timer": 20
+                }
+              ]
+            },
+            {
+              "title": "可选轻弹跳（Optional）",
+              "en": "Optional Light Bouncing",
+              "exercises": [
+                {
+                  "zh": "提踵弹跳",
+                  "en": "Ankle Pogo",
+                  "sets": "2×15",
+                  "purpose": "维持轻量骨骼刺激",
+                  "cues": [
+                    "只是维持轻量刺激，不是爆发训练"
+                  ],
+                  "timer": 15
+                },
+                {
+                  "zh": "原地小跳",
+                  "en": "Mini Hops",
+                  "sets": "2×10",
+                  "purpose": "轻度刺激",
+                  "cues": [
+                    "轻轻跳",
+                    "落地轻"
+                  ],
+                  "timer": 15
+                }
+              ]
+            }
+          ],
+          "stretchGoal": "恢复、姿态重置、让颈肩和髋都更舒服。",
+          "stretches": [
+            {
+              "zh": "儿童式呼吸",
+              "en": "Child's Pose Breathing",
+              "sets": "1–2 分钟",
+              "purpose": "放松背部、肩膀和神经紧张感",
+              "cues": [
+                "跪坐，臀部坐向脚跟",
+                "双手前伸，额头轻放",
+                "缓慢呼吸"
+              ],
+              "timer": 90
+            },
+            {
+              "zh": "穿针引线",
+              "en": "Thread the Needle",
+              "sets": "每侧6次，或停留20秒",
+              "purpose": "松开上背和肩胛周围",
+              "cues": [
+                "四点支撑跪姿",
+                "一只手从身体下方\"穿过去\"",
+                "让肩和胸椎旋转"
+              ],
+              "timer": 20
+            },
+            {
+              "zh": "门框胸肌拉伸",
+              "en": "Doorway Chest Stretch",
+              "sets": "每侧 25 秒",
+              "purpose": "改善低头、圆肩后的胸前紧张",
+              "cues": [
+                "手臂放在门框上，肘约90度",
+                "身体轻轻向前跨一步"
+              ],
+              "timer": 25
+            },
+            {
+              "zh": "跪姿髋屈肌拉伸",
+              "en": "Kneeling Hip Flexor Stretch",
+              "sets": "每侧 30 秒",
+              "purpose": "久坐后髋前侧通常很紧，恢复日最适合",
+              "cues": [
+                "一脚在前，另侧膝跪地",
+                "骨盆轻轻向前推",
+                "上身保持直立"
+              ],
+              "videos": [
+                {
+                  "label": "墙天使 B站参考",
+                  "url": "https://www.bilibili.com/video/BV19541127pw/"
+                },
+                {
+                  "label": "墙天使 备用",
+                  "url": "https://www.bilibili.com/video/BV1Se4y1Z7Wh/"
+                }
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "仰卧臀部拉伸",
+              "en": "Figure-4 Glute Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松臀部深层",
+              "cues": [
+                "仰卧，一脚踝搭在另腿膝盖上",
+                "双手抱住支撑腿大腿后侧往胸口拉"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "腘绳肌拉伸",
+              "en": "Hamstring Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松大腿后侧",
+              "cues": [
+                "一腿伸直，从髋部前倾",
+                "背保持平直，不要弓背"
+              ],
+              "videos": [
+                {
+                  "label": "腘绳肌拉伸 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1NGQWYyEcq/"
+                }
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "下巴回收",
+              "en": "Chin Tuck",
+              "sets": "2×8，每次保持3秒",
+              "purpose": "颈肩姿态修复",
+              "cues": [
+                "眼睛平视",
+                "下巴轻轻往后收"
+              ],
+              "timer": 25
+            },
+            {
+              "zh": "墙天使",
+              "en": "Wall Angels",
+              "sets": "2×8",
+              "purpose": "肩胛控制与胸椎伸展",
+              "cues": [
+                "背靠墙",
+                "手臂贴墙缓慢上下滑动",
+                "下背不要拱"
+              ],
+              "timer": 30
+            }
+          ],
+          "notes": [
+            "这是恢复日，不是高强度训练日",
+            "姿态动作全部慢做",
+            "任何颈部不舒服都以小幅、轻柔为主"
+          ],
+          "summary": "这天非常重要，不是偷懒，而是为了让你恢复更好。"
+        },
+        {
+          "day": "周四",
+          "dayEn": "Thursday",
+          "cls": "thu",
+          "theme": "全身力量 + 臀腿背 + 拳击体能",
+          "themeEn": "Full Body Strength + Glutes/Legs/Back + Boxing Conditioning",
+          "duration": "45–55 分钟",
+          "tags": [
+            {
+              "l": "全身",
+              "c": "t-orange"
+            },
+            {
+              "l": "臀腿",
+              "c": "t-green"
+            },
+            {
+              "l": "背",
+              "c": "t-blue"
+            },
+            {
+              "l": "拳击",
+              "c": "t-pink"
+            }
+          ],
+          "focus": "体型优化主力日、背部、臀腿、体能",
+          "goals": [
+            "背更立",
+            "腰腹更稳",
+            "臀腿更匀称",
+            "拳击体能衔接更顺"
+          ],
+          "warmupNote": "使用统一热身",
+          "sections": [
+            {
+              "title": "全身力量",
+              "en": "Full Body Strength",
+              "exercises": [
+                {
+                  "zh": "深蹲停顿",
+                  "en": "Pause Squat",
+                  "sets": "3×10",
+                  "purpose": "控制力和下肢力量",
+                  "cues": [
+                    "底部停 2 秒",
+                    "重心不变",
+                    "核心收紧"
+                  ],
+                  "videos": [
+                    {
+                      "label": "深蹲 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1KM4y117Yb/"
+                    }
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "单腿 RDL",
+                  "en": "Single-leg Romanian Deadlift",
+                  "sets": "3×每腿8",
+                  "purpose": "单腿稳定与臀后链",
+                  "cues": [
+                    "髋折叠",
+                    "骨盆稳",
+                    "不要为了下去更低而弯腰"
+                  ],
+                  "videos": [
+                    {
+                      "label": "RDL 综合参考",
+                      "url": "https://www.youtube.com/watch?v=ZZI__bqlBkQ"
+                    },
+                    {
+                      "label": "深蹲 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1KM4y117Yb/"
+                    },
+                    {
+                      "label": "罗马尼亚硬拉 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1ARsXe5EoZ/"
+                    }
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "水瓶俯身划船",
+                  "en": "Bent-over Row",
+                  "sets": "4×15",
+                  "purpose": "上背力量",
+                  "cues": [
+                    "肩胛向后向下",
+                    "背部平直"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "俯卧撑",
+                  "en": "Push-up",
+                  "sets": "3×8–12",
+                  "purpose": "上肢推力",
+                  "cues": [
+                    "身体一条线",
+                    "不塌腰"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "臀桥",
+                  "en": "Glute Bridge",
+                  "sets": "3×15",
+                  "purpose": "臀部力量与骨盆稳定",
+                  "cues": [
+                    "感受臀发力",
+                    "骨盆保持平稳"
+                  ],
+                  "videos": [
+                    {
+                      "label": "臀桥 参考",
+                      "url": "https://www.youtube.com/watch?v=Ve19kXFwaPU"
+                    },
+                    {
+                      "label": "臀桥 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1Jg4y1z7Nm/"
+                    }
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "反向平板支撑",
+                  "en": "Reverse Plank",
+                  "sets": "2×25秒",
+                  "purpose": "脊柱伸展链与臀部激活",
+                  "cues": [
+                    "胸打开",
+                    "臀夹紧",
+                    "不要仰头"
+                  ],
+                  "timer": 25
+                }
+              ]
+            },
+            {
+              "title": "拳击体能",
+              "en": "Boxing Conditioning · 3回合 × 2分钟，回合间休息45秒",
+              "exercises": [
+                {
+                  "zh": "轻移动 + Jab",
+                  "en": "Footwork + Jab",
+                  "sets": "回合1 · 2分钟",
+                  "purpose": "热身移动与出拳节奏",
+                  "cues": [
+                    "步伐轻快",
+                    "jab打出立刻回收"
+                  ],
+                  "videos": [
+                    {
+                      "label": "拳击步伐",
+                      "url": "https://www.youtube.com/watch?v=DD9w2ZDdGN4"
+                    }
+                  ],
+                  "timer": 120
+                },
+                {
+                  "zh": "1-2 + 移动",
+                  "en": "1-2 Combo + Footwork",
+                  "sets": "回合2 · 2分钟",
+                  "purpose": "组合与步伐协调",
+                  "cues": [
+                    "jab-cross流畅连接",
+                    "出拳后立刻回护"
+                  ],
+                  "videos": [
+                    {
+                      "label": "Jab-Cross 教程",
+                      "url": "https://www.youtube.com/watch?v=vyTaKpylOcU"
+                    }
+                  ],
+                  "timer": 120
+                },
+                {
+                  "zh": "1-2 + 1-2 + 回护",
+                  "en": "1-2-1-2 + Guard Return",
+                  "sets": "回合3 · 2分钟",
+                  "purpose": "连续组合与体能",
+                  "cues": [
+                    "动作干净优先",
+                    "出拳后双手立刻回护"
+                  ],
+                  "timer": 120
+                },
+                {
+                  "zh": "快速直拳冲刺",
+                  "en": "Straight Punch Burst",
+                  "sets": "4×10秒，组间休息20–30秒",
+                  "purpose": "速度与爆发感知",
+                  "cues": [
+                    "10秒全力出拳",
+                    "组间完全放松"
+                  ],
+                  "timer": 10
+                }
+              ]
+            },
+            {
+              "title": "核心",
+              "en": "Core",
+              "exercises": [
+                {
+                  "zh": "Hollow Hold（简化版）",
+                  "en": "Hollow Hold",
+                  "sets": "3×20秒",
+                  "purpose": "深层核心稳定",
+                  "cues": [
+                    "下背贴地",
+                    "手脚悬空",
+                    "腹部收紧"
+                  ],
+                  "timer": 20
+                },
+                {
+                  "zh": "平板碰肩",
+                  "en": "Shoulder Tap Plank",
+                  "sets": "3×每侧10",
+                  "purpose": "抗旋转核心",
+                  "cues": [
+                    "腰不转",
+                    "骨盆稳",
+                    "慢做"
+                  ],
+                  "videos": [
+                    {
+                      "label": "平板碰肩 参考",
+                      "url": "https://www.youtube.com/watch?v=WhAOPdeUhU0"
+                    },
+                    {
+                      "label": "平板碰肩 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1d24y137HX/"
+                    },
+                    {
+                      "label": "Hollow Hold B站参考",
+                      "url": "https://www.bilibili.com/video/BV1uU4y1j7kv/"
+                    }
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "俄罗斯转体（慢做）",
+                  "en": "Russian Twist (slow)",
+                  "sets": "2×每侧12",
+                  "purpose": "腹斜肌与腰腹协调",
+                  "cues": [
+                    "慢做",
+                    "核心主导",
+                    "脚可放地上"
+                  ],
+                  "videos": [
+                    {
+                      "label": "俄罗斯转体 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1R2421M7oi/"
+                    }
+                  ],
+                  "timer": 45
+                }
+              ]
+            }
+          ],
+          "stretchGoal": "放松背、胸、臀腿、髋和躯干，帮助从\"力量日 + 体能日\"中恢复出来。",
+          "stretches": [
+            {
+              "zh": "门框胸肌拉伸",
+              "en": "Doorway Chest Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "打开胸大肌与肩前侧",
+              "cues": [
+                "手臂放在门框上，肘约90度",
+                "身体轻轻向前跨一步"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "背阔肌拉伸",
+              "en": "Lat Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松腋下到侧腰这条线",
+              "cues": [
+                "一只手扶墙或高处",
+                "身体向同侧斜后方坐回去"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "仰卧臀部拉伸",
+              "en": "Figure-4 Glute Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松臀部深层、梨状肌区域",
+              "cues": [
+                "仰卧，一脚踝搭在另腿膝盖上",
+                "双手抱住支撑腿大腿后侧往胸口拉"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "跪姿髋屈肌拉伸",
+              "en": "Kneeling Hip Flexor Stretch",
+              "sets": "每侧 30 秒",
+              "purpose": "放松髋前侧",
+              "cues": [
+                "一脚在前，另侧膝跪地",
+                "骨盆轻轻向前推",
+                "上身保持直立"
+              ],
+              "videos": [
+                {
+                  "label": "腘绳肌拉伸 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1NGQWYyEcq/"
+                }
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "坐姿单腿前屈",
+              "en": "Seated Hamstring Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松大腿后侧",
+              "cues": [
+                "一腿伸直，从髋部前倾",
+                "背保持平直"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "猫牛式",
+              "en": "Cat-Cow",
+              "sets": "8 次",
+              "purpose": "脊柱温和放松",
+              "cues": [
+                "吸气抬头塌背（Cow）",
+                "呼气低头拱背（Cat）"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "婴儿式侧伸展",
+              "en": "Child's Pose Side Reach",
+              "sets": "每侧 20 秒",
+              "purpose": "放松侧腰、背阔肌和肩后侧",
+              "cues": [
+                "儿童式姿势下，双手向一侧移动",
+                "保持臀部坐回去"
+              ],
+              "timer": 20
+            },
+            {
+              "zh": "下巴回收（收尾可选）",
+              "en": "Chin Tuck (optional)",
+              "sets": "1×8",
+              "purpose": "拳击体能后脖子紧时加这一组",
+              "cues": [
+                "眼睛平视",
+                "下巴轻轻往后收"
+              ],
+              "timer": 25
+            }
+          ],
+          "notes": [
+            "单腿 RDL 强调髋折叠，不是为了比柔韧",
+            "反向平板不要仰头",
+            "拳击体能仍然是动作干净优先"
+          ],
+          "summary": "今天是体型优化主力日，重点放在背、臀腿、核心，不是只看拳击部分。"
+        },
+        {
+          "day": "周五",
+          "dayEn": "Friday",
+          "cls": "fri",
+          "theme": "灵敏 + 轻爆发 + 踢腿控制 + 腰腹",
+          "themeEn": "Agility + Light Explosive Work + Kick Control + Abs",
+          "duration": "40–50 分钟",
+          "tags": [
+            {
+              "l": "灵敏",
+              "c": "t-purple"
+            },
+            {
+              "l": "轻爆发",
+              "c": "t-green"
+            },
+            {
+              "l": "踢腿",
+              "c": "t-pink"
+            },
+            {
+              "l": "腰腹",
+              "c": "t-orange"
+            }
+          ],
+          "focus": "灵敏脚步、轻爆发、踢腿控制、腰腹",
+          "goals": [
+            "保留拳腿感",
+            "练脚步与灵敏",
+            "做轻量爆发",
+            "踢腿控制 + 腹部收紧"
+          ],
+          "warmupNote": "使用统一热身",
+          "sections": [
+            {
+              "title": "轻爆发",
+              "en": "Light Explosive Work",
+              "exercises": [
+                {
+                  "zh": "半蹲跳",
+                  "en": "Squat Jump",
+                  "sets": "3×5",
+                  "purpose": "低量高质量爆发",
+                  "cues": [
+                    "落地轻",
+                    "次数少",
+                    "感受弹跳感"
+                  ],
+                  "videos": [
+                    {
+                      "label": "半蹲跳 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1uK4y1t7Uj/"
+                    }
+                  ],
+                  "timer": 20
+                },
+                {
+                  "zh": "快速提膝",
+                  "en": "Fast Knee Drive",
+                  "sets": "3×15秒",
+                  "purpose": "提膝速度、协调用力",
+                  "cues": [
+                    "快速交替",
+                    "核心稳定",
+                    "不要前倾太多"
+                  ],
+                  "timer": 15
+                },
+                {
+                  "zh": "侧向小跨步跳",
+                  "en": "Small Lateral Bounds",
+                  "sets": "2×每侧8",
+                  "purpose": "侧向灵敏",
+                  "cues": [
+                    "落地轻",
+                    "控制落点"
+                  ],
+                  "timer": 15
+                }
+              ]
+            },
+            {
+              "title": "灵敏移动",
+              "en": "Agility Footwork",
+              "exercises": [
+                {
+                  "zh": "前后快步",
+                  "en": "Quick In-Out Step",
+                  "sets": "3×20秒",
+                  "purpose": "前后灵敏与反应",
+                  "cues": [
+                    "脚步轻快",
+                    "不要跳太大"
+                  ],
+                  "videos": [
+                    {
+                      "label": "拳击步伐 教程",
+                      "url": "https://www.youtube.com/watch?v=DD9w2ZDdGN4"
+                    },
+                    {
+                      "label": "半蹲跳 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1uK4y1t7Uj/"
+                    },
+                    {
+                      "label": "快速提膝 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1EZ4y1y7wZ/"
+                    }
+                  ],
+                  "timer": 20
+                },
+                {
+                  "zh": "左右滑步",
+                  "en": "Lateral Shuffle",
+                  "sets": "3×20秒",
+                  "purpose": "侧向灵敏",
+                  "cues": [
+                    "低重心",
+                    "步伐小而快"
+                  ],
+                  "timer": 20
+                },
+                {
+                  "zh": "拳击步伐",
+                  "en": "Boxing Footwork",
+                  "sets": "2×1分钟",
+                  "purpose": "综合步伐与节奏",
+                  "cues": [
+                    "保持站架",
+                    "前后左右移动",
+                    "随时准备出拳"
+                  ],
+                  "timer": 60
+                }
+              ]
+            },
+            {
+              "title": "踢腿控制",
+              "en": "Kick Control",
+              "exercises": [
+                {
+                  "zh": "提膝爆发",
+                  "en": "Explosive Knee Drive",
+                  "sets": "3×每腿8",
+                  "purpose": "提膝速度与髋屈控制",
+                  "cues": [
+                    "爆发提膝",
+                    "核心参与"
+                  ],
+                  "timer": 40
+                },
+                {
+                  "zh": "前踢快收",
+                  "en": "Fast Front Kick, Quick Recoil",
+                  "sets": "3×每腿6",
+                  "purpose": "前踢速度与回收控制",
+                  "cues": [
+                    "踢出后快速收腿",
+                    "不追求高度"
+                  ],
+                  "videos": [
+                    {
+                      "label": "前踢组合",
+                      "url": "https://www.youtube.com/watch?v=JGobdW7nS1c"
+                    },
+                    {
+                      "label": "拳击步伐 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1XHijeJEdQ/"
+                    },
+                    {
+                      "label": "提膝 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1C741117Am/"
+                    },
+                    {
+                      "label": "前踢 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1sb4y1X78f/"
+                    }
+                  ],
+                  "timer": 40
+                },
+                {
+                  "zh": "回旋踢动作分解",
+                  "en": "Round Kick Breakdown",
+                  "sets": "3×每腿5",
+                  "purpose": "回旋踢基础",
+                  "cues": [
+                    "先提膝",
+                    "转髋",
+                    "支撑脚稳",
+                    "踢完收回"
+                  ],
+                  "videos": [
+                    {
+                      "label": "Round Kick 教程",
+                      "url": "https://www.youtube.com/watch?v=sOPFUfXpxVI"
+                    },
+                    {
+                      "label": "回旋踢 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1Et411z7W4/"
+                    }
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "拳腿组合影练",
+                  "en": "Shadow Combo",
+                  "sets": "3×1.5分钟",
+                  "purpose": "拳腿连贯与节奏",
+                  "cues": [
+                    "jab–cross–front kick",
+                    "jab–cross–step out–knee lift",
+                    "jab–slip–cross–front kick",
+                    "先做流畅，再谈速度"
+                  ],
+                  "videos": [
+                    {
+                      "label": "Jab-Cross-Kick 组合",
+                      "url": "https://www.youtube.com/watch?v=JGobdW7nS1c"
+                    },
+                    {
+                      "label": "Jab-Cross-Round Kick",
+                      "url": "https://www.youtube.com/watch?v=C2x7RTrLYmY"
+                    },
+                    {
+                      "label": "影拳组合 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1QJwpeLEzA/"
+                    }
+                  ],
+                  "timer": 90
+                }
+              ]
+            },
+            {
+              "title": "腰腹",
+              "en": "Abs / Core",
+              "exercises": [
+                {
+                  "zh": "仰卧举腿（屈膝版）",
+                  "en": "Bent-leg Raise",
+                  "sets": "3×10",
+                  "purpose": "下腹核心",
+                  "cues": [
+                    "下背贴地",
+                    "慢慢下放"
+                  ],
+                  "videos": [
+                    {
+                      "label": "Dead Bug B站参考",
+                      "url": "https://www.bilibili.com/video/BV1CYrfYSE9m/"
+                    }
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "侧桥抬髋",
+                  "en": "Side Plank Hip Lift",
+                  "sets": "2×每侧10",
+                  "purpose": "侧核心与臀中肌",
+                  "cues": [
+                    "保持侧桥",
+                    "缓慢抬落髋部"
+                  ],
+                  "videos": [
+                    {
+                      "label": "髋屈肌拉伸 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1st421E7ec/"
+                    }
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "死虫",
+                  "en": "Dead Bug",
+                  "sets": "2×每侧8",
+                  "purpose": "核心稳定",
+                  "cues": [
+                    "对侧手脚伸出",
+                    "腰背中立"
+                  ],
+                  "timer": 30
+                }
+              ]
+            }
+          ],
+          "stretchGoal": "放松髋、臀、内收肌、大腿后侧和小腿，让踢腿后的下半身恢复得更好。",
+          "stretches": [
+            {
+              "zh": "跪姿髋屈肌拉伸",
+              "en": "Kneeling Hip Flexor Stretch",
+              "sets": "每侧 30 秒",
+              "purpose": "放松髋前侧",
+              "cues": [
+                "一脚在前，另侧膝跪地",
+                "骨盆轻轻向前推",
+                "上身保持直立"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "蝴蝶式大腿内侧拉伸",
+              "en": "Butterfly Groin Stretch",
+              "sets": "30 秒",
+              "purpose": "放松大腿内侧（adductors）",
+              "cues": [
+                "坐姿，双脚脚掌相对",
+                "膝盖自然向两侧打开",
+                "身体微微前倾"
+              ],
+              "videos": [
+                {
+                  "label": "蝴蝶式 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1Wr4y1Q7LH/"
+                }
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "坐姿腿后侧拉伸",
+              "en": "Seated Hamstring Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松大腿后侧",
+              "cues": [
+                "一腿伸直，从髋部前倾",
+                "背保持平直，不要弓背"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "仰卧臀中肌 / 臀部拉伸",
+              "en": "Figure-4 Glute Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松臀部深层",
+              "cues": [
+                "仰卧，一脚踝搭在另腿膝盖上",
+                "双手抱住支撑腿大腿后侧往胸口拉"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "站姿小腿拉伸",
+              "en": "Standing Calf Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松小腿",
+              "cues": [
+                "双手扶墙，一前一后",
+                "后脚脚跟踩实地面",
+                "身体往前压"
+              ],
+              "videos": [
+                {
+                  "label": "猫牛式 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1nA411i766/"
+                },
+                {
+                  "label": "腘绳肌拉伸 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1NGQWYyEcq/"
+                },
+                {
+                  "label": "蝴蝶式 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1Wr4y1Q7LH/"
+                }
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "鸽子式简化版（可选）",
+              "en": "Modified Pigeon Stretch (optional)",
+              "sets": "每侧 20–25 秒",
+              "purpose": "对踢腿后臀部和髋外侧放松很好",
+              "cues": [
+                "前腿弯曲放在身体前方",
+                "后腿向后伸",
+                "身体微微前倾",
+                "如果髋太紧或膝盖不舒服，就不要强做"
+              ],
+              "videos": [
+                {
+                  "label": "鸽子式 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1qe411K7sa/"
+                }
+              ],
+              "timer": 25
+            },
+            {
+              "zh": "猫牛式",
+              "en": "Cat-Cow",
+              "sets": "6–8 次",
+              "purpose": "收尾，给腹部和脊柱一个轻松放松",
+              "cues": [
+                "吸气抬头塌背",
+                "呼气低头拱背"
+              ],
+              "timer": 30
+            }
+          ],
+          "notes": [
+            "所有爆发动作都保持低量",
+            "前踢、回旋踢都要\"踢出—收回\"",
+            "先做流畅，再谈速度"
+          ],
+          "summary": "今天是\"控制 > 冲击，协调 > 蛮力\"。"
+        },
+        {
+          "day": "周六",
+          "dayEn": "Saturday",
+          "cls": "sat",
+          "theme": "健身房日（游泳 + 悬垂/引体 + 拉力器械）",
+          "themeEn": "Gym Day: Swimming + Hanging/Pull-up + Pull Machines",
+          "duration": "45–70 分钟",
+          "tags": [
+            {
+              "l": "健身房",
+              "c": "t-green"
+            },
+            {
+              "l": "游泳",
+              "c": "t-blue"
+            },
+            {
+              "l": "悬垂",
+              "c": "t-purple"
+            },
+            {
+              "l": "引体",
+              "c": "t-orange"
+            }
+          ],
+          "focus": "做家里最难替代的内容",
+          "goals": [
+            "做家里最难替代的内容",
+            "补背部拉力",
+            "练悬垂 / 引体基础",
+            "做恢复型全身运动（游泳）"
+          ],
+          "warmupNote": "跑步机快走 / 单车 5分钟 + 动态活动 3分钟",
+          "sections": [
+            {
+              "title": "悬垂 / 引体",
+              "en": "Hanging / Pull-up Section",
+              "exercises": [
+                {
+                  "zh": "自然悬垂",
+                  "en": "Dead Hang",
+                  "sets": "3–5组 × 10–30秒，组间休息40–60秒",
+                  "purpose": "肩带打开、握力、悬挂基础",
+                  "cues": [
+                    "不要耸肩硬吊",
+                    "舒适拉开即可",
+                    "握力不够可从短时间开始"
+                  ],
+                  "videos": [
+                    {
+                      "label": "Dead Hang 教程",
+                      "url": "https://www.youtube.com/watch?v=OT-wTpxP9uo"
+                    },
+                    {
+                      "label": "自然悬垂 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1594y177mJ/"
+                    }
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "肩胛引体",
+                  "en": "Scapular Pull-up",
+                  "sets": "2–3×6–8",
+                  "purpose": "肩胛控制、引体基础",
+                  "cues": [
+                    "肩胛下沉（scapular depression）",
+                    "手肘不要大弯"
+                  ],
+                  "videos": [
+                    {
+                      "label": "肩胛引体 教程",
+                      "url": "https://www.youtube.com/watch?v=V0hzdT1CZnk"
+                    },
+                    {
+                      "label": "肩胛引体 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1x54y127H4/"
+                    }
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "辅助引体 / 引体向上",
+                  "en": "Assisted Pull-up / Pull-up",
+                  "sets": "3×3–6（做不了可跳过）",
+                  "purpose": "垂直拉力补充",
+                  "cues": [
+                    "如果做得动：3×3–6",
+                    "如果做不了：继续做好悬垂和高位下拉"
+                  ],
+                  "timer": 30
+                }
+              ]
+            },
+            {
+              "title": "拉力器械",
+              "en": "Pull Machines",
+              "exercises": [
+                {
+                  "zh": "坐姿划船",
+                  "en": "Seated Row",
+                  "sets": "4×10–12",
+                  "purpose": "背部力量、站姿体态",
+                  "cues": [
+                    "胸打开",
+                    "肩胛后缩"
+                  ],
+                  "videos": [
+                    {
+                      "label": "坐姿划船 教程",
+                      "url": "https://www.youtube.com/watch?v=lSt1oTrZ_Cc"
+                    },
+                    {
+                      "label": "坐姿划船 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1BJ411R7fV/"
+                    }
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "高位下拉",
+                  "en": "Lat Pulldown",
+                  "sets": "3×10–12",
+                  "purpose": "背阔肌、肩线与上半身比例",
+                  "cues": [
+                    "下拉到上胸",
+                    "不要大幅后仰"
+                  ],
+                  "videos": [
+                    {
+                      "label": "高位下拉 教程",
+                      "url": "https://www.youtube.com/watch?v=AOpi-p0cJkc"
+                    },
+                    {
+                      "label": "高位下拉 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1Ar421t7U9/"
+                    }
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "面拉",
+                  "en": "Face Pull",
+                  "sets": "2–3×12–15",
+                  "purpose": "后肩与肩胛稳定",
+                  "cues": [
+                    "绳索拉到脸侧",
+                    "外旋手臂"
+                  ],
+                  "timer": 45
+                }
+              ]
+            },
+            {
+              "title": "下肢 / 核心（少量补充）",
+              "en": "Lower Body / Core Supplement",
+              "exercises": [
+                {
+                  "zh": "高脚杯深蹲",
+                  "en": "Goblet Squat",
+                  "sets": "3×10",
+                  "purpose": "下肢力量补充",
+                  "cues": [
+                    "重量放胸前",
+                    "深蹲姿态"
+                  ],
+                  "videos": [
+                    {
+                      "label": "Goblet Squat 教程",
+                      "url": "https://www.youtube.com/watch?v=mF5tnEBrdkc"
+                    },
+                    {
+                      "label": "高脚杯深蹲 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1kZBbBSEQL/"
+                    }
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "轻重量罗马尼亚硬拉",
+                  "en": "Light Romanian Deadlift",
+                  "sets": "3×10",
+                  "purpose": "后链补充",
+                  "cues": [
+                    "髋折叠为主",
+                    "保持背部中立"
+                  ],
+                  "videos": [
+                    {
+                      "label": "RDL B站参考",
+                      "url": "https://www.bilibili.com/video/BV1ARsXe5EoZ/"
+                    }
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "绳索木劈",
+                  "en": "Cable Wood Chop",
+                  "sets": "3×每侧10",
+                  "purpose": "旋转核心稳定",
+                  "cues": [
+                    "核心主导转动",
+                    "腰椎不过度旋转"
+                  ],
+                  "videos": [
+                    {
+                      "label": "绳索木劈 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1UJx5e1Ems/"
+                    }
+                  ],
+                  "timer": 45
+                }
+              ]
+            },
+            {
+              "title": "游泳",
+              "en": "Swimming · 20–30分钟，轻到中等强度",
+              "exercises": [
+                {
+                  "zh": "自由泳 + 蛙泳交替",
+                  "en": "Freestyle + Breaststroke",
+                  "sets": "20–30分钟",
+                  "purpose": "恢复型全身运动 · 心肺 · 脊柱友好",
+                  "cues": [
+                    "轻松游 4–6 趟",
+                    "中等速度游 4 趟",
+                    "再轻松游恢复",
+                    "不必拼冲刺"
+                  ],
+                  "videos": [
+                    {
+                      "label": "自由泳 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1JS4y1J7iS/"
+                    },
+                    {
+                      "label": "蛙泳 B站参考",
+                      "url": "https://www.bilibili.com/video/BV15k4y1i7hg/"
+                    }
+                  ],
+                  "timer": 1200
+                }
+              ]
+            }
+          ],
+          "stretchGoal": "重点放松胸、背阔肌、肩带、髋屈肌、腿后侧和小腿。",
+          "stretches": [
+            {
+              "zh": "门框胸肌拉伸",
+              "en": "Doorway Chest Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "打开胸大肌与肩前侧",
+              "cues": [
+                "手臂放在门框上，肘约90度",
+                "身体轻轻向前跨一步"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "背阔肌拉伸",
+              "en": "Lat Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松腋下到侧腰这条线",
+              "cues": [
+                "一只手扶墙或高处",
+                "身体向同侧斜后方坐回去"
+              ],
+              "videos": [
+                {
+                  "label": "髋屈肌拉伸 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1st421E7ec/"
+                },
+                {
+                  "label": "自由泳 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1JS4y1J7iS/"
+                },
+                {
+                  "label": "蛙泳 B站参考",
+                  "url": "https://www.bilibili.com/video/BV15k4y1i7hg/"
+                }
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "肩后侧拉伸",
+              "en": "Rear Delt Stretch",
+              "sets": "每侧 25 秒",
+              "purpose": "放松后肩",
+              "cues": [
+                "一只手横过胸前",
+                "另一只手轻轻把它抱近身体"
+              ],
+              "timer": 25
+            },
+            {
+              "zh": "悬垂后肩带放松（可选）",
+              "en": "Passive Hang Relaxation (optional)",
+              "sets": "10–15秒 × 1–2次",
+              "purpose": "给肩带一个轻松拉开感",
+              "cues": [
+                "如果悬垂后肩膀感觉舒服，可轻轻再做",
+                "如果肩不舒服，就跳过"
+              ],
+              "timer": 15
+            },
+            {
+              "zh": "跪姿髋屈肌拉伸",
+              "en": "Kneeling Hip Flexor Stretch",
+              "sets": "每侧 30 秒",
+              "purpose": "放松髋前侧",
+              "cues": [
+                "一脚在前，另侧膝跪地",
+                "骨盆轻轻向前推",
+                "上身保持直立"
+              ],
+              "videos": [
+                {
+                  "label": "腘绳肌拉伸 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1NGQWYyEcq/"
+                }
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "坐姿腿后侧拉伸",
+              "en": "Seated Hamstring Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松大腿后侧",
+              "cues": [
+                "一腿伸直，从髋部前倾",
+                "背保持平直"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "小腿拉伸",
+              "en": "Calf Stretch",
+              "sets": "每侧 25 秒",
+              "purpose": "放松小腿",
+              "cues": [
+                "双手扶墙，一前一后",
+                "后脚脚跟踩实地面"
+              ],
+              "timer": 25
+            },
+            {
+              "zh": "儿童式呼吸",
+              "en": "Child's Pose Breathing",
+              "sets": "1 分钟",
+              "purpose": "游泳和拉力训练后的收尾",
+              "cues": [
+                "跪坐，臀部坐向脚跟",
+                "双手前伸，额头轻放",
+                "缓慢呼吸"
+              ],
+              "timer": 60
+            }
+          ],
+          "notes": [
+            "悬垂不要耸肩硬吊",
+            "Lat Pulldown 不要大幅后仰借力",
+            "游泳作为恢复型全身运动，不必拼冲刺"
+          ],
+          "summary": "健身房日不需要练废，重点是把\"家里练不到的\"补上。"
+        },
+        {
+          "day": "周日",
+          "dayEn": "Sunday",
+          "cls": "sun",
+          "theme": "休息 + 轻拉伸 + 散步",
+          "themeEn": "Rest + Light Stretch + Walk",
+          "duration": "15–25 分钟",
+          "tags": [
+            {
+              "l": "休息",
+              "c": "t-pink"
+            },
+            {
+              "l": "拉伸",
+              "c": "t-green"
+            },
+            {
+              "l": "散步",
+              "c": "t-blue"
+            }
+          ],
+          "focus": "恢复",
+          "goals": [
+            "恢复、放松、维持姿态训练"
+          ],
+          "warmupNote": "无需热身",
+          "sections": [
+            {
+              "title": "轻活动",
+              "en": "Light Activity",
+              "exercises": [
+                {
+                  "zh": "散步",
+                  "en": "Walk",
+                  "sets": "15–20分钟",
+                  "purpose": "促进恢复、轻度活动",
+                  "cues": [
+                    "随意步行",
+                    "保持轻松节奏"
+                  ],
+                  "videos": [
+                    {
+                      "label": "猫牛式 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1nA411i766/"
+                    }
+                  ],
+                  "timer": 900
+                },
+                {
+                  "zh": "下巴回收",
+                  "en": "Chin Tuck",
+                  "sets": "2组",
+                  "purpose": "维持姿态习惯",
+                  "cues": [
+                    "轻轻回收下巴",
+                    "保持3秒"
+                  ],
+                  "timer": 20
+                },
+                {
+                  "zh": "墙天使",
+                  "en": "Wall Angels",
+                  "sets": "2组",
+                  "purpose": "维持肩胛控制",
+                  "cues": [
+                    "下背别拱",
+                    "慢慢滑动"
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "猫牛式",
+                  "en": "Cat-Cow",
+                  "sets": "2组 × 8次",
+                  "purpose": "脊柱放松",
+                  "cues": [
+                    "慢做",
+                    "随呼吸节奏"
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "髋屈肌 + 腘绳肌拉伸",
+                  "en": "Hip Flexor + Hamstring Stretch",
+                  "sets": "各30秒",
+                  "purpose": "下肢放松",
+                  "cues": [
+                    "保持放松",
+                    "不要强求幅度"
+                  ],
+                  "videos": [
+                    {
+                      "label": "猫牛式 B站参考",
+                      "url": "https://www.bilibili.com/video/BV1nA411i766/"
+                    }
+                  ],
+                  "timer": 30
+                }
+              ]
+            }
+          ],
+          "stretchGoal": "恢复、放松、维持活动度，不追求强刺激。",
+          "stretches": [
+            {
+              "zh": "下巴回收",
+              "en": "Chin Tuck",
+              "sets": "2×8，每次保持3秒",
+              "purpose": "维持颈部姿态习惯",
+              "cues": [
+                "眼睛平视",
+                "下巴轻轻往后收"
+              ],
+              "videos": [
+                {
+                  "label": "髋屈肌拉伸 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1st421E7ec/"
+                }
+              ],
+              "timer": 25
+            },
+            {
+              "zh": "墙天使",
+              "en": "Wall Angels",
+              "sets": "2×8",
+              "purpose": "维持肩胛控制",
+              "cues": [
+                "背靠墙",
+                "手臂贴墙缓慢上下滑动",
+                "下背不要拱"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "猫牛式",
+              "en": "Cat-Cow",
+              "sets": "2×8",
+              "purpose": "脊柱放松",
+              "cues": [
+                "吸气抬头塌背",
+                "呼气低头拱背",
+                "随呼吸节奏慢做"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "跪姿髋屈肌拉伸",
+              "en": "Kneeling Hip Flexor Stretch",
+              "sets": "每侧 30 秒",
+              "purpose": "放松髋前侧",
+              "cues": [
+                "一脚在前，另侧膝跪地",
+                "骨盆轻轻向前推"
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "坐姿腘绳肌拉伸",
+              "en": "Seated Hamstring Stretch",
+              "sets": "每侧 25–30 秒",
+              "purpose": "放松大腿后侧",
+              "cues": [
+                "一腿伸直，从髋部前倾",
+                "背保持平直"
+              ],
+              "videos": [
+                {
+                  "label": "腘绳肌拉伸 B站参考",
+                  "url": "https://www.bilibili.com/video/BV1NGQWYyEcq/"
+                }
+              ],
+              "timer": 30
+            },
+            {
+              "zh": "门框胸肌拉伸",
+              "en": "Doorway Chest Stretch",
+              "sets": "每侧 20–25 秒",
+              "purpose": "维持胸椎伸展",
+              "cues": [
+                "手臂放在门框上，肘约90度",
+                "身体轻轻向前跨一步"
+              ],
+              "timer": 25
+            },
+            {
+              "zh": "儿童式呼吸",
+              "en": "Child's Pose Breathing",
+              "sets": "1 分钟",
+              "purpose": "整周结束的收尾动作",
+              "cues": [
+                "跪坐，臀部坐向脚跟",
+                "双手前伸，额头轻放",
+                "缓慢呼吸"
+              ],
+              "timer": 60
+            }
+          ],
+          "notes": [
+            "不做高强度拳腿训练",
+            "如果这一周很累，可以完全休息"
+          ],
+          "summary": "周日尽量不要做高强度拳腿训练。如果这一周很累，可以完全休息。"
+        }
+      ]
+    }
+  },
+  "gentle_home_fitness": {
+    "config": {
+      "navTitle": "居家运动计划",
+      "navSubtitle": "GENTLE HOME FITNESS PLAN",
+      "heroEyebrow": "初学者 · 适量优先 · 居家为主",
+      "heroTitle": "<em>安全适量</em> + 健康活动<br>+ 可长期坚持",
+      "heroSub": "以不过度、不过累、可持续（sustainable）为第一原则；兼顾轻有氧（cardio）、基础力量（strength）、平衡（balance）、活动度（mobility）与恢复（recovery）。",
+      "cssVars": {
+        "--accent": "#8ecf9e",
+        "--accent2": "#79b8ff",
+        "--accent3": "#ff9f7f",
+        "--accent4": "#f2c14e",
+        "--accent5": "#b39ddb"
+      }
+    },
+    "meta": {
+      "profile": {
+        "level": "初学者，之前运动基础较少",
+        "goalPrimary": "活动身体、改善健康（health）、建立可长期坚持的运动习惯",
+        "goalSecondary": "稍微减脂（fat loss），但不是首要目标",
+        "location": "以家里室内为主，可偶尔在公园快走或散步",
+        "equipment": [
+          "瑜伽垫（yoga mat）",
+          "1kg哑铃（1kg dumbbells）"
+        ],
+        "sessionDuration": "每天 30–60 分钟，建议多数天控制在 35–45 分钟"
+      },
+      "notices": [
+        "胸闷、胸痛",
+        "明显头晕、恶心",
+        "呼吸困难且无法缓解",
+        "关节刺痛或卡住感",
+        "腰、膝疼痛越来越明显",
+        "近期有明显外伤、扭伤或旧伤复发",
+        "有高血压、心脏病、糖尿病、骨关节炎或腰椎/膝关节旧伤但未评估"
+      ],
+      "principles": [
+        {
+          "title": "原则1：强度宁轻勿重",
+          "body": "主观用力感（RPE）控制在 3–5/10；运动时应有点热、有点喘，但仍能完整说话。练完感觉舒服、精神一点，而不是累趴。"
+        },
+        {
+          "title": "原则2：时间适中，重在坚持",
+          "body": "每天 30–60 分钟即可，多数天建议 35–45 分钟。与其偶尔练很猛，不如规律、适量、能长期坚持（consistent and sustainable）。"
+        },
+        {
+          "title": "原则3：优先简单、稳定、对膝腰友好的动作",
+          "body": "优先选择稳定、安全、低冲击的动作，不做复杂高难度、不做爆发性很强或需要大重量的训练。"
+        },
+        {
+          "title": "原则4：恢复和舒适感很重要",
+          "body": "如果第二天明显酸痛、疲劳、抗拒训练，通常说明前一天偏多了。恢复良好、第二天还能正常生活，才是合适强度。"
+        },
+        {
+          "title": "原则5：稍微减脂靠规律活动，不靠练到很累",
+          "body": "把步行和轻有氧作为主力，再配合每周 2–3 次全身力量训练。不要依靠高强度、练得很累来减脂。"
+        }
+      ],
+      "goalCards": [
+        {
+          "icon": "❤️",
+          "title": "改善健康（Health）",
+          "body": "增加日常活动量，改善心肺、循环和身体舒适度，让身体更灵活、更有精神。"
+        },
+        {
+          "icon": "🏠",
+          "title": "居家可执行（Home-friendly）",
+          "body": "主要在家完成，只使用瑜伽垫和 1kg 哑铃；偶尔在公园散步或快走即可。"
+        },
+        {
+          "icon": "💪",
+          "title": "基础力量（Strength）",
+          "body": "通过简单的全身力量训练，帮助维持肌力、支持关节稳定、提升日常起身和走路能力。"
+        },
+        {
+          "icon": "🚶",
+          "title": "轻有氧（Cardio）",
+          "body": "以快走、散步、室内原地走为主，帮助改善心肺并辅助轻度减脂。"
+        },
+        {
+          "icon": "🧘",
+          "title": "恢复与活动度（Recovery & Mobility）",
+          "body": "每天都可做一点温和拉伸和活动度练习，减少僵硬，提升舒适感和长期坚持率。"
+        },
+        {
+          "icon": "⚖️",
+          "title": "平衡与防跌倒（Balance）",
+          "body": "加入简单平衡训练，提升身体控制，对 50+ 人群尤其有价值。"
+        }
+      ],
+      "weeklyTargets": [
+        "力量训练（strength）每周 2–3 天",
+        "轻有氧（cardio）每周 3–5 天",
+        "拉伸与活动度（mobility/flexibility）每天都可以做一点"
+      ],
+      "dailyHabits": [
+        "动作慢一点，比做很多更重要",
+        "用力时呼气，放松时吸气，不要憋气",
+        "家里训练时使用稳固椅子，注意地面防滑",
+        "状态一般时可以只做热身 + 散步 + 拉伸",
+        "饭后散步 10–15 分钟是很好的额外加分项"
+      ],
+      "weeklyOverview": [
+        {
+          "day": "第1天",
+          "theme": "全身基础力量 A（Full-body Strength A）",
+          "duration": "35–45 分钟"
+        },
+        {
+          "day": "第2天",
+          "theme": "轻有氧 + 活动度（Cardio + Mobility）",
+          "duration": "30–45 分钟"
+        },
+        {
+          "day": "第3天",
+          "theme": "恢复日 / 轻松日（Recovery Day）",
+          "duration": "30–40 分钟"
+        },
+        {
+          "day": "第4天",
+          "theme": "全身基础力量 B（Full-body Strength B）",
+          "duration": "35–45 分钟"
+        },
+        {
+          "day": "第5天",
+          "theme": "轻有氧 + 平衡训练（Cardio + Balance）",
+          "duration": "30–45 分钟"
+        },
+        {
+          "day": "第6天",
+          "theme": "稍长步行日（Long Easy Walk）",
+          "duration": "40–60 分钟"
+        },
+        {
+          "day": "第7天",
+          "theme": "瑜伽垫轻柔放松日（Mat Recovery）",
+          "duration": "30–40 分钟"
+        }
+      ],
+      "progressionWeeks": [
+        {
+          "week": "第1–2周",
+          "title": "适应期（Adaptation）",
+          "body": "力量训练每个动作先做 1 组 × 8 次；有氧 15–20 分钟；总时长 30–40 分钟。重点是熟悉动作、建立习惯。"
+        },
+        {
+          "week": "第3–4周",
+          "title": "温和增加（Mild Build-up）",
+          "body": "力量训练 1–2 组 × 8–10 次；有氧 20–25 分钟；总时长 35–45 分钟。在仍然轻松的前提下略微增加总量。"
+        },
+        {
+          "week": "第5–8周",
+          "title": "稳定进阶（Stable Progression）",
+          "body": "力量训练 2 组 × 10–12 次；有氧 25–35 分钟；总时长 40–50 分钟。优先增加时间，其次增加次数，最后才增加难度。"
+        }
+      ],
+      "miniRoutines": [
+        {
+          "title": "每日标准训练模板",
+          "titleStyle": "",
+          "wrapStyle": "",
+          "intro": "Daily Standard Template · 如果当天按正常计划训练，可统一采用这个结构。",
+          "items": [
+            {
+              "name": "热身（Warm-up）",
+              "sets": "8–10 分钟"
+            },
+            {
+              "name": "正式练习（Main Workout）",
+              "sets": "15–35 分钟"
+            },
+            {
+              "name": "练后拉伸（Cool-down & Stretching）",
+              "sets": "8–12 分钟"
+            }
+          ],
+          "footer": "大多数天控制在 35–45 分钟即可，更容易坚持。",
+          "links": []
+        },
+        {
+          "title": "20分钟最低完成版",
+          "titleStyle": "color:var(--accent3)",
+          "wrapStyle": "border-color:rgba(255,159,127,.25);background:linear-gradient(135deg,rgba(255,159,127,.06),rgba(255,159,127,.02))",
+          "intro": "Minimum 20-min Routine · 当天状态一般、时间有限，或者只想保住习惯时使用。",
+          "items": [
+            {
+              "name": "原地慢走 + 肩髋活动",
+              "sets": "5 分钟"
+            },
+            {
+              "name": "椅子坐站（Chair Sit-to-Stand）",
+              "sets": "8 次"
+            },
+            {
+              "name": "墙壁俯卧撑（Wall Push-up）",
+              "sets": "8 次"
+            },
+            {
+              "name": "提踵（Calf Raise）",
+              "sets": "10 次"
+            },
+            {
+              "name": "原地走（March in Place）",
+              "sets": "3 分钟"
+            },
+            {
+              "name": "扶椅单脚站立（Single-leg Stand with Support）",
+              "sets": "左右各 15 秒"
+            },
+            {
+              "name": "小腿 / 大腿后侧 / 胸肩拉伸",
+              "sets": "5 分钟"
+            }
+          ],
+          "footer": "这比完全不动好很多，而且更容易长期坚持。",
+          "links": []
+        }
+      ],
+      "fatLossTips": [
+        "把走路和轻有氧作为减脂主力，不依赖高强度训练。",
+        "每周保持 3–5 次快走 / 散步，饭后散步 10–15 分钟非常推荐。",
+        "每周 2–3 次全身力量训练有助于维持肌肉和代谢。",
+        "减脂不是首要目标，所以不需要练到很累。"
+      ],
+      "statusCheck": {
+        "goodSigns": [
+          "练完感觉身体舒展开了",
+          "晚上不影响睡觉",
+          "第二天还能正常生活",
+          "有一点点出汗，但不狼狈",
+          "一周后仍愿意继续练"
+        ],
+        "overloadSigns": [
+          "第二天特别疲劳",
+          "关节不舒服",
+          "腰或膝明显酸痛",
+          "练的时候喘得厉害",
+          "一想到运动就抗拒"
+        ]
+      },
+      "finalAdvice": [
+        "宁可少做，也不要硬撑，尤其是前 2 周。",
+        "动作慢一点、稳一点，比做很多更重要。",
+        "若出现关节刺痛、胸闷、明显头晕，应立刻停止。",
+        "优先把习惯建立起来，再谈进阶。",
+        "长期坚持比单次练很多更重要。"
+      ]
+    },
+    "data": {
+      "generalWarmup": {
+        "title": "固定热身（Warm-up）",
+        "duration": "8–10 分钟",
+        "exercises": [
+          {
+            "zh": "原地慢走",
+            "en": "March in Place",
+            "sets": "2 分钟",
+            "purpose": "慢慢提升体温与心率",
+            "cues": [
+              "步伐自然",
+              "呼吸放松",
+              "不要着急"
+            ],
+            "timer": 120
+          },
+          {
+            "zh": "肩部绕环",
+            "en": "Shoulder Rolls",
+            "sets": "30–45 秒",
+            "purpose": "放松肩部和上背",
+            "cues": [
+              "动作轻柔",
+              "前后都做"
+            ],
+            "timer": 45
+          },
+          {
+            "zh": "颈部轻柔活动",
+            "en": "Neck Mobility",
+            "sets": "30–45 秒",
+            "purpose": "轻柔活动颈部",
+            "cues": [
+              "低头、抬头、左右转都轻轻做",
+              "不要猛甩头"
+            ],
+            "timer": 45
+          },
+          {
+            "zh": "手臂前后摆",
+            "en": "Arm Swings",
+            "sets": "30–45 秒",
+            "purpose": "活动肩胸与上肢",
+            "cues": [
+              "幅度适中",
+              "动作自然"
+            ],
+            "timer": 45
+          },
+          {
+            "zh": "髋部绕环",
+            "en": "Hip Circles",
+            "sets": "30–45 秒",
+            "purpose": "活动髋部",
+            "cues": [
+              "动作慢",
+              "范围适中"
+            ],
+            "timer": 45
+          },
+          {
+            "zh": "膝关节轻屈伸",
+            "en": "Gentle Knee Bends",
+            "sets": "30–45 秒",
+            "purpose": "让膝关节进入状态",
+            "cues": [
+              "幅度小一些",
+              "感觉顺畅即可"
+            ],
+            "timer": 45
+          },
+          {
+            "zh": "踝关节绕环",
+            "en": "Ankle Circles",
+            "sets": "30–45 秒",
+            "purpose": "活动脚踝与下肢末端",
+            "cues": [
+              "左右都做",
+              "动作轻柔"
+            ],
+            "timer": 45
+          },
+          {
+            "zh": "猫牛式",
+            "en": "Cat-Cow",
+            "sets": "6–8 次",
+            "purpose": "轻柔活动脊柱",
+            "cues": [
+              "呼吸配合动作",
+              "动作慢"
+            ],
+            "timer": 60
+          },
+          {
+            "zh": "骨盆前后倾",
+            "en": "Pelvic Tilt",
+            "sets": "6–8 次",
+            "purpose": "唤醒腰盆区域控制",
+            "cues": [
+              "轻轻做",
+              "不要用力过猛"
+            ],
+            "timer": 45
+          },
+          {
+            "zh": "站姿侧伸展",
+            "en": "Standing Side Reach",
+            "sets": "左右各 4–6 次",
+            "purpose": "打开侧腰与肩背",
+            "cues": [
+              "动作温和",
+              "不过度拉扯"
+            ],
+            "timer": 45
+          }
+        ]
+      },
+      "generalCooldown": {
+        "title": "固定练后拉伸（Cool-down & Stretching）",
+        "duration": "8–12 分钟",
+        "stretches": [
+          {
+            "zh": "小腿拉伸",
+            "en": "Calf Stretch",
+            "sets": "15–25 秒",
+            "purpose": "放松小腿与踝周紧张"
+          },
+          {
+            "zh": "大腿前侧拉伸",
+            "en": "Quadriceps Stretch",
+            "sets": "15–25 秒",
+            "purpose": "放松大腿前侧"
+          },
+          {
+            "zh": "大腿后侧拉伸",
+            "en": "Hamstring Stretch",
+            "sets": "15–25 秒",
+            "purpose": "放松大腿后侧"
+          },
+          {
+            "zh": "臀部拉伸",
+            "en": "Glute Stretch",
+            "sets": "15–25 秒",
+            "purpose": "放松臀部和髋后侧"
+          },
+          {
+            "zh": "胸部拉伸",
+            "en": "Chest Stretch",
+            "sets": "15–25 秒",
+            "purpose": "放松胸肩，改善含胸"
+          },
+          {
+            "zh": "肩部拉伸",
+            "en": "Shoulder Stretch",
+            "sets": "15–25 秒",
+            "purpose": "放松肩部"
+          },
+          {
+            "zh": "轻柔腰背放松",
+            "en": "Gentle Back Stretch / Child's Pose",
+            "sets": "15–25 秒",
+            "purpose": "放松腰背"
+          }
+        ],
+        "breathing": "最后加 1–2 分钟轻柔深呼吸"
+      },
+      "schedule": [
+        {
+          "day": "第1天",
+          "dayEn": "Day 1",
+          "cls": "day1",
+          "theme": "全身基础力量 A",
+          "themeEn": "Full-body Strength A",
+          "duration": "35–45 分钟",
+          "tags": [
+            {
+              "l": "力量",
+              "c": "t-green"
+            },
+            {
+              "l": "全身",
+              "c": "t-blue"
+            },
+            {
+              "l": "核心",
+              "c": "t-orange"
+            }
+          ],
+          "focus": "唤醒肌肉、建立基础力量（strength base），动作稳、强度轻。",
+          "goals": [
+            "锻炼大腿与臀部",
+            "建立上肢基础力量",
+            "改善背部发力与姿态",
+            "提升核心稳定",
+            "不过度疲劳"
+          ],
+          "warmupNote": "使用统一热身（8–10 分钟）",
+          "sections": [
+            {
+              "title": "正式练习",
+              "en": "Main Workout",
+              "exercises": [
+                {
+                  "zh": "椅子坐站",
+                  "en": "Chair Sit-to-Stand",
+                  "sets": "1–2 组 × 8–10 次",
+                  "purpose": "锻炼大腿和臀部，帮助日常起身能力",
+                  "cues": [
+                    "双脚与肩同宽",
+                    "起身和坐下都慢一点",
+                    "重心稳定"
+                  ],
+                  "mistakes": [
+                    "起身太快",
+                    "膝盖内扣",
+                    "借力过猛"
+                  ],
+                  "timer": 60
+                },
+                {
+                  "zh": "墙壁俯卧撑",
+                  "en": "Wall Push-up",
+                  "sets": "1–2 组 × 8–10 次",
+                  "purpose": "锻炼胸、肩、手臂",
+                  "cues": [
+                    "双手撑墙",
+                    "身体保持一条线",
+                    "慢慢靠近墙再推开"
+                  ],
+                  "mistakes": [
+                    "耸肩",
+                    "塌腰",
+                    "动作过快"
+                  ],
+                  "timer": 60
+                },
+                {
+                  "zh": "臀桥",
+                  "en": "Glute Bridge",
+                  "sets": "1–2 组 × 8–10 次",
+                  "purpose": "锻炼臀部和后侧链，帮助腰部支持",
+                  "cues": [
+                    "仰卧屈膝",
+                    "抬臀时感受臀部发力",
+                    "不要用腰硬顶"
+                  ],
+                  "mistakes": [
+                    "抬太高",
+                    "腰部代偿太多"
+                  ],
+                  "timer": 60
+                },
+                {
+                  "zh": "站姿哑铃划船",
+                  "en": "Standing Dumbbell Row",
+                  "sets": "1–2 组 × 8–10 次",
+                  "purpose": "锻炼背部，改善含胸圆肩",
+                  "cues": [
+                    "双手各持 1kg 哑铃或单手轮流",
+                    "上身微微前倾",
+                    "手肘向后拉"
+                  ],
+                  "mistakes": [
+                    "耸肩",
+                    "耸背",
+                    "借惯性甩手"
+                  ],
+                  "timer": 60
+                },
+                {
+                  "zh": "死虫式简化版",
+                  "en": "Dead Bug (Easy Version)",
+                  "sets": "1–2 组 × 每侧 6–8 次",
+                  "purpose": "训练核心稳定，保护腰部",
+                  "cues": [
+                    "先从单腿或单臂开始",
+                    "收腹",
+                    "动作慢"
+                  ],
+                  "mistakes": [
+                    "腰离地太多",
+                    "动作太快"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "提踵",
+                  "en": "Calf Raise",
+                  "sets": "1–2 组 × 10–12 次",
+                  "purpose": "锻炼小腿、改善下肢循环和平衡",
+                  "cues": [
+                    "扶椅背或墙",
+                    "脚跟慢慢抬起再放下",
+                    "顶端稍停顿"
+                  ],
+                  "mistakes": [
+                    "弹震太快",
+                    "身体前后晃"
+                  ],
+                  "timer": 45
+                }
+              ]
+            }
+          ],
+          "stretchGoal": "放松胸肩、臀部、大腿和小腿，缓解力量训练后的紧张感。",
+          "stretches": [
+            {
+              "zh": "胸部拉伸",
+              "en": "Chest Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松胸肩"
+            },
+            {
+              "zh": "大腿前侧拉伸",
+              "en": "Quadriceps Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松大腿前侧"
+            },
+            {
+            "zh": "大腿后侧拉伸",
+            "en": "Hamstring Stretch",
+            "sets": "15–25 秒",
+            "purpose": "放松大腿后侧"
+            },
+            {
+              "zh": "小腿拉伸",
+              "en": "Calf Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松小腿"
+            },
+            {
+              "zh": "臀部拉伸",
+              "en": "Glute Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松臀部"
+            },
+            {
+              "zh": "轻柔腰背放松",
+              "en": "Gentle Back Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松腰背"
+            },
+            {
+              "zh": "轻柔深呼吸",
+              "en": "Deep Breathe",
+              "sets": "1-2 分钟"
+            }
+          ],
+          "notes": [
+            "第 1–2 周建议每个动作先做 1 组即可",
+            "组间休息 45–75 秒",
+            "练完应感觉身体发热、精神变好，而不是明显疲劳"
+          ],
+          "summary": "今天重点是稳、慢、轻松，建立基础力量，不追求累。"
+        },
+        {
+          "day": "第2天",
+          "dayEn": "Day 2",
+          "cls": "day2",
+          "theme": "轻有氧 + 活动度",
+          "themeEn": "Cardio + Mobility",
+          "duration": "30–45 分钟",
+          "tags": [
+            {
+              "l": "有氧",
+              "c": "t-blue"
+            },
+            {
+              "l": "活动度",
+              "c": "t-green"
+            },
+            {
+              "l": "轻松",
+              "c": "t-orange"
+            }
+          ],
+          "focus": "促进心肺（cardio）、增加活动量，同时保持轻松不累。",
+          "goals": [
+            "增加日常活动量",
+            "提升心肺耐力",
+            "帮助轻度减脂",
+            "改善关节活动度"
+          ],
+          "warmupNote": "简化热身 5–8 分钟即可",
+          "sections": [
+            {
+              "title": "轻有氧",
+              "en": "Light Cardio",
+              "exercises": [
+                {
+                  "zh": "公园快走 / 室内走动",
+                  "en": "Brisk Walking / Indoor Walking",
+                  "sets": "20–30 分钟",
+                  "purpose": "促进心肺和循环，帮助轻度减脂",
+                  "cues": [
+                    "节奏比散步稍快",
+                    "仍然能完整说话",
+                    "不追求速度"
+                  ],
+                  "mistakes": [
+                    "走得太快导致很喘",
+                    "一开始就冲太猛"
+                  ],
+                  "alternatives": [
+                    "原地走（March in Place）",
+                    "室内来回走",
+                    "跟着轻音乐做低强度活动"
+                  ],
+                  "timer": 1800
+                }
+              ]
+            },
+            {
+              "title": "活动度练习",
+              "en": "Mobility",
+              "exercises": [
+                {
+                  "zh": "猫牛式",
+                  "en": "Cat-Cow",
+                  "sets": "6–8 次",
+                  "purpose": "活动脊柱",
+                  "cues": [
+                    "呼吸配合动作",
+                    "动作轻柔"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "站姿侧弯",
+                  "en": "Side Bend",
+                  "sets": "左右各 6 次",
+                  "purpose": "活动侧腰与躯干",
+                  "cues": [
+                    "幅度适中",
+                    "不要硬压"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "胸椎旋转",
+                  "en": "Thoracic Rotation",
+                  "sets": "左右各 6 次",
+                  "purpose": "改善上背活动度",
+                  "cues": [
+                    "动作慢",
+                    "不要猛拧"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "髋部打开",
+                  "en": "Hip Opener",
+                  "sets": "左右各 6 次",
+                  "purpose": "活动髋部",
+                  "cues": [
+                    "缓慢打开髋部",
+                    "感受活动而非拉扯"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "脚踝活动",
+                  "en": "Ankle Mobility",
+                  "sets": "左右各 8 次",
+                  "purpose": "增加踝关节活动度",
+                  "cues": [
+                    "动作轻柔",
+                    "范围自然"
+                  ],
+                  "timer": 45
+                }
+              ]
+            }
+          ],
+          "stretchGoal": "用轻柔拉伸结束训练，进一步放松下肢和上身。",
+          "stretches": [
+            {
+              "zh": "小腿拉伸",
+              "en": "Calf Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松小腿"
+            },
+            {
+              "zh": "大腿后侧拉伸",
+              "en": "Hamstring Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松腿后侧"
+            },
+            {
+              "zh": "胸肩放松",
+              "en": "Chest / Shoulder Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松上身"
+            },
+            {
+              "zh": "深呼吸放松",
+              "en": "Breathing",
+              "sets": "1–2 分钟",
+              "purpose": "让呼吸和心率平稳下来"
+            }
+          ],
+          "notes": [
+            "今天重点是不累，只要比平时多活动一点就很好",
+            "如果天气不好，完全可以使用室内替代方案"
+          ],
+          "summary": "今天的关键不是快，而是轻松持续地动起来。"
+        },
+        {
+          "day": "第3天",
+          "dayEn": "Day 3",
+          "cls": "day3",
+          "theme": "恢复日 / 轻松日",
+          "themeEn": "Recovery Day",
+          "duration": "30–40 分钟",
+          "tags": [
+            {
+              "l": "恢复",
+              "c": "t-green"
+            },
+            {
+              "l": "放松",
+              "c": "t-pink"
+            },
+            {
+              "l": "低强度",
+              "c": "t-blue"
+            }
+          ],
+          "focus": "主动恢复、减少僵硬、提升舒适感和长期坚持率。",
+          "goals": [
+            "减少疲劳积累",
+            "缓解僵硬",
+            "保持轻度活动",
+            "提高恢复质量"
+          ],
+          "warmupNote": "今天整体就很轻，不需要额外复杂热身",
+          "sections": [
+            {
+              "title": "轻松散步",
+              "en": "Easy Walk",
+              "exercises": [
+                {
+                  "zh": "轻松散步",
+                  "en": "Easy Walk",
+                  "sets": "15–20 分钟",
+                  "purpose": "促进恢复和循环",
+                  "cues": [
+                    "室内或室外均可",
+                    "只求活动，不求快",
+                    "呼吸自然"
+                  ],
+                  "timer": 1200
+                }
+              ]
+            },
+            {
+              "title": "轻柔拉伸与呼吸",
+              "en": "Gentle Stretching & Breathing",
+              "exercises": [
+                {
+                  "zh": "颈肩放松",
+                  "en": "Neck & Shoulder Relaxation",
+                  "sets": "4–6 次",
+                  "purpose": "缓解颈肩紧张",
+                  "cues": [
+                    "低头、抬头、左右转都轻轻做",
+                    "不要猛甩头"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "胸部打开",
+                  "en": "Chest Opening",
+                  "sets": "15–20 秒",
+                  "purpose": "改善上身紧张和含胸",
+                  "cues": [
+                    "轻轻打开胸口",
+                    "肩膀不要耸起"
+                  ],
+                  "timer": 20
+                },
+                {
+                  "zh": "猫牛式",
+                  "en": "Cat-Cow",
+                  "sets": "6–8 次",
+                  "purpose": "活动脊柱",
+                  "timer": 45
+                },
+                {
+                  "zh": "儿童式",
+                  "en": "Child's Pose",
+                  "sets": "15–20 秒 × 2",
+                  "purpose": "放松腰背和肩部",
+                  "timer": 40
+                },
+                {
+                  "zh": "仰卧抱膝",
+                  "en": "Knee to Chest",
+                  "sets": "左右各 15–20 秒",
+                  "purpose": "放松下背和臀部",
+                  "timer": 40
+                },
+                {
+                  "zh": "坐姿前屈轻柔版",
+                  "en": "Gentle Seated Forward Fold",
+                  "sets": "15–20 秒",
+                  "purpose": "放松腿后侧和下背",
+                  "timer": 20
+                },
+                {
+                  "zh": "深呼吸放松",
+                  "en": "Breathing",
+                  "sets": "2–3 分钟",
+                  "purpose": "促进恢复和放松",
+                  "timer": 180
+                }
+              ]
+            }
+          ],
+          "stretchGoal": "今天本身就是恢复和拉伸日，以舒展放松为主。",
+          "stretches": [
+            {
+              "zh": "儿童式",
+              "en": "Child's Pose",
+              "sets": "15–20 秒",
+              "purpose": "放松腰背"
+            },
+            {
+              "zh": "仰卧抱膝",
+              "en": "Knee to Chest",
+              "sets": "15–20 秒",
+              "purpose": "放松下背"
+            },
+            {
+              "zh": "胸部打开",
+              "en": "Chest Opening",
+              "sets": "15–20 秒",
+              "purpose": "放松胸肩"
+            }
+          ],
+          "notes": [
+            "恢复日不是偷懒，而是让身体更容易长期坚持",
+            "如果前两天有轻微酸感，今天应以舒展和呼吸为主"
+          ],
+          "summary": "今天要故意轻一点，目标是恢复，而不是训练刺激。"
+        },
+        {
+          "day": "第4天",
+          "dayEn": "Day 4",
+          "cls": "day4",
+          "theme": "全身基础力量 B",
+          "themeEn": "Full-body Strength B",
+          "duration": "35–45 分钟",
+          "tags": [
+            {
+              "l": "力量",
+              "c": "t-green"
+            },
+            {
+              "l": "平衡稳定",
+              "c": "t-blue"
+            },
+            {
+              "l": "全身",
+              "c": "t-orange"
+            }
+          ],
+          "focus": "继续进行全身基础力量训练，动作略有变化，避免单调。",
+          "goals": [
+            "加强腿部和臀部",
+            "练习坐姿上肢推举",
+            "提升核心和身体控制",
+            "进一步建立训练习惯"
+          ],
+          "warmupNote": "使用统一热身（8–10 分钟）",
+          "sections": [
+            {
+              "title": "正式练习",
+              "en": "Main Workout",
+              "exercises": [
+                {
+                  "zh": "半蹲 / 椅子辅助半蹲",
+                  "en": "Mini Squat / Assisted Squat",
+                  "sets": "1–2 组 × 8–10 次",
+                  "purpose": "锻炼下肢力量，动作更轻松安全",
+                  "cues": [
+                    "不需要蹲太深",
+                    "膝盖舒服最重要",
+                    "动作稳"
+                  ],
+                  "mistakes": [
+                    "蹲太快",
+                    "膝盖内扣"
+                  ],
+                  "timer": 60
+                },
+                {
+                  "zh": "坐姿哑铃推举",
+                  "en": "Seated Dumbbell Press",
+                  "sets": "1–2 组 × 8–10 次",
+                  "purpose": "锻炼肩部与上肢，坐姿更稳定",
+                  "cues": [
+                    "坐在稳固椅子上",
+                    "双手各持 1kg 哑铃",
+                    "从肩旁推起，再慢慢放下"
+                  ],
+                  "mistakes": [
+                    "耸肩",
+                    "推得太快"
+                  ],
+                  "alternatives": [
+                    "前平举（Front Raise）",
+                    "侧平举（Lateral Raise，小幅度）"
+                  ],
+                  "timer": 60
+                },
+                {
+                  "zh": "鸟狗式简化版",
+                  "en": "Bird Dog (Easy Version)",
+                  "sets": "1–2 组 × 每侧 6–8 次",
+                  "purpose": "提升核心稳定和四肢协调",
+                  "cues": [
+                    "四点支撑",
+                    "先练单手或单腿",
+                    "不需要同时伸手伸腿"
+                  ],
+                  "mistakes": [
+                    "身体摇晃太大",
+                    "塌腰"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "侧向抬腿",
+                  "en": "Standing Side Leg Raise",
+                  "sets": "1–2 组 × 每侧 8–10 次",
+                  "purpose": "锻炼臀中肌，帮助骨盆和膝盖稳定",
+                  "cues": [
+                    "扶椅背",
+                    "抬腿幅度适中",
+                    "身体不要歪"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "二头弯举",
+                  "en": "Biceps Curl",
+                  "sets": "1–2 组 × 10–12 次",
+                  "purpose": "锻炼手臂，增加训练趣味",
+                  "cues": [
+                    "双手 1kg 哑铃",
+                    "慢慢弯举，慢慢放下"
+                  ],
+                  "mistakes": [
+                    "借力甩手",
+                    "耸肩"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "靠墙静蹲（可选）",
+                  "en": "Wall Sit (Optional)",
+                  "sets": "10–20 秒 × 1–2 次",
+                  "purpose": "增加股四头肌耐力，但完全可选",
+                  "cues": [
+                    "下背贴墙",
+                    "时间短一些即可"
+                  ],
+                  "mistakes": [
+                    "膝盖不舒服还硬撑"
+                  ],
+                  "timer": 20
+                }
+              ]
+            }
+          ],
+          "stretchGoal": "重点放松大腿前侧、臀部、小腿和胸肩。",
+          "stretches": [
+            {
+              "zh": "大腿前侧拉伸",
+              "en": "Quadriceps Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松大腿前侧"
+            },
+            {
+              "zh": "臀部拉伸",
+              "en": "Glute Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松臀部"
+            },
+            {
+              "zh": "小腿拉伸",
+              "en": "Calf Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松小腿"
+            },
+            {
+              "zh": "胸肩拉伸",
+              "en": "Chest / Shoulder Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松上身"
+            }
+          ],
+          "notes": [
+            "如果肩膀不舒服，哑铃推举可改成小幅度前平举或侧平举",
+            "靠墙静蹲是可选动作，膝盖不舒服就直接跳过",
+            "今天仍然不追求练透，而是轻松完成"
+          ],
+          "summary": "今天继续建立全身力量，但强度仍然保守。"
+        },
+        {
+          "day": "第5天",
+          "dayEn": "Day 5",
+          "cls": "day5",
+          "theme": "轻有氧 + 平衡训练",
+          "themeEn": "Cardio + Balance",
+          "duration": "30–45 分钟",
+          "tags": [
+            {
+              "l": "有氧",
+              "c": "t-blue"
+            },
+            {
+              "l": "平衡",
+              "c": "t-green"
+            },
+            {
+              "l": "防跌倒",
+              "c": "t-orange"
+            }
+          ],
+          "focus": "提升心肺与平衡能力，整体仍保持温和。",
+          "goals": [
+            "提升心肺耐力",
+            "加强平衡与身体控制",
+            "降低跌倒风险",
+            "继续辅助减脂"
+          ],
+          "warmupNote": "简化热身 5–8 分钟即可",
+          "sections": [
+            {
+              "title": "轻有氧",
+              "en": "Light Cardio",
+              "exercises": [
+                {
+                  "zh": "公园快走 / 室内原地踏步",
+                  "en": "Brisk Walking / Marching",
+                  "sets": "15–25 分钟",
+                  "purpose": "促进心肺、循环和日常活动量",
+                  "cues": [
+                    "节奏轻中等",
+                    "仍然能说话",
+                    "状态一般时做 15–20 分钟也可以"
+                  ],
+                  "timer": 1500
+                }
+              ]
+            },
+            {
+              "title": "平衡训练",
+              "en": "Balance Training",
+              "exercises": [
+                {
+                  "zh": "扶椅单脚站立",
+                  "en": "Single-leg Stand with Support",
+                  "sets": "左右各 15–30 秒 × 2 组",
+                  "purpose": "提升单脚稳定和平衡能力",
+                  "cues": [
+                    "一只手扶椅背",
+                    "单脚离地一点点即可",
+                    "不要勉强"
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "前后脚站",
+                  "en": "Tandem Stand",
+                  "sets": "15–30 秒 × 2 组",
+                  "purpose": "练习窄基底平衡",
+                  "cues": [
+                    "像走直线一样前后站",
+                    "必要时扶墙或椅子"
+                  ],
+                  "timer": 30
+                },
+                {
+                  "zh": "脚尖脚跟转换",
+                  "en": "Toe-Heel Raise",
+                  "sets": "10 次 × 2 组",
+                  "purpose": "锻炼脚踝控制和平衡",
+                  "cues": [
+                    "扶椅进行",
+                    "脚尖抬起 / 脚跟抬起都慢慢做"
+                  ],
+                  "timer": 40
+                },
+                {
+                  "zh": "侧步",
+                  "en": "Side Step",
+                  "sets": "左右各 8–10 步 × 2 组",
+                  "purpose": "练习横向移动与控制",
+                  "cues": [
+                    "步子小一点",
+                    "动作慢",
+                    "上身保持稳定"
+                  ],
+                  "timer": 45
+                }
+              ]
+            }
+          ],
+          "stretchGoal": "放松下肢和胸肩，让身体平稳结束训练。",
+          "stretches": [
+            {
+              "zh": "小腿拉伸",
+              "en": "Calf Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松小腿"
+            },
+            {
+              "zh": "大腿前后侧拉伸",
+              "en": "Quadriceps / Hamstring Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松大腿"
+            },
+            {
+              "zh": "胸肩放松",
+              "en": "Chest / Shoulder Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松上身"
+            },
+            {
+              "zh": "深呼吸放松",
+              "en": "Breathing",
+              "sets": "1–2 分钟",
+              "purpose": "降低心率"
+            }
+          ],
+          "notes": [
+            "平衡训练很适合 50+ 人群，收益很大但不需要做得很难",
+            "必要时始终可以扶墙或扶椅，不必逞强"
+          ],
+          "summary": "今天的重点是轻松有氧 + 安全平衡训练。"
+        },
+        {
+          "day": "第6天",
+          "dayEn": "Day 6",
+          "cls": "day6",
+          "theme": "稍长步行日",
+          "themeEn": "Long Easy Walk",
+          "duration": "40–60 分钟",
+          "tags": [
+            {
+              "l": "步行",
+              "c": "t-green"
+            },
+            {
+              "l": "有氧",
+              "c": "t-blue"
+            },
+            {
+              "l": "减脂辅助",
+              "c": "t-orange"
+            }
+          ],
+          "focus": "以轻松、稍长时间的步行为主，兼顾心情放松和轻度减脂。",
+          "goals": [
+            "增加步行总量",
+            "改善心肺和循环",
+            "帮助减脂",
+            "放松心情"
+          ],
+          "warmupNote": "热身 5–8 分钟即可，简单活动关节",
+          "sections": [
+            {
+              "title": "散步 / 快走",
+              "en": "Walking",
+              "exercises": [
+                {
+                  "zh": "慢走进入状态",
+                  "en": "Easy Walk Start",
+                  "sets": "前 5 分钟",
+                  "purpose": "逐步进入状态",
+                  "cues": [
+                    "从慢走开始",
+                    "不要一上来就快"
+                  ],
+                  "timer": 300
+                },
+                {
+                  "zh": "稍快步行",
+                  "en": "Brisk but Comfortable Walking",
+                  "sets": "中间 15–25 分钟",
+                  "purpose": "轻中等强度有氧，帮助减脂与心肺",
+                  "cues": [
+                    "比散步稍快",
+                    "仍能说话",
+                    "不走到腿软气喘"
+                  ],
+                  "timer": 1500
+                },
+                {
+                  "zh": "放慢收尾",
+                  "en": "Cool-down Walk",
+                  "sets": "最后 5 分钟",
+                  "purpose": "帮助身体恢复",
+                  "cues": [
+                    "逐步放慢",
+                    "呼吸放松"
+                  ],
+                  "timer": 300
+                }
+              ]
+            }
+          ],
+          "stretchGoal": "重点放松下肢，尤其是小腿、股四头肌、腿后侧和臀部。",
+          "stretches": [
+            {
+              "zh": "小腿拉伸",
+              "en": "Calf Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松小腿"
+            },
+            {
+              "zh": "大腿前侧拉伸",
+              "en": "Quadriceps Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松大腿前侧"
+            },
+            {
+              "zh": "大腿后侧拉伸",
+              "en": "Hamstring Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松腿后侧"
+            },
+            {
+              "zh": "臀部拉伸",
+              "en": "Glute Stretch",
+              "sets": "15–25 秒",
+              "purpose": "放松臀部"
+            },
+            {
+              "zh": "髋部轻柔打开",
+              "en": "Hip Opener",
+              "sets": "15–25 秒",
+              "purpose": "放松髋部"
+            }
+          ],
+          "notes": [
+            "这一天不是暴走日，宁可走慢一点、久一点，也不要走到很累",
+            "天气不好时可改为室内来回走"
+          ],
+          "summary": "今天用轻松步行积累活动量，帮助健康和轻度减脂。"
+        },
+        {
+          "day": "第7天",
+          "dayEn": "Day 7",
+          "cls": "day7",
+          "theme": "瑜伽垫轻柔放松日",
+          "themeEn": "Mat Recovery",
+          "duration": "30–40 分钟",
+          "tags": [
+            {
+              "l": "恢复",
+              "c": "t-green"
+            },
+            {
+              "l": "瑜伽垫",
+              "c": "t-blue"
+            },
+            {
+              "l": "放松",
+              "c": "t-pink"
+            }
+          ],
+          "focus": "舒展全身、减少僵硬，为下一周训练做准备。",
+          "goals": [
+            "恢复身体",
+            "放松腰背和髋部",
+            "提升柔和活动度",
+            "为下周做好准备"
+          ],
+          "warmupNote": "热身 5 分钟即可：原地慢走 + 肩绕环 + 深呼吸",
+          "sections": [
+            {
+              "title": "垫上轻柔练习",
+              "en": "Mat Routine",
+              "exercises": [
+                {
+                  "zh": "猫牛式",
+                  "en": "Cat-Cow",
+                  "sets": "6–8 次",
+                  "purpose": "轻柔活动脊柱",
+                  "cues": [
+                    "呼吸配合动作",
+                    "动作放慢"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "儿童式",
+                  "en": "Child's Pose",
+                  "sets": "15–20 秒 × 2",
+                  "purpose": "放松腰背和肩部",
+                  "timer": 40
+                },
+                {
+                  "zh": "仰卧抱膝",
+                  "en": "Knee to Chest",
+                  "sets": "左右各 15–20 秒",
+                  "purpose": "放松下背和臀部",
+                  "timer": 40
+                },
+                {
+                  "zh": "仰卧脊柱轻柔扭转",
+                  "en": "Supine Twist",
+                  "sets": "左右各 15–20 秒",
+                  "purpose": "温和放松腰背和躯干",
+                  "timer": 40
+                },
+                {
+                  "zh": "轻量臀桥",
+                  "en": "Light Glute Bridge",
+                  "sets": "1–2 组 × 8 次",
+                  "purpose": "轻轻唤醒臀部，增加下背舒适感",
+                  "cues": [
+                    "不需要抬太高",
+                    "动作轻柔"
+                  ],
+                  "timer": 45
+                },
+                {
+                  "zh": "仰卧腿后侧拉伸",
+                  "en": "Supine Hamstring Stretch",
+                  "sets": "左右各 15–20 秒",
+                  "purpose": "放松腿后侧",
+                  "timer": 40
+                },
+                {
+                  "zh": "坐姿或仰卧深呼吸",
+                  "en": "Breathing",
+                  "sets": "2–3 分钟",
+                  "purpose": "结束放松，帮助恢复",
+                  "timer": 180
+                }
+              ]
+            }
+          ],
+          "stretchGoal": "这一天本身就是拉伸与恢复，目标是柔和舒展、不疲劳。",
+          "stretches": [
+            {
+              "zh": "儿童式",
+              "en": "Child's Pose",
+              "sets": "15–20 秒",
+              "purpose": "放松腰背"
+            },
+            {
+              "zh": "仰卧脊柱轻柔扭转",
+              "en": "Supine Twist",
+              "sets": "15–20 秒",
+              "purpose": "放松躯干"
+            },
+            {
+              "zh": "仰卧腿后侧拉伸",
+              "en": "Supine Hamstring Stretch",
+              "sets": "15–20 秒",
+              "purpose": "放松腿后侧"
+            }
+          ],
+          "notes": [
+            "今天结束后应感到身体柔和放松，而不是疲惫",
+            "如果这一周比较累，今天可以再轻一些"
+          ],
+          "summary": "今天是恢复和舒展日，为下一周重新储备状态。"
+        }
+      ]
+    }
+  }
+}
