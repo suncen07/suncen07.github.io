@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全院集中午休提案调研报告</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; background-color: #020617; }
+        .slide-hidden { display: none !important; }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex items-center justify-center p-4 md:p-8">
+
+    <div id="auth-overlay" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl max-w-md w-full text-center">
+            <div class="inline-flex p-4 bg-teal-500/10 rounded-full mb-6">
+                <i class="fa-solid fa-lock text-teal-400 text-3xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-2">战略数据访问门户</h2>
+            <p class="text-slate-400 text-sm mb-6">请输入访问密码以查看全院午休调研报告</p>
+            <form id="auth-form" onsubmit="handleLogin(event)" class="space-y-4">
+                <input type="password" id="pass-input" placeholder="输入访问密码" 
+                       class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-colors">
+                <p id="error-msg" class="text-red-400 text-sm hidden">密码错误，请重试。</p>
+                <button type="submit" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-3 rounded-lg transition-colors cursor-pointer">
+                    解锁报告
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="ppt-container" class="relative w-full max-w-6xl aspect-[16/9] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col hidden">
+        
+        <div class="flex-grow p-8 md:p-12 overflow-y-auto">
+            
+            <div class="slide flex flex-col items-center justify-center h-full text-center space-y-6">
+                <div class="p-4 bg-teal-500/20 rounded-full mb-2">
+                    <i class="fa-solid fa-chart-pie text-teal-400 text-5xl"></i>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">
+                    学院统一午休提案 <span class="text-teal-400">调研报告</span>
+                </h1>
+                <p class="text-lg text-slate-400 max-w-2xl mx-auto">
+                    探讨 1 小时集中午休对学生社交、支持服务获取及校园基础设施运营的潜在影响与数据分析。
+                </p>
+            </div>
+
+            <div class="slide slide-hidden flex flex-col h-full space-y-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-teal-400 border-l-4 border-teal-400 pl-4">午休核心诉求：不仅仅是就餐</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow items-center">
+                    <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700 h-64">
+                        <canvas id="activitiesChart"></canvas>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-800">
+                            <h4 class="font-bold text-white mb-1"><i class="fa-solid fa-comments text-teal-400 mr-2"></i>社交属性爆发</h4>
+                            <p class="text-sm text-slate-400">模拟数据显示，高达 65% 的学生期望在午休进行社交与社团活动。统一时间段能够极大地解决“朋友间午休时间错开”的痛点。</p>
+                        </div>
+                        <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-800">
+                            <h4 class="font-bold text-white mb-1"><i class="fa-solid fa-book-open text-teal-400 mr-2"></i>轻量学术缓冲</h4>
+                            <p class="text-sm text-slate-400">45% 的学生倾向于利用这段时间自习或找老师答疑。一小时的集中窗口能为师生无缝连接创造可能。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide slide-hidden flex flex-col h-full space-y-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-400 border-l-4 border-blue-400 pl-4">学生支持服务：时间错配的挑战</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow items-center">
+                    <div class="space-y-4">
+                        <p class="text-slate-300 text-base">目前，学生在遇到学业或生活问题需要寻求 Student Services 帮助时，时间分布极度碎片化：</p>
+                        <div class="space-y-2 text-sm">
+                            <p class="flex justify-between border-b border-slate-800 pb-1"><span><i class="fa-solid fa-clock text-blue-400 mr-2"></i> 课前、课后或挤占课堂:</span> <span class="font-bold text-blue-400">45%</span></p>
+                            <p class="flex justify-between border-b border-slate-800 pb-1"><span><i class="fa-solid fa-bolt text-blue-400 mr-2"></i> 现有短课间强行前往:</span> <span class="font-bold text-blue-400">35%</span></p>
+                            <p class="flex justify-between border-b border-slate-800 pb-1"><span><i class="fa-solid fa-calendar text-blue-400 mr-2"></i> 休息日专门跑一趟学校:</span> <span class="font-bold text-blue-400">10%</span></p>
+                        </div>
+                        <p class="text-xs text-slate-500 italic bg-blue-950/30 p-3 rounded border border-blue-900/30">
+                            痛点：当前的非统一时间迫使近半数学生在匆忙的课前后办理业务，增加了迟到风险与心理焦虑。
+                        </p>
+                    </div>
+                    <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700 h-64 flex justify-center">
+                        <div class="w-64"><canvas id="servicesChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide slide-hidden flex flex-col h-full space-y-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-purple-400 border-l-4 border-purple-400 pl-4">校园设施承载力与学生行为预测</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow items-center">
+                    <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700 h-64">
+                        <canvas id="crowdChart"></canvas>
+                    </div>
+                    <div class="space-y-3 text-sm">
+                        <div class="p-3 bg-purple-950/20 border border-purple-900/40 rounded-lg">
+                            <h4 class="font-bold text-white mb-1"><i class="fa-solid fa-triangle-exclamation text-purple-400 mr-2"></i>人流瞬间峰值压力</h4>
+                            <p class="text-slate-400 text-xs">若全员共享同一小时，40% 的学生会因为拥挤而避开食堂前往安静区域，20% 会直接选择离开校园（如去 Kingsford 附近就餐）。</p>
+                        </div>
+                        <div class="p-3 bg-purple-950/20 border border-purple-900/40 rounded-lg">
+                            <h4 class="font-bold text-white mb-1"><i class="fa-solid fa-kitchen-set text-purple-400 mr-2"></i>硬件升级刚需</h4>
+                            <p class="text-slate-400 text-xs">调查显示，微波炉、烧水站以及手机充电设施的加装呼声最高（达68%）。必须去中心化布局，减缓 L5 Common Room 的排队压力。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide slide-hidden flex flex-col h-full space-y-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-amber-400 border-l-4 border-amber-400 pl-4">理想时间分配与未来路线图</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
+                    <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700 flex flex-col justify-center items-center text-center">
+                        <i class="fa-solid fa-hourglass-half text-amber-400 text-3xl mb-3"></i>
+                        <h3 class="font-bold text-white mb-2">60分钟微结构</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">学生期望：25分钟快速就餐 + 15分钟深度社交 + 20分钟轻度自习与认知恢复。需要空间具备高切换效率。</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700 flex flex-col justify-center items-center text-center">
+                        <i class="fa-solid fa-map-location-dot text-amber-400 text-3xl mb-3"></i>
+                        <h3 class="font-bold text-white mb-2">空间偏好热力</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">首选目的地依旧为 L5 楼学生公区（42%），其次为 Village Green 等户外开阔地带（25%）。</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700 flex flex-col justify-center items-center text-center">
+                        <i class="fa-solid fa-route text-amber-400 text-3xl mb-3"></i>
+                        <h3 class="font-bold text-white mb-2">下一步战略行动</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">1. 启动全院微波炉与基础设施密度审计；<br>2. 联合常态化社团进行小范围午间活动试点。</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="h-16 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between px-6 md:px-8">
+            <div class="text-slate-500 text-xs md:text-sm font-medium tracking-wide hidden sm:block">
+                CAMPUS STRATEGY & OPERATIONS REPORT
+            </div>
+            <div class="flex items-center gap-4 mx-auto sm:mx-0">
+                <button onclick="prevSlide()" id="prev-btn" class="p-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
+                    <i class="fa-solid fa-chevron-left text-xl"></i>
+                </button>
+                <span id="slide-number" class="text-slate-400 text-sm font-semibold w-12 text-center">1 / 5</span>
+                <button onclick="nextSlide()" id="next-btn" class="p-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
+                    <i class="fa-solid fa-chevron-right text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 预设密码 "admin" 对应的 SHA-256 哈希值
+        const EXPECTED_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
+        
+        let currentSlideIdx = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        // 哈希计算函数 (Web Crypto API)
+        async function sha256(str) {
+            const buffer = new TextEncoder().encode(str);
+            const hash = await crypto.subtle.digest("SHA-256", buffer);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // 登录验证
+        async function handleLogin(e) {
+            e.preventDefault();
+            const inputPass = document.getElementById('pass-input').value;
+            const hashedInput = await sha256(inputPass);
+
+            if (hashedInput === EXPECTED_HASH) {
+                document.getElementById('auth-overlay').classList.add('hidden');
+                document.getElementById('ppt-container').classList.remove('hidden');
+                initCharts(); // 验证成功后初始化图表，防止动画穿帮
+            } else {
+                const errorEl = document.getElementById('error-msg');
+                errorEl.classList.remove('hidden');
+                errorEl.classList.add('animate-shake');
+            }
+        }
+
+        // 幻灯片翻页控制
+        function updateSlideDisplay() {
+            slides.forEach((slide, idx) => {
+                if (idx === currentSlideIdx) {
+                    slide.classList.remove('slide-hidden');
+                } else {
+                    slide.classList.add('slide-hidden');
+                }
+            });
+            document.getElementById('slide-number').innerText = `${currentSlideIdx + 1} / ${slides.length}`;
+        }
+
+        function nextSlide() {
+            if (currentSlideIdx < slides.length - 1) {
+                currentSlideIdx++;
+                updateSlideDisplay();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlideIdx > 0) {
+                currentSlideIdx--;
+                updateSlideDisplay();
+            }
+        }
+
+        // 监听键盘左右方向键
+        window.addEventListener('keydown', (e) => {
+            if (document.getElementById('ppt-container').classList.contains('hidden')) return;
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        // 初始化图表 (使用 Chart.js)
+        function initCharts() {
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.font.family = 'system-ui';
+
+            // Chart 1: 活动偏好 (条形图)
+            new Chart(document.getElementById('activitiesChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['社交聚会', '学术/自习', '运动健康', '生活琐事', '寻求老师帮助'],
+                    datasets: [{
+                        data: [65, 45, 30, 25, 20],
+                        backgroundColor: '#2dd4bf',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { grid: { display: false } }, y: { grid: { display: false } } }
+                }
+            });
+
+            // Chart 2: 服务获取时间 (饼图)
+            new Chart(document.getElementById('servicesChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['课前/课后', '课间休息', '专门跑一趟', '直接问老师'],
+                    datasets: [{
+                        data: [45, 35, 10, 10],
+                        backgroundColor: ['#2dd4bf', '#3b82f6', '#a855f7', '#f59e0b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10 } } }
+                }
+            });
+
+            // Chart 3: 拥挤应对策略 (柱状图)
+            new Chart(document.getElementById('crowdChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['寻安静区', '调整作息', '离开学校', '忍受拥挤', '选择断食'],
+                    datasets: [{
+                        data: [40, 25, 20, 10, 5],
+                        backgroundColor: '#a855f7',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { grid: { display: false } }, y: { grid: { display: false } } }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
