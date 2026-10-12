@@ -1,0 +1,139 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Interactive Writer Pro</title>
+<link rel="stylesheet" href="css/editor.css">
+<link rel="stylesheet" href="css/app.css"><style id="paperStyle"></style></head><body>
+
+<div class="app-container">
+<div class="main-content">
+<div class="header-section">
+<div class="top-row">
+<input id="filenameInput" title="Click to rename" type="text" value="Untitled Document"/>
+                    <span id="saveStatus" class="save-status" aria-live="polite">Ready</span>
+<button class="secondary" id="settingsButton" type="button" title="Settings" aria-label="Settings" aria-haspopup="dialog" aria-controls="settingsDialog" style="padding:8px; margin-left:auto;">⚙️</button>
+<button class="secondary" id="themeButton" title="Toggle theme" style="padding: 8px;">🌓</button>
+</div>
+<div class="toolbar">
+<input accept=".txt,.md" id="fileInput" type="file"/>
+<button class="secondary" id="importButton">📂 <span>Import</span></button>
+<button class="secondary" id="saveButton" title="Save locally (Ctrl/Cmd+S)">💾 <span>Save</span></button>
+<select id="exportFormat">
+<option value="txt">.txt (Plain Text)</option>
+<option value="md">.md (Markdown)</option>
+</select>
+<button class="secondary" id="downloadButton">📥 <span>Download</span></button>
+<button class="secondary" id="pdfButton">📄 <span>PDF</span></button>
+                    <select id="exportStyle" aria-label="PDF stationery style" title="PDF paper style">
+<option value="classic">Style: Plain</option>
+<option value="ruled">Style: Ruled paper</option>
+<option value="vintage">Style: Vintage letter</option>
+<option value="floral">Style: Floral letter</option>
+<option value="kawaii">Style: Cute cartoon</option>
+<option value="sky">Style: Sky &amp; clouds</option>
+</select>
+<button class="secondary" id="stylePreviewButton" type="button" aria-haspopup="dialog" aria-controls="stylePreviewDialog" title="View PDF style samples">👁 <span>Preview</span></button>
+<div class="clear-actions" id="clearActions">
+<button class="danger" id="clearButton" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="clearMenu">🗑️ <span>Clear</span> ▾</button>
+<div class="clear-menu" id="clearMenu" hidden role="group" aria-label="Clear options">
+<button type="button" class="secondary" id="clearCanvasButton">📝 <span>Clear canvas</span></button>
+<button type="button" class="danger" id="clearStorageButton">🗑️ <span>Clear storage</span></button>
+</div>
+</div>
+<button id="analyzeButton" title="Analyze locally, no data sent">✨ <span>Analyze</span></button>
+</div>
+</div>
+<div class="editor-tools">
+                <div class="format-toolbar" role="toolbar" aria-label="Markdown formatting">
+                    <button type="button" class="secondary" data-insert="heading" title="Heading">H₂</button>
+                    <button type="button" class="secondary" data-insert="bold" title="Bold (Ctrl/Cmd+B)"><b>B</b></button>
+                    <button type="button" class="secondary" data-insert="italic" title="Italic (Ctrl/Cmd+I)"><i>I</i></button>
+                    <button type="button" class="secondary" data-insert="link" title="Link (Ctrl/Cmd+K)">🔗</button>
+                    <button type="button" class="secondary" data-insert="code" title="Inline code">&lt;/&gt;</button>
+                    <button type="button" class="secondary" data-insert="list" title="List">☷</button>
+                    <button type="button" class="secondary" data-insert="task" title="Task list">☑</button>
+                </div>
+                <div class="segmented" role="group" aria-label="Editor view">
+                    <button type="button" class="secondary" data-view="edit" aria-pressed="true">Edit</button>
+                    <button type="button" class="secondary" data-view="split" aria-pressed="false">Split</button>
+                    <button type="button" class="secondary" data-view="preview" aria-pressed="false">Preview</button>
+                </div>
+            </div>
+            <div class="editor-grid" id="editorGrid" data-view="edit">
+                <div class="pane editor-pane" aria-label="Markdown editor">
+                    <div class="editor-host">
+                        <textarea id="editor" placeholder="Start writing here..." aria-label="Markdown source" spellcheck="true"></textarea>
+                        <div class="editor-empty-guide" id="editorEmptyGuide" aria-hidden="true" hidden>
+                            <div class="editor-guide-title">Welcome to Interactive Writer Pro</div>
+                            <div class="editor-guide-subtitle">A quick guide — start typing to dismiss.</div>
+                            <p><strong>Write Markdown.</strong> Try <code># Heading</code>, <code>**bold**</code>, <code>- List</code>, or use the formatting toolbar.</p>
+                            <p><strong>Preview.</strong> Switch between <b>Edit / Split / Preview</b> to see the formatted result.</p>
+                            <p><strong>Improve your writing.</strong> Click <b>✨ Analyze</b> for writing suggestions, or <b>Check grammar</b> for English spelling and grammar.</p>
+                            <p><strong>Export beautifully.</strong> Select a PDF <b>Style</b>, use <b>👁 Preview</b> to browse stationery templates, then click <b>📄 PDF</b>. You can also download a <code>.md</code> or <code>.txt</code> file.</p>
+                            <p><strong>Keep your draft.</strong> Click <b>💾 Save</b>, or switch on Auto-save in <b>⚙ Settings</b> (off by default).</p>
+                            <div class="editor-guide-tip">Tip: <kbd>Ctrl/Cmd + Space</kbd> for Markdown suggestions. Grammar Check uses locally installed Harper; no document uploads. This guide is not part of your document.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pane preview-pane" aria-label="Rendered Markdown preview">
+                    <div class="preview-scroller"><article id="preview" class="markdown-body"></article></div>
+                </div>
+            </div>
+
+</div>
+<div class="sidebar">
+<h3>Dashboard</h3>
+<div class="stat-box">
+<div class="stat-item">
+<span id="wordCount">0</span>
+<label>Words</label>
+</div>
+<div class="stat-item">
+<span id="charCount">0</span>
+<label>Chars</label>
+</div>
+</div>
+<h4>Recommendations</h4>
+<div id="recommendations" aria-label="Writing analysis results">
+<p style="color: #888; font-style: italic; font-size: 0.9rem;">Analysis results will appear here.</p>
+</div>
+</div>
+</div>
+
+<dialog id="settingsDialog" class="settings-dialog" aria-labelledby="settingsTitle">
+  <div class="style-preview-header">
+    <div><h3 id="settingsTitle">Settings</h3><p>Control how this writer saves your work.</p></div>
+    <button class="secondary" id="closeSettings" type="button" aria-label="Close settings">✕</button>
+  </div>
+  <label class="autosave-row" for="autosaveToggle">
+    <span class="autosave-copy"><strong>Auto-save to this device</strong><small>Off by default. When off, edits stay in this tab until you click Save. Download and PDF export still work normally.</small></span>
+    <input id="autosaveToggle" type="checkbox" role="switch" aria-label="Automatically save drafts on this device">
+  </label>
+  <div class="grammar-setting-row">
+  <label for="grammarDialect"><strong>English grammar dialect</strong><small>Harper checks English on-device using project-local files.</small></label>
+  <select id="grammarDialect" aria-label="English grammar dialect">
+    <option value="australian">English (Australia)</option>
+    <option value="british">English (UK)</option>
+    <option value="american">English (US)</option>
+    <option value="canadian">English (Canada)</option>
+  </select>
+</div>
+<p class="settings-note">Grammar Check uses local Harper files (installed once with npm install). Your writing stays on-device; Writing Analysis works without Harper. Save controls remain unchanged.</p>
+<p class="settings-note">The Save button always saves a local draft. Use Clear → Clear storage to delete locally saved data.</p>
+</dialog>
+
+<dialog id="stylePreviewDialog" class="style-preview-dialog" aria-labelledby="stylePreviewTitle">
+  <div class="style-preview-header">
+    <div>
+      <h3 id="stylePreviewTitle">PDF style preview</h3>
+      <p>Actual examples of the exported PDF. Select a template to use it.</p>
+    </div>
+    <button class="secondary" id="closeStylePreview" type="button" aria-label="Close preview">✕</button>
+  </div>
+  <div class="style-preview-gallery" id="stylePreviewGallery" aria-label="Available stationery templates"></div>
+</dialog>
+<div id="print-area"></div>
+
+<script src="js/vendor/markdown-editor.bundle.js"></script>
+<script src="js/analyzer.js"></script>
+<script src="js/grammar.js"></script>
+<script src="js/stationery.js"></script>
+<script src="js/app.js"></script>
+</body></html>
