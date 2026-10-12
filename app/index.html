@@ -1,63 +1,150 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=10.">
-    <title>APP Home Page</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .app-list {
-            list-style: none;
-            padding: 0;
-        }
-        .app-list li {
-            margin-bottom: 15px;
-        }
-        .app-list a {
-            display: block;
-            padding: 10px;
-            background-color: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .app-list a:hover {
-            background-color: #0056b3;
-        }
-    </style>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <title>Apps — Cen Sun</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --background: #ffffff;
+      --text: #202020;
+      --muted: #6b6b6b;
+      --line: #e6e6e6;
+      --hover: #f7f7f7;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .page {
+      width: min(100% - 96px, 1040px);
+      min-height: 100svh;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 29px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .home-link {
+      color: var(--muted);
+      font-size: 14px;
+      transition: color 180ms ease;
+    }
+
+    .home-link:hover { color: var(--text); }
+
+    main { flex: 1; padding: 76px 0 96px; }
+
+    h1 {
+      margin: 0 0 52px;
+      font-size: clamp(44px, 6vw, 70px);
+      font-weight: 600;
+      letter-spacing: -0.065em;
+      line-height: 1.1;
+    }
+
+    .app-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 50px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .app-list li { min-width: 0; border-top: 1px solid var(--line); }
+
+    .app-list a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      min-height: 84px;
+      padding: 20px 14px 20px 0;
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.4;
+      transition: background-color 180ms ease, padding-left 180ms ease;
+    }
+
+    .app-list a::after {
+      content: "↗";
+      flex: none;
+      color: #858585;
+      font-size: 20px;
+      font-weight: 400;
+      transition: color 180ms ease;
+    }
+
+    .app-list a:hover,
+    .app-list a:focus-visible {
+      background: var(--hover);
+      padding-left: 12px;
+    }
+
+    .app-list a:hover::after,
+    .app-list a:focus-visible::after { color: var(--text); }
+
+    a:focus-visible { outline: 2px solid var(--text); outline-offset: 4px; }
+
+    @media (max-width: 700px) {
+      .page { width: min(100% - 40px, 520px); }
+      .topbar { padding: 23px 0; }
+      main { padding: 54px 0 72px; }
+      h1 { margin-bottom: 36px; }
+      .app-list { grid-template-columns: 1fr; }
+      .app-list a { min-height: 74px; font-size: 16px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>APP Home Page</h1>
-        <ul class="app-list">
-            <li><a href="https://suncen07.github.io/app/datavis" target="_blank">Data Visualization</a></li>
-            <li><a href="https://suncen07.github.io/app/order" target="_blank">Order Manager</a></li>
-            <li><a href="https://suncen07.github.io/app/bmi-calculator" target="_blank">BMI Calculator</a></li>
-            <li><a href="https://suncen07.github.io/app/c-mipsy" target="_blank">C to MIPSY</a></li>
-            <li><a href="https://suncen07.github.io/app/score-check" target="_blank">Highest Score Calculator</a></li>
-            <li><a href="https://suncen07.github.io/app/p-calculator" target="_blank">Probability Calculator</a></li>
-            <li><a href="https://suncen07.github.io/app/xiangqi" target="_blank">中国象棋小游戏 (Xiang Qi Game)</a></li>
-            <li><a href="https://suncen07.github.io/app/gesture-particle" target="_blank">Gesture Control Particle</a></li>
-            <li><a href="https://suncen07.github.io/app/writing-tool" target="_blank">Simple Writing Tool</a></li>
-            <li><a href="https://suncen07.github.io/app/screen-share" target="_blank">Screen Share Tool</a></li>
-            <li><a href="https://suncen07.github.io/app/train" target="_blank">Training Plan</a></li>
-        </ul>
-    </div>
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="https://suncen07.github.io/">Cen Sun</a>
+      <a class="home-link" href="https://cs721127.github.io/">Personal Website ↗</a>
+    </header>
 
-</body></html>
+    <main>
+      <h1>Apps</h1>
+      <nav aria-label="App directory">
+        <ul class="app-list">
+          <li><a href="https://suncen07.github.io/app/bmi-calculator">BMI Calculator</a></li>
+          <li><a href="https://suncen07.github.io/app/score-check">Highest Score Calculator</a></li>
+          <li><a href="https://suncen07.github.io/app/p-calculator">Probability Calculator</a></li>
+          <li><a href="https://suncen07.github.io/app/xiangqi">中国象棋小游戏 (Xiang Qi Game)</a></li>
+          <li><a href="https://suncen07.github.io/app/writing-tool">Simple Writing Tool</a></li>
+        </ul>
+      </nav>
+    </main>
+  </div>
+</body>
+</html>
