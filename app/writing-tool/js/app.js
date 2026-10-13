@@ -52,6 +52,8 @@ const shortcuts = [
  {label:'Link',text:'[label](https://example.com)',triggers:['[']},
  {label:'Image',text:'![alt text](https://example.com/image.png)',triggers:['!']},
  {label:'Horizontal rule',text:'---\n',triggers:['-']},
+ {label:'Inline math',text:'$x^2$',triggers:['$']},
+ {label:'Display math',text:'$$\n\n$$',triggers:['$']},
  {label:'Table',text:'| Column A | Column B |\n| --- | --- |\n| Value | Value |',triggers:['|']}
 ];
 function openHints(ed=cm,automatic=false){
@@ -77,7 +79,7 @@ let completionTimer;
 cm.on('inputRead',(ed,change)=>{
  if(change.origin!=='+input') return;
  if(!change.text || change.text.length!==1 || change.text[0].length!==1) return;
- if(!'#[!>`-*|'.includes(change.text[0])) return;
+ if(!'#[!>`-*|$'.includes(change.text[0])) return;
  clearTimeout(completionTimer);
  completionTimer=setTimeout(()=>{if(ed.hasFocus())openHints(ed,true)},160);
 });
@@ -89,6 +91,8 @@ function insertFormat(type){
  if(type==='bold') {inserted='**'+(selected||placeholders.bold)+'**';selectFrom=2;selectLen=(selected||placeholders.bold).length;}
  if(type==='italic'){inserted='*'+(selected||placeholders.italic)+'*';selectFrom=1;selectLen=(selected||placeholders.italic).length;}
  if(type==='code'){inserted='`'+(selected||placeholders.code)+'`';selectFrom=1;selectLen=(selected||placeholders.code).length;}
+ if(type==='math'){inserted='$'+(selected||'x^2')+'$';selectFrom=1;selectLen=(selected||'x^2').length;}
+ if(type==='mathBlock'){inserted='\n$$\n'+(selected||'E = mc^2')+'\n$$\n';selectFrom=4;selectLen=(selected||'E = mc^2').length;}
  if(type==='link'){inserted='['+(selected||placeholders.link)+'](https://example.com)';selectFrom=1;selectLen=(selected||placeholders.link).length;}
  if(['heading','list','task','quote'].includes(type)){
    const prefix={heading:'## ',list:'- ',task:'- [ ] ',quote:'> '}[type];
@@ -150,8 +154,9 @@ function safeHTML(html){
  return template.innerHTML;
 }
 marked.setOptions({gfm:true,breaks:false,headerIds:false,mangle:false});
+WriterMath.install(marked);
 function renderMarkdown(text){
- try{return safeHTML(marked.parse(text,{gfm:true}));}
+ try{WriterMath.begin();return safeHTML(marked.parse(text,{gfm:true}));}
  catch(error){console.error(error);return '<p>'+escapeHtml(text).replace(/\n/g,'<br>')+'</p>';}
 }
 let lastRenderedText=null;
@@ -160,6 +165,7 @@ function updatePreview(){
  if(text===lastRenderedText)return;
  lastRenderedText=text;
  preview.innerHTML=text.trim()?renderMarkdown(text):'<p class="empty-preview">Your rendered Markdown appears here.</p>';
+ if(WriterMath.mount(preview))WriterMath.typeset(preview);
 }
 function setView(view,persist=true){
  if(isMobile() && view==='split')view='edit';
@@ -188,10 +194,12 @@ let initializing = true;
 let suppressAutoSave = false;
 function saveData(manual=false){
  clearTimeout(autosaveTimer);
- const a=store.write('writer_pad_text',cm.getValue());
- const b=store.write('writer_pad_name',filenameInput.value);
- saveStatus.textContent=a&&b?'Saved locally':'Unable to save locally';
- if(manual)showMessage(a&&b?'Saved to this device.':'Storage unavailable — download your file to keep it.');
+ captureCurrentFile();
+ const ok=store.write('writer_pad_workspace_v2',WriterWorkspace.serialize(openFiles,activeFileId));
+ if(ok)openFiles.forEach(file=>file.dirty=false);
+ renderFileTabs();
+ saveStatus.textContent=ok?'Workspace saved locally':'Unable to save locally';
+ if(manual)showMessage(ok?'Workspace saved on this device.':'Storage unavailable — download your workspace to keep it.');
 }
 function queueAutoSave(){
  clearTimeout(autosaveTimer);
@@ -201,12 +209,13 @@ function queueAutoSave(){
  autosaveTimer=setTimeout(()=>saveData(false),650);
 }
 function onEdit(){
+ if(!initializing && !switchingFile)markCurrentFileEdited();
  updateStats();
  queueAutoSave();
  clearTimeout(previewTimer);previewTimer=setTimeout(updatePreview,130);
 }
 cm.on('change',onEdit);
-filenameInput.addEventListener('input',queueAutoSave);
+filenameInput.addEventListener('input',()=>{ if(!initializing && !switchingFile)markCurrentFileEdited(); queueAutoSave(); });
 function downloadFile(){
  const format=$('exportFormat').value;
  const name=(filenameInput.value.trim()||'Untitled Document').replace(/[\\/<>:"|?*\u0000-\u001f]/g,'_').replace(/\.(md|txt)$/i,'');
@@ -216,59 +225,42 @@ function downloadFile(){
  showMessage('Downloaded '+name+'.'+format);
 }
 
-// Self-contained, vector stationery sheets: foreground SVGs ensure decorative
-// elements are printed even when browser "background graphics" is disabled.
-function applyStationeryStyle(){
- const picker = $('exportStyle');
- const chosen = (picker && stationeryArt[picker.value]) ? picker.value : 'classic';
- const fancy = chosen !== 'classic' && chosen !== 'ruled';
- // Classic and notebook retain the original comfortable margins. Fancy
- // stationery reserves a little more room for corner illustrations.
- const top = fancy ? 27 : 18;
- const horizontal = chosen === 'ruled' ? 33 : (fancy ? 23 : 19);
- const bottom = fancy ? 31 : 18;
- $('paperStyle').textContent = chosen === 'classic'
-  ? '@media print { @page {size:A4; margin:18mm 19mm} }'
-  : '@media print { @page {size:A4; margin:0} '+
-    '#print-area {padding:'+top+'mm '+horizontal+'mm '+bottom+'mm !important;'+
-    'box-decoration-break:clone;-webkit-box-decoration-break:clone} '+
-    '#print-area .paper-art {top:0 !important;left:0 !important} }';
- return chosen;
-}
-
+// A4 pages are constructed explicitly. Each page carries its own stationery SVG;
+// mobile print engines no longer have to repeat one fixed background element.
 async function exportPDF(){
  const text=cm.getValue();
  if(!text.trim()){showMessage('Nothing to export.');return;}
  updatePreview();
- const title=filenameInput.value.trim()||'Untitled Document';
- const hasTitle=/^\s*#\s+/.test(text);
- printArea.innerHTML=(hasTitle?'':'<div class="print-title">'+escapeHtml(title)+'</div>')+'<article class="markdown-body">'+preview.innerHTML+'</article>';
- printArea.querySelectorAll('img').forEach(img=>{img.loading='eager';});
- const chosen = applyStationeryStyle();
- if(chosen !== 'classic') {
-  const graphic = document.createElement('div');
-  graphic.className = 'paper-art';
-  graphic.setAttribute('aria-hidden', 'true');
-  const artImage = document.createElement('img');
-  artImage.alt='';
-  artImage.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(stationeryArt[chosen]);
-  graphic.append(artImage);
-  printArea.prepend(graphic);
-  try { await artImage.decode(); } catch (error) { console.warn('Stationery illustration not ready',error); }
- }
- printArea.dataset.stationery=chosen;
- // Native printing keeps Markdown text selectable; the stationery is a vector layer.
- window.print();
+ try {
+   await WriterMath.ready();
+   if(Array.from(preview.querySelectorAll('.iwp-math')).some(el=>!el.querySelector('mjx-container,svg'))){
+      throw new Error('A math formula did not render. Check vendor/mathjax and try again.');
+   }
+   if(document.fonts?.ready)await document.fonts.ready;
+   const images=Array.from(preview.querySelectorAll('img'));
+   await Promise.all(images.map(async img=>{
+      if(!img.complete) await new Promise(resolve=>{img.addEventListener('load',resolve,{once:true});img.addEventListener('error',resolve,{once:true});setTimeout(resolve,4500);});
+   }));
+   const style=$('exportStyle').value;
+   const result=WriterPdfPages.build(printArea,{
+     style,title:filenameInput.value.trim()||'Untitled Document',
+     hasHeading:/^\s*#\s+/.test(text),html:preview.innerHTML,stationery:stationeryArt
+   });
+   if(result.warnings)showMessage('PDF contains oversized elements; review layout.');
+   // Keep full-page SVG stationery as foreground vectors. Printing does not
+   // depend on Safari's background-graphics checkbox or fixed-element repeats.
+   window.print();
+ }catch(error){console.error(error);showMessage('PDF preparation failed: '+error.message);}
 }
 function clearEditor(){
  closeClearMenu();
  if(!cm.getValue().trim()) {showMessage('Canvas is already blank.');return;}
- if(!confirm('Clear the current canvas? Locally saved drafts will be kept.'))return;
+ if(!confirm('Clear the current file? Locally saved workspaces will be kept.'))return;
  clearTimeout(autosaveTimer);
  suppressAutoSave=true;
  try {cm.setValue('');}finally{suppressAutoSave=false;}
  clearTimeout(autosaveTimer);
- saveStatus.textContent='Blank canvas · not saved';
+ markCurrentFileEdited();saveStatus.textContent='Blank file · not saved';
  cm.focus();showMessage('Canvas cleared. Saved local draft was kept.');
 }
 function clearStorage(){
@@ -484,12 +476,143 @@ function scheduleAnalysisRefresh() {
 }
 cm.on('change',scheduleAnalysisRefresh);
 
+
+// Multiple .md/.txt files are kept in memory until Save or Workspace Download.
+let openFiles=[];
+let activeFileId=null;
+let switchingFile=false;
+const fileTabs=$('fileTabs');
+const getActiveFile=()=>openFiles.find(file=>file.id===activeFileId);
+function captureCurrentFile(){
+ const active=getActiveFile();if(!active)return;
+ active.content=cm.getValue(); active.name=WriterWorkspace.validName(filenameInput.value);
+}
+function markCurrentFileEdited(){
+ const current=getActiveFile(); if(!current)return;
+ current.content=cm.getValue();current.name=WriterWorkspace.validName(filenameInput.value);current.dirty=true;
+ renderFileTabs();
+}
+function renderFileTabs(){
+ const frag=document.createDocumentFragment();
+ for(const doc of openFiles){
+  const shell=document.createElement('div');shell.className='file-tab';shell.setAttribute('role','presentation');
+  const tab=document.createElement('button');tab.type='button';tab.className='secondary file-tab-select';
+  tab.setAttribute('role','tab');tab.setAttribute('aria-selected',String(doc.id===activeFileId));
+  tab.setAttribute('title',doc.name+(doc.dirty?' (unsaved)':''));
+  tab.textContent=doc.name+(doc.dirty?' •':'');tab.addEventListener('click',()=>openFile(doc.id));
+  const close=document.createElement('button');close.type='button';close.className='file-tab-close';close.textContent='×';
+  close.setAttribute('aria-label','Close '+doc.name);
+  close.addEventListener('click',()=>closeFile(doc.id));
+  shell.append(tab,close);frag.append(shell);
+ }
+ fileTabs.replaceChildren(frag);
+}
+function resetAnalysisForNewFile(){
+ analysisHasRun=false;analysisReport=null;grammarResults=[];grammarSnapshot=null;grammarState='idle';++grammarSequence;
+ recBox.innerHTML='<p style="color:#888;font-style:italic;font-size:.9rem">Click Analyze to inspect this file.</p>';
+}
+function openFile(id){
+ if(id===activeFileId)return;
+ captureCurrentFile();
+ const doc=openFiles.find(item=>item.id===id);if(!doc)return;
+ switchingFile=true;
+ try{
+  activeFileId=id;cm.setValue(doc.content);filenameInput.value=doc.name;
+  updateStats();updatePreview();resetAnalysisForNewFile();renderFileTabs();
+  saveStatus.textContent=autoSaveEnabled?'Workspace changed · autosave on':'Workspace changed · autosave off';
+  if(isMobile())setView('edit',false);
+  requestAnimationFrame(()=>cm.refresh());
+ }finally{switchingFile=false;}
+ if(autoSaveEnabled)queueAutoSave();
+}
+function addFile(name='',content='',activate=true){
+ captureCurrentFile();
+ const doc=WriterWorkspace.create(WriterWorkspace.validName(name),content);
+ openFiles.push(doc);
+ if(activate)openFile(doc.id);else renderFileTabs();
+ return doc;
+}
+function newFile(){
+ const number=openFiles.length+1;
+ addFile('Untitled '+number,'');
+ cm.focus();showMessage('New file created (in memory).');
+}
+function closeFile(id){
+ const doc=openFiles.find(file=>file.id===id);if(!doc)return;
+ captureCurrentFile();
+ if(doc.dirty&&!confirm('Close "'+doc.name+'" with unsaved changes? Download or Save first to keep it.'))return;
+ const index=openFiles.findIndex(file=>file.id===id);
+ openFiles.splice(index,1);
+ if(openFiles.length===0){const blank=WriterWorkspace.create();openFiles.push(blank);activeFileId=null;openFile(blank.id);}
+ else if(id===activeFileId){activeFileId=null;openFile(openFiles[Math.min(index,openFiles.length-1)].id);}
+ else renderFileTabs();
+ if(autoSaveEnabled)queueAutoSave();
+}
+async function openPickedFiles(files){
+ const accepted=files.filter(file=>/\.(md|markdown|txt)$/i.test(file.name));
+ if(!accepted.length){showMessage('Choose Markdown (.md) or text (.txt) files.');return;}
+ if(openFiles.length+accepted.length>60){showMessage('Limit: 60 open documents.');return;}
+ const payload=[];
+ for(const file of accepted){
+  if(file.size>4_000_000){showMessage('Skipped oversized file: '+file.name);continue;}
+  try{payload.push({name:(file.webkitRelativePath||file.name).replace(/\.(md|markdown|txt)$/i,''),content:await file.text()});}
+  catch(error){console.error(error);showMessage('Could not read '+file.name);}
+ }
+ if(!payload.length)return;
+ // Reuse initial untouched blank file to keep the tab strip uncluttered.
+ const original=getActiveFile();
+ if(openFiles.length===1&&!original.content&&!original.dirty&&original.name==='Untitled Document')openFiles=[];
+ activeFileId=null;
+ let last;
+ for(const item of payload){last=WriterWorkspace.create(item.name,item.content);last.dirty=true;openFiles.push(last);}
+ openFile(last.id);
+ showMessage('Opened '+payload.length+' local file'+(payload.length===1?'':'s')+'. Not written to browser storage.');
+}
+function downloadWorkspace(){
+ captureCurrentFile();
+ const blob=new Blob([WriterWorkspace.serialize(openFiles,activeFileId)],{type:'application/json'});
+ const url=URL.createObjectURL(blob);const anchor=document.createElement('a');anchor.href=url;
+ anchor.download='Interactive-Writer-Workspace.iwp.json';document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),2500);
+ showMessage('Workspace downloaded ('+openFiles.length+' files).');
+}
+async function restoreWorkspace(file){
+ if(file.size>18_000_000){showMessage('Workspace file is too large.');return;}
+ let data;
+ try{data=WriterWorkspace.hydrate(JSON.parse(await file.text()));}catch(error){console.error(error);}
+ if(!data){showMessage('Invalid workspace file.');return;}
+ captureCurrentFile();
+ if(openFiles.some(doc=>doc.dirty)&&!confirm('Replace current open files with the imported workspace? Download your unsaved workspace first.'))return;
+ openFiles=data.files;activeFileId=null;openFile(openFiles[data.activeIndex].id);
+ openFiles.forEach(item=>item.dirty=true);renderFileTabs();
+ showMessage('Workspace opened · '+openFiles.length+' files (not saved locally).');
+}
+$('newFileButton').addEventListener('click',newFile);
+$('addFilesButton').addEventListener('click',()=>fileInput.click());
+$('importFolderButton').addEventListener('click',()=>$('folderInput').click());
+$('folderInput').addEventListener('change',async event=>{try{await openPickedFiles(Array.from(event.target.files));}finally{event.target.value='';}});
+$('downloadWorkspaceButton').addEventListener('click',downloadWorkspace);
+$('openWorkspaceButton').addEventListener('click',()=>$('workspaceInput').click());
+$('workspaceInput').addEventListener('change',async event=>{try{if(event.target.files[0])await restoreWorkspace(event.target.files[0]);}finally{event.target.value='';}});
+// Viewport-wide preview works on iOS Safari too (no Fullscreen API needed).
+let previousView='edit';
+let previewIsFullscreen=false;
+function setFullscreen(on){
+ if(on===previewIsFullscreen)return;
+ if(on){previousView=grid.dataset.view;setView('preview',false);}
+ previewIsFullscreen=on;
+ document.body.classList.toggle('preview-fullscreen',on);
+ $('fullscreenButton').setAttribute('aria-pressed',String(on));
+ $('exitFullscreenButton').focus();
+ if(!on){setView(previousView,false);$('fullscreenButton').focus();}
+}
+$('fullscreenButton').addEventListener('click',()=>setFullscreen(!previewIsFullscreen));
+$('exitFullscreenButton').addEventListener('click',()=>setFullscreen(false));
+window.addEventListener('keydown',event=>{if(event.key==='Escape'&&previewIsFullscreen){event.preventDefault();setFullscreen(false);}});
+
 fileInput.addEventListener('change',async(event)=>{
  const file=event.target.files[0];if(!file)return;
  try {
-  const text=await file.text();
-  if(cm.getValue().trim() && !confirm('Replace the current document with "'+file.name+'"?'))return;
-  filenameInput.value=file.name.replace(/\.(txt|md)$/i,'');cm.setValue(text);setView('edit');cm.focus();showMessage('Imported '+file.name+(autoSaveEnabled?'':' · not saved locally'));
+  await openPickedFiles(Array.from(event.target.files));
  }catch(error){showMessage('Unable to read the selected file.');console.error(error);}
  finally{fileInput.value='';}
 });
@@ -502,7 +625,9 @@ $('exportStyle').addEventListener('change', () => { store.write('writer_pad_expo
 const stylePreviewDialog = $('stylePreviewDialog');
 const stylePreviewNames = {
  classic:'Plain', ruled:'Ruled paper', vintage:'Vintage letter',
- floral:'Floral letter', kawaii:'Cute cartoon', sky:'Sky & clouds'
+ floral:'Floral letter', kawaii:'Cute cartoon', sky:'Sky & clouds',
+ sakura:'Sakura blossom', botanical:'Sage botanical', grid:'Graph notebook',
+ coffee:'Cozy coffee', night:'Moonlit stars', geometric:'Pastel geometric'
 };
 function updateStylePreviewCards(){
  stylePreviewDialog.querySelectorAll('.style-preview-card').forEach(card=>{
@@ -608,15 +733,19 @@ function initialize(){
  initializing=true;
  const savedText=store.read('writer_pad_text');
  const savedName=store.read('writer_pad_name');
- if(savedText!==null)cm.setValue(savedText);else cm.setValue(starter);
- if(savedName!==null)filenameInput.value=savedName;
+ let savedWorkspace=null;
+ try{const raw=store.read('writer_pad_workspace_v2');if(raw)savedWorkspace=WriterWorkspace.hydrate(JSON.parse(raw));}catch(error){console.warn('Ignoring invalid saved workspace',error);}
+ if(savedWorkspace){openFiles=savedWorkspace.files;activeFileId=openFiles[savedWorkspace.activeIndex].id;}
+ else {const first=WriterWorkspace.create(savedName||'Untitled Document',savedText??starter);openFiles=[first];activeFileId=first.id;}
+ cm.setValue(getActiveFile().content);filenameInput.value=getActiveFile().name;
+ renderFileTabs();
  if(store.read('writer_pad_theme')==='dark')document.body.classList.add('dark-mode');
  const storedDialect=store.read('writer_pad_grammar_dialect');
  if(['american','british','australian','canadian'].includes(storedDialect)) $('grammarDialect').value=storedDialect;
  if(store.read('writer_pad_export_style') && $('exportStyle').querySelector('[value="'+store.read('writer_pad_export_style')+'"]')) $('exportStyle').value=store.read('writer_pad_export_style');
  setView(isMobile()?'edit':(store.read('writer_pad_view')||'edit'),false);
  updatePreview();updateStats();
- saveStatus.textContent=savedText!==null?'Draft restored · '+(autoSaveEnabled?'autosave on':'autosave off'):(autoSaveEnabled?'Ready · autosave on':'Ready · autosave off');
+ saveStatus.textContent=(savedWorkspace||savedText!==null?'Workspace restored · ':'Ready · ')+(autoSaveEnabled?'autosave on':'autosave off');
  $('autosaveToggle').checked=autoSaveEnabled;
  initializing=false;
  cm.refresh();
