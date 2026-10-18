@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+ <meta name="theme-color" content="#faf9f5"><meta name="description" content="Somewhere Sydney — 想出去走走？哪里都行。随机发现一个值得去的悉尼角落。">
+ <title>Somewhere — 想出去走走？哪里都行。</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+ <style>:root{
+  --coral:#f47c5c;--coral-hover:#a94b32;--coral-soft:#fff0e9;--cream:#faf9f5;--paper:#fffefa;
+  --forest:#253c37;--forest-mid:#3e6259;--sea:#498e95;--sage:#e9eee8;--ink:#23332e;
+  --text:#50615a;--muted:#65756d;--line:#e1e7df;--white:#fff;
+  --shadow-sm:0 10px 25px rgba(32,56,47,.065);--shadow-lg:0 28px 72px rgba(24,52,47,.11);
+  --r-sm:12px;--r-md:20px;--r-lg:28px;--page:1200px;--gutter:clamp(20px,4.4vw,72px);
+  --font:'DM Sans','Noto Sans SC',system-ui,-apple-system,'PingFang SC',sans-serif;
+  --hand:'Caveat','Segoe Print',cursive;
+  --easing:cubic-bezier(.2,.8,.2,1)
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:95px}body{margin:0;background:var(--cream);font:400 16px/1.65 var(--font);color:var(--ink);min-width:320px;-webkit-font-smoothing:antialiased}body.is-locked{overflow:hidden}
+button,input{font:inherit}button,a{touch-action:manipulation;-webkit-tap-highlight-color:transparent}button{cursor:pointer}a{color:inherit;text-decoration:none}img{max-width:100%;display:block}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--sea);outline-offset:4px}button:disabled{cursor:wait;opacity:.65}h1,h2,h3,p,figure{margin:0}p{color:var(--text)}.icon-defs{position:absolute;width:0;height:0;overflow:hidden}.icon{width:20px;height:20px;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none;flex-shrink:0}.container{width:min(var(--page),calc(100% - var(--gutter)*2));margin-inline:auto}.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.skip-link{position:fixed;z-index:200;left:16px;top:-80px;background:var(--paper);color:var(--ink);padding:12px 20px;border-radius:10px}.skip-link:focus{top:12px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:#a45138}.eyebrow--light{color:#fff0e8}.wavy{font-family:var(--hand);font-weight:700;font-style:normal}.on-dark{color:#fff}.on-dark p{color:rgba(255,255,255,.87)}
+/* header */
+.site-header{height:82px;z-index:40;position:relative;background:var(--cream)}.header-inner{width:min(1336px,calc(100% - var(--gutter)*2));height:100%;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:28px}.brand{display:inline-flex;flex-direction:column;justify-content:center;color:var(--forest);line-height:1;min-width:158px}.brand-main{font-family:var(--hand);font-size:39px;font-weight:700;letter-spacing:-.035em;transform:rotate(-2deg);transform-origin:left center}.brand-dot{color:var(--coral)}.brand-sub{letter-spacing:.38em;font-size:9px;margin:2px 0 0 38px;font-weight:800}.nav-main{display:flex;gap:33px;align-items:center;margin-left:auto}.nav-main a{font-size:14px;font-weight:700;color:var(--forest-mid);padding:16px 0;position:relative;transition:color .2s}.nav-main a:hover,.nav-main a[aria-current="page"]{color:var(--coral-hover)}.nav-main a[aria-current="page"]:after{content:'';position:absolute;left:calc(50% - 3px);bottom:7px;width:6px;height:6px;background:var(--coral);border-radius:50%}.nav-count{background:var(--coral-soft);padding:2px 7px;border-radius:999px;font-size:12px;color:#9c492d;margin-left:4px}.round-btn{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);background:var(--white);color:var(--forest);transition:border-color .2s,background .2s,transform .2s}.round-btn:hover{border-color:#9eccc3;background:#f4faf7}.round-btn:active{transform:scale(.96)}.round-btn[aria-pressed="true"]{color:#cf5940;background:var(--coral-soft);border-color:#f5bea9}.round-btn[aria-pressed="true"] .icon{fill:currentColor}.header-actions{display:flex;gap:9px;align-items:center}.header-mobile-link{display:none}
+/* buttons */
+.btn{appearance:none;min-height:52px;border:1px solid transparent;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;gap:11px;padding:13px 25px;font-weight:800;font-size:15px;line-height:1.25;transition:background .2s var(--easing),box-shadow .2s var(--easing),transform .2s var(--easing),border-color .2s;white-space:normal;text-align:center}.btn .icon{width:20px;height:20px}.btn:hover{transform:translateY(-2px)}.btn:active{transform:translateY(1px) scale(.985)}.btn--coral{background:var(--coral);color:#1f251f;box-shadow:0 12px 26px rgba(171,66,41,.22)}.btn--coral:hover{background:#ff9477;box-shadow:0 15px 35px rgba(171,66,41,.3)}.btn--forest{background:var(--forest);color:#fff}.btn--forest:hover{background:#395a50}.btn--pale{background:var(--sage);color:var(--forest);border-color:var(--line)}.btn--pale:hover{background:#dae7dc}.btn--white{background:#fff;color:var(--forest)}.btn--outline{background:transparent;border-color:#a9beb3;color:var(--forest)}.btn--full{width:100%}.inline-link{min-height:44px;display:inline-flex;align-items:center;gap:9px;color:var(--forest-mid);font-weight:800;border-bottom:1px solid currentColor;font-size:14px;transition:color .2s}.inline-link:hover{color:var(--coral-hover)}.inline-link .icon{height:17px;width:17px}
+/* home hero */
+.hero-wrap{padding:0 20px}.hero{min-height:620px;height:min(750px,calc(100svh - 105px));isolation:isolate;position:relative;border-radius:26px;overflow:hidden;background:#456c72}.hero-photo,.picture-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 50%;z-index:-2}.hero-photo--mobile{display:none}.hero:before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(7,33,42,.84) 0%,rgba(10,41,48,.60) 41%,rgba(8,42,49,.14) 80%),linear-gradient(0deg,rgba(7,31,37,.19),transparent 65%)}.hero .inner{height:100%;width:min(1180px,calc(100% - 80px));margin:0 auto;display:flex;align-items:center}.hero-copy{width:min(680px,100%);padding:20px 0 47px}.hero-location{display:flex;align-items:center;gap:12px;font-size:12px;font-weight:800;letter-spacing:.2em;color:rgba(255,255,255,.9);margin-bottom:27px}.hero-location .pin{width:8px;height:8px;background:#ffc2ab;border-radius:50%;box-shadow:0 0 0 5px rgba(255,255,255,.16)}.hero-title{font-size:clamp(55px,6vw,94px);font-weight:800;letter-spacing:-.07em;line-height:1.24;color:#fff;max-width:770px;text-wrap:balance}.hero-title em{font-style:normal;color:#fff;white-space:nowrap}.hero-lead{font-size:17px;color:rgba(255,255,255,.94);line-height:1.9;margin:24px 0 33px;max-width:460px;font-weight:500}.hero-cta{min-height:80px;font-size:20px;min-width:350px;padding:10px 14px 10px 31px;justify-content:space-between;gap:28px;border-radius:999px;box-shadow:0 18px 38px rgba(185,74,46,.35);color:#292d24}.hero-cta .icon{width:23px;height:23px}.hero-cta .cta-arrow{height:55px;width:55px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.24);transition:background .2s}.hero-cta:hover .cta-arrow{background:rgba(255,255,255,.5)}.hero-cta-wrap{display:inline-grid;justify-items:center;gap:15px}.hero-secondary{background:transparent;color:rgba(255,255,255,.92);border:0;padding:10px 20px;min-height:44px;display:inline-flex;align-items:center;gap:8px;font-weight:650;font-size:13px}.hero-secondary:hover{text-decoration:underline;text-underline-offset:4px}.hero-secondary .icon{width:16px;height:16px}.hero-aside{position:absolute;right:42px;bottom:36px;padding:18px 22px;display:flex;gap:15px;align-items:center;color:#fff;border:1px solid rgba(255,255,255,.3);background:rgba(19,49,52,.34);border-radius:16px;backdrop-filter:blur(10px);max-width:280px}.hero-aside-number{font:700 42px/1 var(--hand);color:#ffd0bf}.hero-aside strong{display:block;font-size:13px}.hero-aside span{font-size:12px;color:rgba(255,255,255,.85)}.hero-footnote{position:absolute;left:50px;bottom:32px;color:rgba(255,255,255,.78);letter-spacing:.2em;font-size:11px;font-weight:800;display:flex;align-items:center;gap:12px}.hero-footnote::before{content:'';height:1px;width:30px;background:rgba(255,255,255,.7)}
+/* home content */
+.section{padding:103px 0}.section-heading{display:flex;align-items:end;justify-content:space-between;gap:28px;margin-bottom:35px}.section-heading h2{font-size:clamp(34px,3.6vw,54px);font-weight:800;line-height:1.3;letter-spacing:-.055em;margin-top:13px;max-width:720px}.section-heading h2 span{color:var(--sea)}.section-heading p{max-width:310px;font-size:14px;line-height:1.85}.feature-spot{display:grid;grid-template-columns:1fr 1fr;min-height:478px;border-radius:25px;overflow:hidden;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-sm)}.feature-img{position:relative;overflow:hidden;min-height:375px;background:var(--sea)}.feature-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}.feature-img:after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(5,34,38,.48),transparent 60%)}.photo-caption{position:absolute;left:28px;bottom:27px;z-index:2;color:#fff;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.03em}.feature-copy{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:clamp(30px,4.3vw,66px)}.feature-copy .eyebrow{margin-bottom:20px}.feature-copy h3{font-size:clamp(31px,3.2vw,48px);line-height:1.18;letter-spacing:-.06em;max-width:430px;margin-bottom:18px}.feature-copy .chinese-title{font-weight:600;color:var(--sea);font-size:20px;letter-spacing:0;display:block;margin-top:12px}.feature-copy p{max-width:425px;line-height:1.9;margin-bottom:27px;font-size:15px}.mini-metrics{display:flex;flex-wrap:wrap;gap:12px 22px;border-top:1px solid var(--line);padding-top:20px;width:100%;margin-bottom:20px}.mini-metrics span{display:flex;align-items:center;gap:6px;color:var(--forest-mid);font-size:13px;font-weight:700}.mini-metrics .icon{width:16px;height:16px;color:var(--coral-hover)}.how-section{background:#eff2eb;padding:80px 0 92px}.how-heading{text-align:center;max-width:600px;margin:0 auto 43px}.how-heading h2{font-size:clamp(30px,3vw,44px);line-height:1.3;letter-spacing:-.05em;margin-top:9px}.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.how-card{border:1px solid #dfe6dc;background:rgba(255,255,255,.82);border-radius:20px;padding:30px;min-height:220px;display:flex;align-items:flex-start;flex-direction:column}.how-card .number{font-family:var(--hand);font-size:31px;font-weight:700;color:#c6684e}.how-card .icon{width:27px;height:27px;color:var(--forest-mid);margin:17px 0}.how-card h3{font-size:20px;letter-spacing:-.03em;margin-bottom:7px}.how-card p{font-size:14px;line-height:1.8}.closing-strip{padding:71px 0;display:flex;align-items:center;justify-content:space-between;gap:25px}.closing-strip h2{font-size:clamp(27px,3vw,43px);letter-spacing:-.045em}.closing-strip p{font-size:14px;margin-top:8px}
+/* interior general */
+.submain{padding-top:34px;padding-bottom:90px;min-height:65svh}.breadcrumb{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:27px;color:#697970;font-size:13px}.breadcrumb a{min-height:44px;display:inline-flex;gap:8px;align-items:center;font-weight:750;color:var(--forest-mid)}.breadcrumb a:hover{color:var(--coral-hover)}.breadcrumb .icon{width:17px;height:17px}.page-kicker{margin-bottom:13px}.page-title{font-size:clamp(39px,5.5vw,75px);line-height:1.19;letter-spacing:-.065em;margin-bottom:17px}.page-title em{color:var(--sea);font-style:normal}.page-lead{max-width:710px;font-size:17px;line-height:1.9;margin-bottom:48px}
+/* result */
+.result-shell{display:grid;grid-template-columns:1.06fr .94fr;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-lg);border-radius:var(--r-lg);overflow:hidden;min-height:610px}.result-visual{position:relative;min-height:540px;overflow:hidden;background:#5f8581}.result-visual img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.result-visual:after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(3,33,41,.63),transparent 44%)}.floating-tag{position:absolute;top:28px;left:28px;z-index:2;background:rgba(255,255,255,.93);backdrop-filter:blur(6px);border-radius:999px;display:inline-flex;gap:8px;align-items:center;padding:10px 16px;color:var(--forest);font-size:12px;font-weight:800}.floating-tag .icon{color:var(--coral-hover);width:17px;height:17px}.result-visual .photo-caption{font-size:13px}.result-content{padding:clamp(31px,4.2vw,65px);display:flex;align-items:flex-start;flex-direction:column;justify-content:center}.result-top{display:flex;justify-content:space-between;align-items:center;width:100%;gap:12px;margin-bottom:32px}.result-location{font-size:12px;letter-spacing:.05em;color:var(--forest-mid);display:flex;align-items:center;gap:8px;font-weight:800}.result-location .icon{width:17px;height:17px;color:var(--coral-hover)}.result-content h1{font-size:clamp(35px,3.6vw,57px);line-height:1.15;letter-spacing:-.055em;margin:11px 0 9px;overflow-wrap:anywhere}.result-cn{font-size:21px;font-weight:650;color:var(--sea);margin-bottom:20px}.result-hook{font-size:19px;font-weight:750;line-height:1.5;margin-bottom:8px}.result-description{color:var(--text);font-size:15px;line-height:1.9;margin-bottom:23px}.result-metrics{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.result-metric{min-width:0}.result-metric .icon{width:20px;height:20px;color:var(--coral-hover);margin-bottom:8px}.result-metric b{font-size:14px;display:block;line-height:1.45}.result-metric small{font-size:12px;display:block;color:var(--muted);margin-top:4px}.result-cta-row{display:flex;width:100%;gap:12px;margin-top:30px}.result-cta-row .btn--coral{flex:1}.result-foot{font-size:12px;color:var(--muted);line-height:1.8;margin-top:18px}.result-next{padding-top:79px}.result-next h2{font-size:clamp(29px,3vw,42px);letter-spacing:-.04em;margin:8px 0 26px}.route-preview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.route-preview article{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:27px;min-width:0}.route-preview article .icon{width:26px;height:26px;color:var(--coral-hover);margin-bottom:20px}.route-preview article h3{font-size:18px;margin-bottom:9px}.route-preview article p{font-size:14px;line-height:1.85}
+/* guide */
+.guide-banner{height:clamp(340px,37vw,470px);position:relative;isolation:isolate;border-radius:var(--r-lg);overflow:hidden;background:#497a77;display:flex;align-items:flex-end;color:#fff}.guide-banner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}.guide-banner:before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(2,29,35,.85),rgba(8,42,43,.27) 84%)}.guide-banner-copy{padding:clamp(32px,5vw,65px);width:100%}.guide-banner h1{font-size:clamp(39px,5vw,73px);line-height:1.13;letter-spacing:-.045em;margin:13px 0}.guide-banner .sub{font-size:19px;font-weight:750;color:#fff}.guide-tags{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:20px 0;border-bottom:1px solid var(--line)}.guide-tags>span{display:inline-flex;gap:8px;align-items:center;font-size:13px;color:var(--forest-mid);font-weight:700}.guide-tags .icon{width:17px;height:17px;color:var(--coral-hover)}.guide-tags .tag-actions{margin-left:auto;display:flex;gap:8px}.guide-body{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:clamp(35px,6vw,95px);padding:72px 0}.guide-article{min-width:0}.guide-block{padding-bottom:47px;margin-bottom:49px;border-bottom:1px solid var(--line)}.guide-block:last-child{border-bottom:none;margin-bottom:0}.guide-block h2{font-size:clamp(27px,3.2vw,41px);letter-spacing:-.05em;line-height:1.28;margin:11px 0 19px}.guide-block>p{font-size:16px;max-width:610px;line-height:1.95}.step-list{margin:30px 0 0;padding:0;list-style:none}.step-list li{display:grid;grid-template-columns:48px 1fr;gap:22px;position:relative;padding-bottom:34px}.step-list li:not(:last-child):before{content:'';position:absolute;top:50px;bottom:2px;left:23px;width:1px;background:var(--line)}.step-no{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--coral-soft);color:#ac4d33;font-weight:850;font-size:13px;position:relative;z-index:1}.step-list h3{font-size:19px;line-height:1.4;margin:3px 0 9px}.step-list p{font-size:15px;line-height:1.9}.tip-list{list-style:none;display:grid;gap:12px;padding:0;margin:22px 0 0}.tip-list li{display:flex;gap:12px;align-items:flex-start;padding:15px 18px;border-radius:12px;background:var(--sage);font-size:14px;color:var(--forest);line-height:1.85}.tip-list .icon{width:19px;height:19px;margin-top:3px;color:var(--forest-mid)}.guide-side{min-width:0}.guide-side-inner{position:sticky;top:22px}.info-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:23px;margin-bottom:17px;box-shadow:var(--shadow-sm)}.info-card h3{font-size:19px;letter-spacing:-.03em;margin-bottom:18px}.map-frame{width:100%;height:215px;display:block;border:0;background:var(--sage);border-radius:14px;margin-bottom:17px}.route-nodes{display:grid;gap:12px;margin-bottom:19px}.route-node{display:flex;gap:11px;align-items:flex-start;font-size:14px;color:var(--forest-mid);font-weight:700}.route-node .dot{width:11px;height:11px;border:3px solid var(--forest-mid);border-radius:50%;flex:none;margin-top:6px}.route-node:last-child .dot{background:var(--coral);border-color:var(--coral)}.guide-info-row{display:grid;grid-template-columns:24px 1fr;gap:12px;padding:13px 0;border-top:1px solid var(--line)}.guide-info-row .icon{color:var(--coral-hover);margin-top:3px}.guide-info-row b{font-size:13px}.guide-info-row p{font-size:13px;line-height:1.7;margin-top:3px}.caution{font-size:12px;line-height:1.9;color:var(--muted);padding:0 4px}.again-banner{background:var(--sage);border-radius:22px;padding:32px 38px;display:flex;justify-content:space-between;align-items:center;gap:25px}.again-banner h2{font-size:27px;letter-spacing:-.03em;margin:5px 0}.again-banner p{font-size:14px}
+/* favorites + about */
+.saved-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin-top:32px}.saved-card{background:#fff;border:1px solid var(--line);border-radius:21px;overflow:hidden;box-shadow:var(--shadow-sm);min-width:0}.saved-photo{height:235px;position:relative;overflow:hidden;background:var(--sea)}.saved-photo img{width:100%;height:100%;object-fit:cover}.saved-card .saved-heart{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.96)}.saved-card-body{padding:26px}.saved-card-body .eyebrow{font-size:11px;letter-spacing:.08em}.saved-card-body h2{font-size:24px;line-height:1.3;margin:10px 0;letter-spacing:-.035em}.saved-card-body p{font-size:14px;line-height:1.85;margin-bottom:13px}.saved-card-actions{border-top:1px solid var(--line);padding-top:12px;display:flex;justify-content:space-between;gap:10px;align-items:center}.saved-card-actions span{font-size:13px;color:var(--muted)}.empty-state{margin:35px auto 0;padding:67px 20px;background:#fff;border:1px solid var(--line);border-radius:25px;text-align:center;max-width:640px}.empty-icon{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;background:var(--coral-soft);margin:0 auto 22px;color:var(--coral-hover)}.empty-icon .icon{width:36px;height:36px}.empty-state h2{font-size:29px}.empty-state p{font-size:15px;max-width:390px;margin:12px auto 26px}.about-split{display:grid;grid-template-columns:1fr 1fr;overflow:hidden;border-radius:25px;background:#fff;border:1px solid var(--line)}.about-split .about-photo{min-height:440px;position:relative;background:var(--sea)}.about-split .about-photo img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}.about-split .about-text{padding:clamp(28px,5vw,70px);display:flex;flex-direction:column;justify-content:center;align-items:flex-start}.about-text h2{font-size:clamp(27px,3.2vw,43px);line-height:1.35;letter-spacing:-.05em;margin:13px 0 21px}.about-text p{font-size:15px;line-height:1.95;margin-bottom:16px}.about-text .btn{margin-top:10px}.about-disclaimer{margin-top:24px;padding:20px 24px;border-radius:14px;background:var(--sage);color:var(--forest);font-size:13px;line-height:1.9}
+/* footer */
+.footer{border-top:1px solid var(--line);background:#f1f3ec;margin-top:35px}.footer-inner{padding:50px 0;display:flex;align-items:flex-end;justify-content:space-between;gap:35px}.footer .brand{margin-bottom:14px}.footer p{font-size:13px}.footer-links{display:flex;gap:13px 24px;flex-wrap:wrap;justify-content:flex-end;align-items:center;font-size:13px;color:var(--forest-mid);font-weight:700}.footer-links button{background:none;border:none;color:inherit;min-height:44px;padding:8px 0}.footer-links a{display:inline-flex;align-items:center;min-height:44px}.footer-links :is(button,a):hover{text-decoration:underline;text-underline-offset:4px}
+/* dialogs & feedback */
+.dialog-screen{position:fixed;inset:0;z-index:100;background:rgba(12,30,29,.58);backdrop-filter:blur(5px);display:grid;place-items:center;padding:20px;animation:fade-in .2s ease}.dialog{background:var(--paper);border-radius:24px;max-width:570px;width:100%;max-height:min(85dvh,780px);overflow-y:auto;overscroll-behavior:contain;padding:30px;box-shadow:var(--shadow-lg)}.dialog-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:13px}.dialog h2{font-size:31px;letter-spacing:-.04em;margin:9px 0 14px;line-height:1.25}.dialog p{font-size:15px;line-height:1.9}.dialog-options{border-top:1px solid var(--line);padding-top:21px;margin-top:24px}.dialog-options legend{font-size:15px;font-weight:800;margin-bottom:12px}.dialog-options fieldset{padding:0;border:0;margin:0 0 17px}.chip-row{display:flex;gap:10px;flex-wrap:wrap}.chip{min-height:46px;border:1px solid #b8c9bd;background:#fff;padding:10px 17px;border-radius:999px;font-size:14px;color:var(--forest);font-weight:750}.chip[aria-pressed="true"]{background:var(--forest);color:#fff;border-color:var(--forest)}.chip:hover{border-color:var(--coral)}.dialog-footer{display:flex;gap:11px;margin-top:24px}.dialog-footer .btn{flex:1}.credits-list{display:grid;gap:11px;margin:18px 0 0}.credits-list a{color:var(--forest-mid);text-decoration:underline;text-underline-offset:3px;font-size:14px;overflow-wrap:anywhere}.toast{position:fixed;z-index:120;bottom:28px;left:50%;max-width:calc(100% - 40px);background:var(--forest);color:#fff;border-radius:999px;padding:13px 22px;font-size:14px;font-weight:750;text-align:center;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transform:translate(-50%,20px);transition:opacity .2s,transform .2s}.toast.is-visible{opacity:1;transform:translate(-50%,0)}.mobile-nav{display:none}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}@keyframes card-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}.page--result .result-shell,.page--detail .guide-banner{animation:card-in .35s var(--easing) both}
+@media(max-width:1000px){.result-shell{grid-template-columns:1fr 1fr}.result-content{padding:33px}.result-cta-row{flex-direction:column}.result-visual{min-height:520px}.guide-body{grid-template-columns:minmax(0,1fr) 300px;gap:37px}.hero-aside{right:25px}.hero .inner{width:calc(100% - 75px)}}
+@media(max-width:768px){.site-header{height:72px}.nav-main{gap:18px}.hero-wrap{padding:0 12px}.hero{height:660px}.hero .inner{width:calc(100% - 64px)}.hero-copy{padding-bottom:30px}.hero-title{font-size:clamp(50px,7.5vw,76px)}.hero-aside{display:none}.hero-footnote{left:33px}.section{padding:73px 0}.section-heading{align-items:flex-start;flex-direction:column;gap:14px}.feature-spot{grid-template-columns:1fr 1fr}.feature-copy{padding:26px}.feature-copy h3{font-size:32px}.guide-body{grid-template-columns:1fr}.guide-side-inner{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:16px}.guide-side-inner .caution{grid-column:1/-1}.info-card{margin-bottom:0}.saved-grid{grid-template-columns:1fr 1fr}.saved-photo{height:195px}.about-split{grid-template-columns:1fr 1fr}.how-card{padding:22px}}
+@media(max-width:600px){
+ :root{--gutter:21px}.site-header{height:70px}.header-inner{gap:10px}.nav-main{display:none}.header-mobile-link{display:flex}.brand-main{font-size:34px}.brand-sub{font-size:8px;margin-left:25px}.header-actions .round-btn{height:43px;width:43px}.page--home .site-header{position:absolute;top:0;left:0;right:0;z-index:50;height:85px;background:transparent}.page--home .site-header .brand{color:#fff}.page--home .site-header .brand-dot{color:#ffd1bd}.page--home .header-actions .round-btn{background:rgba(11,36,40,.24);border-color:rgba(255,255,255,.35);color:#fff;backdrop-filter:blur(9px)}.page--home .header-mobile-link{color:#fff;font-size:13px;font-weight:800;border:1px solid rgba(255,255,255,.35);border-radius:999px;min-height:43px;padding:10px 15px;display:flex;align-items:center;background:rgba(11,36,40,.22)}
+ .hero-wrap{padding:0}.hero{border-radius:0;min-height:680px;height:100svh;max-height:none}.hero-photo{display:none}.hero-photo--mobile{display:block;object-position:53% center}.hero:before{background:linear-gradient(180deg,rgba(2,27,34,.31),rgba(4,32,41,.10) 30%,rgba(4,32,37,.6) 57%,rgba(5,27,33,.92) 100%)}.hero .inner{align-items:flex-end;width:calc(100% - 44px);height:100%;padding-bottom:calc(65px + env(safe-area-inset-bottom))}.hero-copy{padding:0;width:100%}.hero-location{font-size:10px;margin-bottom:20px;letter-spacing:.11em}.hero-title{font-size:clamp(42px,11.8vw,64px);line-height:1.22;letter-spacing:-.07em}.hero-lead{font-size:14px;line-height:1.8;margin:17px 0 21px}.hero-cta-wrap{display:grid;width:100%;gap:8px}.hero-cta{min-width:0;width:100%;min-height:70px;font-size:18px;padding:8px 9px 8px 23px}.hero-cta .cta-arrow{height:52px;width:52px}.hero-cta .icon{width:20px;height:20px}.hero-secondary{font-size:13px;min-height:39px;padding:7px}.hero-footnote{bottom:calc(23px + env(safe-area-inset-bottom));left:22px;font-size:10px}.hero-aside{display:none}.section{padding:60px 0}.section-heading h2{font-size:35px}.section-heading p{font-size:14px}.feature-spot{grid-template-columns:1fr}.feature-img{min-height:265px;height:265px}.feature-copy{padding:27px}.feature-copy h3{font-size:36px}.how-section{padding:60px 0}.how-grid{grid-template-columns:1fr;gap:12px}.how-card{min-height:0;display:grid;grid-template-columns:40px 1fr;gap:0 12px;padding:20px}.how-card .number{grid-row:1/span 2;font-size:28px}.how-card .icon{display:none}.how-card h3{font-size:17px}.how-card p{font-size:13px}.closing-strip{padding:55px 0 70px;display:block}.closing-strip .btn{margin-top:22px;width:100%}
+ .submain{padding:19px 0 86px}.breadcrumb{margin-bottom:16px}.result-shell{display:flex;flex-direction:column;border-radius:20px;min-height:0}.result-visual{min-height:0;height:320px}.result-content{padding:28px 23px 31px}.result-top{margin-bottom:23px}.result-content h1{font-size:clamp(32px,8.5vw,47px)}.result-cn{font-size:20px}.result-description{font-size:14px}.result-metrics{gap:9px}.result-metric b{font-size:12px}.result-metric small{font-size:11px}.result-cta-row{flex-direction:row;gap:9px}.result-cta-row .btn{padding:12px 13px;font-size:13px;min-width:0}.result-cta-row .btn--pale{flex:0 0 auto}.result-next{padding-top:60px}.route-preview{grid-template-columns:1fr;gap:12px}.route-preview article{padding:20px}.route-preview article .icon{margin-bottom:9px}.route-preview article p{font-size:13px}
+ .guide-banner{height:310px;border-radius:18px}.guide-banner-copy{padding:24px}.guide-banner h1{font-size:clamp(30px,8.5vw,46px);overflow-wrap:anywhere}.guide-banner .sub{font-size:16px}.guide-body{padding:46px 0}.guide-block{padding-bottom:34px;margin-bottom:38px}.guide-block>p{font-size:14px}.guide-block h2{font-size:30px}.step-list li{grid-template-columns:42px 1fr;gap:13px}.step-no{height:42px;width:42px}.step-list li:not(:last-child):before{left:20px;top:43px}.step-list h3{font-size:17px}.step-list p{font-size:14px}.guide-side-inner{display:block}.info-card{margin-bottom:16px}.again-banner{padding:26px;display:block}.again-banner .btn{width:100%;margin-top:20px}.guide-tags{gap:12px}.guide-tags .tag-actions{margin-left:0;width:100%}.saved-grid{grid-template-columns:1fr;gap:14px}.saved-photo{height:235px}.page-title{font-size:44px}.page-lead{font-size:15px;margin-bottom:32px}.about-split{grid-template-columns:1fr}.about-split .about-photo{min-height:280px}.about-split .about-text{padding:27px}.footer-inner{flex-direction:column;align-items:flex-start;gap:20px;padding:39px 0 104px}.footer-links{justify-content:flex-start;gap:8px 22px}.mobile-nav{display:flex;position:fixed;z-index:48;bottom:0;left:0;right:0;padding:4px 12px env(safe-area-inset-bottom);height:calc(70px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid var(--line);backdrop-filter:blur(12px);align-items:center;justify-content:space-evenly;box-shadow:0 -9px 30px rgba(15,38,26,.05)}.mobile-nav a{height:60px;min-width:74px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:800;color:var(--muted);border-radius:12px}.mobile-nav a .icon{width:21px;height:21px}.mobile-nav a[aria-current="page"]{color:var(--coral-hover);background:var(--coral-soft)}.page--home .mobile-nav{display:none}.toast{bottom:calc(85px + env(safe-area-inset-bottom));border-radius:15px;font-size:13px}.dialog-screen{align-items:end;padding:0}.dialog{border-radius:23px 23px 0 0;padding:26px 22px calc(30px + env(safe-area-inset-bottom));max-height:88dvh}.dialog h2{font-size:27px}.dialog-footer{flex-wrap:wrap}.dialog-footer .btn{min-width:calc(50% - 7px)}
+}
+@media(max-width:380px){.hero-title{font-size:42px}.hero-location{font-size:9px}.hero-lead{font-size:13px}.result-cta-row .btn{font-size:12px;padding:12px 10px}.result-visual{height:265px}.result-metric b{font-size:11px}.eyebrow{font-size:11px}}
+@media(max-height:650px) and (max-width:600px){.hero{min-height:590px}.hero .inner{padding-bottom:43px}.hero-footnote{display:none}.hero-lead{margin:10px 0 14px}.hero-location{margin-bottom:10px}.hero-cta{min-height:62px}.hero-cta .cta-arrow{height:46px;width:46px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+ .image-unavailable{background-color:#436d72!important}.hero-footnote{appearance:none;background:none;border:0;cursor:pointer;padding:9px 0}.saved-card-actions span .icon{width:16px;height:16px;vertical-align:middle}.dialog-options p .icon{width:20px;height:20px;vertical-align:middle}#main-content:focus{outline:none}
+ 
+/* v2: text-led hierarchy, reduced noise, functional settings */
+.eyebrow,.eyebrow--light{font-size:14px;font-weight:650;letter-spacing:0;text-transform:none;color:var(--forest-mid);line-height:1.5}
+.eyebrow--light{color:#fff}
+.hero .inner{align-items:center}.hero-copy{padding-bottom:8px}.hero-title{max-width:750px;line-height:1.25}
+.hero-cta-wrap{margin-top:34px;gap:10px}.hero-secondary{font-weight:600;opacity:.92;font-size:14px}
+.hero-cta{min-width:345px}.hero-cta .cta-arrow{background:rgba(255,255,255,.22)}
+.section-heading{margin-bottom:26px}.section-heading h2{font-size:clamp(29px,3vw,43px);margin:0;letter-spacing:-.045em}
+.section{padding-block:74px}.feature-spot{min-height:390px}.feature-img{min-height:330px}
+.result-visual::after{background:linear-gradient(0deg,rgba(3,24,30,.75) 0%,rgba(3,24,30,.12) 35%,transparent 56%);pointer-events:none}
+.photo-action-row{position:absolute;z-index:3;bottom:25px;left:28px;right:26px;display:flex;gap:16px;align-items:flex-end;justify-content:space-between}
+.photo-address{display:inline-flex;align-items:flex-start;gap:9px;color:#fff;font-size:14px;line-height:1.55;font-weight:650;max-width:min(78%,410px);text-shadow:0 1px 8px rgba(0,0,0,.28);overflow-wrap:anywhere}
+.photo-address .icon{height:19px;width:19px;margin-top:2px;flex-shrink:0}
+.photo-heart{flex-shrink:0;color:var(--forest);border:1px solid rgba(255,255,255,.65);background:rgba(255,255,255,.93);box-shadow:0 6px 20px rgba(0,0,0,.16)}
+.photo-heart:hover{background:#fff}.photo-heart[aria-pressed=true]{background:var(--coral-soft);color:#bb4f31}
+.result-content h1{margin-top:0}.result-cn{margin-bottom:20px}.result-content{justify-content:center}
+.result-foot{display:flex;gap:7px;align-items:baseline;flex-wrap:wrap;font-size:13px}.muted-action{font:inherit;background:none;border:0;min-height:37px;padding:5px;color:var(--forest-mid);font-weight:750;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.result-next{padding-top:65px}.result-next h2{margin-top:0}
+.guide-banner:before{background:linear-gradient(90deg,rgba(2,29,35,.8),rgba(8,42,43,.2) 84%),linear-gradient(0deg,rgba(2,29,35,.45),transparent 35%)}
+.guide-banner-copy{padding-bottom:85px}.guide-photo-meta{position:absolute;z-index:3;left:clamp(25px,5vw,65px);right:clamp(25px,5vw,65px);bottom:22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.guide-photo-meta>span{display:flex;gap:8px;align-items:center;min-width:0;overflow-wrap:anywhere;font-size:14px;font-weight:650;line-height:1.5;color:#fff}.guide-photo-meta .icon{width:18px;height:18px;flex-shrink:0}
+.guide-photo-meta .photo-heart{width:46px;height:46px}
+.dialog{max-width:580px}.dialog-mark{font:700 24px/1 var(--hand);color:var(--forest-mid);padding-top:9px;transform:rotate(-2deg)}.dialog h2{font-size:30px;margin:10px 0 19px}.dialog-hint{font-size:14px!important;color:var(--text);line-height:1.65!important}
+.account-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:21px 0 23px}
+.account-summary>div{border:1px solid var(--line);background:#f3f5ef;border-radius:15px;padding:16px 13px;min-width:0}
+.account-summary small{display:block;color:var(--text);font-size:12px;font-weight:600;margin-bottom:4px}.account-summary strong{font-size:29px;line-height:1.25;font-weight:800;font-variant-numeric:tabular-nums}.account-summary strong span{font-size:16px;color:var(--muted);font-weight:600}
+.settings-list{border-top:1px solid var(--line)}.settings-row{display:flex;width:100%;text-align:left;align-items:center;gap:14px;min-height:71px;padding:12px 6px;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);cursor:pointer;transition:background .2s}
+.settings-row:hover{background:#f0f4ee}.settings-symbol{display:grid;place-items:center;flex-shrink:0;height:42px;width:42px;background:var(--sage);border-radius:12px;color:var(--forest-mid)}.settings-symbol .icon{width:20px;height:20px}
+.settings-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.settings-copy strong{font-size:15px;font-weight:750}.settings-copy small{font-size:12px;color:var(--muted)}.settings-row>.icon:last-child{height:17px;width:17px;color:var(--muted)}
+.back-action{border:0;background:none;padding:10px 4px 9px 0;min-height:45px;color:var(--forest-mid);font-weight:750;display:inline-flex;align-items:center;gap:8px;margin-bottom:7px}.back-action .icon{width:17px;height:17px}.back-action:hover{text-decoration:underline}
+.modal-note{font-size:12px!important;color:var(--muted)!important;margin-top:14px;line-height:1.7!important}
+.exclude-list{margin-top:17px;border-top:1px solid var(--line)}.exclude-row{display:flex;gap:12px;justify-content:space-between;align-items:center;width:100%;padding:16px 2px;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;cursor:pointer;min-height:68px}.exclude-row:hover{background:#f3f5ef}.exclude-row>span:first-child{min-width:0;display:flex;flex-direction:column;gap:3px}.exclude-row b{font-size:14px}.exclude-row small{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.exclude-status{white-space:nowrap;min-width:91px;text-align:center;padding:7px 9px;border:1px solid var(--line);background:#f1f4ef;border-radius:99px;color:var(--forest-mid);font-size:12px;font-weight:750}.exclude-row[aria-pressed=true] .exclude-status{background:var(--coral-soft);border-color:#efc3af;color:#9c3c22}
+.usage-large{display:flex;align-items:baseline;gap:16px;padding:18px 0}.usage-large strong{font-size:75px;line-height:1;font-variant-numeric:tabular-nums}.usage-large span{font-weight:700;color:var(--text);font-size:16px}.usage-segments{display:flex;gap:8px;margin:0 0 24px}.usage-segments span{height:8px;border-radius:9px;flex:1;background:#bad2c2}.usage-segments span.used{background:var(--coral)}
+.setting-block{padding:23px 0;border-top:1px solid var(--line)}.setting-block h3,.setting-label{display:block;font-size:16px;font-weight:750;margin-bottom:9px}.setting-block p{font-size:14px;margin-bottom:14px}.setting-select,.placeholder-grid select{display:block;appearance:auto;min-height:48px;border:1px solid #b6c6bc;border-radius:11px;background:#fff;color:var(--forest);padding:9px 14px;font:inherit;width:100%}
+.dialog-options{margin-top:18px}.dialog-options fieldset{margin:0 0 22px}.dialog-options legend{font-size:15px}.advanced-details{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:5px}.advanced-details summary{cursor:pointer;min-height:53px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;font-weight:750;color:var(--forest)}.advanced-details summary span{font-weight:500;font-size:12px;color:var(--muted)}.advanced-details[open] summary{border-bottom:1px solid var(--line)}
+.placeholder-grid{padding:17px 0 20px;display:grid;grid-template-columns:1fr 1fr;gap:13px}.placeholder-grid label{font-size:13px;font-weight:700;color:var(--text)}.placeholder-grid select{margin-top:7px;font-size:12px;background:#f1f3ef;color:#697970;opacity:1}
+@media(max-width:600px){.hero .inner{align-items:flex-end;padding-bottom:calc(99px + env(safe-area-inset-bottom))}.hero-title{line-height:1.21}.hero-cta-wrap{margin-top:28px;gap:7px}.hero-secondary{font-size:13px}.section{padding:52px 0}.feature-img{min-height:255px}.result-visual{height:330px}.photo-action-row{left:20px;right:19px;bottom:18px}.photo-address{font-size:13px;max-width:77%}.result-content{padding:30px 23px}.result-content h1{font-size:clamp(30px,8vw,42px)}.result-next{padding-top:55px}.guide-banner-copy{padding-bottom:85px}.guide-photo-meta{left:21px;right:21px;bottom:16px}.guide-photo-meta>span{font-size:12px}.dialog{max-height:90dvh}.dialog h2{font-size:28px}.account-summary{gap:7px}.account-summary>div{padding:13px 9px}.account-summary small{font-size:11px}.account-summary strong{font-size:25px}.placeholder-grid{grid-template-columns:1fr}.settings-row{min-height:68px}}
+@media(max-width:380px){.hero .inner{padding-bottom:calc(87px + env(safe-area-inset-bottom))}.photo-address{font-size:12px}.account-summary strong{font-size:23px}}
+</style>
+</head><body>
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon-defs" aria-hidden="true">
+    <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="m12 2 1.85 6.15L20 10l-6.15 1.85L12 18l-1.85-6.15L4 10l6.15-1.85L12 2Z"/><path d="m19 17 .8 2.2L22 20l-2.2.8L19 23l-.8-2.2L16 20l2.2-.8L19 17ZM4 17l.55 1.45L6 19l-1.45.55L4 21l-.55-1.45L2 19l1.45-.55L4 17Z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-7-7 7 7-7 7"/></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M20 12H4m7 7-7-7 7-7"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.2 4.8-4.8 2.2 2.2-4.8 4.8-2.2Z"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.7 5.6a5.15 5.15 0 0 0-7.3 0L12 7l-1.4-1.4a5.15 5.15 0 0 0-7.3 7.3l1.4 1.4L12 21l7.3-6.7 1.4-1.4a5.15 5.15 0 0 0 0-7.3Z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-walk" viewBox="0 0 24 24"><circle cx="14" cy="4" r="2"/><path d="m9 21 2-6-2-3-4 2m11 7-2-6-3-3 1-5m-5 2 4-2 4 3 4 1"/></symbol>
+    <symbol id="i-ferry" viewBox="0 0 24 24"><path d="M5 11V6h14v5M8 6V3h8v3M3 13h18l-3 6H6l-3-6Zm1 9 4-2 4 2 4-2 4 2"/><path d="M8 9h2m4 0h2"/></symbol>
+    <symbol id="i-coffee" viewBox="0 0 24 24"><path d="M4 8h13v8a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8Zm13 1h2a3 3 0 0 1 0 6h-2M8 3v2m5-2v2"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7V3l-4 4h4ZM4 17v4l4-4H4Z"/><path d="M6 10a7 7 0 0 1 12-3l2 0M18 14a7 7 0 0 1-12 3H4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M5 14v6h14v-6"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19m0-14-1.5 1.5m-11 11L5 19"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/></symbol>
+    <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 6h18v5a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4V6Zm9 0v2m0 3v2m0 3v2"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-location" viewBox="0 0 24 24"><path d="m12 22 4-10 6-4-20-6 6 20 4-10Z"/></symbol>
+  </svg>
+
+<a class="skip-link" href="#main-content">跳到主要内容</a><div id="app"></div>
+<div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div><div id="modal-root"></div>
+<script>
+const PHOTO = {
+  // 真实悉尼摄影：Wikimedia Commons。照片须联网加载，完整署名在页面「摄影来源」。
+  // 1280px 版本已经通过 Commons 页面核对，按屏幕 cover 裁剪。
+  harbour: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Sydney_Harbour_Bridge_and_Sydney_Opera_House_panorama.jpg/1280px-Sydney_Harbour_Bridge_and_Sydney_Opera_House_panorama.jpg',
+  coast: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/82/Looking_over_Shelly_Beach_and_Cabbage_Tree_Bay_in_Sydney.jpg/1280px-Looking_over_Shelly_Beach_and_Cabbage_Tree_Bay_in_Sydney.jpg',
+  manly: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Shelly_Beach_in_Manly_Sydney_Australia.jpg/1280px-Shelly_Beach_in_Manly_Sydney_Australia.jpg',
+  shelly: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/82/Looking_over_Shelly_Beach_and_Cabbage_Tree_Bay_in_Sydney.jpg/1280px-Looking_over_Shelly_Beach_and_Cabbage_Tree_Bay_in_Sydney.jpg',
+  garden: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Wendys_Secret_Garden_MRD_01.jpg/1280px-Wendys_Secret_Garden_MRD_01.jpg',
+  bondi: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/Sydney_%28AU%29%2C_Bondi_To_Bronte_Coastal_Walk_--_2019_--_2358.jpg/1280px-Sydney_%28AU%29%2C_Bondi_To_Bronte_Coastal_Walk_--_2019_--_2358.jpg',
+  watsons: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/HornbyLighthouse.jpg/960px-HornbyLighthouse.jpg',
+};
+
+const DESTINATIONS = [
+  {
+    id: 'manly', english: 'Manly to Shelly Beach', cn: '海岸步道', area: 'MANLY · NORTHERN BEACHES',
+    title: 'Manly to Shelly Beach 海岸步道', hook: '把周末，交给海风。',
+    desc: '坐一趟渡轮，吹一吹海风。沿着海岸慢慢走，从热闹的 Manly 走到安静的 Shelly Beach。',
+    reason: '这是一条不用做很多准备也能享受的海边路线：有渡轮、有海浪、有好吃的，想停下就停下。',
+    category: '海边散步', time: '半日闲逛', walk: '20–40 分钟', difficulty: '轻松', cost: '步道免费 · 交通另计',
+    go: '从 Circular Quay 乘渡轮到 Manly Wharf，穿过 The Corso 前往海滩。',
+    do: '沿 Marine Parade 经过 Fairy Bower，慢慢走到 Shelly Beach。',
+    eat: '在 Manly 的海边咖啡馆喝咖啡，或带点小食去 Shelly Beach 野餐。',
+    best: '晴天的上午或傍晚', start: 'Manly Beach', end: 'Shelly Beach',
+    startAddress: 'Manly Beach, NSW, Australia', endAddress: 'Shelly Beach, Manly NSW, Australia',
+    photo: 'manly', fallback: 'shelly',
+    steps: [
+      ['00', '乘着渡轮，开始放空', '从 Circular Quay 上船，抵达 Manly Wharf。途中可以欣赏海港景色；请以当天班次为准。'],
+      ['01', '穿过 The Corso', '从码头沿步行街走向 Manly Beach，路上可以顺手买杯咖啡。'],
+      ['02', '沿海岸慢慢走', '顺着 Marine Parade 经过 Fairy Bower，欣赏礁石、海浪和树影。'],
+      ['03', '在 Shelly Beach 停一停', '在海湾边坐坐，天气允许时可以休息或野餐，再沿原路返回。'],
+    ],
+    tips: ['步道有部分缓坡，穿舒适的步行鞋。', '海边日晒较强，带水、帽子和防晒。', '渡轮班次与票价会变化，出门前确认实时交通信息。'],
+  },
+  {
+    id: 'garden', english: "Wendy's Secret Garden", cn: '秘密花园', area: 'LAVENDER BAY · NORTH SYDNEY',
+    title: "Wendy's Secret Garden 秘密花园", hook: '去城市里，藏一会儿。',
+    desc: '穿过绿荫与小径，在 Lavender Bay 找到一个安静的角落。带一本书，或者什么都不带。',
+    reason: '不需要长途跋涉，就能在繁忙的悉尼里找到一处松弛的绿色空间。',
+    category: '自然放空', time: '1–2 小时', walk: '20–50 分钟', difficulty: '轻松', cost: '花园免费 · 交通另计',
+    go: '搭火车至 North Sydney 或 Milsons Point，再步行前往 Lavender Bay。',
+    do: '沿着小径探索不同角落，找个树荫下的座位发发呆。',
+    eat: '可以在附近的 Kirribilli 或 Milsons Point 寻找咖啡馆。',
+    best: '温和晴天的上午', start: 'Milsons Point', end: "Wendy's Garden",
+    startAddress: 'Milsons Point Station, NSW, Australia', endAddress: "Wendy Whiteley's Secret Garden, Lavender Bay NSW, Australia",
+    photo: 'garden', fallback: 'garden',
+    steps: [
+      ['00', '来到海湾北岸', '坐火车到 Milsons Point 或 North Sydney，向 Lavender Bay 方向散步。'],
+      ['01', '找到花园的入口', '顺着道路慢慢靠近，留意小径入口和台阶。'],
+      ['02', '在绿色里迷路一小会儿', '慢慢走过树荫、石阶与植物之间的小路，不必赶行程。'],
+      ['03', '找家咖啡馆收尾', '去邻近街区点一杯喜欢的饮品，给今天留一点余白。'],
+    ],
+    tips: ['园内有台阶、坡道及不平整小径，注意脚下。', '请保护植物，随手带走垃圾。', '花园开放安排可能变化，以现场信息为准。'],
+  },
+  {
+    id: 'bondi', english: 'Bondi to Bronte', cn: '海岸漫步', area: 'EASTERN SUBURBS · BONDI',
+    title: 'Bondi to Bronte 海岸漫步', hook: '海浪，是最好的背景音乐。',
+    desc: '从 Bondi 出发，沿悬崖上的海岸步道走向 Bronte，看一整片太平洋在身边展开。',
+    reason: '开阔海景与海边咖啡馆刚刚好，路线清晰，非常适合想活动一下的周末。',
+    category: '海岸风景', time: '2–3 小时', walk: '约 45–70 分钟', difficulty: '适中', cost: '步道免费 · 交通另计',
+    go: '乘公交前往 Bondi Beach，从海滩南端开始海岸步道。',
+    do: '经过 Tamarama，顺着海岸一路走到 Bronte Beach，随时停下来拍照。',
+    eat: '在 Bronte Beach 附近吃一顿早午餐，或者买点东西在海边休息。',
+    best: '早晨或天气凉爽时', start: 'Bondi Beach', end: 'Bronte Beach',
+    startAddress: 'Bondi Beach, NSW, Australia', endAddress: 'Bronte Beach, NSW, Australia',
+    photo: 'bondi', fallback: 'coast',
+    steps: [
+      ['00', '在 Bondi 开始', '从 Bondi Beach 南端找到海岸步道入口。'],
+      ['01', '听海浪、看悬崖', '沿着开放的海岸线往南走，步道部分位置有台阶。'],
+      ['02', '经过 Tamarama', '在观景点停一停，欣赏岩石、海岸与海湾。'],
+      ['03', '抵达 Bronte', '来到 Bronte Beach，用一顿简单的午餐结束旅程。'],
+    ],
+    tips: ['部分台阶较多，遇到强风或大雨应谨慎。', '沿途遮荫较少，带水并做好防晒。', '施工可能导致步道临时改道，留意现场指示。'],
+  },
+  {
+    id: 'watsons', english: 'Watsons Bay & South Head', cn: '灯塔小径', area: 'WATSONS BAY · EASTERN HARBOUR',
+    title: 'Watsons Bay & South Head 灯塔小径', hook: '走到海港的尽头。',
+    desc: '去悉尼海港的入口看灯塔、海浪和远处的船，感受城市慢慢退到身后。',
+    reason: '短短一趟小出走，就能同时收获海港视野、海岸步道与悠闲的海边午餐。',
+    category: '灯塔与海风', time: '半日闲逛', walk: '约 45–90 分钟', difficulty: '适中', cost: '步道免费 · 交通另计',
+    go: '可搭乘公共交通前往 Watsons Bay，查询当天渡轮或公交安排。',
+    do: '沿 South Head Heritage Trail 向 Hornby Lighthouse 方向走。',
+    eat: '在 Watsons Bay 的海边餐厅或外带店买点食物。',
+    best: '晴朗、风较小的白天', start: 'Watsons Bay', end: 'Hornby Lighthouse',
+    startAddress: 'Watsons Bay, NSW, Australia', endAddress: 'Hornby Lighthouse, Watsons Bay NSW, Australia',
+    photo: 'watsons', fallback: 'lighthouse',
+    steps: [
+      ['00', '到 Watsons Bay', '乘公共交通抵达海湾，先在岸边欣赏海港。'],
+      ['01', '走进 South Head', '找到 South Head Heritage Trail，一边走一边欣赏海景。'],
+      ['02', '寻找红白灯塔', '沿步道前往 Hornby Lighthouse，远眺海港入口。'],
+      ['03', '回海湾吃点好的', '回到 Watsons Bay，找个能吹到海风的地方坐坐。'],
+    ],
+    tips: ['临海悬崖区域请留在标识步道内。', '风大时注意安全，尽量安排白天出行。', '部分路段存在台阶与不平整路面。'],
+  },
+];
+
+/* UI UX Pro Max-inspired redesign: accessible, photo-led, dependency-free. */
+const STORE_FAV = 'somewhere-sydney-favorites-v1';
+const STORE_HISTORY = 'somewhere-sydney-history-v1';
+const STORE_PREF = 'somewhere-uupm-pref-v1';
+const STORE_BLOCKED = 'somewhere-uupm-excluded-v1';
+const STORE_QUOTA = 'somewhere-uupm-quota-v1';
+const MAX_SWITCHES = 3;
+const app = document.querySelector('#app');
+const toastNode = document.querySelector('#toast');
+const icons = (name, extra='') => `<svg class="icon ${extra}" aria-hidden="true"><use href="#i-${name}"></use></svg>`;
+const getStore = (k, fall) => {try{ const r=JSON.parse(localStorage.getItem(k));return r??fall;}catch{return fall;}};
+const saveStore = (k,v) => {try{localStorage.setItem(k,JSON.stringify(v));}catch{}};
+const allIds = DESTINATIONS.map(d=>d.id);
+const getDest = id => DESTINATIONS.find(x=>x.id===id) || DESTINATIONS[0];
+let favorites = getStore(STORE_FAV,[]).filter(x=>allIds.includes(x));
+let history = getStore(STORE_HISTORY,[]).filter(x=>allIds.includes(x));
+let preferences = {...{source:'all',vibe:'all',duration:'all'},...getStore(STORE_PREF,{})};
+let excluded = getStore(STORE_BLOCKED,[]).filter(x=>allIds.includes(x));
+function sydneyDay(){const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Australia/Sydney',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const p=Object.fromEntries(parts.map(x=>[x.type,x.value]));return `${p.year}-${p.month}-${p.day}`;}
+function dailyQuota(){const q=getStore(STORE_QUOTA,{});return q.date===sydneyDay()?{date:q.date,draws:Math.max(0,Number(q.draws)||0),switches:Math.min(MAX_SWITCHES,Math.max(0,Number(q.switches)||0))}:{date:sydneyDay(),draws:0,switches:0};}
+function quotaStatusText(){const q=dailyQuota();return q.draws===0?'今日首次抽取免费':`今日还可换选 ${MAX_SWITCHES-q.switches} 次`;}
+function quotaSummary(){const q=dailyQuota();return q.draws===0?'首次抽取待使用':`已换选 ${q.switches} / ${MAX_SWITCHES} 次`;}
+let lastPicked = history[0] || '';
+let modalKind = null;
+let modalFocusOrigin = null;
+let pendingPrefs = null;
+let toastTimer = null;
+let randomBusy = false;
+const pic = (key,cls='',alt='',opts='') => `<img class="${cls}" src="${PHOTO[key]||PHOTO.harbour}" data-photo="${key}" alt="${alt}" ${opts}>`;
+const labelPhoto = d => `${d.english} 的实景摄影照片`;
+function brand(){return `<a class="brand" href="#home" aria-label="Somewhere Sydney，回到首页"><span class="brand-main">somewhere<span class="brand-dot">.</span></span><span class="brand-sub">SYDNEY</span></a>`;}
+function current(){const [page,id]=(location.hash.slice(1)||'home').split('/');return {page:['home','result','detail','favorites','about'].includes(page)?page:'home',id:id||lastPicked||DESTINATIONS[0].id};}
+function head(active='home'){return `<header class="site-header"><div class="header-inner">${brand()}<nav class="nav-main" aria-label="主导航"><a href="#home" ${active==='home'?'aria-current="page"':''}>随机发现</a><a href="#favorites" ${active==='favorites'?'aria-current="page"':''}>我的收藏${favorites.length?`<span class="nav-count">${favorites.length}</span>`:''}</a><a href="#about" ${active==='about'?'aria-current="page"':''}>关于 Somewhere</a></nav><div class="header-actions"><a class="header-mobile-link" href="#favorites">收藏${favorites.length?` · ${favorites.length}`:''}</a><button class="round-btn" type="button" data-action="account" aria-label="打开设置与我的 Somewhere">${icons('user')}</button></div></div></header>`;}
+function bottom(active){return `<nav class="mobile-nav" aria-label="手机导航"><a href="#home" ${active==='home'?'aria-current="page"':''}>${icons('compass')}<span>发现</span></a><a href="#favorites" ${active==='favorites'?'aria-current="page"':''}>${icons('heart')}<span>收藏</span></a><a href="#about" ${active==='about'?'aria-current="page"':''}>${icons('info')}<span>关于</span></a></nav>`;}
+function footer(){return `<footer class="footer"><div class="footer-inner container"><div>${brand()}<p>悉尼随机探索 · 独立演示</p></div><div class="footer-links"><a href="#about">关于 Somewhere</a><button type="button" data-action="credits">摄影与授权</button><span>© 2026 Somewhere · Concept Demo</span></div></div></footer>`;}
+function action(text,act,classes='',attrs=''){return `<button type="button" data-action="${act}" class="btn ${classes}" ${attrs}>${text}</button>`;}
+function heart(id,cl=''){const saved=favorites.includes(id);return `<button type="button" class="round-btn ${cl}" data-action="favorite" data-id="${id}" aria-label="${saved?'取消收藏':'收藏'} ${getDest(id).english}" aria-pressed="${saved}">${icons('heart')}</button>`;}
+function routeLink(d,mode='walking'){return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(d.startAddress)}&destination=${encodeURIComponent(d.endAddress)}&travelmode=${mode}`;}
+function locationLink(d){return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.endAddress)}`;}
+function home(){const d=DESTINATIONS[0];const selected=preferences.source!=='all'||preferences.vibe!=='all'||preferences.duration!=='all';return `<div class="page page--home">${head('home')}
+ <main id="main-content" tabindex="-1">
+  <div class="hero-wrap"><section class="hero on-dark" aria-labelledby="hero-title">
+    ${pic('harbour','hero-photo','', 'fetchpriority="high"')}${pic('coast','hero-photo hero-photo--mobile','', 'fetchpriority="high"')}
+    <div class="inner"><div class="hero-copy">
+    <h1 id="hero-title" class="hero-title">想出去走走？<br><em>哪里都行。</em></h1>
+    <div class="hero-cta-wrap">${action(`<span>替我选个地方</span><span class="cta-arrow">${icons('arrow')}</span>`,'random','btn--coral hero-cta','aria-label="随机推荐一个悉尼目的地"')}
+    <button type="button" class="hero-secondary" data-action="prefs">${icons('menu')}<span>${selected?'修改抽取偏好':'抽取偏好（可选）'}</span></button>
+    </div></div></div>
+  </section></div>
+  <section class="section container" id="inspiration" aria-labelledby="inspiration-title">
+    <div class="section-heading"><div><h2 id="inspiration-title">一个地方，一段路程。</h2></div></div>
+    <article class="feature-spot"><div class="feature-img">${pic(d.photo,'',labelPhoto(d),'loading="lazy"')}<span class="photo-caption">${icons('pin')} Manly · Sydney</span></div>
+      <div class="feature-copy"><span class="eyebrow">地点示例</span><h3>${d.english}<span class="chinese-title">${d.cn}</span></h3><p>${d.desc}</p><div class="mini-metrics"><span>${icons('clock')}${d.time}</span><span>${icons('walk')}${d.difficulty}</span><span>${icons('ticket')}${d.cost}</span></div><a class="inline-link" href="#detail/${d.id}">查看攻略 ${icons('arrow')}</a></div>
+    </article>
+  </section>
+ </main>${footer()}</div>`;}
+function crumb(text,href,label){return `<div class="breadcrumb"><a href="${href}">${icons('arrow-left')}${text}</a><span aria-hidden="true">/</span><span>${label}</span></div>`;}
+function result(d){return `<div class="page page--result">${head('home')}<main id="main-content" tabindex="-1" class="container submain">${crumb('回到首页','#home','随机结果')}
+  <section class="result-shell" aria-label="随机推荐结果"><div class="result-visual">${pic(d.photo,'',labelPhoto(d),'fetchpriority="high"')}
+    <div class="photo-action-row"><span class="photo-address">${icons('pin')}<span>${d.endAddress}</span></span>${heart(d.id,'photo-heart')}</div></div>
+    <div class="result-content"><h1>${d.english}</h1><div class="result-cn">${d.cn}</div><p class="result-description">${d.desc}</p>
+    <div class="result-metrics"><div class="result-metric">${icons('clock')}<b>${d.time}</b><small>建议时间</small></div><div class="result-metric">${icons('walk')}<b>${d.difficulty}</b><small>步行强度</small></div><div class="result-metric">${icons('ticket')}<b>${d.category}</b><small>地点类型</small></div></div>
+    <div class="result-cta-row">${action(`${icons('check')} 查看完整攻略`,'commit','btn--coral',`data-id="${d.id}"`)}${action(`${icons('refresh')} 换一个`,'random','btn--pale')}</div><p class="result-foot">${quotaStatusText()} · <button type="button" class="muted-action" data-action="prefs">调整偏好</button></p></div>
+  </section><section class="result-next"><h2>到达之后</h2><div class="route-preview"><article>${icons('ferry')}<h3>怎么到达</h3><p>${d.go}</p></article><article>${icons('walk')}<h3>怎么逛</h3><p>${d.do}</p></article><article>${icons('coffee')}<h3>附近吃点什么</h3><p>${d.eat}</p></article></div></section>
+ </main>${footer()}${bottom('home')}</div>`;}
+function detail(d){return `<div class="page page--detail">${head('home')}<main id="main-content" tabindex="-1" class="container submain">${crumb('返回随机结果',`#result/${d.id}`,'完整攻略')}
+   <section class="guide-banner" aria-label="${d.english} 景点介绍">${pic(d.photo,'',labelPhoto(d),'fetchpriority="high"')}<div class="guide-banner-copy"><h1>${d.english}</h1><p class="sub">${d.cn}</p></div><div class="guide-photo-meta"><span>${icons('pin')}${d.endAddress}</span>${heart(d.id,'photo-heart')}</div></section>
+   <div class="guide-tags"><span>${icons('clock')}${d.time}</span><span>${icons('walk')}${d.difficulty}</span><div class="tag-actions"><button class="round-btn" type="button" data-action="share" data-id="${d.id}" aria-label="分享 ${d.english} 攻略">${icons('share')}</button></div></div>
+   <div class="guide-body"><article class="guide-article"><section class="guide-block"><span class="eyebrow">推荐理由</span><h2>为什么推荐</h2><p>${d.reason}</p></section>
+   <section class="guide-block"><span class="eyebrow">游玩路线</span><h2>可以这样逛</h2><p></p><ol class="step-list">${d.steps.map((s,i)=>`<li><span class="step-no">${String(i+1).padStart(2,'0')}</span><div><h3>${s[1]}</h3><p>${s[2]}</p></div></li>`).join('')}</ol></section>
+   <section class="guide-block"><span class="eyebrow">出发提醒</span><h2>出发前须知</h2><ul class="tip-list">${d.tips.map(t=>`<li>${icons('check')}<span>${t}</span></li>`).join('')}</ul></section>
+   <section class="guide-block"><span class="eyebrow">附近补给</span><h2>吃点什么</h2><p>${d.eat}</p></section></article>
+   <aside class="guide-side" aria-label="路线和出发信息"><div class="guide-side-inner"><section class="info-card"><h3>目的地与路线</h3><iframe class="map-frame" title="${d.english} 地点地图预览" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=${encodeURIComponent(d.endAddress)}&output=embed"></iframe>
+    <div class="route-nodes"><div class="route-node"><span class="dot"></span><span>${d.start}</span></div><div class="route-node"><span class="dot"></span><span>${d.end}</span></div></div>
+    <a class="btn btn--coral btn--full" href="${routeLink(d)}" target="_blank" rel="noopener noreferrer">${icons('location')} 用 Google Maps 导航 ${icons('arrow-up')}</a><a class="inline-link" style="margin-top:14px" href="${locationLink(d)}" target="_blank" rel="noopener noreferrer">单独查看目的地 ${icons('arrow-up')}</a></section>
+   <section class="info-card"><h3>出发速览</h3><div class="guide-info-row">${icons('ferry')}<div><b>交通建议</b><p>${d.go}</p></div></div><div class="guide-info-row">${icons('clock')}<div><b>步行参考</b><p>${d.walk} · ${d.difficulty}</p></div></div><div class="guide-info-row">${icons('ticket')}<div><b>费用</b><p>${d.cost}</p></div></div><div class="guide-info-row">${icons('sun')}<div><b>推荐时间</b><p>${d.best}</p></div></div><a class="inline-link" style="margin-top:9px" href="https://transportnsw.info/trip" target="_blank" rel="noopener noreferrer">查看 Transport NSW 实时交通 ${icons('arrow-up')}</a></section>
+   <p class="caution">地图展示目的地位置，不代表精准步行路线。出行前请自行核实交通、开放时间、天气与现场安全信息；海边活动不构成游泳安全建议。</p></div></aside></div>
+   <div class="again-banner"><div><span class="eyebrow"></span><h2>再换一个地方</h2><p></p></div>${action(`${icons('refresh')} 再随机一个`,'random','btn--forest')}</div>
+ </main>${footer()}${bottom('home')}</div>`;}
+function savedCard(d){return `<article class="saved-card"><div class="saved-photo"><a href="#detail/${d.id}" aria-label="查看 ${d.english} 详细攻略">${pic(d.photo,'',labelPhoto(d),'loading="lazy"')}</a>${heart(d.id,'saved-heart')}</div><div class="saved-card-body"><span class="eyebrow">${d.endAddress}</span><h2>${d.english}</h2><p>${d.desc}</p><div class="saved-card-actions"><span>${icons('clock')} ${d.time}</span><a class="inline-link" href="#detail/${d.id}">查看攻略 ${icons('arrow')}</a></div></div></article>`;}
+function saved(){const list=favorites.map(getDest);return `<div class="page page--favorites">${head('favorites')}<main id="main-content" tabindex="-1" class="container submain"><span class="eyebrow page-kicker">收藏</span><h1 class="page-title">好地方，<br><em>慢慢收藏。</em></h1><p class="page-lead">把心动的地点放在这里。下一次想出门，不必重新找。</p>${list.length?`<p style="font-size:14px;color:var(--muted)">共 ${list.length} 个收藏 · 仅保存在当前浏览器</p><div class="saved-grid">${list.map(savedCard).join('')}</div>`:`<section class="empty-state"> <div class="empty-icon">${icons('heart')}</div><h2>还没有收藏的地方。</h2><p>看到喜欢的地点，点一下爱心。下次想出发，就能从这里接着走。</p>${action(`${icons('sparkle')} 带我发现一个地方`,'random','btn--coral')}</section>`}</main>${footer()}${bottom('favorites')}</div>`;}
+function about(){return `<div class="page page--about">${head('about')}<main id="main-content" tabindex="-1" class="container submain"><span class="eyebrow page-kicker">关于</span><h1 class="page-title">不是去哪里。<br><em>是先走出去。</em></h1><p class="page-lead">Somewhere 是关于少一点纠结、多一点体验的悉尼小小提议。</p>
+ <section class="about-split"><div class="about-photo">${pic('coast','', '悉尼海岸线的实景摄影照片', 'loading="lazy"')}</div><div class="about-text"><span class="eyebrow">为什么做 Somewhere</span><h2>真正有趣的日子，<br>不一定要计划周全。</h2><p>有时候，我们只是突然想出去走走，却花了半个小时在地图上挑选目的地。</p><p>所以 Somewhere 只做一件事：给你一个值得探索的地方，并把怎么玩、怎么去的初步信息整理好。</p><p>剩下的，就穿上鞋，出门。</p>${action(`${icons('sparkle')} 现在出发`,'random','btn--coral')}</div></section>
+ <div class="about-disclaimer"><strong>关于这个演示：</strong>当前是独立的前端概念 Demo，精选地点仅用于演示。随机选择、偏好筛选、收藏和分享可使用；地图嵌入与图片需要联网，不提供登录、实时路线估算或场所实时营业验证。收藏与偏好仅保存在当前浏览器。</div>
+ </main>${footer()}${bottom('about')}</div>`;}
+function paint({shiftFocus=false}={}){
+ const {page,id}=current();const d=getDest(id);
+ app.innerHTML=page==='home'?home():page==='result'?result(d):page==='detail'?detail(d):page==='favorites'?saved():about();
+ document.title=page==='home'?'Somewhere — 想出去走走？哪里都行。':`${page==='favorites'?'我的收藏':page==='about'?'关于 Somewhere':d.english+' · '+(page==='result'?'随机发现':'完整攻略')} | Somewhere Sydney`;
+ window.scrollTo({top:0,behavior:'instant'});
+ if(shiftFocus){const m=document.querySelector('#main-content');if(m)m.focus({preventScroll:true});}
+}
+function go(page,id=''){const h='#'+page+(id?'/'+id:'');if(location.hash===h)paint({shiftFocus:true});else location.hash=h;}
+function eligible(){return DESTINATIONS.filter(d=>{
+ if(excluded.includes(d.id))return false;
+ if(preferences.source==='favorites'&&!favorites.includes(d.id))return false;
+ if(preferences.source==='new'&&history.includes(d.id))return false;
+ const vibe=preferences.vibe==='all'||(preferences.vibe==='coast'?d.id!=='garden':d.id==='garden');
+ const duration=preferences.duration==='all'||(preferences.duration==='short'?d.id==='garden':d.id!=='garden');
+ return vibe&&duration;
+});}
+function pickRandom(){
+ if(randomBusy)return;
+ const pool=eligible();
+ if(!pool.length){showToast(preferences.source==='favorites'&&!favorites.length?'先收藏几个地点，再从收藏抽选':'没有符合条件的目的地，请调整偏好或排除列表');openModal('prefs');return;}
+ const q=dailyQuota();
+ if(q.draws>0&&q.switches>=MAX_SWITCHES){openModal('usage');return;}
+ const alternatives=pool.filter(d=>d.id!==lastPicked);const candidates=alternatives.length?alternatives:pool;
+ const d=candidates[Math.floor(Math.random()*candidates.length)];lastPicked=d.id;
+ history=[d.id,...history.filter(x=>x!==d.id)].slice(0,12);saveStore(STORE_HISTORY,history);
+ q.draws++;if(q.draws>1)q.switches++;saveStore(STORE_QUOTA,q);
+ randomBusy=true;
+ const pressed=document.querySelector('[data-action="random"]');if(pressed){pressed.disabled=true;pressed.setAttribute('aria-busy','true');}
+ setTimeout(()=>{randomBusy=false;go('result',d.id);},window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:150);
+}
+function toggleFavorite(id){const was=favorites.includes(id);favorites=was?favorites.filter(x=>x!==id):[id,...favorites];saveStore(STORE_FAV,favorites);const y=window.scrollY;
+ const btn=document.querySelector(`[data-action="favorite"][data-id="${id}"]`); const focus=btn===document.activeElement;
+ const page=current().page;app.innerHTML=page==='home'?home():page==='result'?result(getDest(current().id)):page==='detail'?detail(getDest(current().id)):page==='favorites'?saved():about();
+ window.scrollTo({top:Math.max(0,Math.min(y,document.documentElement.scrollHeight-innerHeight)),behavior:'instant'}); if(focus)document.querySelector(`[data-action="favorite"][data-id="${id}"]`)?.focus({preventScroll:true});showToast(was?'已移出收藏':'已收藏，下次从这里继续出发');}
+function showToast(t){toastNode.textContent=t;toastNode.classList.add('is-visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastNode.classList.remove('is-visible'),3000);}
+function modalWrap(content){const root=document.querySelector('#modal-root');root.innerHTML=`<div class="dialog-screen" data-action="close-modal"><section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title" data-dialog-content><div class="dialog-header"><span class="dialog-mark">Somewhere</span><button type="button" class="round-btn" data-action="close-modal" aria-label="关闭弹窗">${icons('close')}</button></div>${content}</section></div>`;
+ document.body.classList.add('is-locked');root.querySelector('#dialog-title')?.setAttribute('tabindex','-1');root.querySelector('#dialog-title')?.focus({preventScroll:true});}
+function panelBack(){return `<button type="button" class="back-action" data-action="open-panel" data-panel="account">${icons('arrow-left')} 返回设置</button>`;}
+function settingsRow(icon,title,description,act,extra=''){return `<button type="button" class="settings-row" data-action="${act}" ${extra}><span class="settings-symbol">${icons(icon)}</span><span class="settings-copy"><strong>${title}</strong>${description?`<small>${description}</small>`:''}</span>${icons('chevron')}</button>`;}
+function chips(name,items,val){const legends={source:'抽取范围',vibe:'目的地类型',duration:'可用时间'};return `<fieldset><legend>${legends[name]||name}</legend><div class="chip-row">${items.map(([id,label])=>`<button type="button" class="chip" data-action="pref-chip" data-pref="${name}" data-value="${id}" aria-pressed="${id===val}">${label}</button>`).join('')}</div></fieldset>`;}
+function openModal(kind){
+ if(!modalKind)modalFocusOrigin=document.activeElement;
+ modalKind=kind;
+ if(kind==='prefs'){pendingPrefs={...preferences};renderPrefs();return;}
+ if(kind==='account'){
+  modalWrap(`<h2 id="dialog-title">我的 Somewhere</h2><div class="account-summary"><div><small>我的收藏</small><strong>${favorites.length}</strong></div><div><small>今日换选</small><strong>${dailyQuota().switches}<span> / ${MAX_SWITCHES}</span></strong></div><div><small>不再推荐</small><strong>${excluded.length}</strong></div></div>
+  <div class="settings-list">${settingsRow('heart','收藏列表',`${favorites.length} 个已收藏地点`,'modal-favorites')}${settingsRow('compass','抽取偏好',preferences.source==='favorites'?'当前：从收藏中抽取':'地点范围、类型、时间','open-panel','data-panel="prefs"')}${settingsRow('close','不再推荐',`${excluded.length} 个地点已排除`,'open-panel','data-panel="exclusions"')}${settingsRow('refresh','换选次数',quotaStatusText(),'open-panel','data-panel="usage"')}${settingsRow('menu','语言与本地数据','语言、清理缓存','open-panel','data-panel="settings"')}</div><p class="modal-note">设置仅保存在当前浏览器。</p>`);return;
+ }
+ if(kind==='exclusions'){modalWrap(`${panelBack()}<h2 id="dialog-title">不再推荐</h2><p class="dialog-hint">选中的地点不会出现在随机结果中。</p><div class="exclude-list">${DESTINATIONS.map(d=>`<button type="button" class="exclude-row" data-action="toggle-exclusion" data-id="${d.id}" aria-pressed="${excluded.includes(d.id)}"><span><b>${d.english}</b><small>${d.endAddress}</small></span><span class="exclude-status">${excluded.includes(d.id)?'已排除':'允许推荐'}</span></button>`).join('')}</div><div class="dialog-footer"><button type="button" class="btn btn--pale btn--full" data-action="clear-exclusions">恢复全部推荐</button></div>`);return;}
+ if(kind==='usage'){const q=dailyQuota();modalWrap(`${panelBack()}<h2 id="dialog-title">今日换选次数</h2><div class="usage-large"><strong>${Math.max(0,MAX_SWITCHES-q.switches)}</strong><span>次可用换选</span></div><div class="usage-segments">${Array.from({length:MAX_SWITCHES},(_,i)=>`<span class="${i<q.switches?'used':''}"></span>`).join('')}</div><p class="dialog-hint">每天首次抽取免费，之后最多换选 ${MAX_SWITCHES} 次。按悉尼日期重置；调整筛选或清理本地数据不会恢复额度。</p>`);return;}
+ if(kind==='settings'){modalWrap(`${panelBack()}<h2 id="dialog-title">语言与本地数据</h2><div class="setting-block"><label class="setting-label" for="language-picker">语言</label><select id="language-picker" class="setting-select" aria-describedby="lang-note"><option>简体中文</option><option disabled>English（即将支持）</option><option disabled>繁體中文（即将支持）</option></select><p class="modal-note" id="lang-note">其他语言将在正式版本中提供。</p></div><div class="setting-block"><h3>本地缓存</h3><p>可清除收藏、历史记录、抽取偏好和排除列表。当天换选额度会保留。</p><button class="btn btn--outline" type="button" data-action="open-panel" data-panel="confirm-clear">清理本地数据</button></div>`);return;}
+ if(kind==='confirm-clear'){modalWrap(`${panelBack()}<h2 id="dialog-title">清理本地数据？</h2><p>收藏、历史记录、抽取偏好和不再推荐列表会从本浏览器删除。今日换选次数不会恢复。</p><div class="dialog-footer"><button class="btn btn--pale" type="button" data-action="open-panel" data-panel="settings">取消</button><button class="btn btn--forest" type="button" data-action="clear-local-data">确认清理</button></div>`);return;}
+ modalWrap(`<h2 id="dialog-title">摄影来源</h2><p>页面使用 Wikimedia Commons 摄影素材。请在原始页面查看作者及许可，图片与地图需要联网。</p><div class="credits-list">
+ <a target="_blank" rel="noopener noreferrer" href="https://commons.wikimedia.org/wiki/File:Sydney_Harbour_Bridge_and_Sydney_Opera_House_panorama.jpg">Sydney Harbour panorama ↗</a>
+ <a target="_blank" rel="noopener noreferrer" href="https://commons.wikimedia.org/wiki/File:Looking_over_Shelly_Beach_and_Cabbage_Tree_Bay_in_Sydney.jpg">Shelly Beach / Cabbage Tree Bay ↗</a>
+ <a target="_blank" rel="noopener noreferrer" href="https://commons.wikimedia.org/wiki/File:Shelly_Beach_in_Manly_Sydney_Australia.jpg">Shelly Beach ↗</a>
+ <a target="_blank" rel="noopener noreferrer" href="https://commons.wikimedia.org/wiki/File:Wendys_Secret_Garden_MRD_01.jpg">Wendy's Secret Garden ↗</a>
+ <a target="_blank" rel="noopener noreferrer" href="https://commons.wikimedia.org/wiki/File:Sydney_(AU),_Bondi_To_Bronte_Coastal_Walk_--_2019_--_2358.jpg">Bondi to Bronte ↗</a>
+ <a target="_blank" rel="noopener noreferrer" href="https://commons.wikimedia.org/wiki/File:HornbyLighthouse.jpg">Hornby Lighthouse ↗</a></div>`);
+}
+function renderPrefs(){const content=`${panelBack()}<h2 id="dialog-title">抽取偏好</h2><p class="dialog-hint">不设置条件，就从全部可推荐地点中随机选择。</p>
+ <div class="dialog-options">${chips('source',[['all','全部地点'],['favorites','我的收藏'],['new','尚未抽中过']],pendingPrefs.source)}${chips('vibe',[['all','不限'],['coast','海边 / 海岸'],['nature','花园 / 安静地点']],pendingPrefs.vibe)}${chips('duration',[['all','不限'],['short','1–2 小时'],['half','半日或更久']],pendingPrefs.duration)}</div>
+ <details class="advanced-details"><summary>更多高级筛选 <span>演示占位</span></summary><div class="placeholder-grid"><label>出发地点<select disabled><option>定位或选择起点（即将支持）</option></select></label><label>交通方式<select disabled><option>公共交通 / 步行 / 驾车（即将支持）</option></select></label><label>预算<select disabled><option>不限 / 免费 / 预算范围（即将支持）</option></select></label><label>探索区域<select disabled><option>悉尼区域筛选（即将支持）</option></select></label></div></details>
+ <p class="modal-note">可从收藏中随机选取；已设为“不再推荐”的地点始终排除。当前仅有 ${DESTINATIONS.length} 个演示地点。</p>
+ <div class="dialog-footer"><button type="button" data-action="reset-prefs" class="btn btn--pale">恢复默认</button><button type="button" data-action="save-prefs" class="btn btn--coral">保存偏好 ${icons('check')}</button></div>`;
+ modalWrap(content);}
+function closeModal(restore=true){document.querySelector('#modal-root').innerHTML='';document.body.classList.remove('is-locked');modalKind=null;pendingPrefs=null;if(restore&&modalFocusOrigin?.isConnected)modalFocusOrigin.focus({preventScroll:true});modalFocusOrigin=null;}
+async function share(id){const d=getDest(id);const url=location.href.split('#')[0]+'#detail/'+d.id;
+ try{if(navigator.share){await navigator.share({title:d.title,text:`Somewhere 带我发现了 ${d.title}`,url});return;}
+ if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(url);showToast('已复制攻略链接');return;}
+ const ta=document.createElement('textarea');ta.value=url;ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();const ok=document.execCommand('copy');ta.remove();showToast(ok?'已复制攻略链接':'请复制地址栏中的攻略链接');}
+ catch(e){if(e.name!=='AbortError')showToast('无法自动复制，请使用浏览器地址栏分享');}}
+document.addEventListener('click',event=>{const target=event.target.closest('[data-action]');if(!target)return;
+ const a=target.dataset.action;if(a==='close-modal'&&event.target.closest('[data-dialog-content]')&&!event.target.closest('button'))return;
+ event.preventDefault();
+ if(a==='scroll-inspiration')document.querySelector('#inspiration')?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+ else if(a==='random')pickRandom();else if(a==='favorite')toggleFavorite(target.dataset.id);else if(a==='commit')go('detail',target.dataset.id);
+ else if(['prefs','account','credits'].includes(a))openModal(a);else if(a==='open-panel')openModal(target.dataset.panel);else if(a==='close-modal')closeModal();
+ else if(a==='modal-favorites'){closeModal(false);go('favorites');}
+ else if(a==='share')share(target.dataset.id);
+ else if(a==='toggle-exclusion'){const id=target.dataset.id;excluded=excluded.includes(id)?excluded.filter(x=>x!==id):[...excluded,id];saveStore(STORE_BLOCKED,excluded);openModal('exclusions');document.querySelector(`[data-action="toggle-exclusion"][data-id="${id}"]`)?.focus({preventScroll:true});}
+ else if(a==='clear-exclusions'){excluded=[];saveStore(STORE_BLOCKED,excluded);openModal('exclusions');showToast('已恢复所有地点的推荐');}
+ else if(a==='clear-local-data'){favorites=[];history=[];excluded=[];lastPicked='';preferences={source:'all',vibe:'all',duration:'all'};[STORE_FAV,STORE_HISTORY,STORE_PREF,STORE_BLOCKED].forEach(k=>{try{localStorage.removeItem(k);}catch{}});closeModal(false);paint();showToast('已清理本地数据，今日额度保持不变');}
+ else if(a==='pref-chip'&&pendingPrefs){pendingPrefs[target.dataset.pref]=target.dataset.value;document.querySelectorAll(`[data-pref="${target.dataset.pref}"]`).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.value===target.dataset.value)));}
+ else if(a==='reset-prefs'&&pendingPrefs){pendingPrefs={source:'all',vibe:'all',duration:'all'};document.querySelectorAll('[data-pref]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.value==='all')));}
+ else if(a==='save-prefs'&&pendingPrefs){preferences={...pendingPrefs};saveStore(STORE_PREF,preferences);closeModal();if(current().page==='home')paint();showToast('已保存，下次随机会使用这些偏好');}
+});
+document.addEventListener('keydown',event=>{if(!modalKind)return;
+ if(event.key==='Escape'){event.preventDefault();closeModal();return;}
+ if(event.key==='Tab'){const box=document.querySelector('[role="dialog"]');if(!box)return;const focusables=[...box.querySelectorAll('a[href],button:not([disabled]),input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter(n=>n.getClientRects().length);
+ if(!focusables.length)return;const first=focusables[0],last=focusables.at(-1);
+ if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}}
+});
+document.addEventListener('error',event=>{const img=event.target;if(!(img instanceof HTMLImageElement))return;const stage=Number(img.dataset.stage||'0');
+ if(stage===0){img.dataset.stage='1';img.src=img.src.replace('https://thumb.wikimedia.org/','https://upload.wikimedia.org/');return;}
+ if(stage===1&&img.dataset.photo!=='harbour'){img.dataset.stage='2';img.src=PHOTO.harbour;return;}
+ img.style.display='none';const p=img.parentElement;if(p)p.classList.add('image-unavailable');
+},true);
+window.addEventListener('hashchange',()=>paint({shiftFocus:true}));
+paint();
+
+</script></body></html>
