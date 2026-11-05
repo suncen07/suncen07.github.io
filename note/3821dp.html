@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>动态规划讲义</title>
+<meta name="description" content="COMP3821 Module 4 动态规划核心知识点、例子与考点">
+<style>
+:root{
+  --bg:#f8f6f1; --fg:#1d2329; --muted:#5d6670; --card:#ffffff; --border:#e2ddd2;
+  --accent:#2c5f8f; --accent-soft:#e6eef6; --orange:#b55a26; --green:#2c7a4f; --red:#b03a3a; --gold:#9a7413;
+  --key-bg:#fbf4dc; --ex-bg:#e9f1f9; --warn-bg:#fbe9e7; --tpl-bg:#e8f4ec; --proof-bg:#f3f1ec;
+  --code-bg:#f0ede6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16191d; --fg:#e4e6e9; --muted:#9aa3ad; --card:#1f2328; --border:#343a41;
+    --accent:#7fb2e5; --accent-soft:#1f2c3a; --orange:#e8925c; --green:#6cc391; --red:#ef7f7f; --gold:#e0c065;
+    --key-bg:#2c2716; --ex-bg:#1a2633; --warn-bg:#331d1d; --tpl-bg:#18291f; --proof-bg:#22252a;
+    --code-bg:#262a30;
+  }
+}
+:root[data-theme="dark"]{
+    --bg:#16191d; --fg:#e4e6e9; --muted:#9aa3ad; --card:#1f2328; --border:#343a41;
+    --accent:#7fb2e5; --accent-soft:#1f2c3a; --orange:#e8925c; --green:#6cc391; --red:#ef7f7f; --gold:#e0c065;
+    --key-bg:#2c2716; --ex-bg:#1a2633; --warn-bg:#331d1d; --tpl-bg:#18291f; --proof-bg:#22252a;
+    --code-bg:#262a30;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font-family:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei","Source Han Sans SC",system-ui,sans-serif;
+  font-size:16px;line-height:1.75;-webkit-text-size-adjust:100%}
+.layout{display:flex;max-width:1280px;margin:0 auto}
+nav.toc{position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;width:270px;flex:0 0 270px;
+  padding:28px 14px 40px 22px;border-right:1px solid var(--border);font-size:13.5px;line-height:1.55}
+nav.toc .tt{font-weight:700;color:var(--muted);letter-spacing:.06em;font-size:12px;margin:0 0 10px}
+nav.toc a{color:var(--fg);text-decoration:none;display:block;padding:3px 6px;border-radius:5px}
+nav.toc a:hover{background:var(--accent-soft);color:var(--accent)}
+nav.toc .lv1{font-weight:700;margin-top:12px}
+nav.toc .lv2{padding-left:16px;color:var(--muted)}
+main{flex:1;min-width:0;padding:34px 44px 90px;max-width:940px}
+header.hero{border-bottom:2px solid var(--fg);padding-bottom:18px;margin-bottom:26px}
+header.hero .kicker{font-size:13px;letter-spacing:.12em;color:var(--orange);font-weight:700}
+header.hero h1{font-size:30px;line-height:1.3;margin:6px 0 10px}
+header.hero p{color:var(--muted);margin:0}
+h2{font-size:24px;margin:54px 0 14px;padding-top:8px;border-top:1px solid var(--border)}
+h2 .num{color:var(--orange);margin-right:8px}
+h3{font-size:19px;margin:34px 0 10px;color:var(--accent)}
+h4{font-size:16.5px;margin:22px 0 6px}
+p{margin:10px 0}
+a{color:var(--accent)}
+.m{font-family:"Cambria Math","STIX Two Math","Latin Modern Math","Times New Roman",serif;font-style:italic;white-space:nowrap}
+.mn{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;white-space:nowrap}
+code,.code{font-family:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;font-size:.88em;background:var(--code-bg);padding:1px 5px;border-radius:4px}
+pre{background:var(--code-bg);padding:12px 14px;border-radius:8px;overflow-x:auto;font-size:13.5px;line-height:1.55;border:1px solid var(--border)}
+pre code{background:none;padding:0}
+.box{border-radius:10px;padding:12px 16px 12px 16px;margin:16px 0;border:1px solid var(--border);border-left-width:5px}
+.box > .bt{font-weight:700;font-size:14px;letter-spacing:.04em;margin-bottom:4px}
+.box p:first-of-type{margin-top:4px}
+.box ul,.box ol{margin:6px 0;padding-left:22px}
+.key{background:var(--key-bg);border-left-color:var(--gold)} .key>.bt{color:var(--gold)}
+.ex{background:var(--ex-bg);border-left-color:var(--accent)} .ex>.bt{color:var(--accent)}
+.warn{background:var(--warn-bg);border-left-color:var(--red)} .warn>.bt{color:var(--red)}
+.tpl{background:var(--tpl-bg);border-left-color:var(--green)} .tpl>.bt{color:var(--green)}
+.proof{background:var(--proof-bg);border-left-color:var(--muted)} .proof>.bt{color:var(--muted)}
+.def{background:var(--card);border-left-color:var(--accent)} .def>.bt{color:var(--accent)}
+figure{margin:18px 0;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;text-align:center;color:var(--fg)}
+figure svg{max-width:100%;height:auto;display:block;margin:0 auto}
+figcaption{font-size:13.5px;color:var(--muted);margin-top:8px;text-align:left}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14.5px;background:var(--card)}
+th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft)}
+.tablewrap{overflow-x:auto}
+ul,ol{padding-left:24px}
+li{margin:3px 0}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:20px;margin-right:4px;border:1px solid currentColor}
+.tag.g{color:var(--green)} .tag.b{color:var(--accent)} .tag.o{color:var(--orange)} .tag.r{color:var(--red)} .tag.y{color:var(--gold)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.small{font-size:13.5px;color:var(--muted)}
+hr{border:none;border-top:1px dashed var(--border);margin:26px 0}
+/* svg helpers */
+svg text{font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;fill:currentColor}
+svg .mt{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-style:italic}
+svg .nd{fill:var(--card);stroke:currentColor;stroke-width:1.6}
+svg .ln{stroke:currentColor;stroke-width:1.6;fill:none}
+svg .faint{stroke:var(--muted);stroke-width:1.2;fill:none;stroke-dasharray:4 4}
+svg .mut{fill:var(--muted)}
+.backtop{position:fixed;right:18px;bottom:18px;background:var(--fg);color:var(--bg);border-radius:20px;padding:6px 12px;font-size:13px;text-decoration:none;opacity:.8}
+.toc-toggle{display:none}
+@media (max-width:900px){
+  .layout{display:block}
+  nav.toc{position:static;height:auto;width:auto;border-right:none;border-bottom:1px solid var(--border);padding:14px 16px;max-height:none}
+  nav.toc details summary{cursor:pointer;font-weight:700}
+  main{padding:20px 16px 80px}
+  header.hero h1{font-size:24px}
+  .two{grid-template-columns:1fr}
+}
+@media print{nav.toc,.backtop{display:none} main{max-width:none;padding:0} h2{break-before:page}}
+
+</style>
+
+<style id="mobile-responsive-patch">
+
+/* RESPONSIVE READING PATCH — original lesson content intentionally unchanged */
+@media screen and (max-width: 900px) {
+  :root { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html { scroll-padding-top: 82px; }
+  body { max-width: 100%; }
+  main { min-width: 0; max-width: 100%; overflow-wrap: break-word; }
+  main > *, main section, main article, main .box, main .q, main .two,
+  main .grid2, main .eq, main figure, main .frame { min-width: 0; max-width: 100%; }
+  main p, main li, main td, main th, main h1, main h2, main h3, main h4 {
+    overflow-wrap: anywhere;
+  }
+  pre { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  pre code { white-space: pre; }
+  :not(pre) > code, :not(pre) > kbd { overflow-wrap: anywhere; white-space: normal; }
+  .mobile-table-scroll, .tablewrap, .tbl {
+    max-width: 100%; overflow-x: auto; overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+  .mobile-table-scroll { margin: 14px 0; border-radius: 6px; }
+  .mobile-table-scroll > table { display: table; width: max-content; min-width: 100%; max-width: none; margin: 0; }
+  .mobile-table-scroll > table:not(.dp) :is(th,td) { min-width: 6.25rem; max-width: 22rem; }
+  .tablewrap > table { min-width: max-content; }
+  .katex-display { max-width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
+  figure { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  figure .frame { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  figure > svg, figure svg.fig, figure .frame > svg {
+    width: var(--mobile-diagram-width, 100%) !important;
+    max-width: none !important; height: auto !important;
+  }
+  figure figcaption { max-width: 100%; white-space: normal; }
+  .box, .q { padding: 12px 13px; }
+  ul, ol { padding-left: 1.35em; }
+  .mobile-toc-button {
+    border: 1px solid currentColor; border-radius: 8px; background: transparent;
+    padding: 7px 12px; min-height: 40px; font-size: 15px;
+    font-family: inherit; font-weight: 600; color: inherit; cursor: pointer;
+  }
+  nav.toc { z-index: 30; }
+  nav.toc summary { min-height: 42px; display: flex; align-items: center; cursor: pointer; }
+  nav.toc a { scroll-margin-top: 90px; }
+  /* The following styles affect navigation only, not any lesson text. */
+  nav.toc.mobile-links-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0 8px; }
+  nav.toc.mobile-links-nav > .brand { flex: 1 1 auto; margin: 0; }
+  nav.toc.mobile-links-nav:not(.mobile-open) > a { display: none !important; }
+  nav.toc.mobile-links-nav.mobile-open > a {
+    display: block; flex: 1 0 100%; padding: 8px 6px; line-height: 1.4;
+    min-height: 36px; margin-top: 0;
+  }
+}
+@media screen and (max-width: 480px) {
+  body { font-size: 16px; line-height: 1.7; }
+  header.hero h1, header.top h1 { font-size: clamp(23px, 6.5vw, 28px); line-height: 1.3; }
+  h2 { font-size: 22px; }
+  h3 { font-size: 19px; }
+  .box, .q { margin-inline: 0; }
+  th, td { padding: 7px 9px; }
+  .backtop { bottom: max(14px, env(safe-area-inset-bottom)); right: 12px; }
+}
+@media print {
+  .mobile-toc-button { display: none !important; }
+  .mobile-table-scroll { display: contents !important; }
+}
+@media screen and (min-width: 901px) {
+  .mobile-toc-button { display: none !important; }
+  .mobile-table-scroll { display: contents; }
+}
+
+
+@media screen and (max-width: 900px) {
+  .m, .mn { white-space: normal !important; overflow-wrap: anywhere !important; }
+  .layout { display: block; width: 100%; }
+  main { padding: 20px 16px 90px; width: 100%; }
+  nav.toc {
+    position: sticky; top: 0; width: 100%; height: auto; max-height: 72dvh;
+    overflow-y: auto; border-right: 0; border-bottom: 1px solid var(--border);
+    background: var(--bg); padding: 5px 16px;
+  }
+  nav.toc details > summary { font-size: 15px; padding: 5px 0; }
+  nav.toc details[open] #tocList { padding: 0 0 10px; }
+  nav.toc a { min-height: 36px; padding: 7px 5px; }
+  .two { grid-template-columns: minmax(0,1fr); }
+  figure { padding: 10px; }
+  header.hero { margin-bottom: 20px; }
+  .box { margin-inline: 0; }
+}
+@media screen and (max-width: 390px) {
+  main { padding-inline: 13px; }
+  nav.toc { padding-inline: 13px; }
+}
+
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc"><details open><summary class="tt">目录 CONTENTS</summary><div id="tocList"></div></details></nav>
+<main>
+<style>
+td.hl,th.hl{background:rgba(224,122,63,.28);font-weight:700}
+td.pa{background:rgba(59,125,216,.16)}
+table.dp td, table.dp th{text-align:center;padding:5px 8px;font-family:"Cambria Math","Times New Roman",serif}
+table.dp{width:auto;margin-left:auto;margin-right:auto}
+</style>
+<header class="hero">
+  <div class="kicker">COMP3821/9801 · MODULE 4 · 学习讲义</div>
+  <h1>动态规划（Dynamic Programming）核心知识点精讲</h1>
+  <p>依据课程讲义 <i>4-dp-short</i> 整理：计数 → 状态设计 → 双参数（背包、字符串）→ 区间划分 → 图上路径 → 子集 DP → 方法总结，外加选读的字符串匹配（Rabin–Karp、KMP）。每节都有可以手算的小例子和考点提示。</p>
+</header>
+
+<div class="box key"><div class="bt">先记住：一个完整的 DP 解答必须交代的 6 件事（课件 §1 末尾，几乎就是评分标准）</div>
+<ol>
+<li><b>状态 State</b>：一个表项到底回答什么问题？（用一句完整的话写清楚，包括每个参数的含义）</li>
+<li><b>递推 Recurrence</b>：依赖哪些更小的答案？<b>为什么</b>这些情况覆盖了所有解？</li>
+<li><b>边界 Base cases</b>：从哪里开始？空集、不可能（∞）的情况怎么处理？</li>
+<li><b>顺序 Order</b>：计算某项时，它依赖的项是否都已算好？</li>
+<li><b>答案 Result</b>：哪一项（或哪些项的组合）是原问题的答案？</li>
+<li><b>代价 Cost</b>：状态数 × 每个状态的工作量；空间。若要输出具体解，还要说明如何<b>记录选择并回溯</b>。</li>
+</ol>
+<p>与贪心的区别：贪心“只做一个选择并证明它安全”；DP“比较所有选择，但相同的子问题只算一次”。</p></div>
+
+<!-- ====================================================== -->
+<h2 id="d1"><span class="num">1</span>复用子问题的答案：计数入门</h2>
+<h3 id="d1-hop">1.1 跳房子 Hopscotch：数路线</h3>
+<p>从格 0 出发，每次走 1 格（step）或 2 格（jump），恰好到达格 n 的走法有多少？顺序不同算不同路线。</p>
+<div class="box def"><div class="bt">按“最后一步”分类</div>
+<p>状态：<span class="m">N(i)</span> = 到格 i 的路线数。每条到 i 的路线最后一步要么是 step（前面是到 i−1 的路线），要么是 jump（前面是到 i−2 的路线），两类<b>不重不漏</b>：</p>
+<p style="text-align:center" class="mn">N(0) = 1,　N(1) = 1,　N(i) = N(i−1) + N(i−2)　(i ≥ 2)</p>
+<p><span class="m">N(0)=1</span>：空的走法也算一种（易错！）。表：<span class="mn">1, 1, 2, 3, 5, 8</span> ⇒ 到格 5 有 8 种。</p></div>
+
+<figure>
+<svg viewBox="0 0 560 200" width="560">
+  <g font-size="12">
+  <g class="ln" stroke-width="1.3">
+    <line x1="280" y1="30" x2="160" y2="80"/><line x1="280" y1="30" x2="400" y2="80"/>
+    <line x1="160" y1="80" x2="90" y2="130"/><line x1="160" y1="80" x2="230" y2="130"/>
+    <line x1="400" y1="80" x2="350" y2="130"/><line x1="400" y1="80" x2="450" y2="130"/>
+    <line x1="90" y1="130" x2="55" y2="180"/><line x1="90" y1="130" x2="125" y2="180"/>
+    <line x1="230" y1="130" x2="200" y2="180"/><line x1="230" y1="130" x2="260" y2="180"/>
+    <line x1="350" y1="130" x2="325" y2="180"/><line x1="350" y1="130" x2="375" y2="180"/>
+  </g>
+  <rect x="250" y="16" width="60" height="26" rx="13" class="nd"/><text x="280" y="34" text-anchor="middle">N(5)</text>
+  <rect x="130" y="66" width="60" height="26" rx="13" class="nd"/><text x="160" y="84" text-anchor="middle">N(4)</text>
+  <rect x="370" y="66" width="60" height="26" rx="13" fill="#e07a3f"/><text x="400" y="84" text-anchor="middle" fill="#fff">N(3)</text>
+  <rect x="60" y="116" width="60" height="26" rx="13" fill="#e07a3f"/><text x="90" y="134" text-anchor="middle" fill="#fff">N(3)</text>
+  <rect x="200" y="116" width="60" height="26" rx="13" fill="#3b7dd8"/><text x="230" y="134" text-anchor="middle" fill="#fff">N(2)</text>
+  <rect x="320" y="116" width="60" height="26" rx="13" fill="#3b7dd8"/><text x="350" y="134" text-anchor="middle" fill="#fff">N(2)</text>
+  <rect x="420" y="116" width="60" height="26" rx="13" class="nd"/><text x="450" y="134" text-anchor="middle">N(1)</text>
+  <g font-size="11"><text x="55" y="194" text-anchor="middle">N(2)</text><text x="125" y="194" text-anchor="middle">N(1)</text><text x="200" y="194" text-anchor="middle">N(1)</text><text x="260" y="194" text-anchor="middle">N(0)</text><text x="325" y="194" text-anchor="middle">N(1)</text><text x="375" y="194" text-anchor="middle">N(0)</text></g>
+  <text x="420" y="24" font-size="11" class="mut">同色 = 同一个子问题</text>
+  <text x="420" y="40" font-size="11" class="mut">被重复计算</text>
+  </g>
+</svg>
+<figcaption>图 1　直接递归的调用树呈指数增长，但只有 n+1 个不同的问题 N(0..n)。DP = 每个只算一次并存起来。</figcaption>
+</figure>
+
+<div class="two">
+<div class="box tpl"><div class="bt">自底向上 Bottom-up（填表）</div>
+<pre><code>N[0] = 1; if n >= 1: N[1] = 1
+for i = 2..n: N[i] = N[i-1] + N[i-2]
+return N[n]</code></pre></div>
+<div class="box tpl"><div class="bt">自顶向下 Top-down（记忆化 memoisation）</div>
+<pre><code>count(i):
+  if i <= 1: return 1
+  if i not in memo:
+     memo[i] = count(i-1) + count(i-2)
+  return memo[i]</code></pre></div>
+</div>
+<p><b>正确性 = 按填表顺序做归纳</b>：基础项正确；假设前面的项都对，按最后一步把路线分成两组，去掉最后一步得到到 i−1 或 i−2 的路线，反之加上最后一步也合法，两组不相交且穷尽 ⇒ 计数相加。</p>
+<div class="box warn"><div class="bt">“算术操作数”≠“比特复杂度”</div>
+<p>O(n) 个状态 × 1 次加法 = O(n) 次算术运算；只留最后两个数则 O(1) 个存储<b>数</b>。但 <span class="m">N(n) = F<sub>n+1</sub> = Θ(φ<sup>n</sup>)</span> 有 Θ(n) 位，第 i 次加法花 O(i) 位运算 ⇒ 总比特代价 <span class="m">O(n²)</span>。考试题如果答案会变得很大，要意识到这个区别。</p></div>
+
+<h3 id="d1-hanoi">1.2 汉诺塔 Tower of Hanoi：最少步数</h3>
+<p>最大盘把过程分成三段：小的 n−1 个从 A 移到 B → 最大盘 A→C → 小的从 B 移到 C。</p>
+<div class="box proof"><div class="bt">最优性（下界 + 匹配构造）</div><p>最大盘第一次移动前，小的 n−1 个必须全部移开：≥ M(n−1) 步；最大盘最后一次到 C 后，小的必须全部移到它上面：≥ M(n−1) 步；最大盘至少移动 1 次。故 <span class="m">M(n) ≥ 2M(n−1)+1</span>，三段策略恰好达到。<span class="m">M(0)=0</span> ⇒ <span class="m">M(n) = 2<sup>n</sup> − 1</span>（0,1,3,7,15,31）。</p></div>
+<p><b>复用的是“次数”不是“移动序列”</b>：两次子转移的盘子在不同柱子之间，移动列表不同，但次数相同。<b>答案很大 ≠ 输出很长</b>：输出 <span class="m">2<sup>n</sup>−1</span> 这个数只要 n 位；而列出所有移动必须 <span class="m">2<sup>n</sup>−1</span> 步，任何复用都省不掉。</p>
+
+<div class="box key"><div class="bt">状态设计是最核心的决定</div><p><b>检验法</b>：两个部分解如果状态相同，能不能用<b>同一条规则</b>继续扩展它们？不能 ⇒ 状态漏记了重要信息。记得太少：递推无法证明；记得太多：状态数爆炸。</p></div>
+
+<!-- ====================================================== -->
+<h2 id="d2"><span class="num">2</span>选择状态记住什么：单参数 DP</h2>
+<h3 id="d2-lis">2.1 最长上升子序列 LIS</h3>
+<p>“前缀里最长的长度”不够——不知道末尾值，就不知道下一个数能否接上（[1,5] 和 [1,3] 都长 2，但 4 只能接在后者后面）。<b>固定终点</b>：</p>
+<div class="box def"><div class="bt">状态与递推</div>
+<p><span class="m">L[i]</span> = 以 <span class="m">A[i]</span> <b>结尾</b>的最长严格上升子序列长度。</p>
+<p style="text-align:center" class="mn">L[i] = 1 + max( {0} ∪ { L[j] : j &lt; i, A[j] &lt; A[i] } )</p>
+<p>按 i 递增计算；答案 <span class="m">max<sub>i</sub> L[i]</span>（不一定以最后一个元素结尾！空输入答 0）。<span class="m">O(n²)</span> 时间、<span class="m">O(n)</span> 空间。</p></div>
+<div class="tablewrap"><table class="dp">
+<tr><th>i</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+<tr><th>A[i]</th><td class="hl">1</td><td class="hl">5</td><td>3</td><td class="hl">6</td><td>2</td><td class="hl">7</td><td>4</td><td class="hl">8</td></tr>
+<tr><th>L[i]</th><td>1</td><td>2</td><td>2</td><td>3</td><td>2</td><td>4</td><td>3</td><td>5</td></tr>
+<tr><th>p[i]</th><td>0</td><td>1</td><td>1</td><td>2</td><td>1</td><td>4</td><td>3</td><td>6</td></tr>
+</table></div>
+<p><b>回溯</b>：同时存前驱 <span class="m">p[i]</span>（达到最大值的 j，没有则 0）。从 L 最大的 8 出发：8→6→4→2→1，反转得 <b>1, 5, 6, 7, 8</b>。例：<span class="m">L[7]</span>（值 4）只能接在值 1、3、2 后面，位置 6（值 7）虽然更长但不能接。</p>
+<div class="box ex"><div class="bt">课件练习：O(n log n) 解法</div>
+<p>提示的意思：同样长度的上升子序列中，<b>末尾值越小越好</b>（更容易被延长）。维护数组 <span class="m">tail[ℓ]</span> = 所有长度为 ℓ 的上升子序列中最小的末尾值；它是严格递增的。对每个新值 x，二分找第一个 <span class="m">tail[ℓ] ≥ x</span> 并替换为 x（找不到就追加）。最终数组长度即答案。</p>
+<p>上例：1 → [1]；5 → [1,5]；3 → [1,3]；6 → [1,3,6]；2 → [1,2,6]；7 → [1,2,6,7]；4 → [1,2,4,7]；8 → [1,2,4,7,8]，长度 5 ✓。（注意 tail 本身不一定是一个真实的子序列。）</p></div>
+
+<h3 id="d2-act">2.2 带权活动选择：最大化总时长</h3>
+<p>贪心模块里“最早结束”最大化的是<b>个数</b>；改为最大化<b>总时长</b>时贪心失败（两个短活动 vs 一个长活动）。</p>
+<div class="box def"><div class="bt">状态与递推</div>
+<p>按结束时间排序 <span class="m">f<sub>1</sub> ≤ … ≤ f<sub>n</sub></span>。<span class="m">T[i]</span> = 以活动 i <b>作为最后一个</b>的相容方案的最大总时长（最后一个活动的结束时间决定下一个能否放下）。</p>
+<p style="text-align:center" class="mn">T[i] = (f<sub>i</sub> − s<sub>i</sub>) + max( {0} ∪ { T[j] : j &lt; i, f<sub>j</sub> ≤ s<sub>i</sub> } )</p>
+<p>答案 <span class="m">max<sub>i</sub> T[i]</span>。排序 <span class="m">O(n log n)</span> + 每个状态至多查 n 个前驱 ⇒ <span class="m">O(n²)</span>。</p></div>
+<div class="box ex"><div class="bt">例（一组与课件表格数值一致的区间）</div>
+<p>活动 1 [0,2)、2 [1,5)、3 [2,6)、4 [5,8)、5 [6,9)：T = 2, 4, 2+4=6, 3+max{2,4}=7, 3+max{2,4,6}=9；p = 0,0,1,2,3。回溯 5→3→1 ⇒ 选 {1,3,5}，总时长 9。</p></div>
+<p><b>正确性要点</b>：最优方案的前驱为 j，则前面的部分在 <span class="m">f<sub>j</sub></span> 结束；把它换成以 j 结尾的更好的方案，结束时间仍是 <span class="m">f<sub>j</sub></span>，仍与 i 相容，总值更大——矛盾。所以最优解由最优子解组成（<b>最优子结构</b>）。</p>
+<p class="small">更快的做法（课件未要求）：若定义 <span class="m">D[i]</span> = 只用前 i 个活动的最优值，则 <span class="m">D[i] = max(D[i−1], (f<sub>i</sub>−s<sub>i</sub>) + D[q(i)])</span>，q(i) 用二分求得，总 <span class="m">O(n log n)</span>。</p>
+
+<h3 id="d2-coin">2.3 找零 Making Change：最少硬币数</h3>
+<p>面额 <span class="m">v<sub>1</sub> &lt; … &lt; v<sub>n</sub></span>，每种无限，凑出恰好 C。贪心（先拿最大）在 {1,3,4}、C=6 时得 4+1+1（3 枚），最优是 3+3（2 枚）。</p>
+<div class="box def"><div class="bt">状态与递推</div>
+<p><span class="m">M[a]</span> = 恰好凑出 a 的最少硬币数。<span class="m">M[0] = 0</span>；</p>
+<p style="text-align:center" class="mn">M[a] = 1 + min<sub>k: v<sub>k</sub> ≤ a</sub> M[a − v<sub>k</sub>]</p>
+<p>凑不出时记 <span class="m">+∞</span>（约定 <span class="m">min ∅ = ∞</span>，<span class="m">1+∞ = ∞</span>）。按 a = 0..C 计算，答案 <span class="m">M[C]</span>（为 ∞ 则报告无解）。</p></div>
+<div class="tablewrap"><table class="dp">
+<tr><th>a</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+<tr><th>M[a]（面额 1,3,4）</th><td>0</td><td>1</td><td>2</td><td class="pa">1</td><td>1</td><td>2</td><td class="hl">2</td></tr>
+<tr><th>M[a]（面额 3,4）</th><td>0</td><td>∞</td><td>∞</td><td>1</td><td>1</td><td>∞</td><td>2</td></tr>
+</table></div>
+<p><span class="m">M[6] = 1 + min{M[5], M[3], M[2]} = 1 + 1 = 2</span>，回溯：存 <span class="m">p[a]</span> = 达到最小值的面额，6 →(3)→ 3 →(3)→ 0。</p>
+<div class="box warn"><div class="bt">伪多项式（重点考点）</div><p>时间 <span class="m">O(nC)</span>、空间 <span class="m">O(C)</span>。C 在输入里只占 <span class="m">⌊log₂C⌋+1</span> 位，但我们为 0..C 每个数都建了状态（C=1000 只需 10 位却要 1001 个表项）。<b>对数值 C 多项式 ≠ 对输入长度多项式</b>。这和 Module 3 里 SubsetSum/Knapsack 是 NP-hard 并不矛盾。</p></div>
+
+<h3 id="d2-ik">2.4 无限背包 Integer Knapsack（每种物品可拿多件）</h3>
+<div class="box def"><div class="bt">状态与递推</div>
+<p><span class="m">B[c]</span> = 总重<b>至多</b> c 的最大价值。<span class="m">B[0] = 0</span>；</p>
+<p style="text-align:center" class="mn">B[c] = max( {0} ∪ { v<sub>k</sub> + B[c − w<sub>k</sub>] : w<sub>k</sub> ≤ c } )</p>
+<p>“0” = 空背包，也处理了“放不下任何物品”。因为可无限拿，去掉一件后所有物品仍可用 ⇒ 一个参数够。</p></div>
+<div class="tablewrap"><table class="dp">
+<tr><th>c</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+<tr><th>B[c]</th><td>0</td><td>0</td><td>3</td><td>4</td><td>6</td><td>7</td><td>9</td><td class="hl">10</td></tr>
+</table></div>
+<p>物品 (w,v) = (2,3),(3,4),(4,5)，C=7：<span class="m">B[7] = max{0, 3+B[5], 4+B[4], 5+B[3]} = max{0,10,10,9} = 10</span>。回溯 7 →类型1→ 5 →类型1→ 3 →类型2→ 0：2+2+3，价值 3+3+4。注意“容量”是上限：<span class="m">B[1] = 0</span> 不是不可能。</p>
+
+<div class="tablewrap"><table>
+<tr><th>问题</th><th>状态固定了什么</th><th>这告诉下一个选择什么</th></tr>
+<tr><td>上升子序列</td><td>最后位置</td><td>最后的值</td></tr>
+<tr><td>活动选择</td><td>最后活动</td><td>结束时间</td></tr>
+<tr><td>找零</td><td>剩余金额</td><td>哪些硬币放得下</td></tr>
+<tr><td>无限背包</td><td>剩余容量</td><td>哪些物品放得下</td></tr>
+</table></div>
+<p>若每件物品只能用一次，“容量”不再记录哪些物品还可用 ⇒ 需要第二个参数。</p>
+
+<!-- ====================================================== -->
+<h2 id="d3"><span class="num">3</span>双参数：资源与字符串</h2>
+<h3 id="d3-01">3.1 0-1 背包</h3>
+<div class="box warn"><div class="bt">为什么一维会错</div><p>只有物品 A(重 2, 值 3)：容量 2 的最优值 3；用一维递推算容量 4 会得到“再加一个 A”= 6，实际仍是 3。存一个最优方案也不够：要加的物品可能已在方案里，而有用的可能是另一个（甚至更差的）方案。</p></div>
+<div class="box def"><div class="bt">状态与递推</div>
+<p><span class="m">K(k, c)</span> = 只用物品 1..k、总重 ≤ c 的最大价值。对第 k 件物品：<b>不拿</b> 或 <b>拿一次</b>，两种情况都只再用前 k−1 件：</p>
+<p style="text-align:center" class="mn">K(k,c) = K(k−1,c)　若 w<sub>k</sub> &gt; c；　否则 max{ K(k−1,c), v<sub>k</sub> + K(k−1, c−w<sub>k</sub>) }</p>
+<p>边界 <span class="m">K(0,c) = 0</span>、<span class="m">K(k,0) = 0</span>；答案 <span class="m">K(n,C)</span>。逐行填（所有依赖都在上一行）。</p></div>
+<div class="tablewrap"><table class="dp">
+<tr><th>k \ c</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr>
+<tr><th>无</th><td class="hl">0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><th>A(2,3)</th><td>0</td><td>0</td><td class="hl">3</td><td>3</td><td>3</td><td>3</td><td>3</td></tr>
+<tr><th>A,B(3,4)</th><td>0</td><td>0</td><td class="hl">3</td><td>4</td><td>4</td><td>7</td><td class="pa">7</td></tr>
+<tr><th>A,B,C(4,6)</th><td>0</td><td>0</td><td>3</td><td>4</td><td>6</td><td>7</td><td class="hl">9</td></tr>
+</table></div>
+<p><span class="m">K(3,6) = max{K(2,6)=7, 6 + K(2,2)=9} = 9</span>。回溯（存“拿/不拿”）：(3,6) 拿 C → (2,2) 不拿 B → (1,2) 拿 A → (0,0)，选 {A, C}，重 6、值 9。</p>
+<div class="box warn"><div class="bt">复杂度与输入规模</div><p>(n+1)(C+1) 个状态、每个 2 个候选 ⇒ 时间 <span class="m">O(nC)</span>、表 <span class="m">O(nC)</span>（只要值可留两行，<span class="m">O(C)</span>）。同样是<b>伪多项式</b>——这不是 0-1 背包的多项式算法。</p></div>
+
+<h3 id="d3-part">3.2 平衡划分 Balanced Partition（归约到背包）</h3>
+<p>把正整数分成两组使和的差最小。总和 T，较小组 B 满足 <span class="m">S<sub>B</sub> ≤ T/2</span>，差 = <span class="m">T − 2S<sub>B</sub></span> ⇒ 让 <span class="m">S<sub>B</sub></span> 尽量大但不超过 <span class="m">⌊T/2⌋</span>。每个数 <span class="m">x<sub>i</sub></span> 变成物品 <span class="m">w<sub>i</sub> = v<sub>i</sub> = x<sub>i</sub></span>，容量 <span class="m">⌊T/2⌋</span>；最优值 s ⇒ 最小差 <span class="m">T − 2s</span>。<span class="m">O(nT)</span>。例：{2,3,4,6}，T=15，容量 7，最优 3+4=7，差 1。</p>
+
+<h3 id="d3-lcs">3.3 最长公共子序列 LCS</h3>
+<div class="box def"><div class="bt">状态与递推</div>
+<p><span class="m">L(i,j)</span> = <span class="m">A[1..i]</span> 与 <span class="m">B[1..j]</span> 的 LCS 长度。</p>
+<p style="text-align:center" class="mn">L(i,j) = 1 + L(i−1,j−1)　若 a<sub>i</sub> = b<sub>j</sub>；　否则 max{ L(i−1,j), L(i,j−1) }</p>
+<p>边界 <span class="m">L(0,j) = L(i,0) = 0</span>；逐行、行内 j 递增；答案 <span class="m">L(n,m)</span>。</p></div>
+<div class="box proof"><div class="bt">两个关键论证</div>
+<ul>
+<li><b>末字符相等可直接匹配</b>：若最优解用了其中一个末位置，把它改为与另一个末位置匹配；若都没用，可以把这个公共字符追加上去变得更长。所以存在最优解匹配两端。</li>
+<li><b>末字符不等</b>：两个末位置不可能都被用（它们只能彼此匹配）⇒ 至少丢掉一个，两种情况取最大。</li>
+</ul></div>
+<div class="tablewrap"><table class="dp">
+<tr><th>A\B</th><th>∅</th><th>c</th><th>a</th><th>r</th><th>t</th></tr>
+<tr><th>∅</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><th>c</th><td>0</td><td class="hl">1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><th>h</th><td>0</td><td class="pa">1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><th>a</th><td>0</td><td>1</td><td class="hl">2</td><td class="pa">2</td><td>2</td></tr>
+<tr><th>t</th><td>0</td><td>1</td><td>2</td><td>2</td><td class="hl">3</td></tr>
+</table></div>
+<p>chat 与 cart：<span class="m">L(4,4) = 3</span>。回溯：对角线（匹配）记录字符，横/竖移动丢弃字符；记录 t, a, c，反转得 <b>cat</b>。时间、空间 <span class="m">O(nm)</span>；只要长度可用两行；回溯 <span class="m">O(n+m)</span>。</p>
+<div class="box warn"><div class="bt">三个串的 LCS：两两求解会丢信息</div><p>A=abcdegg、B=acbeefg、C=accedgf。abeg 与 aceg 都是 A,B 的 LCS；若选 abeg 再与 C 求，只得 aeg（3）；而 aceg 也是 C 的子序列（4）。正确做法：三维状态 <span class="m">L(i,j,k)</span>，三个末字符全相等时 <span class="m">1+L(i−1,j−1,k−1)</span>，否则在去掉某一个末字符的三种情况中取最大。<span class="m">O(nmℓ)</span>。</p></div>
+
+<h3 id="d3-scs">3.4 最短公共超序列 SCS</h3>
+<p>包含两个串作为子序列的最短串。用 LCS 共享尽可能多的字符：长度 = <span class="m">n + m − L</span>。下界：任何公共超序列中，被两个串同时使用的位置构成公共子序列，最多 L 个。例：cat 与 cot，LCS = ct，得 coat 或 caot（长 4 = 3+3−2）。</p>
+
+<h3 id="d3-ed">3.5 编辑距离 Edit Distance</h3>
+<div class="box def"><div class="bt">状态与递推</div>
+<p>操作：插入 <span class="m">c<sub>I</sub></span>、删除 <span class="m">c<sub>D</sub></span>、替换 <span class="m">c<sub>R</sub></span>。<span class="m">E(i,j)</span> = 把 <span class="m">A[1..i]</span> 变成 <span class="m">B[1..j]</span> 的最小代价。按“最后一步”分三类：</p>
+<p style="text-align:center" class="mn">E(i,j) = min{ E(i−1,j) + c<sub>D</sub>,　E(i,j−1) + c<sub>I</sub>,　E(i−1,j−1) + r(a<sub>i</sub>,b<sub>j</sub>) }</p>
+<p><span class="m">r(a,b) = 0</span>（相等）或 <span class="m">c<sub>R</sub></span>。边界 <span class="m">E(i,0) = i·c<sub>D</sub></span>、<span class="m">E(0,j) = j·c<sub>I</sub></span>。单位代价时即 Levenshtein 距离。</p></div>
+<div class="tablewrap"><table class="dp">
+<tr><th>A\B</th><th>∅</th><th>c</th><th>o</th><th>a</th><th>t</th></tr>
+<tr><th>∅</th><td class="hl">0</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+<tr><th>c</th><td>1</td><td class="hl">0</td><td class="hl">1</td><td>2</td><td>3</td></tr>
+<tr><th>a</th><td>2</td><td>1</td><td>1</td><td class="hl">1</td><td>2</td></tr>
+<tr><th>t</th><td>3</td><td>2</td><td>2</td><td>2</td><td class="hl">1</td></tr>
+</table></div>
+<p>cat → coat（单位代价）= 1。路径：匹配 c → <b>插入 o</b>（横向）→ 匹配 a → 匹配 t。<b>对齐 = 表中从左上到右下的路径</b>。<span class="m">O(nm)</span> 时间与空间。</p>
+<div class="tablewrap"><table>
+<tr><th>问题</th><th>格子存什么</th><th>转移做什么</th></tr>
+<tr><td>LCS</td><td>最大公共长度</td><td>匹配或跳过字符</td></tr>
+<tr><td>编辑距离</td><td>最小编辑代价</td><td>对齐、插入或删除一个字符</td></tr>
+</table></div>
+
+<!-- ====================================================== -->
+<h2 id="d4"><span class="num">4</span>选择分割点：区间 DP</h2>
+<h3 id="d4-mc">4.1 矩阵链乘 Matrix Chain Multiplication</h3>
+<p><span class="m">a×b</span> 乘 <span class="m">b×c</span> 用 <span class="m">abc</span> 次标量乘法。结合律让括号可变，<b>矩阵顺序不变</b>，代价却可能差 10 倍：A 10×100、B 100×5、C 5×50：<span class="m">(AB)C</span> = 5000 + 2500 = <b>7500</b>；<span class="m">A(BC)</span> = 25000 + 50000 = 75000。</p>
+<p>加括号方式数 <span class="m">T(n) = Σ<sub>k</sub> T(k)T(n−k)</span>：1, 1, 2, 5, 14, 42, …，即 Catalan 数 <span class="m">C<sub>n−1</sub></span>，<span class="m">C<sub>r</sub> = (1/(r+1))·binom(2r, r) = Θ(4<sup>r</sup>/r<sup>3/2</sup>)</span>，指数增长（同一个数还计数：括号序列、不越过对角线的格路、满二叉树、凸多边形三角剖分、避开 123 模式的排列）。</p>
+<div class="box warn"><div class="bt">为什么“前缀”状态不行</div><p>前缀 <span class="m">A<sub>1</sub>…A<sub>5</sub></span> 的最后一次乘法若在 A₂ 后分开，右边 <span class="m">A<sub>3</sub>…A<sub>5</sub></span> 是一个<b>区间</b>而不是前缀 ⇒ 状态需要记住<b>两个端点</b>。</p></div>
+<div class="box def"><div class="bt">状态与递推</div>
+<p><span class="m">A<sub>i</sub></span> 为 <span class="m">p<sub>i−1</sub>×p<sub>i</sub></span>。<span class="m">M[i,j]</span> = 计算 <span class="m">A<sub>i</sub>…A<sub>j</sub></span> 的最小代价。枚举<b>最后一次乘法</b>的位置 k：</p>
+<p style="text-align:center" class="mn">M[i,i] = 0,　M[i,j] = min<sub>i ≤ k &lt; j</sub> ( M[i,k] + M[k+1,j] + p<sub>i−1</sub>·p<sub>k</sub>·p<sub>j</sub> )</p>
+<p>关键：子积的形状只由端点决定（<span class="m">p<sub>i−1</sub>×p<sub>k</sub></span> 与 <span class="m">p<sub>k</sub>×p<sub>j</sub></span>），与它内部怎么加括号无关。按<b>区间长度</b> 1, 2, …, n 递增计算；答案 <span class="m">M[1,n]</span>。</p></div>
+<figure>
+<svg viewBox="0 0 520 220" width="520">
+  <g font-size="12">
+  <text x="180" y="18" text-anchor="middle" class="mut">终点 j →</text>
+  <text x="20" y="130" class="mut" transform="rotate(-90 20 130)">起点 i →</text>
+  <!-- 5x5 grid upper triangle -->
+  <g>
+  <rect x="60" y="30" width="36" height="32" fill="#9aa3ad" fill-opacity=".25" stroke="currentColor" stroke-opacity=".4"/>
+  <rect x="96" y="30" width="36" height="32" fill="#3b7dd8" fill-opacity=".25" stroke="currentColor" stroke-opacity=".4"/>
+  <rect x="132" y="30" width="36" height="32" fill="#e07a3f" stroke="currentColor" stroke-opacity=".4"/>
+  <rect x="168" y="30" width="36" height="32" fill="none" stroke="currentColor" stroke-opacity=".4"/>
+  <rect x="204" y="30" width="36" height="32" fill="none" stroke="currentColor" stroke-opacity=".4"/>
+  <rect x="96" y="62" width="36" height="32" fill="#9aa3ad" fill-opacity=".25" stroke="currentColor" stroke-opacity=".4"/>
+  <rect x="132" y="62" width="36" height="32" fill="#3b7dd8" fill-opacity=".25" stroke="currentColor" stroke-opacity=".4"/>
+  <rect x="168" y="62" width="36" height="32" fill="#e07a3f" stroke="currentColor" stroke-opacity=".4"/>
+  <rect x="204" y="62" width="36" height="32" fill="none" stroke="currentColor" stroke-opacity=".4"/>
+  <rect x="132" y="94" width="36" height="32" fill="#9aa3ad" fill-opacity=".25" stroke="currentColor" stroke-opacity=".4"/>
+  <rect x="168" y="94" width="36" height="32" fill="#3b7dd8" fill-opacity=".25" stroke="currentColor" stroke-opacity=".4"/>
+  <rect x="204" y="94" width="36" height="32" fill="#e07a3f" stroke="currentColor" stroke-opacity=".4"/>
+  <rect x="168" y="126" width="36" height="32" fill="#9aa3ad" fill-opacity=".25" stroke="currentColor" stroke-opacity=".4"/>
+  <rect x="204" y="126" width="36" height="32" fill="#3b7dd8" fill-opacity=".25" stroke="currentColor" stroke-opacity=".4"/>
+  <rect x="204" y="158" width="36" height="32" fill="#9aa3ad" fill-opacity=".25" stroke="currentColor" stroke-opacity=".4"/>
+  </g>
+  <g font-size="11" text-anchor="middle"><text x="78" y="50">0</text><text x="114" y="82">0</text><text x="150" y="114">0</text><text x="186" y="146">0</text><text x="222" y="178">0</text></g>
+  <rect x="270" y="40" width="16" height="12" fill="#9aa3ad" fill-opacity=".35"/><text x="294" y="51">长度 1：M[i,i] = 0</text>
+  <rect x="270" y="64" width="16" height="12" fill="#3b7dd8" fill-opacity=".35"/><text x="294" y="75">长度 2：只有一个分割点</text>
+  <rect x="270" y="88" width="16" height="12" fill="#e07a3f"/><text x="294" y="99">长度 3：正在计算</text>
+  <text x="270" y="130">每个分割 k 用到同一行左边的</text>
+  <text x="270" y="148">M[i,k] 和同一列下方的 M[k+1,j]，</text>
+  <text x="270" y="166">两者都更短 ⇒ 已算好。</text>
+  <text x="270" y="194" class="mut">i &gt; j 的格子无意义，不填。</text>
+  </g>
+</svg>
+<figcaption>图 2　按对角线（区间长度）填表。</figcaption>
+</figure>
+<div class="box ex"><div class="bt">例：A 10×100、B 100×5、C 5×50（p = 10, 100, 5, 50）</div>
+<p><span class="m">M[1,2] = 10·100·5 = 5000</span>，<span class="m">M[2,3] = 100·5·50 = 25000</span>；</p>
+<p><span class="m">M[1,3] = min{ M[1,1]+M[2,3]+10·100·50 = 75000,　M[1,2]+M[3,3]+10·5·50 = 7500 } = 7500</span>，存分割 <span class="m">K[1,3] = 2</span> ⇒ (AB)C。</p>
+<p><b>回溯括号</b>：在 [i,j] 处递归打印 [i, K[i,j]] 与 [K[i,j]+1, j]，外加一对括号；i = j 时停。</p></div>
+<div class="box proof"><div class="bt">正确性与复杂度</div>
+<p>取 <span class="m">A<sub>i</sub>…A<sub>j</sub></span> 的最优加括号及其最后分割 k：若某一侧有更便宜的加括号，替换后乘积和形状都不变而总代价更小——矛盾。所以两侧都最优；反之每个候选都是合法的加括号。按区间长度归纳。</p>
+<p><span class="m">O(n²)</span> 个区间 × 每个至多 n 个分割 ⇒ <span class="m">O(n³)</span> 时间，<span class="m">O(n²)</span> 空间。</p>
+<p><b>课件练习“能否更细地分析成 o(n³)？”——不能</b>：长度 ℓ 的区间有 <span class="m">n−ℓ+1</span> 个，各试 <span class="m">ℓ−1</span> 个分割，总数 <span class="m">Σ<sub>ℓ</sub>(n−ℓ+1)(ℓ−1) = (n³−n)/6 = Θ(n³)</span>（例如仅长度在 n/3 到 2n/3 的区间就贡献 Ω(n)·Ω(n)·Ω(n)）。</p></div>
+
+<h3 id="d4-expr">4.2 表达式加括号求最大值（含课件练习完整答案）</h3>
+<p>数 <span class="m">a<sub>1</sub>,…,a<sub>n</sub></span> 和固定运算符 <span class="m">∘<sub>1</sub>,…,∘<sub>n−1</sub> ∈ {+, −, ×}</span>，加括号使值最大。与矩阵链不同：括号会改变<b>结果</b>本身。例：<span class="m">10 − ((1−2)−3) = 14</span>，<span class="m">10 − (1−(2−3)) = 8</span>。</p>
+<div class="box warn"><div class="bt">只存最大值不够</div><ul>
+<li>减法：要使 <span class="m">X − Y</span> 最大，需要 X 最大、<b>Y 最小</b>。</li>
+<li>乘法：两个负数相乘可能最大：两边都是 1−2−3（可为 −4 或 2），只用最大值得 2·2 = 4，漏掉 (−4)(−4) = 16。</li>
+</ul></div>
+<div class="box tpl"><div class="bt">完整 DP 解答（按 6 要素写）</div>
+<ol>
+<li><b>状态</b>：对 <span class="m">1 ≤ i ≤ j ≤ n</span>，<span class="m">L[i,j]</span> / <span class="m">H[i,j]</span> = 子表达式 <span class="m">a<sub>i</sub> ∘<sub>i</sub> … ∘<sub>j−1</sub> a<sub>j</sub></span> 在所有完全加括号方式下能取到的最小 / 最大值。边界 <span class="m">L[i,i] = H[i,i] = a<sub>i</sub></span>。</li>
+<li><b>递推</b>：枚举最后运算 <span class="m">∘<sub>k</sub></span>（<span class="m">i ≤ k &lt; j</span>），左区间 [i,k]、右区间 [k+1,j]。令候选集合
+<ul>
+<li><span class="m">∘<sub>k</sub> = +</span>：<span class="m">{L[i,k] + L[k+1,j],  H[i,k] + H[k+1,j]}</span></li>
+<li><span class="m">∘<sub>k</sub> = −</span>：<span class="m">{L[i,k] − H[k+1,j],  H[i,k] − L[k+1,j]}</span></li>
+<li><span class="m">∘<sub>k</sub> = ×</span>：<span class="m">{x·y : x ∈ {L[i,k], H[i,k]}, y ∈ {L[k+1,j], H[k+1,j]}}</span>（四个组合）</li>
+</ul>
+<span class="m">H[i,j]</span> = 所有 k 的候选的最大值，<span class="m">L[i,j]</span> = 最小值。</li>
+<li><b>顺序与答案</b>：按区间长度递增；答案 <span class="m">H[1,n]</span>。</li>
+<li><b>回溯</b>：对每个 (i,j) 和“最大/最小”分别存达到极值的 k 以及左右各取的是 L 还是 H；从 (1,n,max) 递归展开括号。</li>
+<li><b>正确性</b>：固定最后运算 ∘ₖ 后，左右两侧的值可以独立选择（各自取到其可达值集合中的任意值）。函数 <span class="m">x+y</span> 对两个变量都单调增，<span class="m">x−y</span> 对 x 增、对 y 减，所以极值在端点取到；<span class="m">x·y</span> 对固定 y 是 x 的线性函数（反之亦然），在矩形 <span class="m">[L,H]×[L′,H′]</span> 上的极值必在四个角取到——而四个角都可达（它们本身就是可达的极值），<b>即使中间值不一定可达也没关系</b>。按长度归纳即得。</li>
+<li><b>复杂度</b>：<span class="m">O(n²)</span> 个区间 × <span class="m">O(n)</span> 个分割 × 常数个候选 ⇒ <span class="m">O(n³)</span> 时间、<span class="m">O(n²)</span> 空间。</li>
+</ol></div>
+
+<!-- ====================================================== -->
+<h2 id="d5"><span class="num">5</span>图上的路径</h2>
+<h3 id="d5-dag">5.1 DAG 上的最短（最长）路</h3>
+<p>拓扑序保证：处理某点时，它所有可能的前驱都已处理。<b>负权边没问题</b>——计算顺序来自图结构，而不是当前距离估计（这正是 Dijkstra 做不到的）。</p>
+<figure>
+<svg viewBox="0 0 580 170" width="580">
+  <defs><marker id="dar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <g font-size="13">
+  <g class="ln" marker-end="url(#dar)">
+    <line x1="58" y1="76" x2="186" y2="32"/><line x1="58" y1="92" x2="186" y2="136"/>
+    <line x1="200" y1="44" x2="200" y2="124"/><line x1="214" y1="30" x2="352" y2="76"/><line x1="214" y1="136" x2="352" y2="94"/>
+  </g>
+  <g fill="#e07a3f" font-weight="700"><text x="110" y="44">4</text><text x="110" y="128">5</text><text x="206" y="90">−2</text><text x="285" y="44">6</text><text x="285" y="132">3</text></g>
+  <circle cx="45" cy="84" r="15" fill="#3b7dd8"/><text x="45" y="89" text-anchor="middle" fill="#fff">s</text>
+  <circle cx="200" cy="30" r="15" class="nd"/><text x="200" y="35" text-anchor="middle">a</text>
+  <circle cx="200" cy="138" r="15" class="nd"/><text x="200" y="143" text-anchor="middle">b</text>
+  <circle cx="365" cy="84" r="15" class="nd"/><text x="365" y="89" text-anchor="middle">t</text>
+  <text x="400" y="40" font-size="12">拓扑序 s,a,b,t</text>
+  <text x="400" y="62" font-size="12">d(s)=0</text><text x="400" y="80" font-size="12">d(a)=4</text>
+  <text x="400" y="98" font-size="12">d(b)=min{5, 4−2}=2</text><text x="400" y="116" font-size="12">d(t)=min{4+6, 2+3}=5</text>
+  </g>
+</svg>
+<figcaption>图 3　课件 DAG 例子：最短路 s→a→b→t = 5，靠存前驱回溯 t,b,a,s 再反转。</figcaption>
+</figure>
+<div class="box def"><div class="bt">递推</div><p><span class="m">d(s) = 0</span>，<span class="m">d(t) = min<sub>(v,t)∈E</sub> (d(v) + w(v,t))</span>（空的 min 为 ∞）。按拓扑序处理，<span class="m">O(n+m)</span>（每条入边扫描一次：入度之和是 m，不是 n²）。<b>最长路</b>：把 min 换成 max，不可达用 −∞，仍 <span class="m">O(n+m)</span>。一般图上最长简单路是 NP-hard：无环性去掉了“要记住访问过哪些点”的需要。</p></div>
+
+<h3 id="d5-asm">5.2 装配线调度 Assembly Line</h3>
+<p>两条线，作业 1..n 依次完成。<span class="m">s<sub>i</sub></span> 进入、<span class="m">f<sub>i</sub></span> 离开、<span class="m">a<sub>i,k</sub></span> 处理、<span class="m">t<sub>i,k</sub></span> 在作业 k 后从线 i 换到另一条线。</p>
+<p style="text-align:center" class="mn">F<sub>1</sub>(k) = a<sub>1,k</sub> + min{ F<sub>1</sub>(k−1),  F<sub>2</sub>(k−1) + t<sub>2,k−1</sub> }，F<sub>2</sub> 对称；F<sub>i</sub>(1) = s<sub>i</sub> + a<sub>i,1</sub>；答案 min{F<sub>1</sub>(n)+f<sub>1</sub>, F<sub>2</sub>(n)+f<sub>2</sub>}</p>
+<div class="box ex"><div class="bt">课件例子</div><p>进入 (1,2)，离开 (2,1)；处理 线1: 4,2,5；线2: 2,6,2；换线 线1 后: 1,2；线2 后: 2,1。<br>
+(F₁,F₂)(1) = (5, 4)；(2) = (2+min{5, 4+2}, 6+min{4, 5+1}) = (7, 10)；(3) = (5+min{7, 10+1}, 2+min{10, 7+2}) = (12, 11)。结束 min{12+2, 11+1} = <b>12</b>，路线 线1, 线1, 线2。<span class="m">O(n)</span>。</p></div>
+
+<h3 id="d5-bf">5.3 Bellman–Ford：有环、有负权边</h3>
+<p>有环时没有拓扑序；有负边时 Dijkstra 的“最小即确定”会错（s→a 4 看似最终，但 s→b→a = 5−3 = 2）。<b>可达的负环</b>会使受影响的点没有有限最短距离（只有从 s 可达、且能从负环到达的点受影响）。</p>
+<div class="box key"><div class="bt">加一个“边数上限”参数，使依赖无环</div>
+<p>无可达负环时，存在不重复顶点的最短路（删去非负的环不会变长）⇒ 最多 n−1 条边。</p>
+<p><span class="m">d<sub>i</sub>(v)</span> = 至多用 i 条边的 s→v 走法的最小权。<span class="m">d<sub>0</sub>(s)=0</span>，其余 ∞；</p>
+<p style="text-align:center" class="mn">d<sub>i</sub>(v) = min{ d<sub>i−1</sub>(v),  min<sub>(u,v)∈E</sub> ( d<sub>i−1</sub>(u) + w(u,v) ) }</p>
+<p>答案 <span class="m">d<sub>n−1</sub>(v)</span>。依赖只从第 i−1 层到第 i 层，即使原图有环。</p></div>
+<figure>
+<svg viewBox="0 0 520 170" width="520">
+  <defs><marker id="bar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <g font-size="13">
+  <g class="ln" marker-end="url(#bar)">
+    <line x1="58" y1="76" x2="186" y2="32"/><line x1="58" y1="92" x2="186" y2="136"/>
+    <path d="M190 44 Q 175 85 190 124"/><path d="M210 124 Q 225 85 210 44"/>
+    <line x1="214" y1="30" x2="352" y2="76"/><line x1="214" y1="136" x2="352" y2="94"/>
+  </g>
+  <g fill="#e07a3f" font-weight="700"><text x="110" y="44">4</text><text x="110" y="128">5</text><text x="160" y="90">4</text><text x="226" y="90">−3</text><text x="285" y="44">4</text><text x="285" y="132">6</text></g>
+  <circle cx="45" cy="84" r="15" fill="#3b7dd8"/><text x="45" y="89" text-anchor="middle" fill="#fff">s</text>
+  <circle cx="200" cy="30" r="15" class="nd"/><text x="200" y="35" text-anchor="middle">a</text>
+  <circle cx="200" cy="138" r="15" class="nd"/><text x="200" y="143" text-anchor="middle">b</text>
+  <circle cx="365" cy="84" r="15" class="nd"/><text x="365" y="89" text-anchor="middle">t</text>
+  <text x="395" y="70" font-size="12">环 a→b→a</text><text x="395" y="88" font-size="12">权 4−3 = 1 ≥ 0</text><text x="395" y="106" font-size="12">（不是负环）</text>
+  </g>
+</svg>
+<figcaption>图 4　Bellman–Ford 例子：s→a 4，s→b 5，a→b 4，b→a −3，a→t 4，b→t 6。</figcaption>
+</figure>
+<div class="tablewrap"><table class="dp">
+<tr><th>i</th><th>s</th><th>a</th><th>b</th><th>t</th><th>说明</th></tr>
+<tr><td>0</td><td>0</td><td>∞</td><td>∞</td><td>∞</td><td style="font-family:inherit">只有 s 有限</td></tr>
+<tr><td>1</td><td>0</td><td>4</td><td>5</td><td>∞</td><td style="font-family:inherit">一条边到不了 t</td></tr>
+<tr><td>2</td><td>0</td><td class="hl">2</td><td>5</td><td>8</td><td style="font-family:inherit">d₂(a)=min{4, 0+4, 5−3}=2；d₂(t)=min{∞, 4+4, 5+6}=8（读的是第 1 行）</td></tr>
+<tr><td>3</td><td>0</td><td>2</td><td>5</td><td class="hl">6</td><td style="font-family:inherit">改进再传一条边：d₃(t)=2+4=6，路径 s→b→a→t</td></tr>
+</table></div>
+<ul>
+<li><b>两行实现</b>：每轮复制旧行，对每条边 <span class="m">new[v] ← min(new[v], old[u]+w)</span>；<span class="m">O(n(n+m))</span> 时间、<span class="m">O(n)</span> 空间；保留所有行（<span class="m">O(n²)</span>）便于回溯（记录“保持”或“追加边 (u,v)”，平局优先“保持”以免绕零权环）。</li>
+<li><b>单数组原地更新</b>（常见写法）：一轮里后面的边可能用到本轮的改进，所以第 i 轮后的值“至少和 ≤ i 条边的最优一样好”；n−1 轮后精确。<span class="m">O(nm + n)</span>。</li>
+<li><b>提前结束</b>：一整轮没变化即可停止。<b>检测负环</b>：n−1 轮后再扫一遍边，若还能严格改进 ⇒ 存在从 s 可达的负环。SPFA（队列优化）最坏仍是 Bellman–Ford 的界。</li>
+</ul>
+
+<h3 id="d5-fw">5.4 Floyd–Warshall：全源最短路</h3>
+<div class="box def"><div class="bt">状态与递推</div>
+<p>顶点编号 1..n。<span class="m">D<sub>k</sub>(i,j)</span> = 从 i 到 j、<b>中间点只允许是 1..k</b> 的最短距离。</p>
+<p style="text-align:center" class="mn">D<sub>k</sub>(i,j) = min{ D<sub>k−1</sub>(i,j),  D<sub>k−1</sub>(i,k) + D<sub>k−1</sub>(k,j) }</p>
+<p><span class="m">D<sub>0</sub>(i,i) = 0</span>，有边则 <span class="m">w(i,j)</span>（平行边取最小），否则 ∞。为何两段就够：无负环时取最短简单路，若经过 k 则只经过一次，切开后两段中间点都 &lt; k。</p></div>
+<div class="ex box"><div class="bt">课件例子：A→B 4，B→C −2，C→A 3，A→C 10</div>
+<div class="tablewrap"><table class="dp">
+<tr><th></th><th colspan="3">D₀</th><th colspan="3">D₁（允许 A）</th><th colspan="3">D₂（再允许 B）</th><th colspan="3">D₃（再允许 C）</th></tr>
+<tr><th></th><th>A</th><th>B</th><th>C</th><th>A</th><th>B</th><th>C</th><th>A</th><th>B</th><th>C</th><th>A</th><th>B</th><th>C</th></tr>
+<tr><th>A</th><td>0</td><td>4</td><td>10</td><td>0</td><td>4</td><td>10</td><td>0</td><td>4</td><td class="hl">2</td><td>0</td><td>4</td><td>2</td></tr>
+<tr><th>B</th><td>∞</td><td>0</td><td>−2</td><td>∞</td><td>0</td><td>−2</td><td>∞</td><td>0</td><td>−2</td><td class="hl">1</td><td>0</td><td>−2</td></tr>
+<tr><th>C</th><td>3</td><td>∞</td><td>0</td><td>3</td><td class="hl">7</td><td>0</td><td>3</td><td>7</td><td>0</td><td>3</td><td>7</td><td>0</td></tr>
+</table></div>
+<p>D₁(C,B) = 3+4 = 7；D₂(A,C) = min{10, 4−2} = 2；D₃(B,A) = −2+3 = 1。</p></div>
+<pre><code>for k = 1..n:          // k 必须在最外层：它决定“允许哪些中间点”
+  for i = 1..n:
+    for j = 1..n:
+      D[i][j] = min(D[i][j], D[i][k] + D[k][j])</code></pre>
+<p>时间 <span class="m">O(n³)</span>，空间 <span class="m">O(n²)</span>（单矩阵原地更新是安全的：无负环时 <span class="m">D[k][k]=0</span>，第 k 阶段第 k 行、列不变）。<b>路径恢复</b>：存 <span class="m">next[i][j]</span>（初始直接边为 j；经 k 严格改进时设为 <span class="m">next[i][k]</span>）。</p>
+
+<div class="tablewrap"><table>
+<tr><th>方法</th><th>“更早”的依赖是什么</th><th>时间</th></tr>
+<tr><td>DAG 路径</td><td>拓扑序中更早的点</td><td><span class="m">O(n+m)</span></td></tr>
+<tr><td>装配线</td><td>更早的作业</td><td><span class="m">O(n)</span></td></tr>
+<tr><td>Bellman–Ford</td><td>少一条允许的边</td><td><span class="m">O(nm+n)</span></td></tr>
+<tr><td>Floyd–Warshall</td><td>更少的允许中间点</td><td><span class="m">O(n³)</span></td></tr>
+</table></div>
+<div class="box key"><div class="bt">设计问题（考点）</div><p>如果最自然的递推是循环依赖的，<b>加什么额外限制能让依赖只指向更小的状态？</b>（边数上限、允许的中间点集合、拓扑序……）</p></div>
+
+<!-- ====================================================== -->
+<h2 id="d6"><span class="num">6</span>记住一个子集：指数级但比暴力好</h2>
+<p>有些问题的未来取决于“用过了哪些对象”。状态可以是一个集合——状态数可能是指数级，DP <b>不一定</b>给出多项式算法，但能把 n! 降到 2ⁿ 级别。</p>
+
+<h3 id="d6-tsp">6.1 TSP：Held–Karp 子集 DP</h3>
+<div class="box def"><div class="bt">状态与递推</div>
+<p>固定起点 s。<span class="m">D(S, v)</span> = 从 s 出发、恰好访问 S 中每个点一次、在 v 结束的最小代价（<span class="m">s, v ∈ S</span>）。访问<b>顺序</b>不是状态的一部分：s→a→b→c 与 s→b→a→c 的后续选择完全一样，只保留更便宜的。</p>
+<p style="text-align:center" class="mn">D({s}, s) = 0,　D(S, v) = min<sub>u ∈ S∖{v}</sub> ( D(S∖{v}, u) + w(u,v) )</p>
+<p>缺边记 ∞；<span class="m">D(S, s) = ∞</span>（S ≠ {s}，不能提前回到 s）。按 |S| 递增计算。闭合：<span class="m">tour = min<sub>v ≠ s</sub> ( D(V, v) + w(v, s) )</span>。</p></div>
+<figure>
+<svg viewBox="0 0 460 190" width="460">
+  <g font-size="13">
+  <g class="ln" stroke-width="1.6">
+    <line x1="80" y1="40" x2="220" y2="40"/><line x1="220" y1="40" x2="220" y2="160"/><line x1="220" y1="160" x2="80" y2="160"/><line x1="80" y1="160" x2="80" y2="40"/>
+    <line x1="80" y1="40" x2="220" y2="160"/><line x1="220" y1="40" x2="80" y2="160"/>
+  </g>
+  <g fill="#e07a3f" font-weight="700"><text x="146" y="32">2</text><text x="228" y="104">1</text><text x="146" y="178">2</text><text x="62" y="104">3</text><text x="112" y="62">5</text><text x="180" y="62">6</text></g>
+  <circle cx="80" cy="40" r="15" fill="#3b7dd8"/><text x="80" y="45" text-anchor="middle" fill="#fff">s</text>
+  <circle cx="220" cy="40" r="15" class="nd"/><text x="220" y="45" text-anchor="middle">a</text>
+  <circle cx="220" cy="160" r="15" class="nd"/><text x="220" y="165" text-anchor="middle">b</text>
+  <circle cx="80" cy="160" r="15" class="nd"/><text x="80" y="165" text-anchor="middle">c</text>
+  <g font-size="12"><text x="260" y="40">D({s,a,b}, b) = 2+1 = 3</text><text x="260" y="62">D({s,a,b}, a) = 5+1 = 6</text>
+  <text x="260" y="90">D({s,a,b,c}, c)</text><text x="270" y="110">= min{6+6, 3+2} = 5</text><text x="260" y="140">回到 s：5 + 3 = 8</text><text x="260" y="160">最优回路 s→a→b→c→s</text></g>
+  </g>
+</svg>
+<figcaption>图 5　课件 TSP 例子（数值由课件推出）。</figcaption>
+</figure>
+<div class="tablewrap"><table>
+<tr><th>方法</th><th>记住什么</th><th>时间</th><th>空间</th></tr>
+<tr><td>枚举回路</td><td>整个顺序</td><td><span class="m">O(n·(n−1)!)</span></td><td><span class="m">O(n)</span></td></tr>
+<tr><td>子集 DP</td><td>访问集合 + 终点</td><td><span class="m">O(n²2ⁿ)</span>（稀疏图 <span class="m">O((n+m)2ⁿ)</span>）</td><td><span class="m">O(n2ⁿ)</span></td></tr>
+</table></div>
+<p>收益来自<b>合并“未来选择相同”的历史</b>，代价是一张大得多的表。</p>
+
+<h3 id="d6-col">6.2 图着色：一次拿掉一个颜色类</h3>
+<div class="box def"><div class="bt">状态与递推</div>
+<p>同色的点构成独立集。<span class="m">C(S)</span> = 诱导子图 <span class="m">G[S]</span> 的色数。</p>
+<p style="text-align:center" class="mn">C(∅) = 0,　C(S) = 1 + min<sub>∅ ≠ I ⊆ S, I 独立</sub> C(S∖I)</p>
+<p>按 |S| 递增；答案 <span class="m">C(V)</span>。例：5-环 a-b-c-d-e-a，取 I = {a,c}，剩 {b,d,e} 只有 d–e 相邻需 2 色 ⇒ 1 + 2 = 3。</p></div>
+<p><b>复杂度</b>：<span class="m">Σ<sub>S</sub> 2<sup>|S|</sup> = Σ<sub>j</sub> binom(n,j) 2<sup>j</sup> = 3ⁿ</span>（每个点在 (S, I) 中有三种角色：不在 S、在 S∖I、在 I）⇒ <span class="m">O*(3ⁿ)</span> 时间、<span class="m">O*(2ⁿ)</span> 空间。</p>
+<div class="box key"><div class="bt">改进：只枚举极大独立集（Lawler 1976）</div>
+<p><b>极大 ≠ 最大</b>（路径 a–b–c：{b} 极大但 {a,c} 更大）。取最优着色的一个颜色类 I，若外面某点与 I 无邻居，就把它改成 I 的颜色——不产生冲突、不增加颜色；重复直到 I 极大 ⇒ 只需考虑极大独立集。</p>
+<p>j 个点的图至多 <span class="m">3<sup>j/3</sup></span> 个极大独立集（Moon–Moser），可在 <span class="m">O*(3<sup>j/3</sup>)</span> 列出 ⇒ <span class="m">Σ binom(n,j)3<sup>j/3</sup> = (1+3<sup>1/3</sup>)ⁿ ≈ 2.4423ⁿ</span>。状态和含义不变，只是每个状态的候选更少。（用容斥可到 <span class="m">O*(2ⁿ)</span>，超出本课。）</p></div>
+
+<h3 id="d6-dom">6.3 二分图上的支配集（Liedloff 2008）</h3>
+<p>选最少的点，使每个点被选或与被选点相邻。即使在二分图上也是 NP-hard。思路：<b>枚举较小一侧 A 的选择</b>，剩下的用覆盖 DP 补全。</p>
+<figure>
+<svg viewBox="0 0 440 210" width="440">
+  <g font-size="13">
+  <g stroke="currentColor" stroke-opacity=".6" stroke-width="1.5">
+    <line x1="100" y1="40" x2="320" y2="30"/><line x1="100" y1="40" x2="320" y2="80"/><line x1="100" y1="40" x2="320" y2="130"/>
+    <line x1="100" y1="110" x2="320" y2="130"/><line x1="100" y1="110" x2="320" y2="180"/>
+    <line x1="100" y1="180" x2="320" y2="30"/><line x1="100" y1="180" x2="320" y2="80"/>
+  </g>
+  <circle cx="100" cy="40" r="16" fill="#3b7dd8"/><text x="100" y="45" text-anchor="middle" fill="#fff">a₁</text>
+  <circle cx="100" cy="110" r="16" class="nd"/><text x="100" y="115" text-anchor="middle">a₂</text>
+  <circle cx="100" cy="180" r="16" class="nd"/><text x="100" y="185" text-anchor="middle">a₃</text>
+  <circle cx="320" cy="30" r="16" fill="#2e9e6a"/><text x="320" y="35" text-anchor="middle" fill="#fff">b₁</text>
+  <circle cx="320" cy="80" r="16" class="nd"/><text x="320" y="85" text-anchor="middle">b₂</text>
+  <circle cx="320" cy="130" r="16" class="nd"/><text x="320" y="135" text-anchor="middle">b₃</text>
+  <circle cx="320" cy="180" r="16" fill="#e07a3f"/><text x="320" y="185" text-anchor="middle" fill="#fff">b₄</text>
+  <text x="100" y="12" text-anchor="middle" font-weight="700">A</text><text x="320" y="12" text-anchor="middle" font-weight="700">B</text>
+  <text x="350" y="35" font-size="11">剩余覆盖</text><text x="350" y="185" font-size="11">被迫选</text><text x="40" y="45" font-size="11">X</text>
+  </g>
+</svg>
+<figcaption>图 6　X = {a₁}（蓝）支配 b₁,b₂,b₃；b₄ 没有被支配，B 内部没有边 ⇒ 只能选 b₄ 自己（橙，Y = B∖N(X)）；b₄ 支配 a₂；剩 R = {a₃}，用 b₁（绿）覆盖。共 3 个点。</figcaption>
+</figure>
+<div class="box def"><div class="bt">算法</div>
+<ol>
+<li>设 |A| ≤ |B|，B = {b₁..b_q}。覆盖表：<span class="m">H(R, k)</span> = 在 b₁..b_k 中选最少的点，使其邻居覆盖 R ⊆ A。
+<span class="m">H(R,k) = min{ H(R,k−1),  1 + H(R ∖ N(b<sub>k</sub>), k−1) }</span>，<span class="m">H(∅,k)=0</span>，<span class="m">H(R,0)=∞</span>（R≠∅）。</li>
+<li>对每个 <span class="m">X ⊆ A</span>：<span class="m">Y = B ∖ N(X)</span>（被迫选），<span class="m">R = A ∖ (X ∪ N(Y))</span>。</li>
+<li>返回 <span class="m">min<sub>X</sub> |X| + |Y| + H(R, q)</span>。</li>
+</ol>
+<p>正确性：Y 是被迫的；Y 中的点与 R 无邻居，所以残余覆盖不需要重复选 Y 的点。时间 <span class="m">O*(2<sup>|A|</sup>) ⊆ O*(2<sup>n/2</sup>)</span>。例：<span class="m">H({a₂,a₃},3) = min{∞, 1 + H({a₃},2)} = 2</span>。</p></div>
+
+<h3 id="d6-pm">6.4 计数二分图完美匹配</h3>
+<p>完全二分图有 n! 个完美匹配，列举至少阶乘时间；DP 把“补全方式的个数”相加而不是列举。</p>
+<div class="box def"><div class="bt">状态与递推</div>
+<p><span class="m">M(i, U)</span> = 把 a₁..a_i 与 {b_j : j ∈ U} 恰好匹配的方案数。看 a_i 的配偶：</p>
+<p style="text-align:center" class="mn">M(i,U) = Σ<sub>j ∈ U, a<sub>i</sub>b<sub>j</sub> ∈ E</sub> M(i−1, U∖{j})，　M(0, ∅) = 1</p>
+<p>情况互不重叠（a_i 恰有一个配偶）⇒ 计数相加不会重复（<b>计数 DP 要额外检查不重复</b>）。直接做 <span class="m">O(n²2ⁿ)</span>。</p>
+<p><b>练习答案</b>：非零状态必有 <span class="m">i = |U|</span> ⇒ 去掉冗余参数，<span class="m">F(U) = Σ<sub>j∈U, a<sub>|U|</sub>b<sub>j</sub>∈E</sub> F(U∖{j})</span>，2ⁿ 个状态 × n ⇒ <span class="m">O(n2ⁿ)</span> 次加法、<span class="m">O(2ⁿ)</span> 空间（答案可达 n!，有 Θ(n log n) 位）。</p></div>
+<div class="box ex"><div class="bt">例</div><p>边：a₁–b₁,b₂,b₃；a₂–b₁,b₃；a₃–b₁,b₂（无 a₃b₃）。<span class="m">M(3,{1,2,3}) = M(2,{2,3}) + M(2,{1,3}) = 1 + 2 = 3</span>。</p></div>
+<div class="tablewrap"><table>
+<tr><th>问题</th><th>状态记住</th><th>合并方式</th></tr>
+<tr><td>TSP</td><td>访问集合 + 终点</td><td>最小代价</td></tr>
+<tr><td>着色</td><td>剩余顶点</td><td>最少颜色</td></tr>
+<tr><td>二分支配</td><td>未覆盖子集 + 前缀</td><td>最小规模</td></tr>
+<tr><td>完美匹配</td><td>已用配偶</td><td>计数求和</td></tr>
+</table></div>
+
+<!-- ====================================================== -->
+<h2 id="d7"><span class="num">7</span>把方法串起来</h2>
+<div class="tablewrap"><table>
+<tr><th>要记住什么</th><th>例子</th><th>表的形状</th></tr>
+<tr><td>部分解在哪里结束</td><td>LIS、路径</td><td>一维（终点）</td></tr>
+<tr><td>哪些选择还可用</td><td>0-1 背包的物品前缀</td><td>二维（前缀 × 资源）</td></tr>
+<tr><td>每个输入用了多少</td><td>两个字符串前缀</td><td>二维网格</td></tr>
+<tr><td>区间的两端</td><td>矩阵链乘</td><td>上三角，按长度</td></tr>
+<tr><td>用过哪些对象</td><td>TSP 子集 DP</td><td>2ⁿ 级</td></tr>
+</table></div>
+<div class="box tpl"><div class="bt">完整解答检查清单（课件 §7）</div><ol>
+<li>写清问题与每个参数的含义。</li>
+<li>把可能的“最后一个选择”分类，解释为什么<b>覆盖所有解</b>。</li>
+<li>优化问题：说明“把子解换成更好的仍然合法”（最优子结构 / cut-and-paste）。</li>
+<li>给出递推，包括空集与不可能（∞）的情况。</li>
+<li>给出边界、计算顺序与最终答案。</li>
+<li>计算状态数、转移数与存储；如需输出具体解，说明回溯。</li>
+<li>计数问题：再检查没有解被数两次。</li>
+</ol></div>
+<div class="box ex"><div class="bt">课件练习：路径上的最大权独立集（含答案）</div>
+<p><span class="m">D(i)</span> = 只用前 i 个点的最大权。第 i 个点要么不选（<span class="m">D(i−1)</span>），要么选——此时 i−1 不能选，剩下恰好是“到 i−2 为止的前缀”：</p>
+<p style="text-align:center" class="mn">D(0) = 0,　D(1) = w<sub>1</sub>,　D(i) = max{ D(i−1),  w<sub>i</sub> + D(i−2) }</p>
+<p>例：权 3, 2, 5, 10, 7 ⇒ D = 0, 3, 3, 8, 13, 15；回溯：D(5)=D(3)+7 选 5，D(3)=D(1)+5 选 3，选 1 ⇒ {1,3,5}，权 15。<span class="m">O(n)</span>。<b>只留两个值</b>可以算出最优值，但要输出选了哪些点，需要保留表（或每步的选择）——两个值不够回溯。</p></div>
+<div class="box ex"><div class="bt">谜题：桌面上的硬币</div><p>25 枚等大硬币（半径 r）放满桌面使得再放不下一枚。则桌面每一点到某个圆心的距离 &lt; 2r（否则可以以该点为圆心再放一枚）⇒ 半径放大到 2r 的 25 个圆盖住桌面。整体缩小一半：25 枚半径 r 的硬币盖住一张长宽各为一半的桌子；原桌面可分成 4 张这样的小桌 ⇒ 100 枚硬币可以盖住整张桌子。</p></div>
+
+<!-- ====================================================== -->
+<h2 id="d8"><span class="num">8</span>选读：字符串匹配</h2>
+<p>在文本 <span class="m">A = a<sub>1</sub>…a<sub>n</sub></span> 中找模式 <span class="m">B = b<sub>1</sub>…b<sub>m</sub></span> 的所有<b>连续</b>出现（与 LCS 不同，不允许间隔）。朴素：每个起点比 m 个字符，最坏 <span class="m">O(nm)</span>。</p>
+<h3 id="d8-rk">8.1 Rabin–Karp：滚动哈希</h3>
+<ul>
+<li>多项式哈希：<span class="m">H(b<sub>1</sub>…b<sub>m</sub>) = (Σ b<sub>j</sub>d<sup>m−j</sup>) mod p</span>。例：d=10、p=13，H(123) = 123 mod 13 = 6。首个哈希用 Horner：<span class="m">h ← (dh + b<sub>j</sub>) mod p</span>。</li>
+<li>滚动更新：预算 <span class="m">r = d<sup>m−1</sup> mod p</span>，<span class="m">H<sub>s+1</sub> = (d(H<sub>s</sub> − a<sub>s</sub>r) + a<sub>s+m</sub>) mod p</span>。123→234：r=9，<span class="m">(10(6−9)+4) mod 13 = 0</span>（= 234 mod 13 ✓）。</li>
+<li><b>哈希相等只是候选</b>：H(123) = 6 = H(136)。必须逐字符验证。固定的大素数本身不带概率保证。</li>
+<li>代价：扫描 <span class="m">O(n+m)</span> 次算术；z 个哈希碰撞窗口验证 <span class="m">O(zm)</span>；最坏 <span class="m">O(nm)</span>。实现注意溢出和负余数。</li>
+</ul>
+<h3 id="d8-kmp">8.2 KMP：保留仍然有用的部分匹配</h3>
+<div class="box def"><div class="bt">失败函数（前缀函数）</div>
+<p><span class="m">π(k)</span> = 模式前缀 <span class="m">B<sub>k</sub></span> 的最长<b>真</b>前缀、同时也是其后缀的长度（<span class="m">0 ≤ π(k) &lt; k</span>）。例 B = xyxyxzx：</p>
+<div class="tablewrap"><table class="dp">
+<tr><th>k</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+<tr><th>b<sub>k</sub></th><td>x</td><td>y</td><td>x</td><td>y</td><td>x</td><td>z</td><td>x</td></tr>
+<tr><th>π(k)</th><td>0</td><td>0</td><td>1</td><td>2</td><td class="hl">3</td><td>0</td><td>1</td></tr>
+</table></div>
+<p>π(5) = 3：xyxyx 的前缀 xyx = 后缀 xyx。失败链 5 → 3 → 1 → 0 按从长到短列出所有可能保留的长度（更短的前后缀一定也是最长那个的前后缀）。</p></div>
+<pre><code>// 构造 π（π(1) = 0）
+for k = 2..m:
+    q = π(k-1)
+    while q > 0 and b[q+1] != b[k]: q = π(q)
+    if b[q+1] == b[k]: q = q + 1
+    π(k) = q
+// 扫描文本
+q = 0
+for i = 1..n:
+    while q > 0 and b[q+1] != a[i]: q = π(q)
+    if b[q+1] == a[i]: q = q + 1
+    if q == m: report match at i-m+1; q = π(m)   // 允许重叠出现</code></pre>
+<div class="box ex"><div class="bt">完整扫描：A = xyxyxyxzx，B = xyxyxzx</div>
+<p>每步之后的匹配长度：1, 2, 3, 4, 5, <b>4</b>, 5, 6, 7。i = 6 时长度 5 遇到 y 而模式期待 z：退到 π(5) = 3，再用同一个 y 扩展到 4。i = 9 长度到 7 ⇒ 在位置 9−7+1 = 3 匹配，然后退到 π(7) = 1 以便发现重叠的出现。构造 π 时 k = 6：q=π(5)=3 期待 y 读到 z → q=π(3)=1 仍期待 y → q=π(1)=0，x≠z ⇒ π(6)=0。</p></div>
+<div class="box proof"><div class="bt">正确性与线性时间</div>
+<p>失败时更短的部分匹配必须以同一文本位置结束（是 <span class="m">B<sub>q</sub></span> 的后缀），又必须是模式前缀 ⇒ 正是失败链上的长度，从长到短检查，不会漏掉匹配。<b>势能论证</b>：文本指针只前进 n 次，每次 q 至多加 1；q 从不为负，所以所有回退之和 ≤ 所有增加之和 ⇒ 扫描 <span class="m">O(n)</span>，构造 π 同理 <span class="m">O(m)</span>，总 <span class="m">O(n+m)</span>。</p>
+<p>有限自动机视角：状态 q ∈ {0..m}，转移 <span class="m">δ(q, c)</span> 把“回退 + 扩展”预先算好（如 δ(5, y) = 4）。</p></div>
+<div class="tablewrap"><table>
+<tr><th>方法</th><th>保留的信息</th><th>最坏时间</th></tr>
+<tr><td>朴素</td><td>无</td><td><span class="m">O(nm)</span></td></tr>
+<tr><td>Rabin–Karp</td><td>当前窗口的哈希</td><td><span class="m">O(nm)</span></td></tr>
+<tr><td>KMP</td><td>已匹配前缀 + 失败表</td><td><span class="m">O(n+m)</span></td></tr>
+</table></div>
+
+<!-- ====================================================== -->
+<h2 id="d9"><span class="num">9</span>Module 4 考点清单 &amp; 与前面模块的联系</h2>
+<div class="box key"><div class="bt">考点清单</div>
+<ol>
+<li><b>写完整的 DP 解答</b>：状态（一句话含义）、递推（含 ∞ / 空情况）、边界、顺序、答案、复杂度、回溯。</li>
+<li><b>正确性论证</b>：按“最后一个选择”分类（覆盖所有解 + 每个候选合法）+ 最优子结构的替换论证；按填表顺序归纳。</li>
+<li><b>状态设计</b>：一维不够时加参数（LIS 固定终点、0-1 背包加物品前缀、矩阵链用区间两端、Bellman–Ford 加边数、FW 加允许中间点、TSP 加集合）。</li>
+<li><b>标准模型</b>：LIS（含 O(n log n)）、带权区间调度、找零、无限/0-1 背包、平衡划分、LCS/三串 LCS、SCS（n+m−L）、编辑距离、矩阵链、表达式极值（同时存 min/max）。</li>
+<li><b>图</b>：DAG 最短/最长路 O(n+m)、装配线、Bellman–Ford（负边、负环检测、O(nm)）、Floyd–Warshall（k 最外层、O(n³)）。</li>
+<li><b>子集 DP</b>：Held–Karp TSP <span class="m">O(n²2ⁿ)</span>、着色 <span class="m">O*(3ⁿ)</span> 与极大独立集改进、计数完美匹配 <span class="m">O(n2ⁿ)</span>。</li>
+<li><b>复杂度陷阱</b>：伪多项式（O(nC) 对 log C 是指数）；答案很大时算术操作数 ≠ 比特复杂度；“答案大”≠“输出长”。</li>
+<li>选读：Rabin–Karp（哈希相等要验证）、KMP 失败函数与线性时间论证。</li>
+</ol></div>
+<div class="box ex"><div class="bt">与前面内容的联系</div><ul>
+<li>Module 2 的活动选择（数个数，贪心）vs 本模块的带权版本（DP）：目标变了，贪心的交换论证就失效。</li>
+<li>期中 Q2：(a) 就是“DAG 最长路”；(b) 用 SCC 把有环图变成 DAG 后再做 DAG 上的 DP。</li>
+<li>Module 3：0-1 背包、SubsetSum、Partition 是 NP-hard，但有伪多项式 DP；TSP 和着色是 NP-hard，子集 DP 给出比暴力快得多的精确指数算法（对应“放宽运行时间”的应对策略）。</li>
+<li>2SAT ∈ P 用的是 SCC + 拓扑序；Module 3 的 meet-in-the-middle 也是“存答案、再复用”的思想。</li>
+</ul></div>
+
+</main>
+</div>
+<a class="backtop" href="#">↑ 顶部</a>
+<script>
+(function(){
+  var nav=document.getElementById('tocList'); if(!nav) return;
+  var hs=document.querySelectorAll('main h2[id], main h3[id]');
+  hs.forEach(function(h){
+    var a=document.createElement('a'); a.href='#'+h.id;
+    var n=h.querySelector('.num'); var t=h.textContent; if(n){t=n.textContent+'  '+t.slice(n.textContent.length);} a.textContent=t.replace(/\s+/g,' ').trim();
+    a.className=h.tagName==='H2'?'lv1':'lv2'; nav.appendChild(a);
+  });
+})();
+</script>
+
+<script>
+/* Mobile interaction enhancements; educational text, equations and diagrams remain intact. */
+(function () {
+  'use strict';
+  var mq = window.matchMedia('(max-width: 900px)');
+  var nav = document.querySelector('nav.toc');
+  var isMobile = function () { return mq.matches; };
+
+  if (nav) {
+    var details = nav.querySelector('details');
+    if (details) {
+      function syncDisclosure(event) {
+        if (event && event.matches === undefined) return;
+        details.open = !isMobile();
+      }
+      syncDisclosure();
+      if (mq.addEventListener) mq.addEventListener('change', syncDisclosure);
+      else if (mq.addListener) mq.addListener(syncDisclosure);
+      nav.addEventListener('click', function (event) {
+        if (isMobile() && event.target.closest('a[href^="#"]')) details.open = false;
+      });
+    } else if (nav.querySelector('.brand') && nav.querySelector('a')) {
+      nav.classList.add('mobile-links-nav');
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'mobile-toc-button';
+      btn.textContent = '目录 ☰';
+      btn.setAttribute('aria-label', '展开或收起目录');
+      btn.setAttribute('aria-expanded', 'false');
+      nav.insertBefore(btn, nav.children[1] || null);
+      function closeMenu() {
+        nav.classList.remove('mobile-open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+      btn.addEventListener('click', function () {
+        var open = nav.classList.toggle('mobile-open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      nav.addEventListener('click', function (event) {
+        if (isMobile() && event.target.closest('a[href^="#"]')) closeMenu();
+      });
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') closeMenu();
+      });
+      if (mq.addEventListener) mq.addEventListener('change', closeMenu);
+    }
+  }
+
+  // Only wrap as needed; large data tables should scroll by themselves, not widen the page.
+  function wrapTables() {
+    if (!isMobile()) return;
+    document.querySelectorAll('main table').forEach(function (table) {
+      if (table.closest('.tablewrap, .tbl, .mobile-table-scroll')) return;
+      var scroll = document.createElement('div');
+      scroll.className = 'mobile-table-scroll';
+      scroll.setAttribute('role', 'region');
+      scroll.setAttribute('aria-label', '可横向滑动的完整表格');
+      scroll.setAttribute('tabindex', '0');
+      table.parentNode.insertBefore(scroll, table);
+      scroll.appendChild(table);
+    });
+  }
+  wrapTables();
+  if (mq.addEventListener) mq.addEventListener('change', wrapTables);
+
+  // Preserve diagram dimensions, offering horizontal pan instead of unreadable scaling.
+  document.querySelectorAll('main figure svg[viewBox]').forEach(function (svg) {
+    var vb = svg.viewBox && svg.viewBox.baseVal;
+    if (!vb || !vb.width) return;
+    if (vb.width >= 450) {
+      svg.style.setProperty('--mobile-diagram-width', Math.round(vb.width) + 'px');
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

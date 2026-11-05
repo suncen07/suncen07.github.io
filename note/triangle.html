@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f8f6">
+  <meta name="description" content="Triangle-Free Independent Set 的 NP-hard 证明：中文直觉、交互式边替换图、双向归约和可用于考试的正式英文证明。">
+  <title>Triangle-Free Independent Set · NP-hard 归约详解</title>
+  <style>
+    :root{color-scheme:light;--bg:#f7f8f6;--paper:#fff;--ink:#1d2827;--sub:#536260;--muted:#7b8784;--rule:#dce4e0;--accent:#206a59;--accent-bg:#edf6f1;--warn:#a9572a;--warn-bg:#fff4e9;--code:#f2f5f3;--shadow:0 8px 30px rgba(28,45,38,.035)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:16px;line-height:1.85;-webkit-font-smoothing:antialiased}
+    a{color:var(--accent);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}
+    .wrap{width:min(900px,calc(100% - 48px));margin:auto}.topbar{border-bottom:1px solid var(--rule);background:rgba(255,255,255,.82)}
+    .topbar .wrap{min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:14px}.brand{font-size:13px;font-weight:800;letter-spacing:.035em}.toplink{font-size:12px;font-weight:650;text-decoration:none;color:var(--sub)}
+    main{padding-bottom:92px}.hero{padding:52px 0 31px}.eyebrow{font-size:12px;color:var(--accent);font-weight:800;letter-spacing:.14em;text-transform:uppercase}.hero h1{font-size:clamp(27px,4.7vw,45px);letter-spacing:-.04em;line-height:1.27;margin:10px 0 15px;font-weight:850;max-width:750px}.lede{color:var(--sub);font-size:16px;max-width:720px;margin:0}.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:21px}.tag{border:1px solid var(--rule);border-radius:100px;padding:5px 10px;font-size:12px;font-weight:650;color:var(--sub);background:white;line-height:1.5}
+    .toc{display:flex;flex-wrap:wrap;gap:12px 20px;padding:16px 0 22px;border-bottom:1px solid var(--rule)}.toc a{text-decoration:none;font-size:13px;font-weight:650}
+    section{padding:30px 0 8px;scroll-margin-top:24px}.section-label{font-size:12px;font-weight:800;color:var(--accent);letter-spacing:.06em;margin-bottom:4px}.section-title{font-size:clamp(21px,3.2vw,27px);font-weight:820;line-height:1.4;margin:4px 0 17px;letter-spacing:-.025em}p{margin:10px 0 15px}strong{font-weight:780}.muted{color:var(--sub)}.small{font-size:13px}.soft{font-size:14px;color:var(--sub)}.lead-strong{font-size:19px;font-weight:730;line-height:1.65;margin-bottom:14px}
+    .paper{background:var(--paper);border:1px solid var(--rule);border-radius:15px;padding:22px 25px;margin:18px 0;box-shadow:var(--shadow)}.paper h3{font-size:17px;margin:0 0 12px;line-height:1.5}.paper p:last-child{margin-bottom:0}.paper .section-title{margin-top:0}.rule{border-top:1px solid var(--rule);margin:23px 0}
+    .key{border-left:3px solid var(--accent);padding:13px 16px;background:var(--accent-bg);border-radius:0 10px 10px 0;margin:18px 0}.warning{border-left:3px solid var(--warn);padding:13px 16px;background:var(--warn-bg);border-radius:0 10px 10px 0;margin:18px 0}.key p,.warning p{margin:4px 0}
+    .math{font-family:"STIX Two Math","Cambria Math",Georgia,serif;font-size:1.08em;white-space:nowrap}.equation{margin:17px 0;padding:17px 12px;text-align:center;background:var(--code);border:1px solid var(--rule);border-radius:10px;font-size:clamp(17px,2.8vw,23px);font-family:"Cambria Math",Georgia,serif;line-height:1.5;overflow-x:auto}.equation strong{color:var(--accent)}
+    .steps{counter-reset:st;list-style:none;padding:0;margin:16px 0}.steps li{position:relative;padding:0 0 18px 43px;min-height:36px}.steps li:before{counter-increment:st;content:counter(st);position:absolute;top:2px;left:0;width:26px;height:26px;border-radius:50%;background:#e9f2ec;color:var(--accent);display:grid;place-items:center;font-weight:800;font-size:13px}.steps li:last-child{padding-bottom:3px}
+    .fig{border:1px solid var(--rule);background:#fbfcfb;border-radius:13px;padding:14px;margin:16px 0 18px;overflow:hidden}.fig figcaption{margin-top:4px;color:var(--sub);font-size:13px;line-height:1.7}.fig svg{width:100%;height:auto;display:block}.fig .node{fill:white;stroke:#82948d;stroke-width:2.5}.fig .node.original{stroke:#3f6760;stroke-width:3}.fig .node.selected{fill:#d0ede2;stroke:#16805f;stroke-width:3.5}.fig .node-label{fill:#23413b;font-weight:700;font-size:18px;pointer-events:none}.fig .edge{stroke:#9da9a5;stroke-width:3;stroke-linecap:round}.fig .diagram-heading{font-size:16px;fill:#344b45;font-weight:750}.fig .diagram-hint{font-size:13px;fill:#647770}
+    .choice-group{display:flex;flex-wrap:wrap;gap:8px;margin:7px 0 14px}.choice-group button{background:#fff;border:1px solid #cdd9d3;border-radius:9px;padding:10px 13px;font:inherit;font-weight:720;font-size:13px;color:var(--ink);cursor:pointer;transition:background .12s,border-color .12s;touch-action:manipulation}.choice-group button:hover{border-color:var(--accent)}.choice-group button[aria-pressed="true"]{background:var(--accent-bg);color:var(--accent);border-color:#80ad98}.choice-outcome{margin:10px 2px 1px;color:var(--sub);font-size:14px;min-height:50px}.choice-outcome strong{color:var(--accent)}
+    .table-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);border-radius:11px;margin:18px 0}table{width:100%;border-collapse:collapse;font-size:14px;min-width:490px}th,td{padding:12px 13px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule)}th{background:#f1f5f2;font-weight:800;color:#345247;font-size:13px}tr:last-child td{border-bottom:0}tbody tr:nth-child(even){background:#fafcfb}td strong{color:var(--accent)}
+    .proof{font-family:Georgia,"Times New Roman",serif;font-size:16px;line-height:1.75;background:#fff}.proof h3{font-family:Inter,"PingFang SC",sans-serif;font-size:18px;margin:0 0 12px}.proof p{margin:9px 0 15px}.proof ul{padding-left:21px;margin:12px 0}.proof li{margin:11px 0}.proof .math{font-size:1.03em}.proof .note{font-family:Inter,"PingFang SC",sans-serif;font-size:12px;color:var(--sub);margin:0 0 14px}.proof .end{font-weight:800;letter-spacing:.03em}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}.two-col .paper{margin:0}.codeword{background:var(--code);border:1px solid var(--rule);border-radius:5px;padding:1px 6px;font-size:.91em;white-space:nowrap}.mini-head{font-weight:800;font-size:15px;margin:19px 0 8px}.counter{display:flex;gap:13px;align-items:flex-start;border-bottom:1px solid var(--rule);padding:14px 0}.counter:last-child{border:0}.count{font-size:12px;font-weight:900;color:var(--warn);min-width:23px}
+    .footer{border-top:1px solid var(--rule);padding:23px 0;font-size:12px;color:var(--muted)}.footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+    @media(max-width:650px){body{font-size:15px;line-height:1.8}.wrap{width:min(100% - 30px,900px)}.hero{padding:32px 0 24px}.hero h1{font-size:29px}.lede{font-size:14px}.toc{gap:8px 15px}.toc a{font-size:12px}section{padding:24px 0 5px}.paper{padding:17px 15px;border-radius:12px}.two-col{grid-template-columns:1fr}.fig{padding:8px}.choice-group{display:grid;grid-template-columns:1fr 1fr}.choice-group button{padding:11px 7px;min-height:43px}.equation{font-size:18px;padding:15px 5px}.proof{font-size:15px;line-height:1.72}.proof li{margin:10px 0}.proof ul{padding-left:20px}.fig figcaption{font-size:12px}.steps li{padding-left:39px}.tag{font-size:11px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+    @media print{body{background:#fff;font-size:12px}.topbar,.toc,.choice-group,.footer{display:none}.wrap{width:100%;max-width:none}.hero{padding:12px 0}.hero h1{font-size:26px}.paper,.fig{box-shadow:none;break-inside:avoid}.proof{font-size:12px}.section-title{font-size:19px}.fig svg{max-height:260px}.key,.warning{background:#fff!important}section{padding:16px 0 0}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="wrap"><div class="brand">ALGORITHMS / COMPLEXITY THEORY</div><a class="toplink" href="#formal">跳转到英文证明 ↓</a></div></header>
+  <main class="wrap">
+    <div class="hero">
+      <div class="eyebrow">NP-hardness · Reduction · Graph Theory</div>
+      <h1>Triangle-Free Independent Set<br>为什么它仍然是 NP-hard？</h1>
+      <p class="lede">从直觉理解边替换（edge subdivision）、构造为什么恰好有效，再写出与 sample solution 风格一致的 <strong>formal English proof</strong>。</p>
+      <div class="tags"><span class="tag">中文逐步解释</span><span class="tag">可交互 SVG</span><span class="tag">双向证明</span><span class="tag">考试可用英文稿</span><span class="tag">手机适配 · 离线可用</span></div>
+    </div>
+
+    <nav class="toc" aria-label="章节目录">
+      <a href="#problem">01 题目理解</a><a href="#insight">02 归约思路</a><a href="#gadget">03 交互图解</a><a href="#directions">04 双向证明</a><a href="#example">05 具体例子</a><a href="#formal">06 英文正式证明</a><a href="#pitfalls">07 常见错误</a>
+    </nav>
+
+    <section id="problem">
+      <div class="section-label">01 / UNDERSTAND THE QUESTION</div>
+      <h2 class="section-title">题目到底要证明什么？</h2>
+      <div class="paper">
+        <p><strong>原题：</strong>A graph <span class="math">G</span> is <em>triangle-free</em> if it contains no three pairwise-adjacent vertices. Given a triangle-free graph <span class="math">G = (V, E)</span> and a nonnegative integer <span class="math">k</span>, prove that it is NP-hard to decide whether <span class="math">G</span> has an independent set of size at least <span class="math">k</span>.</p>
+      </div>
+      <p><strong>Independent set（独立集）</strong>：顶点集合 <span class="math">I ⊆ V</span>，其中任意两点之间都没有边。问题问是否存在 <span class="math">|I| ≥ k</span>。</p>
+      <p><strong>Triangle-free（无三角形）</strong>：图中不存在三个彼此都有边相连的顶点。它不是说“没有环”，更不是说“没有边”！它仍然允许 4、5、6、9 等长度的环。</p>
+      <div class="key"><p><strong>真正的目标：</strong>已知一般图上的 Independent Set 是 NP-hard。我们要证明：<strong>即使规定输入图不能包含任何三角形，问题仍然难。</strong></p></div>
+      <p>因此，不能仅仅说“Independent Set 已经 NP-hard，所以这个版本也是”。因为 <strong>限制输入范围后，问题可能变简单</strong>；必须真正构造一个归约。</p>
+    </section>
+
+    <section id="insight">
+      <div class="section-label">02 / FIND THE REDUCTION</div>
+      <h2 class="section-title">最关键的想法：把原图中的每条边「拉长」</h2>
+      <p class="lead-strong">从已知 NP-hard 的一般 Independent Set 归约：<br>把每条原边 <span class="math">{u, v}</span> 替换成长度为 3 的路径 <span class="math">u — a<sub>e</sub> — b<sub>e</sub> — v</span>。</p>
+      <figure class="fig">
+        <svg viewBox="0 0 760 215" role="img" aria-label="原边 u-v 被替换为 u-a_e-b_e-v 路径，增加两个顶点">
+          <text x="153" y="31" text-anchor="middle" class="diagram-heading">原始边</text>
+          <line x1="97" y1="106" x2="218" y2="106" class="edge"/>
+          <circle cx="97" cy="106" r="23" class="node original"/><circle cx="218" cy="106" r="23" class="node original"/>
+          <text x="97" y="112" text-anchor="middle" class="node-label">u</text><text x="218" y="112" text-anchor="middle" class="node-label">v</text>
+          <path d="M270 105 H340 M329 94 L340 105 L329 116" fill="none" stroke="#206a59" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="565" y="31" text-anchor="middle" class="diagram-heading">替换后：加入两个新顶点</text>
+          <line x1="406" y1="106" x2="501" y2="106" class="edge"/><line x1="501" y1="106" x2="593" y2="106" class="edge"/><line x1="593" y1="106" x2="685" y2="106" class="edge"/>
+          <circle cx="406" cy="106" r="23" class="node original"/><circle cx="501" cy="106" r="23" class="node"/><circle cx="593" cy="106" r="23" class="node"/><circle cx="685" cy="106" r="23" class="node original"/>
+          <text x="406" y="112" text-anchor="middle" class="node-label">u</text><text x="501" y="112" text-anchor="middle" class="node-label">a</text><text x="593" y="112" text-anchor="middle" class="node-label">b</text><text x="685" y="112" text-anchor="middle" class="node-label">v</text>
+          <text x="547" y="163" text-anchor="middle" class="diagram-hint">a 和 b 是为这一条边单独创建的新顶点</text>
+          <text x="548" y="189" text-anchor="middle" class="diagram-hint">原边 u—v 已删除</text>
+        </svg>
+        <figcaption>每一条边都使用独立的新顶点对 <span class="math">a<sub>e</sub>, b<sub>e</sub></span>。这里说的“长度为 3”指 3 条边，不是 3 个顶点。</figcaption>
+      </figure>
+      <h3 class="mini-head">为什么恰好要加入两个点？</h3>
+      <ol class="steps">
+        <li><strong>消除三角形。</strong>原图里相连的两个旧顶点现在不再直接相连。每个新顶点只与路径上的两个邻居相连，而且这两个邻居之间没有边，所以不会形成三角形。</li>
+        <li><strong>给每条旧边提供最多 1 个可选的新顶点。</strong>因为 <span class="math">a<sub>e</sub></span> 和 <span class="math">b<sub>e</sub></span> 相邻，所以两者最多选一个。</li>
+        <li><strong>保留旧边带来的冲突。</strong>如果我们同时选了旧边的两个端点 <span class="math">u</span> 和 <span class="math">v</span>，中间两个新点都不能选；这条边就会少贡献 1 个顶点。冲突没有消失，而是变成了可以计数的“损失”。</li>
+      </ol>
+      <div class="key"><p><strong>一句话核心：</strong>用一个局部 gadget，把原来的“两个端点不可以同时选”转化为“如果两个端点同时选，那么这条边就损失一个新顶点”。</p></div>
+      <p>设 <span class="math">m = |E|</span>。每条原边对应一份这样的 gadget，所以新图中的最优独立集大小将恰好是 <span class="math">m</span> 加上原图的最优独立集大小：</p>
+      <div class="equation">α(G′) = α(G) + m</div>
+      <p>我们不能只把这个关系当成直觉；接下来会通过两方向证明它。</p>
+    </section>
+
+    <section id="gadget">
+      <div class="section-label">03 / INTERACTIVE LOCAL GADGET</div>
+      <h2 class="section-title">亲手看一次：选与不选，为什么刚好损失 1？</h2>
+      <p>先只看旧边 <span class="math">e = {u,v}</span> 对应的 4 个点。点击不同情况。<strong>绿色</strong>表示当前选入独立集的顶点。图中中间顶点按“能选多少就选多少”的原则自动选择。</p>
+      <div class="paper">
+        <div class="choice-group" role="group" aria-label="选择原边的两个端点是否进入独立集">
+          <button type="button" data-case="none" aria-pressed="true">两端都不选</button>
+          <button type="button" data-case="u" aria-pressed="false">只选 u</button>
+          <button type="button" data-case="v" aria-pressed="false">只选 v</button>
+          <button type="button" data-case="both" aria-pressed="false">u 和 v 都选</button>
+        </div>
+        <figure class="fig" style="margin-top:8px">
+          <svg id="gadget" viewBox="0 0 560 180" role="img" aria-label="路径 u-a-b-v 的顶点可选状态">
+            <line x1="76" y1="79" x2="210" y2="79" class="edge"/><line x1="210" y1="79" x2="350" y2="79" class="edge"/><line x1="350" y1="79" x2="484" y2="79" class="edge"/>
+            <circle data-node="u" cx="76" cy="79" r="29" class="node original"/><circle data-node="a" cx="210" cy="79" r="29" class="node"/><circle data-node="b" cx="350" cy="79" r="29" class="node"/><circle data-node="v" cx="484" cy="79" r="29" class="node original"/>
+            <text x="76" y="87" text-anchor="middle" class="node-label">u</text><text x="210" y="87" text-anchor="middle" class="node-label">a</text><text x="350" y="87" text-anchor="middle" class="node-label">b</text><text x="484" y="87" text-anchor="middle" class="node-label">v</text>
+            <text x="76" y="140" text-anchor="middle" class="diagram-hint">旧顶点</text><text x="280" y="140" text-anchor="middle" class="diagram-hint">每条原边新建的一对顶点</text><text x="484" y="140" text-anchor="middle" class="diagram-hint">旧顶点</text>
+          </svg>
+          <figcaption>提示：每条边的内部顶点 <span class="math">a,b</span> 与别的边 gadget 的内部顶点之间没有连边。</figcaption>
+        </figure>
+        <div id="choice-outcome" class="choice-outcome" aria-live="polite"></div>
+      </div>
+      <div class="table-scroll" role="region" aria-label="局部 gadget 的四种情况" tabindex="0">
+        <table>
+          <thead><tr><th>旧端点 u, v</th><th>中间可选顶点</th><th>最多能新增几个点</th></tr></thead>
+          <tbody>
+            <tr><td>都不选</td><td>a 或 b</td><td><strong>1</strong></td></tr>
+            <tr><td>只选 u</td><td>b</td><td><strong>1</strong></td></tr>
+            <tr><td>只选 v</td><td>a</td><td><strong>1</strong></td></tr>
+            <tr><td>u、v 都选</td><td>没有（a 邻接 u；b 邻接 v）</td><td><strong>0</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>表格揭示了阈值为什么是 <span class="math">k + m</span>：如果旧顶点构成独立集，<strong>每条原边都不会出现两端同时被选的情况</strong>，于是每条原边都能额外贡献 1 个点；总共 <span class="math">m</span> 条边，便增加 <span class="math">m</span> 个点。</p>
+      <div class="warning"><p><strong>为什么不只插入一个点 u—a—v？</strong>插入一个点会把整张图变成二分图（旧顶点在一边，新顶点在另一边），而二分图的最大独立集可在多项式时间求出。因此这种构造无法给出所需的 NP-hard 归约（除非 P=NP）。更重要的是，它没有上述“每条边贡献 1、双端冲突少 1”的统一计数规律。</p></div>
+    </section>
+
+    <section id="directions">
+      <div class="section-label">04 / PROVE IF AND ONLY IF</div>
+      <h2 class="section-title">双向证明：真正容易卡住的是反方向</h2>
+      <div class="paper">
+        <h3>先把变换和目标值写清楚</h3>
+        <p>输入：任意 Independent Set 实例 <span class="math">(G=(V,E), k)</span>。记 <span class="math">m=|E|</span>。</p>
+        <p>输出：把所有边 <span class="math">{u,v}</span> 替换成 <span class="math">u—a<sub>e</sub>—b<sub>e</sub>—v</span> 得到 <span class="math">G′</span>，并设 <span class="math">k′=k+m</span>。</p>
+        <div class="equation">G 有大小 ≥ k 的独立集<br>⇔<br>G′ 有大小 ≥ k + m 的独立集</div>
+      </div>
+      <div class="two-col">
+        <div class="paper">
+          <h3>方向一（⇒）：原图 YES → 新图 YES</h3>
+          <p>已知原图有独立集 <span class="math">I</span>，其中 <span class="math">|I| ≥ k</span>。</p>
+          <p>因为 <span class="math">I</span> 独立，所以对每条旧边，<strong>最多一个端点</strong>落在 <span class="math">I</span>。按交互表，每条边都可额外选 1 个内部顶点。</p>
+          <p>不同 gadget 的内部顶点之间互不相邻。总共得到：</p>
+          <div class="equation">|I′| = |I| + m ≥ k + m</div>
+          <p class="soft">这一方向通常比较直观：直接构造一个新图里的独立集即可。</p>
+        </div>
+        <div class="paper">
+          <h3>方向二（⇐）：新图 YES → 原图 YES</h3>
+          <p>已知新图有独立集 <span class="math">J</span>，其中 <span class="math">|J| ≥ k+m</span>。</p>
+          <p>令 <span class="math">S=J∩V</span>（只取原图中的旧顶点）。<strong>S 未必在原图里独立！</strong>因为原来的边被删除了。</p>
+          <p>设 <span class="math">t=|E(G[S])|</span> 是 <span class="math">S</span> 内部原本存在的边数。每条这样被“双端选中”的旧边对应 0 个可选内部点，其余 <span class="math">m-t</span> 条边最多各提供 1 个：</p>
+          <div class="equation">|J| ≤ |S| + m − t</div>
+          <p>因此 <span class="math">|S| − t ≥ k</span>。针对 <span class="math">S</span> 中的每条冲突边，删去其中一个端点；最多删除 <span class="math">t</span> 个旧顶点，就能消除所有旧边。</p>
+          <p>留下的 <span class="math">T</span> 是原图的独立集，且 <span class="math">|T|≥|S|−t≥k</span>。</p>
+        </div>
+      </div>
+      <div class="key"><p><strong>反方向的关键不是直接说“保留旧顶点即可”。</strong>旧顶点中可能仍有原图的边；必须用 <span class="math">t</span> 统计这些冲突，再利用 <span class="math">k+m</span> 的下界保证：即使修复冲突，旧顶点仍然至少保留 <span class="math">k</span> 个。</p></div>
+      <p class="soft"><strong>为什么“删除至多 t 个顶点”一定成立？</strong>对 <span class="math">G[S]</span> 中的每一条边，指定一个端点准备删除；把被指定的所有顶点的并集删除。至多指定 <span class="math">t</span> 个不同顶点，且每一条边至少失去一个端点，因此剩余集合没有任何边。</p>
+    </section>
+
+    <section id="example">
+      <div class="section-label">05 / WORKED EXAMPLE</div>
+      <h2 class="section-title">拿最简单的三角形试一下：K₃ → C₉</h2>
+      <p>假设原图本身是一个三角形 <span class="math">K₃</span>，三个顶点 <span class="math">A,B,C</span>。原图的最大独立集只能选 <strong>1</strong> 个点，即 <span class="math">α(G)=1</span>。</p>
+      <figure class="fig">
+        <svg viewBox="0 0 830 390" role="img" aria-label="原图三角形 K3 替换三条边，每条边增加两个节点，得到 9 环 C9；选择一个旧顶点和三个新顶点构成独立集，大小为 4">
+          <text x="181" y="30" text-anchor="middle" class="diagram-heading">原图：K₃</text>
+          <line x1="181" y1="86" x2="75" y2="294" class="edge"/><line x1="181" y1="86" x2="287" y2="294" class="edge"/><line x1="75" y1="294" x2="287" y2="294" class="edge"/>
+          <circle cx="181" cy="86" r="22" class="node selected original"/><circle cx="75" cy="294" r="22" class="node original"/><circle cx="287" cy="294" r="22" class="node original"/>
+          <text x="181" y="92" text-anchor="middle" class="node-label">A</text><text x="75" y="300" text-anchor="middle" class="node-label">B</text><text x="287" y="300" text-anchor="middle" class="node-label">C</text>
+          <text x="181" y="365" text-anchor="middle" class="diagram-hint">3 条边 · 最大独立集 = 1</text>
+          <path d="M348 191 H414 M400 179 L414 191 L400 203" fill="none" stroke="#206a59" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="624" y="30" text-anchor="middle" class="diagram-heading">每条边拉长：得到 C₉</text>
+          <g class="edge">
+            <line x1="624" y1="75" x2="714" y2="108"/><line x1="714" y1="108" x2="761" y2="184"/><line x1="761" y1="184" x2="745" y2="278"/><line x1="745" y1="278" x2="669" y2="329"/><line x1="669" y1="329" x2="579" y2="329"/><line x1="579" y1="329" x2="503" y2="278"/><line x1="503" y1="278" x2="487" y2="184"/><line x1="487" y1="184" x2="534" y2="108"/><line x1="534" y1="108" x2="624" y2="75"/>
+          </g>
+          <!-- 9 cycle: A at 0, B at 3, C at 6; selected indices 0,2,4,7 -->
+          <circle cx="624" cy="75" r="20" class="node original selected"/><circle cx="714" cy="108" r="20" class="node"/><circle cx="761" cy="184" r="20" class="node selected"/><circle cx="745" cy="278" r="20" class="node original"/><circle cx="669" cy="329" r="20" class="node selected"/><circle cx="579" cy="329" r="20" class="node"/><circle cx="503" cy="278" r="20" class="node original"/><circle cx="487" cy="184" r="20" class="node selected"/><circle cx="534" cy="108" r="20" class="node"/>
+          <text x="624" y="82" text-anchor="middle" class="node-label">A</text><text x="714" y="115" text-anchor="middle" class="node-label">a</text><text x="761" y="191" text-anchor="middle" class="node-label">b</text><text x="745" y="285" text-anchor="middle" class="node-label">B</text><text x="669" y="336" text-anchor="middle" class="node-label">c</text><text x="579" y="336" text-anchor="middle" class="node-label">d</text><text x="503" y="285" text-anchor="middle" class="node-label">C</text><text x="487" y="191" text-anchor="middle" class="node-label">e</text><text x="534" y="115" text-anchor="middle" class="node-label">f</text>
+          <text x="624" y="365" text-anchor="middle" class="diagram-hint">6 个新点 · 最大独立集 = 4</text>
+        </svg>
+        <figcaption>绿色点是合法的独立集：左图选 A；右图选 A 以及 3 个彼此不相邻的内部点。注意左侧原图的三角形已经变成右侧的 9 环，没有三角形。</figcaption>
+      </figure>
+      <p>对这个例子，<span class="math">m=3</span>，因而 <span class="math">α(G′)=1+3=4</span>。比如输入原图的 <span class="math">k=2</span>（答案 NO），转换后要求 <span class="math">k′=5</span>，而新图的最大独立集只有 4，答案仍是 NO。若 <span class="math">k=1</span>，两边都是 YES。</p>
+      <p class="soft">这个例子只能帮助验证直觉，不能替代上一节对任意图的两个方向的证明。</p>
+    </section>
+
+    <section id="formal">
+      <div class="section-label">06 / EXAM-READY FORMAL PROOF</div>
+      <h2 class="section-title">Formal English proof（按照 sample solution 的结构）</h2>
+      <p class="muted small">下面是可以直接参考的英文正式证明：先描述归约，再说明合法性和两方向，最后分析时间并得出 NP-hard。</p>
+      <article class="paper proof" lang="en">
+        <h3>Solution.</h3>
+        <p>We reduce from <em>Independent Set</em>, which is NP-hard. Given an instance <span class="math">(G=(V,E),k)</span>, let <span class="math">m=|E|</span>. For every edge <span class="math">e={u,v}∈E</span>, delete <span class="math">e</span>, introduce two new vertices <span class="math">a<sub>e</sub></span> and <span class="math">b<sub>e</sub></span>, and add the three edges <span class="math">{u,a<sub>e</sub>}</span>, <span class="math">{a<sub>e</sub>,b<sub>e</sub>}</span>, and <span class="math">{b<sub>e</sub>,v}</span>. Let the resulting graph be <span class="math">G′</span>, and set <span class="math">k′=k+m</span>.</p>
+        <p>Observe that <span class="math">G′</span> is triangle-free: every new vertex has two neighbours that are not adjacent to each other, and no two original vertices are adjacent in <span class="math">G′</span>.</p>
+        <p>We claim that <span class="math">G</span> has an independent set of size at least <span class="math">k</span> if and only if <span class="math">G′</span> has an independent set of size at least <span class="math">k+m</span>.</p>
+        <ul>
+          <li><strong>(⇒)</strong> Suppose that <span class="math">G</span> has an independent set <span class="math">I</span> of size at least <span class="math">k</span>. For every original edge <span class="math">e={u,v}</span>, at most one of <span class="math">u</span> and <span class="math">v</span> belongs to <span class="math">I</span>. Hence, we can choose one of <span class="math">a<sub>e</sub></span> and <span class="math">b<sub>e</sub></span> that is not adjacent to any vertex of <span class="math">I</span>. Since vertices introduced for different edges have no edges between them, these choices together with <span class="math">I</span> form an independent set in <span class="math">G′</span> of size <span class="math">|I|+m≥k+m</span>.</li>
+          <li><strong>(⇐)</strong> Suppose that <span class="math">G′</span> has an independent set <span class="math">J</span> of size at least <span class="math">k+m</span>. Let <span class="math">S=J∩V</span>, and let <span class="math">t</span> be the number of edges of <span class="math">G</span> with both endpoints in <span class="math">S</span>. For each such edge <span class="math">e={u,v}</span>, neither <span class="math">a<sub>e</sub></span> nor <span class="math">b<sub>e</sub></span> can belong to <span class="math">J</span>. For each of the remaining <span class="math">m−t</span> edges, at most one of its two new vertices can belong to <span class="math">J</span>, since they are adjacent. Therefore,
+            <div style="text-align:center;margin:12px 0"><span class="math">k+m ≤ |J| ≤ |S|+(m−t),</span></div>
+            so <span class="math">|S|−t≥k</span>. By deleting at most one endpoint of each of the <span class="math">t</span> edges induced by <span class="math">S</span> in <span class="math">G</span>, we obtain an independent set <span class="math">I</span> in <span class="math">G</span> with <span class="math">|I|≥|S|−t≥k</span>.</li>
+        </ul>
+        <p>The construction introduces exactly <span class="math">2m</span> new vertices and replaces each original edge with three edges. It therefore runs in polynomial time. Thus, <em>Independent Set on triangle-free graphs</em> is NP-hard. <span class="end">∎</span></p>
+      </article>
+      <div class="key"><p><strong>英文证明结构与 sample 一致：</strong>“We reduce from ...” → “We claim ... if and only if ...” → “(⇒)” → “(⇐)” → “The reduction runs in polynomial time. Thus ... is NP-hard.”</p></div>
+    </section>
+
+    <section id="pitfalls">
+      <div class="section-label">07 / WHAT CAN GO WRONG</div>
+      <h2 class="section-title">考试最容易失分的地方</h2>
+      <div class="paper">
+        <div class="counter"><span class="count">01</span><div><strong>只删除三角形中的边，不设计对应关系。</strong><br><span class="soft">删除边可能让原图的最大独立集变大，却无法用固定阈值恢复原问题。归约必须保持 YES / NO 等价。</span></div></div>
+        <div class="counter"><span class="count">02</span><div><strong>把目标设成 k，而不是 k+|E|。</strong><br><span class="soft">新增顶点确实能进入独立集；不对它们的贡献做补偿，答案就可能改变。每条原边有一个“正常贡献”，因此整体补偿 m。</span></div></div>
+        <div class="counter"><span class="count">03</span><div><strong>反方向错误地认为 J∩V 自动是原图独立集。</strong><br><span class="soft">它在 G′ 中确实没有旧顶点之间的边，但这些边在 G 中原本存在。一定要统计原图诱导子图中的冲突边 t，然后删除至多 t 个端点。</span></div></div>
+        <div class="counter"><span class="count">04</span><div><strong>只说明新图 triangle-free，没有完成 if and only if。</strong><br><span class="soft">证明归约的输出满足限制只是第一步。还必须分别证明原实例 YES ⇒ 新实例 YES，以及新实例 YES ⇒ 原实例 YES。</span></div></div>
+        <div class="counter"><span class="count">05</span><div><strong>把 NP-hard 与 NP-complete 混为一谈。</strong><br><span class="soft">本题要求 NP-hard。上面的归约足够。如果要额外证明 NP-complete，只须再说明给定顶点集合可在多项式时间检查其大小及独立性，即问题属于 NP。</span></div></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">08 / ONE-MINUTE RECAP</div>
+      <h2 class="section-title">最后复习时，只需要抓住这条主线</h2>
+      <div class="paper">
+        <ol class="steps">
+          <li>从一般图的 <strong>Independent Set</strong> 归约。</li>
+          <li>将每条旧边 <span class="math">u—v</span> 替换为 <span class="math">u—a—b—v</span>，保证新图 <strong>triangle-free</strong>。</li>
+          <li>每条原边正常提供 <strong>1</strong> 个内部顶点；如果两端都选，则该边贡献 <strong>0</strong>。</li>
+          <li>目标改为 <span class="math">k′=k+|E|</span>。</li>
+          <li>正方向，每条边补 1 个新点；反方向，用 <span class="math">t</span> 个冲突边的损失保证删掉冲突后还有至少 <span class="math">k</span> 个旧顶点。</li>
+          <li>构造只需 <span class="math">O(|V|+|E|)</span> 时间，因此得到 NP-hard。</li>
+        </ol>
+      </div>
+      <div class="equation"><strong>α(G′) = α(G) + |E|</strong></div>
+      <p class="soft">这就是整道题的核心不变量：删掉了旧边的直接邻接关系，但通过内部点的“损失”，保留了原来的选择冲突。</p>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap"><span>Graph reductions · Triangle-free Independent Set</span><span>完整离线 HTML · 响应式布局 · 可打印</span></div></footer>
+  <script>
+    (function(){
+      const info={
+        none:{nodes:['a'],text:'<strong>u、v 都不选：</strong>可在 a、b 中任选一个（它们彼此相邻）。这条原边可以贡献 <strong>1 个新顶点</strong>。'},
+        u:{nodes:['u','b'],text:'<strong>只选 u：</strong>a 与 u 相邻不能选，但 b 可以选。这条原边仍贡献 <strong>1 个新顶点</strong>。'},
+        v:{nodes:['a','v'],text:'<strong>只选 v：</strong>b 与 v 相邻不能选，但 a 可以选。这条原边仍贡献 <strong>1 个新顶点</strong>。'},
+        both:{nodes:['u','v'],text:'<strong>同时选 u、v：</strong>a 邻接 u，b 邻接 v，因此两个内部顶点都不能选。这条原边只能贡献 <strong>0 个新顶点</strong>，比正常情况少 1。'}
+      };
+      const buttons=Array.from(document.querySelectorAll('[data-case]'));
+      const outcome=document.getElementById('choice-outcome');
+      const circles=Array.from(document.querySelectorAll('#gadget [data-node]'));
+      function update(kind){const c=info[kind];buttons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.case===kind)));circles.forEach(node=>node.classList.toggle('selected',c.nodes.includes(node.dataset.node)));outcome.innerHTML=c.text;}
+      buttons.forEach(b=>b.addEventListener('click',()=>update(b.dataset.case)));
+      update('none');
+    })();
+  </script>
+</body>
+</html>

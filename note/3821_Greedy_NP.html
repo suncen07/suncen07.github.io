@@ -1,0 +1,1330 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>贪心与难解问题讲义</title>
+<meta name="description" content="COMP3821 Module 2 贪心算法与 Module 3 难解问题核心知识点、考点与例子">
+<style>
+:root{
+  --bg:#f8f6f1; --fg:#1d2329; --muted:#5d6670; --card:#ffffff; --border:#e2ddd2;
+  --accent:#2c5f8f; --accent-soft:#e6eef6; --orange:#b55a26; --green:#2c7a4f; --red:#b03a3a; --gold:#9a7413;
+  --key-bg:#fbf4dc; --ex-bg:#e9f1f9; --warn-bg:#fbe9e7; --tpl-bg:#e8f4ec; --proof-bg:#f3f1ec;
+  --code-bg:#f0ede6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16191d; --fg:#e4e6e9; --muted:#9aa3ad; --card:#1f2328; --border:#343a41;
+    --accent:#7fb2e5; --accent-soft:#1f2c3a; --orange:#e8925c; --green:#6cc391; --red:#ef7f7f; --gold:#e0c065;
+    --key-bg:#2c2716; --ex-bg:#1a2633; --warn-bg:#331d1d; --tpl-bg:#18291f; --proof-bg:#22252a;
+    --code-bg:#262a30;
+  }
+}
+:root[data-theme="dark"]{
+    --bg:#16191d; --fg:#e4e6e9; --muted:#9aa3ad; --card:#1f2328; --border:#343a41;
+    --accent:#7fb2e5; --accent-soft:#1f2c3a; --orange:#e8925c; --green:#6cc391; --red:#ef7f7f; --gold:#e0c065;
+    --key-bg:#2c2716; --ex-bg:#1a2633; --warn-bg:#331d1d; --tpl-bg:#18291f; --proof-bg:#22252a;
+    --code-bg:#262a30;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font-family:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei","Source Han Sans SC",system-ui,sans-serif;
+  font-size:16px;line-height:1.75;-webkit-text-size-adjust:100%}
+.layout{display:flex;max-width:1280px;margin:0 auto}
+nav.toc{position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;width:270px;flex:0 0 270px;
+  padding:28px 14px 40px 22px;border-right:1px solid var(--border);font-size:13.5px;line-height:1.55}
+nav.toc .tt{font-weight:700;color:var(--muted);letter-spacing:.06em;font-size:12px;margin:0 0 10px}
+nav.toc a{color:var(--fg);text-decoration:none;display:block;padding:3px 6px;border-radius:5px}
+nav.toc a:hover{background:var(--accent-soft);color:var(--accent)}
+nav.toc .lv1{font-weight:700;margin-top:12px}
+nav.toc .lv2{padding-left:16px;color:var(--muted)}
+main{flex:1;min-width:0;padding:34px 44px 90px;max-width:940px}
+header.hero{border-bottom:2px solid var(--fg);padding-bottom:18px;margin-bottom:26px}
+header.hero .kicker{font-size:13px;letter-spacing:.12em;color:var(--orange);font-weight:700}
+header.hero h1{font-size:30px;line-height:1.3;margin:6px 0 10px}
+header.hero p{color:var(--muted);margin:0}
+h2{font-size:24px;margin:54px 0 14px;padding-top:8px;border-top:1px solid var(--border)}
+h2 .num{color:var(--orange);margin-right:8px}
+h3{font-size:19px;margin:34px 0 10px;color:var(--accent)}
+h4{font-size:16.5px;margin:22px 0 6px}
+p{margin:10px 0}
+a{color:var(--accent)}
+.m{font-family:"Cambria Math","STIX Two Math","Latin Modern Math","Times New Roman",serif;font-style:italic;white-space:nowrap}
+.mn{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;white-space:nowrap}
+code,.code{font-family:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;font-size:.88em;background:var(--code-bg);padding:1px 5px;border-radius:4px}
+pre{background:var(--code-bg);padding:12px 14px;border-radius:8px;overflow-x:auto;font-size:13.5px;line-height:1.55;border:1px solid var(--border)}
+pre code{background:none;padding:0}
+.box{border-radius:10px;padding:12px 16px 12px 16px;margin:16px 0;border:1px solid var(--border);border-left-width:5px}
+.box > .bt{font-weight:700;font-size:14px;letter-spacing:.04em;margin-bottom:4px}
+.box p:first-of-type{margin-top:4px}
+.box ul,.box ol{margin:6px 0;padding-left:22px}
+.key{background:var(--key-bg);border-left-color:var(--gold)} .key>.bt{color:var(--gold)}
+.ex{background:var(--ex-bg);border-left-color:var(--accent)} .ex>.bt{color:var(--accent)}
+.warn{background:var(--warn-bg);border-left-color:var(--red)} .warn>.bt{color:var(--red)}
+.tpl{background:var(--tpl-bg);border-left-color:var(--green)} .tpl>.bt{color:var(--green)}
+.proof{background:var(--proof-bg);border-left-color:var(--muted)} .proof>.bt{color:var(--muted)}
+.def{background:var(--card);border-left-color:var(--accent)} .def>.bt{color:var(--accent)}
+figure{margin:18px 0;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;text-align:center;color:var(--fg)}
+figure svg{max-width:100%;height:auto;display:block;margin:0 auto}
+figcaption{font-size:13.5px;color:var(--muted);margin-top:8px;text-align:left}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14.5px;background:var(--card)}
+th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft)}
+.tablewrap{overflow-x:auto}
+ul,ol{padding-left:24px}
+li{margin:3px 0}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:20px;margin-right:4px;border:1px solid currentColor}
+.tag.g{color:var(--green)} .tag.b{color:var(--accent)} .tag.o{color:var(--orange)} .tag.r{color:var(--red)} .tag.y{color:var(--gold)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.small{font-size:13.5px;color:var(--muted)}
+hr{border:none;border-top:1px dashed var(--border);margin:26px 0}
+/* svg helpers */
+svg text{font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;fill:currentColor}
+svg .mt{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-style:italic}
+svg .nd{fill:var(--card);stroke:currentColor;stroke-width:1.6}
+svg .ln{stroke:currentColor;stroke-width:1.6;fill:none}
+svg .faint{stroke:var(--muted);stroke-width:1.2;fill:none;stroke-dasharray:4 4}
+svg .mut{fill:var(--muted)}
+.backtop{position:fixed;right:18px;bottom:18px;background:var(--fg);color:var(--bg);border-radius:20px;padding:6px 12px;font-size:13px;text-decoration:none;opacity:.8}
+.toc-toggle{display:none}
+@media (max-width:900px){
+  .layout{display:block}
+  nav.toc{position:static;height:auto;width:auto;border-right:none;border-bottom:1px solid var(--border);padding:14px 16px;max-height:none}
+  nav.toc details summary{cursor:pointer;font-weight:700}
+  main{padding:20px 16px 80px}
+  header.hero h1{font-size:24px}
+  .two{grid-template-columns:1fr}
+}
+@media print{nav.toc,.backtop{display:none} main{max-width:none;padding:0} h2{break-before:page}}
+
+</style>
+
+<style id="mobile-responsive-patch">
+
+/* RESPONSIVE READING PATCH — original lesson content intentionally unchanged */
+@media screen and (max-width: 900px) {
+  :root { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html { scroll-padding-top: 82px; }
+  body { max-width: 100%; }
+  main { min-width: 0; max-width: 100%; overflow-wrap: break-word; }
+  main > *, main section, main article, main .box, main .q, main .two,
+  main .grid2, main .eq, main figure, main .frame { min-width: 0; max-width: 100%; }
+  main p, main li, main td, main th, main h1, main h2, main h3, main h4 {
+    overflow-wrap: anywhere;
+  }
+  pre { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  pre code { white-space: pre; }
+  :not(pre) > code, :not(pre) > kbd { overflow-wrap: anywhere; white-space: normal; }
+  .mobile-table-scroll, .tablewrap, .tbl {
+    max-width: 100%; overflow-x: auto; overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+  .mobile-table-scroll { margin: 14px 0; border-radius: 6px; }
+  .mobile-table-scroll > table { display: table; width: max-content; min-width: 100%; max-width: none; margin: 0; }
+  .mobile-table-scroll > table:not(.dp) :is(th,td) { min-width: 6.25rem; max-width: 22rem; }
+  .tablewrap > table { min-width: max-content; }
+  .katex-display { max-width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
+  figure { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  figure .frame { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  figure > svg, figure svg.fig, figure .frame > svg {
+    width: var(--mobile-diagram-width, 100%) !important;
+    max-width: none !important; height: auto !important;
+  }
+  figure figcaption { max-width: 100%; white-space: normal; }
+  .box, .q { padding: 12px 13px; }
+  ul, ol { padding-left: 1.35em; }
+  .mobile-toc-button {
+    border: 1px solid currentColor; border-radius: 8px; background: transparent;
+    padding: 7px 12px; min-height: 40px; font-size: 15px;
+    font-family: inherit; font-weight: 600; color: inherit; cursor: pointer;
+  }
+  nav.toc { z-index: 30; }
+  nav.toc summary { min-height: 42px; display: flex; align-items: center; cursor: pointer; }
+  nav.toc a { scroll-margin-top: 90px; }
+  /* The following styles affect navigation only, not any lesson text. */
+  nav.toc.mobile-links-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0 8px; }
+  nav.toc.mobile-links-nav > .brand { flex: 1 1 auto; margin: 0; }
+  nav.toc.mobile-links-nav:not(.mobile-open) > a { display: none !important; }
+  nav.toc.mobile-links-nav.mobile-open > a {
+    display: block; flex: 1 0 100%; padding: 8px 6px; line-height: 1.4;
+    min-height: 36px; margin-top: 0;
+  }
+}
+@media screen and (max-width: 480px) {
+  body { font-size: 16px; line-height: 1.7; }
+  header.hero h1, header.top h1 { font-size: clamp(23px, 6.5vw, 28px); line-height: 1.3; }
+  h2 { font-size: 22px; }
+  h3 { font-size: 19px; }
+  .box, .q { margin-inline: 0; }
+  th, td { padding: 7px 9px; }
+  .backtop { bottom: max(14px, env(safe-area-inset-bottom)); right: 12px; }
+}
+@media print {
+  .mobile-toc-button { display: none !important; }
+  .mobile-table-scroll { display: contents !important; }
+}
+@media screen and (min-width: 901px) {
+  .mobile-toc-button { display: none !important; }
+  .mobile-table-scroll { display: contents; }
+}
+
+
+@media screen and (max-width: 900px) {
+  .m, .mn { white-space: normal !important; overflow-wrap: anywhere !important; }
+  .layout { display: block; width: 100%; }
+  main { padding: 20px 16px 90px; width: 100%; }
+  nav.toc {
+    position: sticky; top: 0; width: 100%; height: auto; max-height: 72dvh;
+    overflow-y: auto; border-right: 0; border-bottom: 1px solid var(--border);
+    background: var(--bg); padding: 5px 16px;
+  }
+  nav.toc details > summary { font-size: 15px; padding: 5px 0; }
+  nav.toc details[open] #tocList { padding: 0 0 10px; }
+  nav.toc a { min-height: 36px; padding: 7px 5px; }
+  .two { grid-template-columns: minmax(0,1fr); }
+  figure { padding: 10px; }
+  header.hero { margin-bottom: 20px; }
+  .box { margin-inline: 0; }
+}
+@media screen and (max-width: 390px) {
+  main { padding-inline: 13px; }
+  nav.toc { padding-inline: 13px; }
+}
+
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc"><details open><summary class="tt">目录 CONTENTS</summary><div id="tocList"></div></details></nav>
+<main>
+<header class="hero">
+  <div class="kicker">COMP3821/9801 · MODULE 2 &amp; MODULE 3 · 学习讲义</div>
+  <h1>贪心算法 &amp; 难解问题（NP 完全性、近似、线性规划）核心知识点精讲</h1>
+  <p>依据课程讲义 <i>2-greedy-short</i> 与 <i>3-intractability-short</i> 整理。每节包含：定义与直觉 → 关键结论 → 证明骨架 → 小例子 → 考点/易错点。中文讲解，术语保留英文以便对照课件和考试原题。</p>
+</header>
+
+<div class="box key"><div class="bt">先看考试规则（来自期中试卷封面，直接决定你怎么答题）</div>
+<ul>
+<li><b>用了贪心就必须证明正确性</b>：“Any greedy algorithm without justification will not be marked as correct, even if the algorithm is correct.” —— 所以 Module 2 最核心的能力是<b>写贪心证明</b>（stays ahead / exchange / 相邻交换）。</li>
+<li>其他算法题只需“proof sketch”，但<b>时间复杂度要认真分析</b>（错误分析的慢算法 &lt; 正确分析的慢算法）。</li>
+<li><b>NP-hard / NP-complete 证明要证两个方向</b>（YES ⇒ YES 且 YES ⇐ YES）。</li>
+<li>考试附带 NP-hard 问题清单和拟阵清单，可以直接引用（不必再证它们本身是 NP-hard / 是拟阵）。</li>
+<li>Dijkstra 的 <span class="m">O(m + n log n)</span>（Fibonacci 堆）<b>不能直接用</b>，课程标准是 <span class="m">O(m log n)</span>。</li>
+</ul></div>
+
+<!-- ====================================================== -->
+<h2 id="g1"><span class="num">1</span>什么是贪心算法？它什么时候会错？</h2>
+
+<div class="box def"><div class="bt">定义</div>
+<p>贪心算法<b>分阶段</b>构造解；每个阶段只做“当前看起来最好”的那一个选择，不回头、不枚举其他可能。好处：搜索空间大幅缩小、算法通常简单；代价：<b>局部最优不一定导出全局最优</b>，所以必须证明。</p></div>
+
+<p>课件用“爬山找最高点”打比方：一直沿最陡方向往上爬，一定能到某个山顶，但不一定是最高的那个山顶。</p>
+
+<h3 id="g1-knap">例 1：分数背包 vs 0-1 背包</h3>
+<p><b>Fractional Knapsack</b>：物品 <span class="m">i</span> 重 <span class="m">w<sub>i</sub></span>、价值 <span class="m">v<sub>i</sub></span>，可以取任意比例。贪心：按<b>单位价值 <span class="m">v<sub>i</sub>/w<sub>i</sub></span> 从大到小</b>装，最后一个可能切一部分。<b>这是最优的</b>（后面 Module 3 的“等重量交换”给出了证明）。</p>
+<p><b>0-1 Knapsack</b>：物品只能整件拿或不拿。同样的贪心就会失败：</p>
+
+<figure>
+<svg viewBox="0 0 600 190" width="600">
+  <text x="10" y="20" font-size="13">物品：A(1kg, $60, 60/kg)　B(2kg, $100, 50/kg)　C(3kg, $120, 40/kg)，容量 W = 5kg</text>
+  <text x="10" y="68" font-size="13" font-weight="700">贪心</text>
+  <rect x="80" y="48" width="400" height="34" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <rect x="80" y="48" width="80" height="34" fill="#3b7dd8" opacity=".75"/><text x="120" y="70" text-anchor="middle" font-size="13" fill="#fff">A</text>
+  <rect x="160" y="48" width="160" height="34" fill="#2e9e6a" opacity=".75"/><text x="240" y="70" text-anchor="middle" font-size="13" fill="#fff">B</text>
+  <text x="400" y="70" text-anchor="middle" font-size="12" class="mut">空 2kg（C 放不下）</text>
+  <text x="490" y="70" font-size="13">= $160</text>
+  <text x="10" y="128" font-size="13" font-weight="700">最优</text>
+  <rect x="80" y="108" width="400" height="34" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <rect x="80" y="108" width="160" height="34" fill="#2e9e6a" opacity=".75"/><text x="160" y="130" text-anchor="middle" font-size="13" fill="#fff">B</text>
+  <rect x="240" y="108" width="240" height="34" fill="#e07a3f" opacity=".8"/><text x="360" y="130" text-anchor="middle" font-size="13" fill="#fff">C</text>
+  <text x="490" y="130" font-size="13">= $220</text>
+  <text x="80" y="175" font-size="12" class="mut">每 80px = 1kg；整件物品使“按单位价值贪心”丢失了 2kg 的容量</text>
+</svg>
+<figcaption>图 1　0-1 背包上，按单位价值贪心得 $160，而最优解是 $220。分数背包里可以把 C 切 2/3 补满，所以那里贪心正确。</figcaption>
+</figure>
+
+<div class="box warn"><div class="bt">易错</div><p>“贪心看起来对”不等于对。考试里想到一个贪心规则，<b>先花一分钟找反例</b>（小规模、2~3 个元素的极端情况），找不到再动手证明。0-1 背包要用动态规划。</p></div>
+
+<!-- ====================================================== -->
+<h2 id="g2"><span class="num">2</span>证明贪心正确的三种标准方法</h2>
+
+<div class="two">
+<div class="box tpl"><div class="bt">方法 A：Greedy stays ahead（贪心始终领先）</div>
+<ol>
+<li>把贪心解 <span class="m">G = (g<sub>1</sub>,…,g<sub>r</sub>)</span> 和任意（最优）解 <span class="m">O = (o<sub>1</sub>,…,o<sub>s</sub>)</span> 按同一顺序排好。</li>
+<li>选一个<b>进度度量</b>，例如“第 k 个活动的结束时间”。</li>
+<li>对 <span class="m">k</span> 归纳证明：贪心在每一步都不落后（如 <span class="m">f(g<sub>k</sub>) ≤ f(o<sub>k</sub>)</span>）。</li>
+<li>最后一步：解释为什么“不落后”推出最优（通常反证：若 <span class="m">s &gt; r</span>，则 <span class="m">o<sub>r+1</sub></span> 贪心也能选，矛盾）。</li>
+</ol></div>
+<div class="box tpl"><div class="bt">方法 B：Exchange argument（交换论证）</div>
+<ol>
+<li>取任意最优解 <span class="m">O</span>。</li>
+<li>找第一个与贪心不同的位置 <span class="m">k</span>（<span class="m">g<sub>k</sub> ≠ o<sub>k</sub></span>）。</li>
+<li>把 <span class="m">o<sub>k</sub></span> 换成 <span class="m">g<sub>k</sub></span>，证明：<b>仍可行</b>且<b>目标值不变差</b>。</li>
+<li>重复交换，最优解逐步变成贪心解（或包含贪心解），故贪心最优。</li>
+</ol></div>
+</div>
+<div class="box tpl"><div class="bt">方法 C：相邻交换 + 反证（排序类问题专用，本质是 B 的特例）</div>
+<p>假设最优顺序不是贪心顺序 ⇒ 一定存在<b>相邻</b>逆序对 <span class="m">(i, i+1)</span>。交换这两个后只有它们俩的贡献改变，算出差值 <span class="m">≥ 0</span>（或 <span class="m">&gt;0</span> 得矛盾）。像冒泡排序一样消去所有逆序 ⇒ 贪心顺序最优。<b>只交换相邻的</b>：交换不相邻元素会改变中间所有元素的完成时间，难以比较。</p></div>
+
+<div class="box key"><div class="bt">考点：如何选择证明方法（课件 §2.2 的结论）</div>
+<ul>
+<li><b>Activity selection</b>：“结束得更早”这个性质，两种方法都能用。</li>
+<li><b>Prim</b>：“部分树在同等规模下最便宜”这种 stays-ahead 度量是<b>错的</b>（反例见 §4），要用<b>交换</b>：维持“已选边都属于某棵 MST”。</li>
+<li><b>Dijkstra</b>：直接<b>比较路径长度</b>（任意竞争路径第一次离开 S 的点）就证完了；硬写交换论证反而要先用到这个结论。</li>
+<li>原则：选一个能让“下一步贪心决策安全”的性质——要么是有用的比较量，要么是完整解里的合法交换。</li>
+</ul></div>
+
+<!-- ====================================================== -->
+<h2 id="g3"><span class="num">3</span>活动选择 Activity Selection</h2>
+<div class="box def"><div class="bt">问题</div><p>给 <span class="m">n</span> 个活动 <span class="m">[s<sub>i</sub>, f<sub>i</sub>)</span>，选出<b>两两不重叠</b>的最多个数的活动。</p></div>
+
+<h3 id="g3-rules">三个候选规则，只有一个对</h3>
+<table>
+<tr><th>规则</th><th>结论</th><th>反例思路</th></tr>
+<tr><td>最短的先选</td><td>✗</td><td>一个短活动正好横跨两个不重叠长活动的交界处：选它会挤掉两个。</td></tr>
+<tr><td>冲突最少的先选</td><td>✗</td><td>课件给出了特意构造的反例（冲突数最少的活动恰好破坏最优结构）。</td></tr>
+<tr><td><b>结束时间最早的先选（EFT）</b></td><td>✓</td><td>—</td></tr>
+</table>
+
+<figure>
+<svg viewBox="0 0 520 110" width="520">
+  <line x1="20" y1="95" x2="500" y2="95" class="ln" stroke-width="1"/>
+  <rect x="40" y="20" width="190" height="16" rx="3" fill="#2e9e6a" opacity=".8"/><text x="135" y="32" text-anchor="middle" font-size="11" fill="#fff">长 1（最优选）</text>
+  <rect x="270" y="20" width="200" height="16" rx="3" fill="#2e9e6a" opacity=".8"/><text x="370" y="32" text-anchor="middle" font-size="11" fill="#fff">长 2（最优选）</text>
+  <rect x="200" y="55" width="100" height="16" rx="3" fill="#c94040" opacity=".85"/><text x="250" y="67" text-anchor="middle" font-size="11" fill="#fff">最短（贪心选）</text>
+  <text x="20" y="108" font-size="11" class="mut">时间 →　　“最短优先”得 1 个，最优是 2 个</text>
+</svg>
+<figcaption>图 2　“最短优先”的反例。</figcaption>
+</figure>
+
+<figure>
+<svg viewBox="0 0 540 270" width="540">
+  <g font-size="11">
+  <!-- scale: x = 40 + 28*t -->
+  <line x1="40" y1="245" x2="516" y2="245" class="ln" stroke-width="1"/>
+  <g class="mut"><text x="40" y="260">0</text><text x="152" y="260">4</text><text x="264" y="260">8</text><text x="376" y="260">12</text><text x="488" y="260">16</text></g>
+  <!-- intervals sorted by finish: [1,4],[3,5],[0,6],[5,7],[3,9],[5,9],[6,10],[8,11],[8,12],[2,14],[12,16] -->
+  <rect x="68" y="14" width="84" height="14" rx="3" fill="#3b7dd8"/><text x="156" y="25">a1 [1,4) ✓</text>
+  <rect x="124" y="34" width="56" height="14" rx="3" fill="#9aa3ad" opacity=".55"/><text x="184" y="45">a2 [3,5)</text>
+  <rect x="40" y="54" width="168" height="14" rx="3" fill="#9aa3ad" opacity=".55"/><text x="212" y="65">a3 [0,6)</text>
+  <rect x="180" y="74" width="56" height="14" rx="3" fill="#3b7dd8"/><text x="240" y="85">a4 [5,7) ✓</text>
+  <rect x="124" y="94" width="168" height="14" rx="3" fill="#9aa3ad" opacity=".55"/><text x="296" y="105">a5 [3,9)</text>
+  <rect x="180" y="114" width="112" height="14" rx="3" fill="#9aa3ad" opacity=".55"/><text x="296" y="125">a6 [5,9)</text>
+  <rect x="208" y="134" width="112" height="14" rx="3" fill="#9aa3ad" opacity=".55"/><text x="324" y="145">a7 [6,10)</text>
+  <rect x="264" y="154" width="84" height="14" rx="3" fill="#3b7dd8"/><text x="352" y="165">a8 [8,11) ✓</text>
+  <rect x="264" y="174" width="112" height="14" rx="3" fill="#9aa3ad" opacity=".55"/><text x="380" y="185">a9 [8,12)</text>
+  <rect x="96" y="194" width="336" height="14" rx="3" fill="#9aa3ad" opacity=".55"/><text x="436" y="205">a10 [2,14)</text>
+  <rect x="376" y="214" width="112" height="14" rx="3" fill="#3b7dd8"/><text x="400" y="240">a11 [12,16) ✓</text>
+  </g>
+</svg>
+<figcaption>图 3　活动已按结束时间排序。EFT 贪心依次选 a1, a4, a8, a11（蓝色），共 4 个；灰色因与已选活动冲突被跳过。每次只需和“最后选中的结束时间”比较。</figcaption>
+</figure>
+
+<h3 id="g3-proof">证明 1：stays ahead</h3>
+<div class="box proof"><div class="bt">证明骨架（可直接写在考卷上）</div>
+<p>设贪心解 <span class="m">G = {g<sub>1</sub>,…,g<sub>r</sub>}</span>、任一最优解 <span class="m">O = {o<sub>1</sub>,…,o<sub>s</sub>}</span>，都按结束时间排序。</p>
+<p><b>断言</b>：对所有 <span class="m">k ≤ min(r,s)</span>，<span class="m">f(g<sub>k</sub>) ≤ f(o<sub>k</sub>)</span>。</p>
+<p><b>基础</b>：<span class="m">g<sub>1</sub></span> 是全体中结束最早的，故 <span class="m">f(g<sub>1</sub>) ≤ f(o<sub>1</sub>)</span>。</p>
+<p><b>归纳</b>：若 <span class="m">f(g<sub>k−1</sub>) ≤ f(o<sub>k−1</sub>)</span>，由于 <span class="m">O</span> 相容，<span class="m">f(o<sub>k−1</sub>) ≤ s(o<sub>k</sub>)</span>，所以 <span class="m">o<sub>k</sub></span> 与 <span class="m">g<sub>1..k−1</sub></span> 都相容，是贪心第 k 步的候选；贪心选了结束最早的候选，故 <span class="m">f(g<sub>k</sub>) ≤ f(o<sub>k</sub>)</span>。</p>
+<p><b>最优性</b>：若 <span class="m">s &gt; r</span>，则 <span class="m">f(g<sub>r</sub>) ≤ f(o<sub>r</sub>) ≤ s(o<sub>r+1</sub>)</span>，<span class="m">o<sub>r+1</sub></span> 仍可加入，贪心不会停下，矛盾。故 <span class="m">r ≥ s</span>。∎</p></div>
+
+<h3 id="g3-proof2">证明 2：exchange</h3>
+<div class="box proof"><div class="bt">证明骨架</div>
+<p>若 <span class="m">G ⊄ O</span>，令 <span class="m">k</span> 为第一个 <span class="m">g<sub>k</sub> ≠ o<sub>k</sub></span> 的下标。令 <span class="m">O′ = (O \ {o<sub>k</sub>}) ∪ {g<sub>k</sub>}</span>，大小不变。可行性：<span class="m">g<sub>k</sub></span> 与 <span class="m">o<sub>1..k−1</sub> = g<sub>1..k−1</sub></span> 相容；又 <span class="m">g<sub>k</sub></span> 是与它们相容的活动中结束最早的，故 <span class="m">f(g<sub>k</sub>) ≤ f(o<sub>k</sub>) ≤ s(o<sub>i</sub>)</span>（<span class="m">i &gt; k</span>），与后面也不冲突。反复交换得到最优解 <span class="m">O ⊇ G</span>；若 <span class="m">O</span> 还有 <span class="m">G</span> 之外的活动，它与 <span class="m">G</span> 全部相容，贪心会选它——矛盾。故 <span class="m">O = G</span>。∎</p></div>
+
+<h3 id="g3-time">实现与复杂度</h3>
+<p>按 <span class="m">f<sub>i</sub></span> 排序 <span class="m">O(n log n)</span>；扫描时只维护“上一个被选活动的结束时间” <span class="m">last</span>：若 <span class="m">s<sub>i</sub> ≥ last</span> 则选并更新，否则丢弃，<span class="m">O(1)</span>/个。总 <span class="m">O(n log n)</span>。</p>
+
+<div class="box ex"><div class="bt">变体（常考）</div>
+<ul>
+<li><b>所有活动等长、最大化总时长</b>：总时长 = 个数 × d，等价于原问题，贪心仍对。</li>
+<li><b>不等长、最大化总时长</b>（或带权活动）：贪心<b>失效</b>——交换论证依赖“任意活动对目标贡献一样”，这时不成立。要用 DP（weighted interval scheduling）。</li>
+</ul></div>
+
+<!-- ====================================================== -->
+<h2 id="g4"><span class="num">4</span>证明策略对比：Prim 与 Dijkstra</h2>
+<h3 id="g4-prim">Prim：为什么要用交换而不是 stays ahead</h3>
+<p>Prim：从根 <span class="m">r</span> 出发，每次加一条“连接当前树和新顶点的最便宜边”。</p>
+<div class="box warn"><div class="bt">自然但错误的进度断言</div><p>“Prim 在每一步都拥有同样顶点数下最便宜的树”——<b>错</b>。课件例：边 <span class="mn">ra=4, rb=5, bc=1, ac=10</span>。Prim 前两步选 <span class="mn">ra(4)</span>、<span class="mn">rb(5)</span> 共 9；另一顺序选 <span class="mn">rb, bc</span> 只要 6。两棵都含 3 个顶点，但顶点不同，不能直接比；最终两者都能补成总价 10 的 MST。</p></div>
+<div class="box proof"><div class="bt">正确的不变量（交换）</div>
+<p><b>不变量</b>：已选的边都属于某棵最小生成树 <span class="m">T</span>。设下一条贪心边 <span class="m">e</span> 连接已到达集合 <span class="m">S</span> 与外部。若 <span class="m">e ∈ T</span> 无事；否则 <span class="m">T + e</span> 有一个环，环上必有另一条边 <span class="m">f</span> 也跨越 <span class="m">S</span> 与外部。Prim 当时也能选 <span class="m">f</span>，所以 <span class="m">w(e) ≤ w(f)</span>；<span class="m">T′ = T + e − f</span> 是生成树且不更贵，且 <span class="m">f</span> 不是之前选的边（之前选的边都在 S 内部）。∎</p></div>
+
+<h3 id="g4-dij">Dijkstra：直接比较路径</h3>
+<p>见 §9 的完整证明。核心一句话：对选出的 <span class="m">v</span> 和任意 <span class="m">s→v</span> 路径 <span class="m">P</span>，设 <span class="m">P</span> 第一次离开已定集合 <span class="m">S</span> 时到达 <span class="m">y</span>，则 <span class="m">D(v) ≤ D(y) ≤ len(P 到 y 的前缀) ≤ len(P)</span>（非负边权保证后半段不会变短）。</p>
+
+<!-- ====================================================== -->
+<h2 id="g5"><span class="num">5</span>基站覆盖 Cell Towers 与区间刺穿 Interval Stabbing</h2>
+<div class="box def"><div class="bt">问题</div><p>一条直路旁有若干房子，基站覆盖半径 5km。放<b>最少</b>的基站使每座房子都在某基站 5km 内。</p></div>
+<p><b>贪心</b>：自西向东，找第一座未被覆盖的房子 <span class="m">h</span>，在 <span class="m">h + 5</span> 处放基站（尽量往东放，覆盖得最远）；跳过所有被覆盖的房子，重复。已排序 <span class="m">O(n)</span>，否则 <span class="m">O(n log n)</span>。</p>
+
+<figure>
+<svg viewBox="0 0 640 120" width="640">
+  <line x1="10" y1="70" x2="550" y2="70" class="ln"/>
+  <g fill="#e07a3f">
+    <circle cx="30" cy="70" r="5"/><circle cx="70" cy="70" r="5"/><circle cx="110" cy="70" r="5"/>
+    <circle cx="190" cy="70" r="5"/><circle cx="250" cy="70" r="5"/>
+    <circle cx="380" cy="70" r="5"/><circle cx="420" cy="70" r="5"/><circle cx="520" cy="70" r="5"/>
+  </g>
+  <!-- range 5km = 50px; tower at first+50 -->
+  <g stroke="#3b7dd8" stroke-width="2.5">
+    <line x1="30" y1="45" x2="130" y2="45"/><line x1="190" y1="45" x2="290" y2="45"/><line x1="380" y1="45" x2="480" y2="45"/><line x1="520" y1="45" x2="620" y2="45"/>
+  </g>
+  <g fill="#3b7dd8"><path d="M80 70 l-7 -14 h14z"/><path d="M240 70 l-7 -14 h14z"/><path d="M430 70 l-7 -14 h14z"/><path d="M570 70 l-7 -14 h14z"/></g>
+  <text x="80" y="95" text-anchor="middle" font-size="11">g₁</text><text x="240" y="95" text-anchor="middle" font-size="11">g₂</text><text x="430" y="95" text-anchor="middle" font-size="11">g₃</text>
+  <text x="570" y="95" text-anchor="middle" font-size="11">g₄</text>
+  <text x="10" y="18" font-size="11" class="mut">橙点 = 房子；蓝三角 = 基站（放在“第一座未覆盖房子”东侧 5km）；蓝线 = 覆盖范围 [g−5, g+5]</text>
+</svg>
+<figcaption>图 4　基站贪心。每个基站都由“它左端那座房子”强制产生。</figcaption>
+</figure>
+
+<div class="box proof"><div class="bt">证明（stays ahead，题目 Q1 也会用到同样思想）</div>
+<p><b>断言</b>：把基站从西到东编号，贪心第 k 个基站 <span class="m">g<sub>k</sub></span> 不比任何合法方案的第 k 个基站 <span class="m">a<sub>k</sub></span> 更靠西：<span class="m">a<sub>k</sub> ≤ g<sub>k</sub></span>。</p>
+<p><b>基础</b>：若 <span class="m">a<sub>1</sub> &gt; g<sub>1</sub> = h<sub>1</sub>+5</span>，第一座房子覆盖不到。</p>
+<p><b>归纳</b>：贪心放 <span class="m">g<sub>k</sub></span> 是因为有房子 <span class="m">h = g<sub>k</sub> − 5 &gt; g<sub>k−1</sub> + 5</span>。若 <span class="m">a<sub>k</sub> &gt; g<sub>k</sub></span>，则 <span class="m">a<sub>k−1</sub> + 5 ≤ g<sub>k−1</sub> + 5 &lt; h &lt; a<sub>k</sub> − 5</span>，<span class="m">h</span> 夹在 A 的两个相邻基站的范围之间，A 不合法。</p>
+<p><b>最优</b>：若贪心用 <span class="m">r</span> 个，最后一个由房子 <span class="m">h = g<sub>r</sub> − 5 &gt; g<sub>r−1</sub>+5</span> 强制；任何只用 <span class="m">r−1</span> 个的方案，最后一个 <span class="m">≤ g<sub>r−1</sub></span>，盖不到 <span class="m">h</span>。∎</p></div>
+
+<h3 id="g5-stab">抽象：区间刺穿（Interval Stabbing）</h3>
+<p>房子 <span class="m">x</span> 能被 <span class="m">[x−5, x+5]</span> 内任何基站覆盖 ⇒ 每座房子是一个区间，基站是“刺穿点”。问题变为：<b>用最少的点刺穿所有区间</b>。</p>
+<div class="box ex"><div class="bt">一般区间（长度不等）的正确贪心——课件留作练习，期中 Q1 直接考</div>
+<p>按<b>右端点</b>排序；结束最早的区间必须被刺中，<b>刺在它的右端点</b>最好（能顺带刺中尽可能多后面的区间）；删去所有被刺中的区间，重复。</p>
+<p>错误想法：“刺穿区间最多的点”——课件反例显示会多用一个点。</p></div>
+<div class="box warn"><div class="bt">易错</div><p>等长区间时“按左端点排序 + 放在左端点+长度”和“按右端点排序”等价；<b>长度不等时必须按右端点</b>，否则一个很长的早开始区间会让你把点放得太靠右，错过一个很短的区间。</p></div>
+
+<!-- ====================================================== -->
+<h2 id="g6"><span class="num">6</span>插曲：图类（Graph Classes）</h2>
+<p>这一节把前面的问题“抽象成图问题”，理解 NP-hard 问题在特殊图上可能变容易。</p>
+<div class="box def"><div class="bt">定义速查</div>
+<ul>
+<li><b>交图（intersection graph）</b>：每个对象一个顶点，两个对象相交就连边。</li>
+<li><b>区间图（interval graph）</b>：可以表示为实数轴上区间的交图。</li>
+<li><b>单位区间图（unit / proper interval graph）</b>：区间长度都为 1。</li>
+<li><b>团 clique</b>：两两相邻的顶点集；<b>独立集 independent set</b>：两两不相邻；“极大 maximal”= 不能再扩充（不同于“最大 maximum”）。</li>
+<li><b>团覆盖 clique cover</b>：把 V 划分成若干团；大小 = 团的个数。</li>
+<li><b>诱导子图 induced subgraph</b>：只删点（及其关联边）；<b>子图</b>：删点也删边。</li>
+<li><b>色数 chromatic number</b>：合法着色所需最少颜色数。</li>
+<li><b>完美图 perfect graph</b>：每个诱导子图的最大团大小 = 色数。</li>
+</ul></div>
+
+<figure>
+<svg viewBox="0 0 560 160" width="560">
+  <g font-size="12">
+  <line x1="20" y1="140" x2="290" y2="140" class="ln" stroke-width="1"/>
+  <rect x="30" y="20" width="75" height="14" rx="3" fill="#3b7dd8"/><text x="10" y="31">v1</text>
+  <rect x="80" y="45" width="75" height="14" rx="3" fill="#2e9e6a"/><text x="60" y="56">v2</text>
+  <rect x="130" y="70" width="100" height="14" rx="3" fill="#e07a3f"/><text x="110" y="81">v3</text>
+  <rect x="180" y="95" width="75" height="14" rx="3" fill="#8a5cc7"/><text x="160" y="106">v4</text>
+  <rect x="205" y="118" width="75" height="14" rx="3" fill="#c94040"/><text x="285" y="129">v5</text>
+  <text x="150" y="156" text-anchor="middle" class="mut" font-size="11">区间表示</text>
+  <!-- graph -->
+  <line x1="340" y1="60" x2="400" y2="40" class="ln"/><line x1="400" y1="40" x2="460" y2="70" class="ln"/>
+  <line x1="460" y1="70" x2="510" y2="40" class="ln"/><line x1="460" y1="70" x2="510" y2="110" class="ln"/><line x1="510" y1="40" x2="510" y2="110" class="ln"/>
+  <circle cx="340" cy="60" r="14" fill="#3b7dd8"/><text x="340" y="64" text-anchor="middle" fill="#fff">v1</text>
+  <circle cx="400" cy="40" r="14" fill="#2e9e6a"/><text x="400" y="44" text-anchor="middle" fill="#fff">v2</text>
+  <circle cx="460" cy="70" r="14" fill="#e07a3f"/><text x="460" y="74" text-anchor="middle" fill="#fff">v3</text>
+  <circle cx="510" cy="40" r="14" fill="#8a5cc7"/><text x="510" y="44" text-anchor="middle" fill="#fff">v4</text>
+  <circle cx="510" cy="110" r="14" fill="#c94040"/><text x="510" y="114" text-anchor="middle" fill="#fff">v5</text>
+  <text x="430" y="156" text-anchor="middle" class="mut" font-size="11">对应的区间图：{v3,v4,v5} 是团，{v1,v3} 是独立集</text>
+  </g>
+</svg>
+<figcaption>图 5　区间与区间图。不重叠的区间 ⇔ 独立集。</figcaption>
+</figure>
+
+<div class="box key"><div class="bt">本节要记住的“等价关系”</div>
+<ul>
+<li><b>活动选择 = 区间图上的最大独立集</b>（给定排好序的区间表示时）。</li>
+<li><b>基站问题 = 单位区间刺穿 = 单位区间图上的最小团覆盖</b>（团中的区间有公共点 ⇒ 一个刺穿点覆盖整个团；Helly 性质）。</li>
+<li>区间图识别 <span class="m">O(n+m)</span>；区间图有 <span class="m">O(|V|)</span> 个极大团（练习）。</li>
+<li>区间图上：3-着色、着色、团、团覆盖、支配集、哈密顿回路、独立集等都是线性/多项式；但 <b>Maximum Cut 在区间图上是 NP-complete</b>，在单位区间图上多项式。</li>
+<li><b>完美图定理（Lovász 1972）</b>：G 完美 ⇔ 补图完美 ⇒ 每个诱导子图的最大独立集 = 团覆盖数。</li>
+<li><b>强完美图定理（2006）</b>：G 完美 ⇔ 不含奇洞（长度 ≥5 的奇诱导环）和奇反洞。练习：区间图是完美图。</li>
+<li>输入不在图类里怎么办：更大的图类（circular-arc、chordal、perfect）；k-interval；k-gap；删掉少量顶点使之落入图类。</li>
+</ul></div>
+
+<!-- ====================================================== -->
+<h2 id="g7"><span class="num">7</span>最优排序 Optimal Ordering</h2>
+<h3 id="g7-tape">7.1 磁带存储 I（等概率）</h3>
+<p><span class="m">n</span> 个文件长 <span class="m">L<sub>i</sub></span>，读第 <span class="m">i</span> 个文件要扫过前面所有文件。期望读取时间</p>
+<p style="text-align:center" class="mn">E = (1/n)·Σ<sub>i</sub>(L<sub>1</sub>+…+L<sub>i</sub>) = (1/n)·[ nL<sub>1</sub> + (n−1)L<sub>2</sub> + … + 1·L<sub>n</sub> ]</p>
+<p><b>贪心：按长度升序</b>。证明（相邻交换）：若存在相邻 <span class="m">L<sub>i</sub> &gt; L<sub>i+1</sub></span>，交换后只有这两项系数互换，<span class="m">T − T′ = (n−i+1)L<sub>i</sub> + (n−i)L<sub>i+1</sub> − (n−i+1)L<sub>i+1</sub> − (n−i)L<sub>i</sub> = L<sub>i</sub> − L<sub>i+1</sub> &gt; 0</span>，与最优矛盾。</p>
+
+<h3 id="g7-tape2">7.2 磁带存储 II（概率 <span class="m">p<sub>i</sub></span>）</h3>
+<p><span class="m">E = Σ<sub>k</sub> p<sub>k</sub>(L<sub>1</sub>+…+L<sub>k</sub>)</span>。两个直觉冲突：短的往前、概率大的往前。<b>按 <span class="m">p<sub>i</sub>/L<sub>i</sub></span> 降序</b>（<span class="m">p<sub>i</sub>=0</span> 放最后）。</p>
+<div class="box proof"><div class="bt">关键计算</div><p>交换相邻的 <span class="m">k, k+1</span>：只有它们两项变化，<span class="m">E − E′ = L<sub>k</sub>p<sub>k+1</sub> − L<sub>k+1</sub>p<sub>k</sub></span>。若 <span class="m">p<sub>k</sub>/L<sub>k</sub> &lt; p<sub>k+1</sub>/L<sub>k+1</sub></span>，则 <span class="m">L<sub>k+1</sub>p<sub>k</sub> &lt; L<sub>k</sub>p<sub>k+1</sub></span>，即 <span class="m">E − E′ &gt; 0</span>，交换后严格更好，矛盾。</p></div>
+<div class="box ex"><div class="bt">小例子</div><p>文件 A(L=4, p=0.5)、B(L=1, p=0.2)、C(L=2, p=0.3)。比值：A 0.125，B 0.2，C 0.15 ⇒ 顺序 B, C, A。<br>E = 0.2·1 + 0.3·(1+2) + 0.5·(1+2+4) = 0.2+0.9+3.5 = <b>4.6</b>。对比按长度升序（B,C,A）相同；按概率降序（A,C,B）：0.5·4+0.3·6+0.2·7 = 5.2，更差。</p></div>
+
+<h3 id="g7-late">7.3 最小化最大延迟 Minimising Job Lateness</h3>
+<div class="box def"><div class="bt">问题</div><p>任务有时长 <span class="m">t<sub>i</sub></span>、截止 <span class="m">d<sub>i</sub></span>，0 时刻都可开始，一次做一个不可中断。延迟 <span class="m">late<sub>i</sub> = finish<sub>i</sub> − d<sub>i</sub></span>（可负）。最小化 <span class="m">max<sub>i</sub> late<sub>i</sub></span>。</p></div>
+<p><b>贪心：Earliest Deadline First（按截止时间升序、无空闲）</b>。<b>时长根本不重要。</b></p>
+<div class="box proof"><div class="bt">证明（相邻逆序交换）</div>
+<p>先去掉空闲（不增加延迟）。逆序：i 在 j 前但 <span class="m">d<sub>j</sub> &lt; d<sub>i</sub></span>。未排序 ⇒ 有相邻逆序 <span class="m">k, k+1</span>。设这对任务在时刻 <span class="m">C</span> 结束（交换前后相同）。交换前两者最大延迟为 <span class="m">C − d<sub>k+1</sub></span>（k+1 后完成且截止更早）。交换后：<span class="m">late′<sub>k+1</sub> = C − t<sub>k</sub> − d<sub>k+1</sub> &lt; C − d<sub>k+1</sub></span>，<span class="m">late′<sub>k</sub> = C − d<sub>k</sub> &lt; C − d<sub>k+1</sub></span>。其他任务不变 ⇒ 最大延迟不增加。反复交换得到 EDF 顺序，故 EDF 最优。∎</p></div>
+<div class="box ex"><div class="bt">小例子</div><p>任务 (t, d)：J1(3, 6)、J2(2, 8)、J3(1, 9)、J4(4, 9)。EDF：J1→J2→J3→J4，完成 3,5,6,10；延迟 −3,−3,−3,1 ⇒ 最大 1。“最短先做”为什么不行？反例：K1(t=3, d=3)、K2(t=1, d=10)。EDF 先 K1 再 K2：完成 3, 4，延迟 0, −6 ⇒ 最大 0；最短优先先 K2 再 K1：完成 1, 4，延迟 −9, <b>1</b> ⇒ 最大 1，更差。</p></div>
+
+<!-- ====================================================== -->
+<h2 id="g8"><span class="num">8</span>最优合并与 Huffman 编码</h2>
+<h3 id="g8-merge">数组合并（练习）</h3>
+<p>n 个有序数组，每次合并两个（代价 = 两者长度和），直到剩一个。最少移动次数：<b>每次合并当前最短的两个</b>（与 Huffman 同构：合并树中每个元素被移动的次数 = 它所在叶子的深度）。</p>
+
+<h3 id="g8-prefix">前缀码</h3>
+<p>变长编码可能有歧义：<span class="mn">a=010, c=101, e=00, k=111, s=100, t=11</span>，“cake” 编码为 <code>10101011100</code>，但它也能解码成 “cats”——因为 <span class="mn">t=11</span> 是 <span class="mn">k=111</span> 的前缀。</p>
+<div class="box def"><div class="bt">前缀码 prefix code</div><p>任何码字都不是另一个码字的前缀 ⇒ 一定可唯一解码。用二叉树表示（左 0 右 1），码字都在<b>叶子</b>上。目标：最小化平均码长 <span class="m">Σ f<sub>i</sub>·len(C<sub>i</sub>)</span>。</p></div>
+
+<h3 id="g8-huff">Huffman 算法</h3>
+<p>优先队列存所有符号（按频率）。重复：取出频率最小的两个 <span class="m">x, y</span>，新建符号 <span class="m">xy</span>（频率 <span class="m">f<sub>x</sub>+f<sub>y</sub></span>，左孩子 x、右孩子 y）放回。剩一个时，从根到叶读出码字。<span class="m">O(n log n)</span>。</p>
+
+<figure>
+<svg viewBox="0 0 520 250" width="520">
+  <g class="ln">
+    <line x1="260" y1="30" x2="150" y2="85"/><line x1="260" y1="30" x2="380" y2="85"/>
+    <line x1="150" y1="85" x2="90" y2="145"/><line x1="150" y1="85" x2="210" y2="145"/>
+    <line x1="210" y1="145" x2="165" y2="205"/><line x1="210" y1="145" x2="255" y2="205"/>
+    <line x1="380" y1="85" x2="330" y2="145"/><line x1="380" y1="85" x2="440" y2="145"/>
+  </g>
+  <g font-size="11" fill="#e07a3f" font-weight="700">
+    <text x="196" y="52">0</text><text x="322" y="52">1</text><text x="108" y="114">0</text><text x="186" y="114">1</text>
+    <text x="178" y="176">0</text><text x="238" y="176">1</text><text x="345" y="114">0</text><text x="415" y="114">1</text>
+  </g>
+  <g font-size="12">
+  <rect x="225" y="15" width="70" height="28" rx="14" class="nd"/><text x="260" y="34" text-anchor="middle">1.00</text>
+  <rect x="112" y="71" width="76" height="28" rx="14" class="nd"/><text x="150" y="90" text-anchor="middle">cde .43</text>
+  <rect x="345" y="71" width="70" height="28" rx="14" class="nd"/><text x="380" y="90" text-anchor="middle">ab .57</text>
+  <rect x="176" y="131" width="68" height="28" rx="14" class="nd"/><text x="210" y="150" text-anchor="middle">de .23</text>
+  <rect x="58" y="131" width="64" height="28" rx="5" fill="#3b7dd8"/><text x="90" y="150" text-anchor="middle" fill="#fff">c .20</text>
+  <rect x="133" y="191" width="64" height="28" rx="5" fill="#3b7dd8"/><text x="165" y="210" text-anchor="middle" fill="#fff">e .05</text>
+  <rect x="223" y="191" width="64" height="28" rx="5" fill="#3b7dd8"/><text x="255" y="210" text-anchor="middle" fill="#fff">d .18</text>
+  <rect x="298" y="131" width="64" height="28" rx="5" fill="#3b7dd8"/><text x="330" y="150" text-anchor="middle" fill="#fff">b .25</text>
+  <rect x="408" y="131" width="64" height="28" rx="5" fill="#3b7dd8"/><text x="440" y="150" text-anchor="middle" fill="#fff">a .32</text>
+  <text x="90" y="178" text-anchor="middle" font-weight="700">00</text><text x="165" y="238" text-anchor="middle" font-weight="700">010</text><text x="255" y="238" text-anchor="middle" font-weight="700">011</text>
+  <text x="330" y="178" text-anchor="middle" font-weight="700">10</text><text x="440" y="178" text-anchor="middle" font-weight="700">11</text>
+  </g>
+</svg>
+<figcaption>图 6　课件例子：频率 a .32, b .25, c .20, d .18, e .05。合并顺序：(d,e)→.23；(c,de)→.43；(b,a)→.57；(cde,ab)→1。码长 a,b,c 为 2，d,e 为 3，平均码长 = 2·0.32+2·0.25+2·0.20+3·0.18+3·0.05 = <b>2.23</b>（固定 3 位编码需要 3）。左右顺序可交换，码字不唯一但码长分布最优。</figcaption>
+</figure>
+
+<div class="box proof"><div class="bt">Huffman 最优性证明三步（考点）</div>
+<ol>
+<li><b>满二叉树</b>：存在最优前缀码其树每个内部节点都有 2 个孩子（单孩子节点可用孩子替换，码长只减不增）。</li>
+<li><b>最深兄弟</b>：存在最优树，其中频率最小的两个符号 x, y 是最大深度上的兄弟（交换论证：把低频符号往下换、高频的往上换，期望长度不增）。</li>
+<li><b>收缩 + 归纳</b>：把 x, y 合并为 xy（频率 <span class="m">f<sub>x</sub>+f<sub>y</sub></span>），得到 n−1 个符号的问题；归纳假设 Huffman 在其上最优；展开 xy 时两棵树都恰好增加 <span class="m">f<sub>x</sub>+f<sub>y</sub></span>，所以 Huffman 仍不差。</li>
+</ol></div>
+
+<!-- ====================================================== -->
+<h2 id="g9"><span class="num">9</span>图结构：海啸预警、强连通分量、拓扑排序</h2>
+<div class="box def"><div class="bt">海啸预警 Tsunami Warning</div><p>n 个塔，坐标 <span class="m">(x<sub>i</sub>,y<sub>i</sub>)</span>、半径 <span class="m">r<sub>i</sub></span>。激活的塔会激活其半径内的塔（连锁）。最少装几个传感器能激活全部？</p></div>
+<p>错误尝试：只看半径最大；只看直接覆盖最多。都忽略了<b>间接激活</b>。正确建模：有向图 <span class="m">u → v</span> ⇔ <span class="m">v</span> 在 <span class="m">u</span> 的半径内（注意是有向的，半径不同）。</p>
+<div class="box key"><div class="bt">关键观察</div><ul>
+<li>互相可达的一组塔（强连通分量 SCC）可看作一个“超级塔”：最多放一个传感器，放哪都一样。</li>
+<li><b>凝聚图（condensation）</b> <span class="m">Σ<sub>G</sub></span>：每个 SCC 缩成一点，保留不同 SCC 间的边（去重）。<b>它一定是 DAG</b>（若有环，环上 SCC 可合并成更大的强连通集，矛盾）。</li>
+<li><b>答案 = 凝聚图中入度为 0 的点数</b>。下界：入度 0 的 SCC 无法被别人激活，必须各放一个；上界：任一 SCC 沿入边一直倒退，因无环，必终止于某个入度 0 的 SCC，其传感器会沿路径激活它。</li>
+</ul></div>
+
+<figure>
+<svg viewBox="0 0 560 260" width="560">
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <g font-size="13">
+  <rect x="20" y="20" width="150" height="130" rx="14" class="faint"/><rect x="200" y="20" width="150" height="130" rx="14" class="faint"/><rect x="380" y="20" width="160" height="130" rx="14" class="faint"/>
+  <g class="ln" marker-end="url(#ar)">
+    <line x1="58" y1="50" x2="122" y2="50"/><line x1="128" y1="62" x2="104" y2="110"/><line x1="86" y1="112" x2="56" y2="64"/>
+    <line x1="110" y1="122" x2="259" y2="122"/>
+    <line x1="238" y1="50" x2="302" y2="50"/><line x1="308" y1="62" x2="284" y2="110"/><line x1="266" y1="112" x2="236" y2="64"/>
+    <line x1="328" y1="55" x2="403" y2="74"/>
+    <line x1="430" y1="70" x2="485" y2="70"/><line x1="485" y1="86" x2="430" y2="86"/>
+  </g>
+  <circle cx="45" cy="50" r="13" class="nd"/><text x="45" y="55" text-anchor="middle">a</text>
+  <circle cx="135" cy="50" r="13" class="nd"/><text x="135" y="55" text-anchor="middle">b</text>
+  <circle cx="95" cy="122" r="13" class="nd"/><text x="95" y="127" text-anchor="middle">c</text>
+  <circle cx="225" cy="50" r="13" class="nd"/><text x="225" y="55" text-anchor="middle">d</text>
+  <circle cx="315" cy="50" r="13" class="nd"/><text x="315" y="55" text-anchor="middle">e</text>
+  <circle cx="275" cy="122" r="13" class="nd"/><text x="275" y="127" text-anchor="middle">f</text>
+  <circle cx="417" cy="78" r="13" class="nd"/><text x="417" y="83" text-anchor="middle">g</text>
+  <circle cx="498" cy="78" r="13" class="nd"/><text x="498" y="83" text-anchor="middle">h</text>
+  <text x="95" y="168" text-anchor="middle" class="mut" font-size="12">C_a={a,b,c}</text><text x="275" y="168" text-anchor="middle" class="mut" font-size="12">C_d={d,e,f}</text><text x="460" y="168" text-anchor="middle" class="mut" font-size="12">C_g={g,h}</text>
+  <!-- condensation -->
+  <g class="ln" marker-end="url(#ar)"><line x1="160" y1="222" x2="232" y2="222"/><line x1="320" y1="222" x2="392" y2="222"/></g>
+  <rect x="70" y="205" width="90" height="34" rx="17" fill="#e07a3f"/><text x="115" y="227" text-anchor="middle" fill="#fff">{a,b,c} ★</text>
+  <rect x="232" y="205" width="88" height="34" rx="17" class="nd"/><text x="276" y="227" text-anchor="middle">{d,e,f}</text>
+  <rect x="392" y="205" width="80" height="34" rx="17" class="nd"/><text x="432" y="227" text-anchor="middle">{g,h}</text>
+  <text x="10" y="200" font-size="11" class="mut">凝聚图（DAG）：</text>
+  </g>
+</svg>
+<figcaption>图 7　课件例子的 SCC 分解：<span class="m">R<sub>e</sub></span>={d,e,f,g,h}（从 e 可达），<span class="m">R′<sub>e</sub></span>={a,b,c,d,e,f}（能到 e），交集 <span class="m">C<sub>e</sub></span>={d,e,f}。凝聚图只有 {a,b,c} 入度为 0 ⇒ 只需 1 个传感器（★）。</figcaption>
+</figure>
+
+<h3 id="g9-scc">求 SCC 的三种方法</h3>
+<table>
+<tr><th>方法</th><th>思路</th><th>时间</th></tr>
+<tr><td>朴素</td><td>对未分配顶点 v：G 中 BFS 得 <span class="m">R<sub>v</sub></span>，反图 <span class="m">G<sup>rev</sup></span> 中 BFS 得 <span class="m">R′<sub>v</sub></span>，<span class="m">C<sub>v</sub> = R<sub>v</sub> ∩ R′<sub>v</sub></span>；重复</td><td><span class="m">O(|V|(|V|+|E|))</span></td></tr>
+<tr><td><b>Tarjan</b></td><td>一次 DFS；ID[v] 发现序号；LOW[v]；SCC 栈</td><td><span class="m">O(|V|+|E|)</span></td></tr>
+<tr><td>Kosaraju</td><td>G 上 DFS 记完成时间；<span class="m">G<sup>rev</sup></span> 上按完成时间降序 DFS</td><td><span class="m">O(|V|+|E|)</span></td></tr>
+</table>
+<div class="box def"><div class="bt">Tarjan 规则（课件原样）</div>
+<ul>
+<li>首次访问 v：<span class="m">LOW[v] = ID[v]</span>，v 入 SCC 栈并标记 in-stack。</li>
+<li>对边 (u,v)：v 未访问 → 递归，返回后 <span class="m">LOW[u] ← min(LOW[u], LOW[v])</span>；v 已访问且<b>仍在 SCC 栈中</b> → <span class="m">LOW[u] ← min(LOW[u], ID[v])</span>（包括回边与指向栈中顶点的横叉边）；v 已归属某 SCC → 忽略。</li>
+<li>u 的边处理完后若 <span class="m">LOW[u] = ID[u]</span>：弹栈直到 u，弹出的顶点构成一个 SCC。</li>
+<li>易错：忽略指向栈中顶点的横叉边（如课件 c→b）会把 {c} 错报为单独 SCC。</li>
+</ul></div>
+<p class="small">“线性时间 = 读图的时间”，所以 SCC、拓扑排序可以在任何图算法里“免费”使用——期中 Q2(b) 正是这样用的。</p>
+
+<h3 id="g9-topo">拓扑排序（Kahn 算法）</h3>
+<p>DAG 的拓扑序：双射 <span class="m">σ: V → {1..n}</span>，边 <span class="m">(v,w)</span> ⇒ <span class="m">σ(v) &lt; σ(w)</span>。每个 DAG 都有（可能多个）。算法：维护入度数组 D 和入度为 0 的集合 S；不断取出 S 中的 u 追加到序列 L，删除其出边并更新入度，入度变 0 就加入 S。最终仍有边 ⇒ 有环。<span class="m">O(|V|+|E|)</span>。</p>
+<p>海啸问题的贪心视角：每次选当前剩余凝聚图的一个“源点”（拓扑序第一个）放传感器，删去它能到达的所有分量，重复。</p>
+<div class="box key"><div class="bt">考点</div><p>遇到 DAG 题，<b>先拓扑排序再想问题</b>；遇到一般有向图，<b>先缩 SCC 变 DAG</b>。DAG 上最长路、路径计数等都可以按拓扑序 DP。</p></div>
+
+<!-- ====================================================== -->
+<h2 id="g10"><span class="num">10</span>单源最短路：Dijkstra</h2>
+<div class="box def"><div class="bt">设定</div><p>有向图、<b>非负边权</b>、单一源点 s（假设都可达）。无向图把每条边换成两条反向有向边即可。最短路不一定唯一。</p></div>
+<p><b>算法</b>：维护已确定集合 S；<span class="m">d<sub>s</sub>=0</span>，其余 ∞。每轮选 <span class="m">V∖S</span> 中 <span class="m">d<sub>v</sub></span> 最小的 v 加入 S，对每条出边 <span class="m">(v,z)</span> 松弛：若 <span class="m">d<sub>z</sub> &gt; d<sub>v</sub> + w(v,z)</span> 则更新。<span class="m">d<sub>v</sub></span> 的含义：中间点都在 S 中的最短路长度。</p>
+
+<figure>
+<svg viewBox="0 0 560 190" width="560">
+  <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <g font-size="13">
+  <g class="ln" marker-end="url(#ar2)">
+    <line x1="56" y1="88" x2="150" y2="38"/><line x1="56" y1="106" x2="150" y2="152"/><line x1="60" y1="97" x2="252" y2="97"/>
+    <line x1="168" y1="146" x2="168" y2="50"/><line x1="182" y1="152" x2="255" y2="108"/><line x1="182" y1="40" x2="255" y2="88"/>
+  </g>
+  <g fill="#e07a3f" font-weight="700" font-size="12"><text x="92" y="56">4</text><text x="92" y="146">1</text><text x="150" y="92">6</text><text x="174" y="128">2</text><text x="222" y="142">7</text><text x="222" y="58">2</text></g>
+  <circle cx="45" cy="97" r="14" fill="#3b7dd8"/><text x="45" y="102" text-anchor="middle" fill="#fff">s</text>
+  <circle cx="168" cy="34" r="14" class="nd"/><text x="168" y="39" text-anchor="middle">a</text>
+  <circle cx="168" cy="160" r="14" class="nd"/><text x="168" y="165" text-anchor="middle">b</text>
+  <circle cx="268" cy="97" r="14" class="nd"/><text x="268" y="102" text-anchor="middle">t</text>
+  </g>
+  <g font-size="12">
+  <text x="310" y="30" font-weight="700">步骤 d(s,a,b,t)</text>
+  <text x="310" y="54">初始　(0, ∞, ∞, ∞)</text>
+  <text x="310" y="78">定 s　(0, 4, 1, 6)</text>
+  <text x="310" y="102">定 b　(0, 3, 1, 6)　1+2&lt;4 更新a；1+7&gt;6 不变</text>
+  <text x="310" y="126">定 a　(0, 3, 1, 5)　3+2&lt;6 更新t</text>
+  <text x="310" y="150">定 t　最短路 s→b→a→t = 5</text>
+  </g>
+</svg>
+<figcaption>图 8　课件 Dijkstra 例子。注意比较的是从 s 出发的<b>总距离</b>，而不是“下一条边”有多便宜。</figcaption>
+</figure>
+
+<div class="box proof"><div class="bt">正确性（必考证明）</div>
+<p>设 v 是下一个加入 S 的点，<span class="m">d<sub>v</sub></span> 是“只经过 S 的最短路” p 的长度。若存在更短的路 p′，p′ 必在某处第一次离开 S 到达点 y ∉ S。p′ 到 y 的前缀只经过 S，长度 ≥ <span class="m">d<sub>y</sub></span>；边权非负 ⇒ <span class="m">len(p′) ≥ d<sub>y</sub></span>。而 v 是 S 外 d 最小的，<span class="m">d<sub>v</sub> ≤ d<sub>y</sub> ≤ len(p′)</span>，矛盾。∎</p>
+<p><b>更新的完整性</b>：加入 v 后若 <span class="m">d<sub>z</sub></span> 变小，新最短路的倒数第二个点一定是 v。否则形如 <span class="m">s→…→v→…→u→z</span>，u 比 v 早进 S，存在不经过 v 的到 u 的最短路 p′，拼上 uz 不比 p 长，且早已是 <span class="m">d<sub>z</sub></span> 的候选，矛盾。</p></div>
+
+<h3 id="g10-ds">数据结构与复杂度</h3>
+<table>
+<tr><th>实现</th><th>找最小</th><th>更新</th><th>总时间</th><th>适用</th></tr>
+<tr><td>数组 + 线性扫描</td><td><span class="m">O(n)</span> × n 次</td><td><span class="m">O(1)</span> × m 次</td><td><span class="m">O(n²+m) = O(n²)</span></td><td>稠密图 <span class="m">m=Θ(n²)</span> 时线性</td></tr>
+<tr><td><b>增强堆（augmented heap）</b></td><td><span class="m">O(log n)</span> 删除</td><td><span class="m">O(log n)</span> 上浮</td><td><span class="m">O((n+m) log n) = O(m log n)</span></td><td>稀疏图（如道路 m=O(n)）</td></tr>
+</table>
+<p><b>增强堆</b>：堆数组 <span class="m">A[j] = (i, d<sub>i</sub>)</span>，再加位置数组 <span class="m">P[i] = j</span>，使得能 O(1) 找到顶点 i 在堆中的位置；每次交换两个堆元素时同步更新 P。d 只减少，所以只需上浮（bubble up）。</p>
+<div class="box warn"><div class="bt">易错</div><ul><li>负权边 Dijkstra 不成立（证明里“后半段不会变短”失效）。</li><li><span class="m">O(m + n log n)</span> 需要 Fibonacci 堆，课程规定<b>不能直接引用</b>。</li><li><span class="m">m ≥ n−1</span>（全部可达）才能把 <span class="m">O((n+m)log n)</span> 化简为 <span class="m">O(m log n)</span>。</li></ul></div>
+<p class="small">课件前沿注记：Duan 等人 2025 年给出 <span class="m">O(m log<sup>2/3</sup> n)</span> 的确定性算法，在稀疏图上首次打破 Dijkstra 界；这属于扩展阅读。</p>
+
+<!-- ====================================================== -->
+<h2 id="g11"><span class="num">11</span>拟阵 Matroids：贪心一定最优的框架</h2>
+<div class="box def"><div class="bt">定义</div>
+<p>拟阵 <span class="m">(S, 𝒥)</span>：有限地集 S，<span class="m">𝒥</span> 是 S 的一族子集（称为<b>独立集</b>），满足</p>
+<ol>
+<li><b>非空</b>：<span class="m">∅ ∈ 𝒥</span>；</li>
+<li><b>遗传性（hereditary）</b>：<span class="m">X ∈ 𝒥, Y ⊆ X ⇒ Y ∈ 𝒥</span>；</li>
+<li><b>交换性（exchange）</b>：<span class="m">X, Y ∈ 𝒥</span> 且 <span class="m">|X| &gt; |Y|</span> ⇒ 存在 <span class="m">x ∈ X∖Y</span> 使 <span class="m">Y ∪ {x} ∈ 𝒥</span>。</li>
+</ol>
+<p><b>基（basis）</b>：极大独立集。由交换性，<b>所有基大小相同</b>。</p></div>
+
+<h3 id="g11-ex">常见拟阵（考试清单里的四个 + 线性拟阵）</h3>
+<table>
+<tr><th>名称</th><th>地集</th><th>独立 ⇔</th><th>基</th></tr>
+<tr><td>均匀拟阵 Uniform <span class="m">U<sub>k</sub></span></td><td>S</td><td><span class="m">|I| ≤ k</span></td><td>大小为 k 的集合</td></tr>
+<tr><td>划分拟阵 Partition</td><td>S = S<sub>1</sub>⊔…⊔S<sub>ℓ</sub></td><td><span class="m">|I ∩ S<sub>i</sub>| ≤ k<sub>i</sub></span> 对所有 i</td><td>每块恰取 k<sub>i</sub> 个（块够大时）</td></tr>
+<tr><td>图拟阵 / 环拟阵 Cycle (graphic)</td><td>边集 E</td><td>边集无环（森林）</td><td>生成森林（连通时为生成树）</td></tr>
+<tr><td>匹配拟阵 Matching</td><td>顶点集 V</td><td>存在一个匹配覆盖 I 中所有点</td><td>最大匹配的端点集</td></tr>
+<tr><td>线性拟阵 Linear</td><td>矩阵的列号</td><td>对应列线性无关</td><td>列空间的一组基</td></tr>
+</table>
+
+<h3 id="g11-greedy">加权拟阵上的贪心</h3>
+<pre><code>按权重降序排序 s1, s2, ..., sn
+I ← ∅
+for i = 1..n:
+    if I ∪ {si} ∈ 𝒥:  I ← I ∪ {si}
+return I</code></pre>
+<p>时间 <span class="m">O(n log n + n·f(n))</span>，<span class="m">f(n)</span> 为一次独立性查询的时间。输出是基：若被跳过的元素最后还能加入，由遗传性它当时也能加入，矛盾。</p>
+<div class="box proof"><div class="bt">正确性证明（交换性的典型用法，考点）</div>
+<p>设 <span class="m">G = {g<sub>1</sub>,…,g<sub>k</sub>}</span>（贪心）与最优基 <span class="m">H = {h<sub>1</sub>,…,h<sub>k</sub>}</span> 都按权重降序。假设 <span class="m">w(G) &lt; w(H)</span>，取第一个 <span class="m">w(g<sub>r</sub>) &lt; w(h<sub>r</sub>)</span> 的下标 r。对 <span class="m">G<sub>r−1</sub> = {g<sub>1..r−1</sub>}</span> 与 <span class="m">H<sub>r</sub> = {h<sub>1..r</sub>}</span> 用交换性：存在 <span class="m">h ∈ H<sub>r</sub>∖G<sub>r−1</sub></span>，<span class="m">G<sub>r−1</sub> ∪ {h} ∈ 𝒥</span>。而 <span class="m">w(h) ≥ w(h<sub>r</sub>) &gt; w(g<sub>r</sub>)</span>，贪心在处理 <span class="m">g<sub>r</sub></span> 之前已遇到 h，且当时（由遗传性）可加入——贪心不会跳过它，矛盾。∎</p></div>
+<ul>
+<li><b>最小权基</b>：按升序贪心，或令 <span class="m">w′(s) = M − w(s)</span>。</li>
+<li>练习：若权重互不相同，最大权基唯一。</li>
+<li>权重非负时，最大权基也是所有独立集中权重最大的（任何独立集可扩充为基，权重不减）。</li>
+</ul>
+<div class="box key"><div class="bt">考点（期中 Q3 / Q4 即此）</div><ul>
+<li>证明某集合系统是拟阵：逐条验证三条公理，最难的是<b>交换性</b>。</li>
+<li>证明不是拟阵：<b>给出具体 X, Y 违反交换性</b>（或违反遗传性）。</li>
+<li>把约束识别成“划分拟阵 ∩ 均匀拟阵”等结构，然后直接套贪心定理。</li>
+<li><b>两个拟阵的交一般不是拟阵</b>（如二分图匹配 = 两个划分拟阵的交）。</li>
+</ul></div>
+
+<!-- ====================================================== -->
+<h2 id="g12"><span class="num">12</span>最小生成树、Kruskal、并查集与 k-聚类</h2>
+<h3 id="g12-cyc">环拟阵是拟阵</h3>
+<p>非空、遗传显然（删边不会产生环）。<b>交换性</b>：无环图 <span class="m">(V,F)</span> 有 <span class="m">|V|−|F|</span> 个连通分量。若 <span class="m">|F<sub>1</sub>| &gt; |F<sub>2</sub>|</span>，则 <span class="m">(V,F<sub>1</sub>)</span> 分量更少，必有 <span class="m">F<sub>1</sub></span> 中某条边连接 <span class="m">(V,F<sub>2</sub>)</span> 的两个不同分量，加入 <span class="m">F<sub>2</sub></span> 不成环。连通图中，<b>基 = 生成树</b>。故 MST = 环拟阵的最小权基 ⇒ <b>Kruskal 正确</b>。</p>
+
+<figure>
+<svg viewBox="0 0 520 210" width="520">
+  <g font-size="12">
+  <line x1="60" y1="60" x2="170" y2="30" stroke="#2e9e6a" stroke-width="3.5"/>
+  <line x1="170" y1="30" x2="160" y2="150" stroke="#2e9e6a" stroke-width="3.5"/>
+  <line x1="290" y1="150" x2="400" y2="70" stroke="#2e9e6a" stroke-width="3.5"/>
+  <line x1="60" y1="60" x2="160" y2="150" stroke="#c94040" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <line x1="160" y1="150" x2="290" y2="150" stroke="#2e9e6a" stroke-width="3.5"/>
+  <line x1="400" y1="70" x2="430" y2="170" stroke="#2e9e6a" stroke-width="3.5"/>
+  <line x1="170" y1="30" x2="290" y2="150" stroke="#c94040" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <line x1="290" y1="150" x2="430" y2="170" stroke="#c94040" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <g font-weight="700" fill="#e07a3f"><text x="110" y="36">1</text><text x="172" y="96">2</text><text x="340" y="104">3</text><text x="98" y="120">4</text><text x="222" y="166">5</text><text x="424" y="120">6</text><text x="236" y="84">7</text><text x="356" y="176">8</text></g>
+  <circle cx="60" cy="60" r="14" class="nd"/><text x="60" y="65" text-anchor="middle">A</text>
+  <circle cx="170" cy="30" r="14" class="nd"/><text x="170" y="35" text-anchor="middle">B</text>
+  <circle cx="160" cy="150" r="14" class="nd"/><text x="160" y="155" text-anchor="middle">C</text>
+  <circle cx="290" cy="150" r="14" class="nd"/><text x="290" y="155" text-anchor="middle">D</text>
+  <circle cx="400" cy="70" r="14" class="nd"/><text x="400" y="75" text-anchor="middle">E</text>
+  <circle cx="430" cy="170" r="14" class="nd"/><text x="430" y="175" text-anchor="middle">F</text>
+  <text x="10" y="200" font-size="11" class="mut">按权重 1..8 处理：1✓ 2✓ 3✓ 4✗(A-B-C 成环) 5✓ 6✓ —— 已有 n−1=5 条，7✗ 8✗</text>
+  </g>
+</svg>
+<figcaption>图 9　Kruskal：绿色为选中的树边（总权 1+2+3+5+6 = 17），红色虚线为因成环被拒的边。</figcaption>
+</figure>
+
+<h3 id="g12-uf">并查集 Union-Find（size 启发式）</h3>
+<ul>
+<li>每个集合是一棵有根树，Find 返回根；parent 数组，根无父亲。</li>
+<li>Union(a,b)：找两个根 c, d；相同则不做；否则<b>把小树的根挂到大树的根下</b>，更新新根的 size。</li>
+<li><b>高度 ≤ log₂ n</b>：v 一旦有父亲 w，挂上去时 <span class="m">size(w) ≥ size(v)</span>，挂完后 <span class="m">size(w) ≥ 2·size(v)</span>，且 v 的子树以后不再变。沿叶到根的 h 条父边，子树大小每步至少翻倍 ⇒ <span class="m">2<sup>h</sup> ≤ n</span>。</li>
+<li>Find、Union 都是 <span class="m">O(log n)</span>。（rank 启发式与之等价；路径压缩可进一步降低摊还复杂度，CLRS §19。）</li>
+</ul>
+<p><b>Kruskal 总复杂度</b>：排序 <span class="m">O(m log m) = O(m log n)</span>（简单图 <span class="m">m &lt; n²</span>）；2m 次 Find + (n−1) 次 Union，<span class="m">O((m+n) log n)</span>；连通 ⇒ <b><span class="m">O(m log n)</span></b>。</p>
+<div class="box ex"><div class="bt">小观察（期中 Q4 用到）</div><p>Kruskal 若把所有边都处理完，被拒绝的边恰好是所有非树边；<b>第一条被拒绝的边就是权最小的非树边</b>。</p></div>
+
+<h3 id="g12-clu">k-聚类最大间隔 k-clustering of maximum spacing</h3>
+<p>完全图、边权为距离，把顶点分成 k 个非空簇，使<b>不同簇间最小距离（spacing）最大</b>。</p>
+<p><b>算法</b>：跑 Kruskal，<b>剩 k 个连通分量时停止</b>（即删掉 MST 中最重的 k−1 条边）。</p>
+<div class="box proof"><div class="bt">证明</div><p>令 δ 为连接两个最终分量的最小边权（我们的 spacing）。这样的边从未被拒绝过（端点一直在不同分量），所以停止时仍未处理 ⇒ 所有已选边权 ≤ δ。任取另一种聚类，必有一对 x, y 在我们这里同簇、在那里异簇；我们的森林中 x 到 y 的路径上每条边 ≤ δ，这条路径必在某条边 (z,w) 处跨越对方的簇边界 ⇒ 对方 spacing ≤ w(z,w) ≤ δ。∎ 时间：排序 Θ(n²) 条边 ⇒ <span class="m">O(n² log n)</span>。</p></div>
+
+<!-- ====================================================== -->
+<h2 id="g13"><span class="num">13</span>Module 2 谜题 &amp; 考点清单</h2>
+<div class="box ex"><div class="bt">谜题：寄泰迪熊</div><p>非空箱子必须上锁寄出；钥匙不能寄；挂锁只能锁着寄。<b>“AND”方案（3 次邮寄）</b>：Bob 用自己的锁锁箱寄给 Alice；Alice 再挂上自己的锁寄回；Bob 取下自己的锁再寄出；Alice 用自己的钥匙打开。<b>“OR”方案（2 次）</b>的关键是“挂锁可以串起来”：Alice 先把自己的锁（锁好的、挂在一只空箱的一个扣环上）寄给 Bob；Bob 装好熊，用自己的锁穿过箱盖的扣环和 Alice 那把锁的锁环，把两者串起来锁上——任一把锁打开都能开箱——再寄给 Alice，Alice 打开自己的锁即可。</p></div>
+
+<div class="box key"><div class="bt">Module 2 考点清单</div>
+<ol>
+<li><b>识别贪心规则 + 给反例</b>：0-1 背包、最短/冲突最少的活动、刺穿最多区间、只看半径的海啸、等。</li>
+<li><b>三种证明模板</b>：stays ahead（活动选择、基站）、exchange（活动选择、Prim、拟阵、Huffman）、相邻交换（磁带、延迟）。</li>
+<li><b>排序准则</b>：结束时间、右端点、长度、<span class="m">p/L</span> 比值、截止时间、单位价值。</li>
+<li><b>复杂度</b>：排序主导 <span class="m">O(n log n)</span>；维护“最后一个”状态做到线性扫描。</li>
+<li><b>图工具</b>：SCC（Tarjan/Kosaraju 线性）、凝聚图是 DAG、拓扑排序、DAG 上按序 DP。</li>
+<li><b>Dijkstra</b>：正确性证明、数组 <span class="m">O(n²)</span> vs 增强堆 <span class="m">O(m log n)</span>、非负权前提。</li>
+<li><b>拟阵</b>：三公理、基同大小、贪心定理及其交换证明、识别划分/均匀/图拟阵；交集不一定是拟阵。</li>
+<li><b>MST</b>：Kruskal + 并查集 <span class="m">O(m log n)</span>、size 启发式高度证明、Prim 的交换证明、k-聚类。</li>
+<li><b>Huffman</b>：前缀码、算法、平均码长计算、三步最优性证明。</li>
+<li><b>图类</b>：区间图/单位区间图、独立集/团覆盖与活动选择/刺穿的对应、完美图定理。</li>
+</ol></div>
+
+<!-- ====================================================== PART II -->
+<h2 id="n1"><span class="num">14</span>Module 3 开篇：多项式时间与“输入长度”</h2>
+<div class="box def"><div class="bt">多项式时间</div><p>算法在每个输入上都在 <span class="m">T(n) = O(n<sup>c</sup>)</span> 步内结束，<span class="m">c</span> 是<b>固定常数</b>，<span class="m">n</span> 是<b>输入长度（编码的比特数）</b>。指数不能随输入增长。</p></div>
+<div class="box ex"><div class="bt">例 1：最长上升子序列的穷举</div><p>[4,1,3] 的每个元素选或不选 ⇒ <span class="m">2<sup>n</sup></span> 个候选，每个检查 <span class="m">O(n)</span> ⇒ <span class="m">O(n·2<sup>n</sup>)</span>。注意：这只说明<b>这个穷举算法</b>慢，并不说明问题难（LIS 其实有多项式 DP 算法）。</p></div>
+<div class="box ex"><div class="bt">例 2：试除法判素数——为什么 <span class="m">O(√x)</span> 不是多项式</div><p>只需试 <span class="m">2..⌊√x⌋</span>（若 <span class="m">x=ab</span>，必有一个因子 ≤ √x）。但输入 x 只占 <span class="m">b = ⌊log₂x⌋+1</span> 位，<span class="m">√x ≈ 2<sup>b/2</sup></span>，对 b 是<b>指数</b>的。数值问题里“多项式”指对 <span class="m">log x</span> 多项式。（这也是 SubsetSum 的 <span class="m">O(nt)</span> DP 只是“伪多项式”的原因。）</p></div>
+<div class="box warn"><div class="bt">易错</div><p>分析含数字的算法时，问自己“输入有多少位”。<span class="m">O(t)</span> 当 t 以二进制给出时是指数的。</p></div>
+
+<!-- ====================================================== -->
+<h2 id="n2"><span class="num">15</span>判定问题、P、NP 与证书</h2>
+<div class="box def"><div class="bt">核心定义</div>
+<ul>
+<li><b>判定问题</b>：对每个输入回答 YES/NO。例：“是否有长度 ≥ k 的上升子序列？”</li>
+<li><b>P</b>：存在确定性多项式时间算法，对所有输入（YES 与 NO）都答对。</li>
+<li><b>NP</b>：存在多项式 <span class="m">p</span> 和问题 <span class="m">B ∈ P</span>，使得对所有 x：<br>
+<span class="m">A(x) = YES ⇔ ∃y: |y| ≤ p(|x|) 且 B(x, y) = YES</span>。<br>
+y 叫<b>证书（certificate）</b>，B 的算法叫<b>验证器（verifier / certifier）</b>。</li>
+<li>YES 实例：至少一个短证书被接受；NO 实例：<b>所有</b>证书都被拒绝。</li>
+<li>NP = Non-deterministic Polynomial time。它保证<b>验证快</b>，不提供<b>找</b>证书的方法。</li>
+</ul></div>
+<table>
+<tr><th>问题</th><th>证书</th><th>验证</th></tr>
+<tr><td>合数 Composite</td><td>因子 y（<span class="m">1&lt;y&lt;x</span>）</td><td>检查 <span class="m">x mod y = 0</span>，位数 O(log x)</td></tr>
+<tr><td>SAT</td><td>每个变量一个真值</td><td>逐个子句检查</td></tr>
+<tr><td>Clique (G,k)</td><td>顶点集 C（位向量）</td><td><span class="m">|C|=k</span> 且检查 <span class="m">C(k,2)</span> 对相邻</td></tr>
+<tr><td>Vertex Cover (G,k)</td><td>顶点集</td><td>大小 ≤ k，每条边有端点在集合中</td></tr>
+<tr><td>3-Colouring</td><td>着色</td><td>检查每条边两端异色</td></tr>
+<tr><td>TSP (G, ℓ)</td><td>一条回路的顶点顺序</td><td>每点恰访一次、总长 ≤ ℓ</td></tr>
+</table>
+<div class="box key"><div class="bt">要点</div><ul>
+<li><b>P ⊆ NP</b>：能解就能验证（自己解一遍，不需要证书）。</li>
+<li><b>属于 NP ≠ 难</b>：素数判定在 NP，也在 P（AKS 2002）。</li>
+<li><b>P vs NP</b> 未解决；普遍猜想 P ≠ NP。</li>
+<li>SAT：CNF 公式（子句 = 文字的 OR，子句之间 AND）是否可满足。验证容易；有 <span class="m">2<sup>n</sup></span> 种赋值，但多项式算法未必需要逐个尝试——只是没人找到。</li>
+</ul></div>
+
+<!-- ====================================================== -->
+<h2 id="n3"><span class="num">16</span>归约 Reductions：方向是一切</h2>
+<div class="box def"><div class="bt">Karp 归约（多项式时间多一归约）<span class="m">U ≤<sub>P</sub> V</span></div>
+<p>存在多项式时间可计算的 f，把 U 的每个实例 x 映射为 V 的实例 f(x)，且 <span class="m">U(x) = YES ⇔ V(f(x)) = YES</span>。输出长度自动是多项式的（写输出也要花时间）。</p></div>
+
+<figure>
+<svg viewBox="0 0 600 150" width="600">
+  <defs><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <g font-size="13">
+  <rect x="20" y="40" width="150" height="56" rx="10" fill="#c94040" opacity=".15" stroke="#c94040"/>
+  <text x="95" y="64" text-anchor="middle" font-weight="700">U（已知难）</text><text x="95" y="84" text-anchor="middle" font-size="12">如 3SAT</text>
+  <rect x="420" y="40" width="160" height="56" rx="10" fill="#3b7dd8" opacity=".15" stroke="#3b7dd8"/>
+  <text x="500" y="64" text-anchor="middle" font-weight="700">V（要证明难）</text><text x="500" y="84" text-anchor="middle" font-size="12">如 Vertex Cover</text>
+  <line x1="172" y1="68" x2="416" y2="68" class="ln" stroke-width="2.2" marker-end="url(#ar3)"/>
+  <text x="294" y="58" text-anchor="middle">多项式变换 f（构造）</text>
+  <text x="294" y="90" text-anchor="middle" font-size="12">x 是 YES ⇔ f(x) 是 YES（两个方向都要证）</text>
+  <text x="300" y="130" text-anchor="middle" font-size="12" class="mut">算法信息向左流：V ∈ P ⇒ U ∈ P；　难度信息向右流：U 是 NP-hard ⇒ V 是 NP-hard</text>
+  </g>
+</svg>
+<figcaption>图 10　证明“V 难”时，箭头必须<b>指向 V</b>：从已知难问题归约到新问题。</figcaption>
+</figure>
+
+<div class="box warn"><div class="bt">最常见的错误（考试大扣分点）</div><ul>
+<li><b>方向反了</b>：把新问题 V 归约到 3SAT，只说明 V 不比 3SAT 难，证明不了任何难度。</li>
+<li><b>只证一个方向</b>：只证明“x YES ⇒ f(x) YES”是不够的，还要“f(x) YES ⇒ x YES”（通常写成逆否：x NO ⇒ f(x) NO，也可以）。</li>
+<li><b>构造依赖答案</b>：f 不能用到“满足赋值/最优解”，它只能看输入本身（构造必须多项式时间）。</li>
+<li>没有说明构造是多项式时间（给出顶点数/边数的规模即可）。</li>
+</ul></div>
+<div class="box ex"><div class="bt">归约的小例子</div><ul>
+<li>“避开同色端点边的最短路” → 删掉这些边，跑普通最短路。</li>
+<li>区间图（给出区间表示）：“≤ k 个团覆盖所有点” ⇔ “≤ k 个点刺穿所有区间”。点→团：被同一点刺中的区间构成团；团→点：团中区间有公共点。</li>
+</ul></div>
+
+<!-- ====================================================== -->
+<h2 id="n4"><span class="num">17</span>Cook 定理、NP-hard、NP-complete</h2>
+<div class="box def"><div class="bt">定义</div><ul>
+<li><b>Cook 定理</b>：对每个 <span class="m">U ∈ NP</span>，<span class="m">U ≤<sub>P</sub> SAT</span>（把验证器的计算编码成公式；课上不证）。</li>
+<li><b>NP-hard</b>：每个 NP 问题都能多项式归约到它。<b>不要求它本身在 NP 中</b>。</li>
+<li><b>NP-complete</b> = NP-hard ∩ NP。SAT 是 NP-complete。</li>
+<li><b>传递性</b>：若 V 是 NP-hard 且 <span class="m">V ≤<sub>P</sub> W</span>，则 W 是 NP-hard（复合 <span class="m">g∘f</span> 仍保持答案；时间 <span class="m">P(n) + Q(P(n))</span> 仍是多项式，因为 <span class="m">|f(x)| ≤ P(n)</span>）。</li>
+<li>若任一 NP-complete 问题有多项式算法 ⇒ P = NP。</li>
+</ul></div>
+<figure>
+<svg viewBox="0 0 600 230" width="600">
+  <g font-size="13">
+  <ellipse cx="210" cy="125" rx="208" ry="98" fill="#3b7dd8" fill-opacity=".10" stroke="#3b7dd8" stroke-width="1.8"/>
+  <path d="M252 15 Q 590 15 592 125 Q 590 225 252 225 Z" fill="#c94040" fill-opacity=".10" stroke="#c94040" stroke-width="1.8"/>
+  <ellipse cx="130" cy="135" rx="80" ry="50" fill="#2e9e6a" fill-opacity=".15" stroke="#2e9e6a" stroke-width="1.8"/>
+  <text x="130" y="132" text-anchor="middle" font-weight="700">P</text><text x="130" y="152" text-anchor="middle" font-size="11">2SAT, 最短路, MST, 素数</text>
+  <text x="60" y="70" font-weight="700" fill="#3b7dd8">NP</text>
+  <text x="520" y="50" font-weight="700" fill="#c94040">NP-hard</text>
+  <text x="333" y="110" text-anchor="middle" font-weight="700">NP-complete</text>
+  <text x="335" y="130" text-anchor="middle" font-size="11">SAT, 3SAT, VC, Clique,</text>
+  <text x="335" y="146" text-anchor="middle" font-size="11">3COL, HamCycle, TSP 判定</text>
+  <text x="500" y="160" text-anchor="middle" font-size="11">NP 之外的难题</text>
+  <text x="500" y="176" text-anchor="middle" font-size="11">（如 TSP 优化、#SAT）</text>
+  </g>
+</svg>
+<figcaption>图 11　假设 P ≠ NP 时的猜想图景（未被证明）。若 P = NP，则除“永远 YES / 永远 NO”两个平凡问题外，NP 中每个问题都是 NP-complete。</figcaption>
+</figure>
+
+<!-- ====================================================== -->
+<h2 id="n5"><span class="num">18</span>SAT → 3SAT（第一个“手工”归约）</h2>
+<p><span class="m">k</span>SAT：每个子句恰好 k 个文字（允许重复）。<b>2SAT ∈ P</b>（用 SCC + 拓扑排序线性时间求解）；<b>3SAT 是 NP-complete</b>。简单方向 3SAT ≤ SAT 平凡；我们需要 SAT ≤ 3SAT。</p>
+<div class="box def"><div class="bt">构造：长子句拆成链</div>
+<p>原子句 <span class="m">x<sub>1</sub> ∨ ¬x<sub>2</sub> ∨ ¬x<sub>3</sub> ∨ x<sub>4</sub> ∨ ¬x<sub>5</sub> ∨ x<sub>6</sub></span>（6 个文字），引入新变量 <span class="m">q<sub>1</sub>, q<sub>2</sub>, q<sub>3</sub></span>：</p>
+<p style="text-align:center" class="mn">(x<sub>1</sub> ∨ ¬x<sub>2</sub> ∨ q<sub>1</sub>) ∧ (¬q<sub>1</sub> ∨ ¬x<sub>3</sub> ∨ q<sub>2</sub>) ∧ (¬q<sub>2</sub> ∨ x<sub>4</sub> ∨ q<sub>3</sub>) ∧ (¬q<sub>3</sub> ∨ ¬x<sub>5</sub> ∨ x<sub>6</sub>)</p>
+<p><span class="m">q<sub>j</sub></span> 的含义：“到这里为止原文字都是假的，要求还没满足，传给下一个子句”。</p>
+<ul>
+<li><b>⇒</b>：原子句有真文字。第一个真文字之前的 <span class="m">q<sub>j</sub></span> 取真，之后取假，每个新子句都满足。</li>
+<li><b>⇐</b>：若原文字全假，链会强迫 <span class="m">q<sub>1</sub>=T ⇒ q<sub>2</sub>=T ⇒ q<sub>3</sub>=T</span>，最后一个子句 <span class="m">(¬q<sub>3</sub> ∨ F ∨ F)</span> 为假。</li>
+<li>r ≥ 4 个文字 → r−2 个子句、r−3 个新变量；短子句重复文字补齐：<span class="m">(a) ↦ (a∨a∨a)</span>，<span class="m">(a∨b) ↦ (a∨b∨b)</span>。规模线性。</li>
+</ul></div>
+<p>3SAT ∈ NP（赋值即证书）+ NP-hard ⇒ <b>3SAT 是 NP-complete</b>。以后可以从 3SAT 出发归约到图问题。</p>
+
+<!-- ====================================================== -->
+<h2 id="n6"><span class="num">19</span>写 NP-complete 证明的标准流程</h2>
+<div class="box tpl"><div class="bt">模板（几乎所有题都这样写）</div>
+<ol>
+<li><b>（若要 NP-complete）证明 W ∈ NP</b>：说清证书是什么、长度多项式、验证器做什么、多少时间。</li>
+<li><b>选一个已知 NP-hard 问题 V</b>（考试清单里的任意一个），写出它的输入。</li>
+<li><b>构造</b>：由 V 的实例 x 构造 W 的实例 f(x)，包括参数（如 k 的取值）。最好配小例子/图。</li>
+<li><b>规模</b>：f(x) 的大小和构造时间是多项式的。</li>
+<li><b>（⇒）</b>x 是 YES ⇒ f(x) 是 YES：从 x 的解<b>构造</b> f(x) 的解。</li>
+<li><b>（⇐）</b>f(x) 是 YES ⇒ x 是 YES：从 f(x) 的<b>任意</b>解“读回” x 的解（常需要先把解“规范化”，如“不妨设解不含某类顶点”）。</li>
+<li>结论：V ≤<sub>P</sub> W，W 是 NP-hard（再加第 1 步得 NP-complete）。</li>
+</ol></div>
+<p class="small">旁注：若 <span class="m">V ≤<sub>P</sub> W</span> 且 <span class="m">W ∈ NP</span>，则 <span class="m">V ∈ NP</span>。所以拿一个已知 NP-complete 问题作起点是合适的。</p>
+
+<!-- ====================================================== -->
+<h2 id="n7"><span class="num">20</span>四个经典归约（课件全部）</h2>
+<p>统一示例公式：<span class="m">F = (x<sub>1</sub>∨¬x<sub>2</sub>∨x<sub>3</sub>) ∧ (¬x<sub>1</sub>∨x<sub>2</sub>∨x<sub>3</sub>) ∧ (¬x<sub>1</sub>∨x<sub>2</sub>∨¬x<sub>3</sub>)</span>，满足赋值 <span class="m">x<sub>1</sub>=0, x<sub>2</sub>=1, x<sub>3</sub>=1</span>。</p>
+
+<h3 id="n7-vc">20.1 3SAT ≤ Vertex Cover</h3>
+<ul>
+<li><b>变量小件</b>：每个变量 <span class="m">x<sub>i</sub></span> 两个相邻点 <span class="m">x<sub>i</sub></span>、<span class="m">¬x<sub>i</sub></span>（覆盖至少选 1 个）。</li>
+<li><b>子句小件</b>：每个子句一个三角形，每个出现位置一个点（覆盖至少选 2 个）。</li>
+<li><b>连接</b>：三角形里的每个出现点连到同名文字的变量点。</li>
+<li><b>k = n + 2m</b>：刚好没有余量。</li>
+</ul>
+<figure>
+<svg viewBox="0 0 540 300" width="540">
+<g font-size="12">
+<line x1="50" y1="250" x2="60" y2="40" stroke="currentColor" stroke-opacity=".35" stroke-width="1.2"/>
+<line x1="140" y1="250" x2="300" y2="40" stroke="currentColor" stroke-opacity=".35" stroke-width="1.2"/>
+<line x1="95" y1="180" x2="400" y2="40" stroke="currentColor" stroke-opacity=".35" stroke-width="1.2"/>
+<line x1="220" y1="250" x2="130" y2="40" stroke="currentColor" stroke-opacity=".35" stroke-width="1.2"/>
+<line x1="310" y1="250" x2="230" y2="40" stroke="currentColor" stroke-opacity=".35" stroke-width="1.2"/>
+<line x1="265" y1="180" x2="400" y2="40" stroke="currentColor" stroke-opacity=".35" stroke-width="1.2"/>
+<line x1="390" y1="250" x2="130" y2="40" stroke="currentColor" stroke-opacity=".35" stroke-width="1.2"/>
+<line x1="480" y1="250" x2="230" y2="40" stroke="currentColor" stroke-opacity=".35" stroke-width="1.2"/>
+<line x1="435" y1="180" x2="470" y2="40" stroke="currentColor" stroke-opacity=".35" stroke-width="1.2"/>
+<line x1="60" y1="40" x2="130" y2="40" class="ln" stroke-width="2.2"/>
+<line x1="230" y1="40" x2="300" y2="40" class="ln" stroke-width="2.2"/>
+<line x1="400" y1="40" x2="470" y2="40" class="ln" stroke-width="2.2"/>
+<line x1="50" y1="250" x2="140" y2="250" class="ln" stroke-width="2.2"/>
+<line x1="140" y1="250" x2="95" y2="180" class="ln" stroke-width="2.2"/>
+<line x1="50" y1="250" x2="95" y2="180" class="ln" stroke-width="2.2"/>
+<line x1="220" y1="250" x2="310" y2="250" class="ln" stroke-width="2.2"/>
+<line x1="310" y1="250" x2="265" y2="180" class="ln" stroke-width="2.2"/>
+<line x1="220" y1="250" x2="265" y2="180" class="ln" stroke-width="2.2"/>
+<line x1="390" y1="250" x2="480" y2="250" class="ln" stroke-width="2.2"/>
+<line x1="480" y1="250" x2="435" y2="180" class="ln" stroke-width="2.2"/>
+<line x1="390" y1="250" x2="435" y2="180" class="ln" stroke-width="2.2"/>
+<circle cx="60" cy="40" r="17" class="nd"/><text x="60" y="44" text-anchor="middle">x₁</text>
+<circle cx="130" cy="40" r="17" fill="#e07a3f"/><text x="130" y="44" text-anchor="middle" fill="#fff">¬x₁</text>
+<circle cx="230" cy="40" r="17" fill="#e07a3f"/><text x="230" y="44" text-anchor="middle" fill="#fff">x₂</text>
+<circle cx="300" cy="40" r="17" class="nd"/><text x="300" y="44" text-anchor="middle">¬x₂</text>
+<circle cx="400" cy="40" r="17" fill="#e07a3f"/><text x="400" y="44" text-anchor="middle" fill="#fff">x₃</text>
+<circle cx="470" cy="40" r="17" class="nd"/><text x="470" y="44" text-anchor="middle">¬x₃</text>
+<circle cx="50" cy="250" r="17" fill="#e07a3f"/><text x="50" y="254" text-anchor="middle" fill="#fff">x₁</text>
+<circle cx="140" cy="250" r="17" fill="#e07a3f"/><text x="140" y="254" text-anchor="middle" fill="#fff">¬x₂</text>
+<circle cx="95" cy="180" r="17" class="nd"/><text x="95" y="184" text-anchor="middle">x₃</text>
+<text x="95" y="290" text-anchor="middle" font-weight="700" fill="#3b7dd8">C1</text>
+<circle cx="220" cy="250" r="17" class="nd"/><text x="220" y="254" text-anchor="middle">¬x₁</text>
+<circle cx="310" cy="250" r="17" fill="#e07a3f"/><text x="310" y="254" text-anchor="middle" fill="#fff">x₂</text>
+<circle cx="265" cy="180" r="17" fill="#e07a3f"/><text x="265" y="184" text-anchor="middle" fill="#fff">x₃</text>
+<text x="265" y="290" text-anchor="middle" font-weight="700" fill="#3b7dd8">C2</text>
+<circle cx="390" cy="250" r="17" class="nd"/><text x="390" y="254" text-anchor="middle">¬x₁</text>
+<circle cx="480" cy="250" r="17" fill="#e07a3f"/><text x="480" y="254" text-anchor="middle" fill="#fff">x₂</text>
+<circle cx="435" cy="180" r="17" fill="#e07a3f"/><text x="435" y="184" text-anchor="middle" fill="#fff">¬x₃</text>
+<text x="435" y="290" text-anchor="middle" font-weight="700" fill="#3b7dd8">C3</text>
+<text x="10" y="16" font-size="11" class="mut">上排：变量对（各选 1 个）；下排：子句三角形（各选 2 个）；细线：出现位置 ↔ 同名文字</text>
+</g></svg>
+<figcaption>图 12　示例的构造（n = 3, m = 3, k = 9）。橙色为由赋值 x₁=0, x₂=1, x₃=1 得到的大小 9 的覆盖：每对选真文字；每个三角形留出一个真文字出现（C1 留 x₃，C2、C3 留 ¬x₁），其余两个选上。</figcaption>
+</figure>
+<div class="box proof"><div class="bt">两个方向</div>
+<p><b>赋值 ⇒ 覆盖</b>：选每对中为真的文字点；每个子句挑一个真文字出现留出，其余 2 个选上。共 n+2m。变量边、三角边被覆盖；连接边：若三角端被选则已覆盖，否则它是真文字的出现，其变量端（真文字）被选。</p>
+<p><b>覆盖 ⇒ 赋值</b>：不相交的小件就需要 n+2m 个点 ⇒ 每对恰 1 个、每个三角形恰 2 个。令“选了 <span class="m">x<sub>i</sub></span>”为真。每个三角形有一个未选的出现点，它的连接边必须由变量端覆盖 ⇒ 该文字为真 ⇒ 子句满足。∎ 规模：2n+3m 个点，n+3m+3m 条边。</p></div>
+
+<h3 id="n7-clique">20.2 3SAT ≤ Clique</h3>
+<p>每个子句的每个出现建一个点（共 3m 个）。两点连边 ⇔ <b>来自不同子句</b>且<b>不互为相反文字</b>。问是否有大小 <b>k = m</b> 的团。</p>
+<figure>
+<svg viewBox="0 0 520 340" width="520">
+<g font-size="13">
+<line x1="135" y1="174" x2="368" y2="233" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="135" y1="174" x2="385" y2="174" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="135" y1="174" x2="260" y2="45" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="135" y1="174" x2="201" y2="60" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="152" y1="232" x2="326" y2="276" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="152" y1="232" x2="385" y2="174" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="152" y1="232" x2="319" y2="60" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="152" y1="232" x2="201" y2="60" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="194" y1="276" x2="326" y2="276" stroke="#e07a3f" stroke-width="3.5"/>
+<line x1="194" y1="276" x2="368" y2="233" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="194" y1="276" x2="385" y2="174" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="194" y1="276" x2="319" y2="60" stroke="#e07a3f" stroke-width="3.5"/>
+<line x1="194" y1="276" x2="260" y2="45" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="326" y1="276" x2="319" y2="60" stroke="#e07a3f" stroke-width="3.5"/>
+<line x1="326" y1="276" x2="260" y2="45" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="326" y1="276" x2="201" y2="60" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="368" y1="233" x2="319" y2="60" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="368" y1="233" x2="260" y2="45" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="368" y1="233" x2="201" y2="60" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="385" y1="174" x2="319" y2="60" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<line x1="385" y1="174" x2="260" y2="45" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
+<circle cx="135" cy="174" r="17" class="nd"/><text x="135" y="179" text-anchor="middle">x₁</text>
+<circle cx="152" cy="232" r="17" class="nd"/><text x="152" y="238" text-anchor="middle">¬x₂</text>
+<circle cx="194" cy="276" r="17" fill="#e07a3f"/><text x="194" y="281" text-anchor="middle" fill="#fff">x₃</text>
+<circle cx="326" cy="276" r="17" fill="#e07a3f"/><text x="326" y="281" text-anchor="middle" fill="#fff">¬x₁</text>
+<circle cx="368" cy="233" r="17" class="nd"/><text x="368" y="238" text-anchor="middle">x₂</text>
+<circle cx="385" cy="174" r="17" class="nd"/><text x="385" y="179" text-anchor="middle">x₃</text>
+<circle cx="319" cy="60" r="17" fill="#e07a3f"/><text x="319" y="65" text-anchor="middle" fill="#fff">¬x₁</text>
+<circle cx="260" cy="45" r="17" class="nd"/><text x="260" y="50" text-anchor="middle">x₂</text>
+<circle cx="201" cy="60" r="17" class="nd"/><text x="201" y="65" text-anchor="middle">¬x₃</text>
+<text x="110" y="258" text-anchor="middle" font-weight="700" fill="#3b7dd8">C1</text>
+<text x="410" y="258" text-anchor="middle" font-weight="700" fill="#3b7dd8">C2</text>
+<text x="260" y="10" text-anchor="middle" font-weight="700" fill="#3b7dd8">C3</text>
+</g></svg>
+<figcaption>图 13　3SAT → Clique 的图（21 条边）。同一子句内部无边；相反文字（如 x₁ 与 ¬x₁）之间无边。橙色三角形 {C1 的 x₃, C2 的 ¬x₁, C3 的 ¬x₁} 是大小 3 = m 的团，对应赋值 x₁=0, x₃=1。</figcaption>
+</figure>
+<div class="box proof"><div class="bt">两个方向</div>
+<p><b>⇒</b>：每个子句选一个真出现，它们来自不同子句且不会矛盾（同时为真），两两相连，得 m-团。</p>
+<p><b>⇐</b>：团中无两点来自同一子句（组内无边），m 个点 ⇒ 每个子句恰一个；彼此不矛盾 ⇒ 令它们为真（其余变量任意）即满足每个子句。∎ 构造 <span class="m">O(m²)</span>。Clique ∈ NP ⇒ NP-complete。</p></div>
+
+<h3 id="n7-vc2c">20.3 Vertex Cover ≤ Clique（补图）</h3>
+<p><span class="m">(G, k) ↦ (Ḡ, n−k)</span>。关键事实：<b>S 是 G 的点覆盖 ⇔ V∖S 是 G 的独立集 ⇔ V∖S 是 Ḡ 的团</b>。构造补图 <span class="m">O(n²)</span>；<span class="m">k &gt; n</span> 时输出固定 YES 实例。</p>
+<div class="box ex"><div class="bt">小例子</div><p>G：边 ab, ad, bc, bd, cd, de（6 条）。{b,d} 覆盖所有边（k=2）。剩下 {a,c,e} 在 G 中两两不相邻 ⇒ 在 Ḡ 中是 3 = n−k 的团。</p></div>
+
+<h3 id="n7-3col">20.4 3SAT ≤ 3-Colouring</h3>
+<ol>
+<li><b>参照三角形</b> T, F, B：三种颜色分别命名为 1（真）、0（假）、2（第三色）。</li>
+<li>每个变量：点 <span class="m">x<sub>i</sub></span>、<span class="m">¬x<sub>i</sub></span> 互连且都连 B ⇒ 它们只能用 0/1 且互异 ⇒ 是一个合法真值。</li>
+<li><b>OR 小件</b>：输入 <span class="m">ℓ<sub>1</sub>, ℓ<sub>2</sub></span>；内部 <span class="m">y<sub>1</sub>, y<sub>2</sub>, y<sub>3</sub></span>；边 <span class="m">ℓ<sub>1</sub>y<sub>1</sub>, ℓ<sub>2</sub>y<sub>2</sub>, y<sub>1</sub>y<sub>2</sub>, y<sub>1</sub>y<sub>3</sub>, y<sub>2</sub>y<sub>3</sub></span>。两输入都为 0 ⇒ y₁, y₂ 只能用 1, 2 ⇒ 输出 y₃ 被迫为 0；至少一个输入为 1 ⇒ 存在使 y₃ = 1 的着色。</li>
+<li><b>子句小件</b>：两个 OR 串联 <span class="m">(ℓ<sub>1</sub>,ℓ<sub>2</sub>)→y<sub>3</sub></span>，<span class="m">(y<sub>3</sub>,ℓ<sub>3</sub>)→y<sub>6</sub></span>；再把 <span class="m">y<sub>6</sub></span> 连到 B 和 F ⇒ <span class="m">y<sub>6</sub></span> 被迫为 1（真）。每个子句 6 个新点、12 条新边。</li>
+</ol>
+<figure>
+<svg viewBox="0 0 600 240" width="600">
+  <g font-size="12">
+  <g class="ln" stroke-width="1.8">
+    <line x1="50" y1="40" x2="140" y2="40"/><line x1="50" y1="140" x2="140" y2="140"/><line x1="140" y1="40" x2="140" y2="140"/>
+    <line x1="140" y1="40" x2="220" y2="90"/><line x1="140" y1="140" x2="220" y2="90"/>
+    <line x1="220" y1="90" x2="310" y2="90"/><line x1="220" y1="190" x2="310" y2="190"/><line x1="310" y1="90" x2="310" y2="190"/>
+    <line x1="310" y1="90" x2="390" y2="140"/><line x1="310" y1="190" x2="390" y2="140"/>
+    <line x1="390" y1="140" x2="480" y2="90" stroke="#e07a3f" stroke-width="2.4"/><line x1="390" y1="140" x2="480" y2="190" stroke="#e07a3f" stroke-width="2.4"/>
+    <line x1="480" y1="90" x2="480" y2="190"/><line x1="480" y1="90" x2="560" y2="140"/><line x1="480" y1="190" x2="560" y2="140"/>
+  </g>
+  <rect x="100" y="15" width="148" height="150" rx="12" class="faint"/><rect x="270" y="65" width="148" height="150" rx="12" class="faint"/>
+  <text x="174" y="180" text-anchor="middle" class="mut" font-size="11">OR 小件 1</text><text x="344" y="230" text-anchor="middle" class="mut" font-size="11">OR 小件 2</text>
+  <circle cx="50" cy="40" r="15" fill="#3b7dd8"/><text x="50" y="44" text-anchor="middle" fill="#fff">ℓ₁</text>
+  <circle cx="50" cy="140" r="15" fill="#3b7dd8"/><text x="50" y="144" text-anchor="middle" fill="#fff">ℓ₂</text>
+  <circle cx="220" cy="190" r="15" fill="#3b7dd8"/><text x="220" y="194" text-anchor="middle" fill="#fff">ℓ₃</text>
+  <circle cx="140" cy="40" r="15" class="nd"/><text x="140" y="44" text-anchor="middle">y₁</text>
+  <circle cx="140" cy="140" r="15" class="nd"/><text x="140" y="144" text-anchor="middle">y₂</text>
+  <circle cx="220" cy="90" r="15" class="nd"/><text x="220" y="94" text-anchor="middle">y₃</text>
+  <circle cx="310" cy="90" r="15" class="nd"/><text x="310" y="94" text-anchor="middle">y₄</text>
+  <circle cx="310" cy="190" r="15" class="nd"/><text x="310" y="194" text-anchor="middle">y₅</text>
+  <circle cx="390" cy="140" r="15" class="nd"/><text x="390" y="144" text-anchor="middle">y₆</text>
+  <circle cx="480" cy="90" r="15" fill="#8a8f96"/><text x="480" y="94" text-anchor="middle" fill="#fff">B</text>
+  <circle cx="480" cy="190" r="15" fill="#c94040"/><text x="480" y="194" text-anchor="middle" fill="#fff">F</text>
+  <circle cx="560" cy="140" r="15" fill="#2e9e6a"/><text x="560" y="144" text-anchor="middle" fill="#fff">T</text>
+  <text x="520" y="230" text-anchor="middle" class="mut" font-size="11">参照三角形（全图共享）</text>
+  </g>
+</svg>
+<figcaption>图 14　子句 (ℓ₁∨ℓ₂∨ℓ₃) 的小件。蓝色输入点就是已有的文字点；y₆ 与 B、F 相连（橙色边）⇒ y₆ 只能取 T 的颜色。三个输入都为假时 y₃ 被迫为 0，进而 y₆ 被迫为 0，矛盾。</figcaption>
+</figure>
+<div class="box proof"><div class="bt">两个方向</div>
+<p><b>赋值 ⇒ 着色</b>：T,F,B 着 1,0,2；文字按真值着色；每个子句有真输入，小件可补全（取 <span class="m">y<sub>3</sub> = ℓ<sub>1</sub> ∨ ℓ<sub>2</sub></span>，再补全使 y₆=1）；各子句内部点互不相交，补全可以同时进行。</p>
+<p><b>着色 ⇒ 赋值</b>：用 T,F,B 的颜色命名三色；每对文字取相反真值；每个子句输出颜色为 1，若三个输入都为 0 会迫使输出为 0，矛盾 ⇒ 每个子句满足。∎ 规模：3 + 2n + 6m 点，3 + 3n + 12m 边。</p>
+<p class="small">注意措辞：小件不是“确定性的 OR 门”，我们只声称“输入允许的着色<b>存在</b>”。</p></div>
+
+<!-- ====================================================== -->
+<h2 id="n8"><span class="num">21</span>常见 NP-complete 问题与“一字之差”</h2>
+<table>
+<tr><th>主题</th><th>在 P 中</th><th>NP-complete</th></tr>
+<tr><td>s–t 简单路径</td><td>长度 <b>≤ k</b>（BFS）</td><td>长度 <b>≥ k</b>（k=n−1 即 Hamiltonian Path）</td></tr>
+<tr><td>CNF 可满足性</td><td>每子句 ≤ 2 文字（2SAT）</td><td>每子句 ≤ 3 文字（3SAT）</td></tr>
+<tr><td>图上的巡回</td><td>每条<b>边</b>恰走一次（Euler）</td><td>每个<b>点</b>恰访一次（Hamilton）</td></tr>
+<tr><td>覆盖</td><td>二分图/区间图/树上的点覆盖</td><td>一般图点覆盖</td></tr>
+</table>
+<p>其他判定版本 NP-complete 的：TSP（带界 ℓ）、图着色（k=3 固定时也是）、Vertex Cover、Set Cover、<b>Weighted Set Cover</b>（单位价格 + 预算 b=k 即退化为 Set Cover ⇒ “更一般的问题仍然难”）。</p>
+<div class="box key"><div class="bt">考点</div><p>“要读清楚题目问的到底是什么”。一般化问题（加权、更多参数）至少和特殊情形一样难：<b>特例 ≤<sub>P</sub> 一般化</b>，归约只需把特例原样嵌入。</p></div>
+
+<!-- ====================================================== -->
+<h2 id="n9"><span class="num">22</span>优化、判定、搜索、计数</h2>
+<table>
+<tr><th>任务</th><th>以 Vertex Cover 为例</th></tr>
+<tr><td>判定 Decision</td><td>是否存在大小 ≤ k 的覆盖？</td></tr>
+<tr><td>搜索 Search</td><td>输出一个这样的覆盖，或报告不存在</td></tr>
+<tr><td>优化 Optimisation</td><td>输出最小覆盖或其大小</td></tr>
+<tr><td>计数 Counting</td><td>大小 ≤ k 的覆盖有多少个？</td></tr>
+</table>
+<ul>
+<li><b>优化 ⇒ 判定</b>：算出 OPT 再比较 OPT ≤ L。所以判定版 NP-hard ⇒ 多项式优化算法会推出 P = NP。</li>
+<li><b>判定 ⇒ 优化值</b>：OPT ∈ [0, U] 为整数时，二分查找 <span class="m">O(log(U+1))</span> 次查询；U 的位数是多项式时，这是多项式的。找到达到最优的解是另一个任务（很多问题也能用判定查询做到）。</li>
+<li>P/NP 只给判定问题分类；其余任务的关系需要论证。</li>
+</ul>
+
+<!-- ====================================================== -->
+<h2 id="n10"><span class="num">23</span>应对 NP-hard：放宽哪一条？</h2>
+<p>理想是“所有输入 + 精确答案 + 多项式时间”。NP-hard 意味着（除非 P=NP）三者不可兼得，可以放宽：</p>
+<table>
+<tr><th>放宽</th><th>方法</th><th>例子（Vertex Cover / 其他）</th></tr>
+<tr><td>时间</td><td>精确指数算法：减少重复、降低底数</td><td>VC <span class="m">O<sup>*</sup>(1.1996<sup>n</sup>)</span>；Subset Sum meet-in-the-middle</td></tr>
+<tr><td>时间（参数化）</td><td>FPT：指数只依赖小参数 k</td><td>VC <span class="m">O<sup>*</sup>(1.25284<sup>k</sup>)</span></td></tr>
+<tr><td>最优性</td><td><b>近似算法</b>（有保证）</td><td>VC 2-近似</td></tr>
+<tr><td>输入范围</td><td>特殊结构</td><td>VC 在二分图、区间图、树上多项式</td></tr>
+<tr><td>保证</td><td>启发式</td><td>COVER 等，基准测试表现好</td></tr>
+</table>
+<div class="box warn"><div class="bt">建模提醒：MaxSAT</div><p>“满足尽可能多的子句”可能违反关键约束（8 个中满足 7 个却不可用）。实际用硬子句（必须满足）+ 软子句（尽量满足）。目标函数要匹配应用。</p></div>
+
+<h3 id="n10-mitm">Meet in the middle：Subset Sum 优化版</h3>
+<p>给 n 个正整数与目标 S，找和不超过 S 的最大子集和。暴力 <span class="m">O(n·2<sup>n</sup>)</span>。</p>
+<ol>
+<li>分成两半，各枚举所有子集和，得列表 A、B（各至多 <span class="m">M = 2<sup>⌈n/2⌉</sup></span> 个）。</li>
+<li>B 排序。</li>
+<li>对每个 <span class="m">a ∈ A, a ≤ S</span>，二分找 B 中 <span class="m">≤ S − a</span> 的最大 b，更新最优 a+b。</li>
+</ol>
+<p>正确性：最优解拆成 <span class="m">a*, b*</span>，处理 <span class="m">a*</span> 时找到的伙伴 ≥ <span class="m">b*</span>。时间 <span class="m">O(n·2<sup>n/2</sup>)</span>，空间 <span class="m">O(2<sup>n/2</sup>)</span>。例：[2,5,6,8]、S=12 ⇒ A={0,2,5,7}，B={0,6,8,14}；a=5 时剩 7，取 6，得 11（最优）。n=60 时从“2000 多年”降到“约一分钟”，但内存成为瓶颈（Schroeppel–Shamir 把空间降到 <span class="m">O<sup>*</sup>(2<sup>n/4</sup>)</span>）。量子回溯约 <span class="m">√T</span>，仍是指数。</p>
+
+<!-- ====================================================== -->
+<h2 id="n11"><span class="num">24</span>近似算法 Approximation</h2>
+<div class="box def"><div class="bt">r-近似（r ≥ 1，对每个实例都成立）</div>
+<ul><li>最小化：<span class="m">OPT(I) ≤ A(I) ≤ r·OPT(I)</span>（r=2：花费不超过最优的两倍）。</li>
+<li>最大化：<span class="m">OPT(I)/r ≤ A(I) ≤ OPT(I)</span>（r=2：至少得到最优的一半）。</li></ul>
+<p>套路：<b>构造一个可行解 + 找一个最优值的界（下界/上界）+ 比较</b>。不需要知道 OPT。</p></div>
+
+<h3 id="n11-vc">24.1 Vertex Cover 的 2-近似（取两端点）</h3>
+<p>任取一条剩余边，两个端点都选上，删去所有与之相邻的边；重复。等价于：扫描边，若两端都没选则都选。<span class="m">O(|V|+|E|)</span>。</p>
+<div class="box proof"><div class="bt">证明</div><p>被挑出的 k 条边两两<b>无公共端点</b>（是一个匹配）。任何覆盖必须为每条挑出的边选至少一个端点，且一个点不能覆盖两条挑出的边 ⇒ <span class="m">OPT ≥ k</span>。我们选了 <span class="m">2k ≤ 2·OPT</span> 个点；所有边都在被覆盖后才删除 ⇒ 可行。∎</p></div>
+
+<h3 id="n11-lp">24.2 LP 松弛与对偶给出下界</h3>
+<div class="two">
+<div class="box def"><div class="bt">原始 LP：分数点覆盖</div><p>min <span class="m">Σ<sub>v</sub> x<sub>v</sub></span><br>s.t. <span class="m">x<sub>u</sub> + x<sub>v</sub> ≥ 1</span>（每条边 uv）<br><span class="m">x<sub>v</sub> ≥ 0</span></p><p><span class="m">OPT<sub>LP</sub> ≤ OPT<sub>VC</sub></span>（整数解也是分数解）。</p></div>
+<div class="box def"><div class="bt">对偶 LP：边价格</div><p>max <span class="m">Σ<sub>e</sub> y<sub>e</sub></span><br>s.t. <span class="m">Σ<sub>e∋v</sub> y<sub>e</sub> ≤ 1</span>（每个点 v）<br><span class="m">y<sub>e</sub> ≥ 0</span></p><p>弱对偶：任意可行 y 有 <span class="m">Σ y<sub>e</sub> ≤ OPT<sub>LP</sub> ≤ OPT<sub>VC</sub></span>。</p></div>
+</div>
+<p>三角形例子：每点取 1/2 可行，代价 3/2；三个约束相加得 <span class="m">2(x<sub>a</sub>+x<sub>b</sub>+x<sub>c</sub>) ≥ 3</span> ⇒ <span class="m">OPT<sub>LP</sub>=3/2</span>，而整数最优是 2。<b>LP 给的是界，不一定是整数解。</b></p>
+<p>“取两端点”算法里，令挑出的匹配边价格为 1、其余为 0，这是可行对偶解（每点至多碰一条匹配边）⇒ <span class="m">|M| ≤ OPT<sub>LP</sub> ≤ OPT<sub>VC</sub> ≤ |C| = 2|M|</span>。</p>
+
+<h3 id="n11-wvc">24.3 加权 Vertex Cover：原始-对偶 2-近似</h3>
+<p>“取两端点”在加权时会失败（代价 1 和 1000 的一条边，取两端花 1001，最优 1）。改用边价格：对偶约束变为 <span class="m">Σ<sub>e∋v</sub> y<sub>e</sub> ≤ w<sub>v</sub></span>（点的代价是预算）。</p>
+<div class="box tpl"><div class="bt">算法</div><ol>
+<li>所有价格 0；代价为 0 的点直接选入 S。</li>
+<li>对每条两端都不在 S 中的边 uv：剩余预算 <span class="m">r<sub>u</sub> = w<sub>u</sub> − Σ<sub>e∋u</sub>y<sub>e</sub></span>，同理 <span class="m">r<sub>v</sub></span>；令 <span class="m">y<sub>uv</sub> += δ = min(r<sub>u</sub>, r<sub>v</sub>)</span>。</li>
+<li>预算用尽（<b>tight</b>）的端点加入 S。</li>
+</ol><p>一次扫描，<span class="m">O(|V|+|E|)</span> 次算术运算。</p></div>
+<div class="box ex"><div class="bt">例：路径 A–B–C，代价 2, 3, 4</div><p>处理 AB：δ = min(2,3) = 2 ⇒ A 用尽，选 A。处理 BC：B 剩 1、C 剩 4，δ=1 ⇒ B 用尽，选 B。结果 {A,B} 代价 5；价格总和 3 是下界；最优是 {B} 代价 3。5 ≤ 2·3 ✓。</p></div>
+<div class="box proof"><div class="bt">保证</div><p>价格始终可行（每次增加都在两端预算内）⇒ <span class="m">Σ y<sub>e</sub> ≤ OPT</span>（任何覆盖都触及每条边，用其预算付账）。选中的点都是 tight 的，且保持 tight（之后只给两端都未选的边加价）。故</p>
+<p style="text-align:center" class="mn">Σ<sub>v∈S</sub> w<sub>v</sub> = Σ<sub>v∈S</sub> Σ<sub>e∋v</sub> y<sub>e</sub> ≤ 2·Σ<sub>e</sub> y<sub>e</sub> ≤ 2·OPT</p>
+<p>（每条边只有 2 个端点，价格最多被数两次。）所有代价为 1 时就退化为“取两端点”。∎</p></div>
+
+<h3 id="n11-knap">24.4 0-1 背包的 1/2-近似</h3>
+<p>单用“密度优先”会失败（物品 1 重 1000 值 1000、物品 2 重 1 值 1.001，容量 1000：密度先拿物品 2 后放不下物品 1）。单用“价值优先”也会失败（一个重 1000 值 1.001 的大件 vs 1000 个重 1 值 1 的小件）。</p>
+<div class="box tpl"><div class="bt">算法</div><p>先丢掉 <span class="m">w<sub>i</sub> &gt; W</span> 的物品。候选 1：按密度降序取<b>前缀</b> P，遇到第一个放不下的物品 j 就停；候选 2：价值最大的单件。<b>返回两者中更好的</b>。<span class="m">O(n log n)</span>。</p></div>
+<div class="box proof"><div class="bt">证明</div><p>分数背包按密度装满是分数最优（等重量交换：把低密度物品的 δ 重量换成高密度的，价值变化 <span class="m">δ(ρ<sub>high</sub> − ρ<sub>low</sub>) ≥ 0</span>）。分数最优 ≥ 0-1 最优。剩余容量 <span class="m">R &lt; w<sub>j</sub></span>：</p>
+<p style="text-align:center" class="mn">OPT ≤ V<sub>P</sub> + (R/w<sub>j</sub>)·v<sub>j</sub> ≤ V<sub>P</sub> + v<sub>j</sub> ≤ V<sub>P</sub> + V<sub>single</sub></p>
+<p>两个数之和 ≥ OPT ⇒ 较大者 ≥ OPT/2。∎ 例：W=10，a(2,6)、b(9,18)、c(6,9)（密度 3,2,1.5）：前缀 {a} 值 6，b 放不下；最大单件 b 值 18 ⇒ 返回 {b}；分数上界 6 + (8/9)·18 = 22。</p></div>
+
+<h3 id="n11-tsp">24.5 Metric TSP 的 2-近似</h3>
+<p>完全图、非负边长、满足<b>三角不等式</b> <span class="m">d(i,k) ≤ d(i,j) + d(j,k)</span>。</p>
+<figure>
+<svg viewBox="0 0 520 220" width="520">
+  <defs><marker id="ar4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#e07a3f"/></marker></defs>
+  <g font-size="13">
+  <g class="ln" stroke-width="2.2">
+    <line x1="260" y1="40" x2="140" y2="100"/><line x1="140" y1="100" x2="90" y2="170"/><line x1="140" y1="100" x2="190" y2="170"/>
+    <line x1="260" y1="40" x2="290" y2="120"/><line x1="290" y1="120" x2="250" y2="190"/><line x1="290" y1="120" x2="340" y2="190"/>
+    <line x1="260" y1="40" x2="410" y2="90"/><line x1="410" y1="90" x2="450" y2="170"/>
+  </g>
+  <g stroke="#e07a3f" stroke-width="1.8" stroke-dasharray="6 4" fill="none" marker-end="url(#ar4)">
+    <path d="M90 170 L178 170"/><path d="M190 170 L276 128"/><path d="M264 190 L322 190"/><path d="M340 190 L400 102"/><path d="M450 170 L272 46"/>
+  </g>
+  <circle cx="260" cy="40" r="15" fill="#3b7dd8"/><text x="260" y="45" text-anchor="middle" fill="#fff">a</text>
+  <circle cx="140" cy="100" r="14" class="nd"/><text x="140" y="105" text-anchor="middle">b</text>
+  <circle cx="90" cy="170" r="14" class="nd"/><text x="90" y="175" text-anchor="middle">c</text>
+  <circle cx="190" cy="170" r="14" class="nd"/><text x="190" y="175" text-anchor="middle">d</text>
+  <circle cx="290" cy="120" r="14" class="nd"/><text x="290" y="125" text-anchor="middle">e</text>
+  <circle cx="250" cy="190" r="14" class="nd"/><text x="250" y="195" text-anchor="middle">f</text>
+  <circle cx="340" cy="190" r="14" class="nd"/><text x="340" y="195" text-anchor="middle">g</text>
+  <circle cx="410" cy="90" r="14" class="nd"/><text x="410" y="95" text-anchor="middle">h</text>
+  <circle cx="450" cy="170" r="14" class="nd"/><text x="450" y="175" text-anchor="middle">i</text>
+  <text x="10" y="214" font-size="11" class="mut">黑：MST；橙虚线：跳过重复点的捷径</text>
+  </g>
+</svg>
+<figcaption>图 15　DFS 闭合走法 a,b,c,b,d,b,a,e,f,e,g,e,a,h,i,h,a（每条树边走两次）；跳过重复点（c→d, d→e, f→g, g→h, i→a）得到最终回路 a,b,c,d,e,f,g,h,i,a。</figcaption>
+</figure>
+<div class="box proof"><div class="bt">三步证明</div><ol>
+<li>MST 是下界：从最优回路删一条边得到一棵生成路径（树），<span class="m">w(T) ≤ OPT − w(e*) ≤ OPT</span>。</li>
+<li>DFS 绕树一圈，每条树边走两次：长度 <span class="m">2w(T) ≤ 2·OPT</span>。</li>
+<li>跳过已访问的点（shortcut）：三角不等式保证不变长。⇒ 可行回路长度 ≤ 2·OPT。</li>
+</ol><p>时间：完全图上 Prim + 数组 <span class="m">O(n²)</span>，遍历与捷径 <span class="m">O(n)</span>。</p></div>
+
+<h3 id="n11-tsphard">24.6 一般 TSP 不可近似（gap 归约）</h3>
+<p><b>定理</b>：除非 P = NP，一般 TSP 不存在任何常数 c 的多项式时间 c-近似。</p>
+<div class="box proof"><div class="bt">证明（从 Hamiltonian Cycle 归约）</div>
+<p>给 n ≥ 3 个点的图 G，构造完全图 G*：原有边权 1，添加的边权 <span class="m">c·n</span>。</p>
+<ul><li>G 有哈密顿回路 ⇒ OPT = n ⇒ 近似算法返回 <span class="m">A ≤ c·n</span>。</li>
+<li>G 无哈密顿回路 ⇒ 每条回路至少用一条重边 ⇒ <span class="m">A ≥ OPT ≥ cn + (n−1) &gt; cn</span>。</li></ul>
+<p>所以“A ≤ cn 吗？”就判定了 Hamiltonian Cycle ⇒ P = NP。（G* 不满足三角不等式，所以不与 metric 版本矛盾。）例：c=2, n=4，回路图得 4 ≤ 8，路径图至少 8+1+1+1 = 11 &gt; 8。</p></div>
+
+<table>
+<tr><th>问题</th><th>证明用的界</th><th>保证</th></tr>
+<tr><td>加权 Vertex Cover</td><td>下界：可行边价格（对偶）</td><td>≤ 2·OPT</td></tr>
+<tr><td>0-1 背包</td><td>上界：分数最优</td><td>≥ OPT/2</td></tr>
+<tr><td>Metric TSP</td><td>下界：MST</td><td>≤ 2·OPT</td></tr>
+<tr><td>一般 TSP</td><td>—</td><td>无常数近似（除非 P=NP）</td></tr>
+</table>
+
+<!-- ====================================================== -->
+<h2 id="n12"><span class="num">25</span>超越 NP：coNP、多项式层级、计数</h2>
+<h3 id="n12-conp">25.1 coNP</h3>
+<ul>
+<li><b>补问题</b> coA：答案取反。<span class="m">A ∈ coNP ⇔ coA ∈ NP</span>。coP = P。</li>
+<li>两种等价视角（B 为多项式检查）：<span class="m">A(x)=NO ⇔ ∃y: B(x,y)=0</span>（<b>短 NO-证书 / 反例</b>）；<span class="m">A(x)=YES ⇔ ∀y: B(x,y)=1</span>。</li>
+<li>coNP-complete 例：<b>Tautology</b>（每个赋值都真？反例一个赋值）、<b>Not-3-Colourable</b>（NO 证书：一个 3-着色）、<b>Is-Min-Vertex-Cover</b>（给定覆盖 S 是最小的吗？NO 证书：更小的覆盖 T）。</li>
+<li>例：Expansion（每个 <span class="m">|S| ≤ |V|/2</span> 的集合是否满足 <span class="m">|N(S)| ≥ |S|</span>）在 coNP：违反的 S 就是 NO 证书。</li>
+</ul>
+<h3 id="n12-ph">25.2 量词与多项式层级 PH</h3>
+<p>量词顺序很重要：<span class="m">∃y ∀z: y = z</span> 为假（先选 y 无法应对所有 z）；<span class="m">∀z ∃y: y = z</span> 为真。</p>
+<figure>
+<svg viewBox="0 0 520 220" width="520">
+  <g font-size="13">
+  <g class="ln" stroke-width="1.3">
+    <line x1="260" y1="190" x2="170" y2="150"/><line x1="260" y1="190" x2="350" y2="150"/>
+    <line x1="170" y1="130" x2="170" y2="92"/><line x1="350" y1="130" x2="350" y2="92"/><line x1="170" y1="130" x2="350" y2="92"/><line x1="350" y1="130" x2="170" y2="92"/>
+    <line x1="170" y1="72" x2="170" y2="40"/><line x1="350" y1="72" x2="350" y2="40"/>
+  </g>
+  <rect x="225" y="178" width="70" height="26" rx="13" class="nd"/><text x="260" y="196" text-anchor="middle">P</text>
+  <rect x="110" y="128" width="120" height="26" rx="13" class="nd"/><text x="170" y="146" text-anchor="middle">NP = Σ₁ (∃)</text>
+  <rect x="290" y="128" width="120" height="26" rx="13" class="nd"/><text x="350" y="146" text-anchor="middle">coNP = Π₁ (∀)</text>
+  <rect x="110" y="68" width="120" height="26" rx="13" class="nd"/><text x="170" y="86" text-anchor="middle">Σ₂ (∃∀)</text>
+  <rect x="290" y="68" width="120" height="26" rx="13" class="nd"/><text x="350" y="86" text-anchor="middle">Π₂ (∀∃)</text>
+  <text x="170" y="32" text-anchor="middle">⋮</text><text x="350" y="32" text-anchor="middle">⋮</text>
+  <text x="260" y="22" text-anchor="middle" class="mut" font-size="12">PH = 所有固定层的并 ⊆ PSPACE</text>
+  <text x="420" y="200" font-size="11" class="mut">连线 = 包含（⊆）</text>
+  </g>
+</svg>
+<figcaption>图 16　多项式层级。Σₖ 以 ∃ 开头、Πₖ 以 ∀ 开头，下标是交替块数。也可用 oracle 定义：<span class="m">Σ<sub>k</sub> = NP<sup>Σ<sub>k−1</sub></sup></span>，例如 <span class="m">Σ<sub>2</sub> = NP<sup>SAT</sup></span>。是否严格分离未知。</figcaption>
+</figure>
+<ul>
+<li><b>Oracle</b>：假想的子程序，一步回答某个判定问题（如 SAT）。多项式算法可问多项式次，后面的询问可依赖前面的答案。</li>
+<li><b>PSPACE</b>：多项式空间可解。可以逐个尝试赋值、重用空间，因此 PH ⊆ PSPACE（时间可能指数）。</li>
+</ul>
+<h3 id="n12-count">25.3 计数：#P、FP、Cook 归约</h3>
+<ul>
+<li><b>FP</b>：多项式时间可计算的函数（输出不只是 YES/NO）。</li>
+<li><b>#P</b>：形如 <span class="m">A(x) = |{y ∈ {0,1}<sup>p(|x|)</sup> : B(x,y)=1}|</span> 的函数（数被接受的证书个数）。例：#SAT。</li>
+<li><b>Cook 归约（多项式时间图灵归约）</b> <span class="m">A ≤<sub>T</sub><sup>P</sup> B</span>：用 B 的 oracle 在多项式时间内解 A，可以多次询问、适应性询问。例：SAT ≤ #SAT（问个数是否 &gt; 0）。</li>
+<li><b>#P-hard</b>：每个 #P 函数都能用它的 oracle 多项式计算；<b>#P-complete</b> = 在 #P 中 + #P-hard。#SAT 是 #P-complete。</li>
+<li><b>判定容易 ≠ 计数容易</b>：二分图找一个完美匹配是多项式的，<b>计数</b>完美匹配是 #P-complete。</li>
+<li><b>Parsimonious 归约</b>：保持解的<b>个数</b>（一一对应）。课件练习：SAT ≤ 3SAT 的链式构造<b>不是</b> parsimonious（原赋值可能有多种 q 的扩展），如何让扩展唯一 ⇒ 证明 #3SAT 是 #P-complete。（提示：让 <span class="m">q<sub>j</sub></span> 被前面的文字唯一确定，例如额外加子句强制 <span class="m">q<sub>j</sub> ⇔ (前面文字都假)</span>。）</li>
+</ul>
+
+<!-- ====================================================== -->
+<h2 id="n13"><span class="num">26</span>线性规划 Linear Programming</h2>
+<h3 id="n13-model">26.1 建模：沙拉问题</h3>
+<p>做 300g 沙拉，风味 ≥ 7、口感 ≥ 7，成本最小。变量 <span class="m">x<sub>L</sub>, x<sub>T</sub>, x<sub>O</sub> ≥ 0</span>（单位 100g，可取分数）：</p>
+<p style="text-align:center" class="mn">min x<sub>L</sub> + 0.8x<sub>T</sub> + 0.6x<sub>O</sub>　s.t.　x<sub>L</sub>+x<sub>T</sub>+x<sub>O</sub> = 3,　4x<sub>T</sub>+x<sub>O</sub> ≥ 7,　6x<sub>L</sub>+2x<sub>O</sub> ≥ 7</p>
+<p>可行解 (1.1, 1.7, 0.2) 代价 $2.58，是最优（等成本线在可行三角形上的最后一点）。LP 的三种结局：有最优解、不可行、无界。求解：单纯形法（实践快，最坏指数）、椭球法/内点法（多项式，按二进制输入长度计）。</p>
+<h3 id="n13-ilp">26.2 整数规划与 LP 松弛</h3>
+<ul>
+<li>ILP：变量必须是整数。<b>一般 ILP（即使只判可行性）是 NP-complete</b>（如从 Vertex Cover 归约）；整数点少 ≠ 更容易。</li>
+<li>沙拉 II（整包 100g）：风味 ≥ 7 需至少 2 包番茄，剩下至多 1 包，口感 ≤ 6 &lt; 7 ⇒ <b>无可行整数解</b>，而 LP 有解。</li>
+<li><b>LP 松弛</b>：去掉整数约束，可行集变大 ⇒ 最小化时 <span class="m">LP 最优 ≤ 整数最优</span>（例：至少 150g、100g 一包：整数 2 包 $2，分数 1.5 包 $1.5）。</li>
+<li>背包 ILP：<span class="m">max Σ v<sub>i</sub>x<sub>i</sub>, Σ w<sub>i</sub>x<sub>i</sub> ≤ W, x<sub>i</sub> ∈ ℤ<sub>≥0</sub></span>；0-1 背包再加 <span class="m">x<sub>i</sub> ≤ 1</span>（练习答案）。</li>
+</ul>
+<h3 id="n13-dual">26.3 对偶：用约束的非负组合证明上界</h3>
+<div class="two">
+<div class="box def"><div class="bt">原始 P</div><p>max <span class="m">3x<sub>1</sub>+x<sub>2</sub>+2x<sub>3</sub></span><br><span class="m">x<sub>1</sub>+x<sub>2</sub>+3x<sub>3</sub> ≤ 30</span><br><span class="m">2x<sub>1</sub>+2x<sub>2</sub>+5x<sub>3</sub> ≤ 24</span><br><span class="m">4x<sub>1</sub>+x<sub>2</sub>+2x<sub>3</sub> ≤ 36</span><br><span class="m">x ≥ 0</span></p></div>
+<div class="box def"><div class="bt">对偶 P*</div><p>min <span class="m">30y<sub>1</sub>+24y<sub>2</sub>+36y<sub>3</sub></span><br><span class="m">y<sub>1</sub>+2y<sub>2</sub>+4y<sub>3</sub> ≥ 3</span><br><span class="m">y<sub>1</sub>+2y<sub>2</sub>+y<sub>3</sub> ≥ 1</span><br><span class="m">3y<sub>1</sub>+5y<sub>2</sub>+2y<sub>3</sub> ≥ 2</span><br><span class="m">y ≥ 0</span></p></div>
+</div>
+<p>(8,4,0) 可行、值 28 ⇒ OPT ≥ 28。行权重 (1,1,0) 给上界 54；行权重 <b>(0, 1/6, 2/3)</b> 给上界 4+24 = 28 ⇒ OPT = 28，(8,4,0) 最优。<b>寻找最好的行权重本身就是对偶 LP。</b></p>
+<div class="box key"><div class="bt">对偶的公式与定理</div>
+<ul>
+<li>标准形：<span class="m">max c<sup>T</sup>x, Ax ≤ b, x ≥ 0</span> 的对偶是 <span class="m">min b<sup>T</sup>y, A<sup>T</sup>y ≥ c, y ≥ 0</span>（每条约束一个对偶变量，矩阵转置）。对偶的对偶是原问题。</li>
+<li><b>弱对偶</b>：<span class="m">c<sup>T</sup>x ≤ y<sup>T</sup>Ax ≤ b<sup>T</sup>y</span>（需要 x ≥ 0 和 y ≥ 0 保持不等号方向）。最大化原问题：原可行值 ≤ OPT ≤ 对偶可行值；最小化原问题方向相反。</li>
+<li><b>强对偶</b>：原问题可行且有有限最优 ⇒ 对偶最优值相等（不证）。</li>
+<li>求解器返回原、对偶解，检查可行性与值：L = U 则都最优；否则 [L, U] 包住 OPT。<b>验证不需重跑求解器。</b></li>
+</ul></div>
+<h3 id="n13-conv">26.4 转换成标准形</h3>
+<table>
+<tr><th>原要求</th><th>替换</th></tr>
+<tr><td>min q</td><td>max −q</td></tr>
+<tr><td>q ≥ b</td><td>−q ≤ −b</td></tr>
+<tr><td>q = b</td><td>q ≤ b 且 −q ≤ −b</td></tr>
+<tr><td>x<sub>i</sub> 无符号限制</td><td>x<sub>i</sub> = u<sub>i</sub> − v<sub>i</sub>，u<sub>i</sub>, v<sub>i</sub> ≥ 0</td></tr>
+<tr><td>|q| ≤ b</td><td>q ≤ b 且 −q ≤ b（|Ax| ≤ b 按行展开）</td></tr>
+</table>
+<h3 id="n13-sep">26.5 分离预言机 Separation Oracle</h3>
+<p>约束太多写不下（如“任意子集的和 ≤ 1”有 <span class="m">2<sup>n</sup></span> 条）：只需一个过程，给点 x，要么确认可行，要么返回一条 x 违反但所有可行点满足的线性不等式。例中：把所有正坐标加起来，≤ 1 则全部满足，否则这些下标就是被违反的约束。<b>椭球法</b>：变量数多项式 + 高效分离 ⇒ 多项式时间优化。注意：它处理“很多约束”，不自动处理“很多变量”（可以考虑对偶）。</p>
+
+<!-- ====================================================== -->
+<h2 id="n14"><span class="num">27</span>Module 3 谜题 &amp; 考点清单</h2>
+<div class="box ex"><div class="bt">谜题：用偏硬币得到公平结果（von Neumann）</div><p>连抛两次：正反 → 输出“正”；反正 → 输出“反”；正正或反反 → 重来。两种结果概率都是 <span class="m">p(1−p)</span>，相等；每轮以概率 <span class="m">2p(1−p) &gt; 0</span> 结束 ⇒ 以概率 1 终止，不需要知道 p。</p></div>
+<div class="box key"><div class="bt">Module 3 考点清单</div>
+<ol>
+<li>定义：P、NP（证书 + 验证器 + 多项式长度）、NP-hard、NP-complete、Karp 归约、coNP、#P、Cook 归约。</li>
+<li><b>归约方向</b>：已知难 → 目标；YES ⇔ YES 两个方向；构造多项式时间且不依赖答案。</li>
+<li>“在 NP 中”的证明：给证书和验证过程。</li>
+<li>能复述并改编课上的四个归约：3SAT→VC（k=n+2m）、3SAT→Clique（k=m）、VC→Clique（补图，n−k）、3SAT→3COL（OR 小件）；以及 SAT→3SAT。</li>
+<li>用考试清单里的问题做归约（见第二份讲义：期中 Q5 用 Set Cover）。</li>
+<li>输入长度按比特计：伪多项式陷阱。</li>
+<li>优化 vs 判定：二分查找、NP-hard 优化问题。</li>
+<li>近似：r-近似定义；VC 2-近似（匹配下界）；加权 VC 原始-对偶；背包 1/2；Metric TSP 2；一般 TSP 不可近似（gap 归约）。</li>
+<li>指数算法：meet in the middle <span class="m">O(n2<sup>n/2</sup>)</span>。</li>
+<li>LP：建模、松弛给界、写对偶、弱/强对偶、标准形转换、分离预言机。</li>
+</ol></div>
+
+</main>
+</div>
+<a class="backtop" href="#">↑ 顶部</a>
+<script>
+(function(){
+  var nav=document.getElementById('tocList'); if(!nav) return;
+  var hs=document.querySelectorAll('main h2[id], main h3[id]');
+  hs.forEach(function(h){
+    var a=document.createElement('a'); a.href='#'+h.id;
+    var n=h.querySelector('.num'); var t=h.textContent; if(n){t=n.textContent+'  '+t.slice(n.textContent.length);} a.textContent=t.replace(/\s+/g,' ').trim();
+    a.className=h.tagName==='H2'?'lv1':'lv2'; nav.appendChild(a);
+  });
+})();
+</script>
+
+<script>
+/* Mobile interaction enhancements; educational text, equations and diagrams remain intact. */
+(function () {
+  'use strict';
+  var mq = window.matchMedia('(max-width: 900px)');
+  var nav = document.querySelector('nav.toc');
+  var isMobile = function () { return mq.matches; };
+
+  if (nav) {
+    var details = nav.querySelector('details');
+    if (details) {
+      function syncDisclosure(event) {
+        if (event && event.matches === undefined) return;
+        details.open = !isMobile();
+      }
+      syncDisclosure();
+      if (mq.addEventListener) mq.addEventListener('change', syncDisclosure);
+      else if (mq.addListener) mq.addListener(syncDisclosure);
+      nav.addEventListener('click', function (event) {
+        if (isMobile() && event.target.closest('a[href^="#"]')) details.open = false;
+      });
+    } else if (nav.querySelector('.brand') && nav.querySelector('a')) {
+      nav.classList.add('mobile-links-nav');
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'mobile-toc-button';
+      btn.textContent = '目录 ☰';
+      btn.setAttribute('aria-label', '展开或收起目录');
+      btn.setAttribute('aria-expanded', 'false');
+      nav.insertBefore(btn, nav.children[1] || null);
+      function closeMenu() {
+        nav.classList.remove('mobile-open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+      btn.addEventListener('click', function () {
+        var open = nav.classList.toggle('mobile-open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      nav.addEventListener('click', function (event) {
+        if (isMobile() && event.target.closest('a[href^="#"]')) closeMenu();
+      });
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') closeMenu();
+      });
+      if (mq.addEventListener) mq.addEventListener('change', closeMenu);
+    }
+  }
+
+  // Only wrap as needed; large data tables should scroll by themselves, not widen the page.
+  function wrapTables() {
+    if (!isMobile()) return;
+    document.querySelectorAll('main table').forEach(function (table) {
+      if (table.closest('.tablewrap, .tbl, .mobile-table-scroll')) return;
+      var scroll = document.createElement('div');
+      scroll.className = 'mobile-table-scroll';
+      scroll.setAttribute('role', 'region');
+      scroll.setAttribute('aria-label', '可横向滑动的完整表格');
+      scroll.setAttribute('tabindex', '0');
+      table.parentNode.insertBefore(scroll, table);
+      scroll.appendChild(table);
+    });
+  }
+  wrapTables();
+  if (mq.addEventListener) mq.addEventListener('change', wrapTables);
+
+  // Preserve diagram dimensions, offering horizontal pan instead of unreadable scaling.
+  document.querySelectorAll('main figure svg[viewBox]').forEach(function (svg) {
+    var vb = svg.viewBox && svg.viewBox.baseVal;
+    if (!vb || !vb.width) return;
+    if (vb.width >= 450) {
+      svg.style.setProperty('--mobile-diagram-width', Math.round(vb.width) + 'px');
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

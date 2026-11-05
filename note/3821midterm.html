@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>期中题解与NP-hard清单</title>
+<meta name="description" content="COMP3821 2025 T3 期中考试逐题解析，附 NP-hard 问题清单与拟阵清单讲解">
+<style>
+:root{
+  --bg:#f8f6f1; --fg:#1d2329; --muted:#5d6670; --card:#ffffff; --border:#e2ddd2;
+  --accent:#2c5f8f; --accent-soft:#e6eef6; --orange:#b55a26; --green:#2c7a4f; --red:#b03a3a; --gold:#9a7413;
+  --key-bg:#fbf4dc; --ex-bg:#e9f1f9; --warn-bg:#fbe9e7; --tpl-bg:#e8f4ec; --proof-bg:#f3f1ec;
+  --code-bg:#f0ede6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16191d; --fg:#e4e6e9; --muted:#9aa3ad; --card:#1f2328; --border:#343a41;
+    --accent:#7fb2e5; --accent-soft:#1f2c3a; --orange:#e8925c; --green:#6cc391; --red:#ef7f7f; --gold:#e0c065;
+    --key-bg:#2c2716; --ex-bg:#1a2633; --warn-bg:#331d1d; --tpl-bg:#18291f; --proof-bg:#22252a;
+    --code-bg:#262a30;
+  }
+}
+:root[data-theme="dark"]{
+    --bg:#16191d; --fg:#e4e6e9; --muted:#9aa3ad; --card:#1f2328; --border:#343a41;
+    --accent:#7fb2e5; --accent-soft:#1f2c3a; --orange:#e8925c; --green:#6cc391; --red:#ef7f7f; --gold:#e0c065;
+    --key-bg:#2c2716; --ex-bg:#1a2633; --warn-bg:#331d1d; --tpl-bg:#18291f; --proof-bg:#22252a;
+    --code-bg:#262a30;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font-family:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei","Source Han Sans SC",system-ui,sans-serif;
+  font-size:16px;line-height:1.75;-webkit-text-size-adjust:100%}
+.layout{display:flex;max-width:1280px;margin:0 auto}
+nav.toc{position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;width:270px;flex:0 0 270px;
+  padding:28px 14px 40px 22px;border-right:1px solid var(--border);font-size:13.5px;line-height:1.55}
+nav.toc .tt{font-weight:700;color:var(--muted);letter-spacing:.06em;font-size:12px;margin:0 0 10px}
+nav.toc a{color:var(--fg);text-decoration:none;display:block;padding:3px 6px;border-radius:5px}
+nav.toc a:hover{background:var(--accent-soft);color:var(--accent)}
+nav.toc .lv1{font-weight:700;margin-top:12px}
+nav.toc .lv2{padding-left:16px;color:var(--muted)}
+main{flex:1;min-width:0;padding:34px 44px 90px;max-width:940px}
+header.hero{border-bottom:2px solid var(--fg);padding-bottom:18px;margin-bottom:26px}
+header.hero .kicker{font-size:13px;letter-spacing:.12em;color:var(--orange);font-weight:700}
+header.hero h1{font-size:30px;line-height:1.3;margin:6px 0 10px}
+header.hero p{color:var(--muted);margin:0}
+h2{font-size:24px;margin:54px 0 14px;padding-top:8px;border-top:1px solid var(--border)}
+h2 .num{color:var(--orange);margin-right:8px}
+h3{font-size:19px;margin:34px 0 10px;color:var(--accent)}
+h4{font-size:16.5px;margin:22px 0 6px}
+p{margin:10px 0}
+a{color:var(--accent)}
+.m{font-family:"Cambria Math","STIX Two Math","Latin Modern Math","Times New Roman",serif;font-style:italic;white-space:nowrap}
+.mn{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;white-space:nowrap}
+code,.code{font-family:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;font-size:.88em;background:var(--code-bg);padding:1px 5px;border-radius:4px}
+pre{background:var(--code-bg);padding:12px 14px;border-radius:8px;overflow-x:auto;font-size:13.5px;line-height:1.55;border:1px solid var(--border)}
+pre code{background:none;padding:0}
+.box{border-radius:10px;padding:12px 16px 12px 16px;margin:16px 0;border:1px solid var(--border);border-left-width:5px}
+.box > .bt{font-weight:700;font-size:14px;letter-spacing:.04em;margin-bottom:4px}
+.box p:first-of-type{margin-top:4px}
+.box ul,.box ol{margin:6px 0;padding-left:22px}
+.key{background:var(--key-bg);border-left-color:var(--gold)} .key>.bt{color:var(--gold)}
+.ex{background:var(--ex-bg);border-left-color:var(--accent)} .ex>.bt{color:var(--accent)}
+.warn{background:var(--warn-bg);border-left-color:var(--red)} .warn>.bt{color:var(--red)}
+.tpl{background:var(--tpl-bg);border-left-color:var(--green)} .tpl>.bt{color:var(--green)}
+.proof{background:var(--proof-bg);border-left-color:var(--muted)} .proof>.bt{color:var(--muted)}
+.def{background:var(--card);border-left-color:var(--accent)} .def>.bt{color:var(--accent)}
+figure{margin:18px 0;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;text-align:center;color:var(--fg)}
+figure svg{max-width:100%;height:auto;display:block;margin:0 auto}
+figcaption{font-size:13.5px;color:var(--muted);margin-top:8px;text-align:left}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14.5px;background:var(--card)}
+th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft)}
+.tablewrap{overflow-x:auto}
+ul,ol{padding-left:24px}
+li{margin:3px 0}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:20px;margin-right:4px;border:1px solid currentColor}
+.tag.g{color:var(--green)} .tag.b{color:var(--accent)} .tag.o{color:var(--orange)} .tag.r{color:var(--red)} .tag.y{color:var(--gold)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.small{font-size:13.5px;color:var(--muted)}
+hr{border:none;border-top:1px dashed var(--border);margin:26px 0}
+/* svg helpers */
+svg text{font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;fill:currentColor}
+svg .mt{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-style:italic}
+svg .nd{fill:var(--card);stroke:currentColor;stroke-width:1.6}
+svg .ln{stroke:currentColor;stroke-width:1.6;fill:none}
+svg .faint{stroke:var(--muted);stroke-width:1.2;fill:none;stroke-dasharray:4 4}
+svg .mut{fill:var(--muted)}
+.backtop{position:fixed;right:18px;bottom:18px;background:var(--fg);color:var(--bg);border-radius:20px;padding:6px 12px;font-size:13px;text-decoration:none;opacity:.8}
+.toc-toggle{display:none}
+@media (max-width:900px){
+  .layout{display:block}
+  nav.toc{position:static;height:auto;width:auto;border-right:none;border-bottom:1px solid var(--border);padding:14px 16px;max-height:none}
+  nav.toc details summary{cursor:pointer;font-weight:700}
+  main{padding:20px 16px 80px}
+  header.hero h1{font-size:24px}
+  .two{grid-template-columns:1fr}
+}
+@media print{nav.toc,.backtop{display:none} main{max-width:none;padding:0} h2{break-before:page}}
+
+</style>
+
+<style id="mobile-responsive-patch">
+
+/* RESPONSIVE READING PATCH — original lesson content intentionally unchanged */
+@media screen and (max-width: 900px) {
+  :root { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html { scroll-padding-top: 82px; }
+  body { max-width: 100%; }
+  main { min-width: 0; max-width: 100%; overflow-wrap: break-word; }
+  main > *, main section, main article, main .box, main .q, main .two,
+  main .grid2, main .eq, main figure, main .frame { min-width: 0; max-width: 100%; }
+  main p, main li, main td, main th, main h1, main h2, main h3, main h4 {
+    overflow-wrap: anywhere;
+  }
+  pre { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  pre code { white-space: pre; }
+  :not(pre) > code, :not(pre) > kbd { overflow-wrap: anywhere; white-space: normal; }
+  .mobile-table-scroll, .tablewrap, .tbl {
+    max-width: 100%; overflow-x: auto; overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+  .mobile-table-scroll { margin: 14px 0; border-radius: 6px; }
+  .mobile-table-scroll > table { display: table; width: max-content; min-width: 100%; max-width: none; margin: 0; }
+  .mobile-table-scroll > table:not(.dp) :is(th,td) { min-width: 6.25rem; max-width: 22rem; }
+  .tablewrap > table { min-width: max-content; }
+  .katex-display { max-width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
+  figure { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  figure .frame { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  figure > svg, figure svg.fig, figure .frame > svg {
+    width: var(--mobile-diagram-width, 100%) !important;
+    max-width: none !important; height: auto !important;
+  }
+  figure figcaption { max-width: 100%; white-space: normal; }
+  .box, .q { padding: 12px 13px; }
+  ul, ol { padding-left: 1.35em; }
+  .mobile-toc-button {
+    border: 1px solid currentColor; border-radius: 8px; background: transparent;
+    padding: 7px 12px; min-height: 40px; font-size: 15px;
+    font-family: inherit; font-weight: 600; color: inherit; cursor: pointer;
+  }
+  nav.toc { z-index: 30; }
+  nav.toc summary { min-height: 42px; display: flex; align-items: center; cursor: pointer; }
+  nav.toc a { scroll-margin-top: 90px; }
+  /* The following styles affect navigation only, not any lesson text. */
+  nav.toc.mobile-links-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0 8px; }
+  nav.toc.mobile-links-nav > .brand { flex: 1 1 auto; margin: 0; }
+  nav.toc.mobile-links-nav:not(.mobile-open) > a { display: none !important; }
+  nav.toc.mobile-links-nav.mobile-open > a {
+    display: block; flex: 1 0 100%; padding: 8px 6px; line-height: 1.4;
+    min-height: 36px; margin-top: 0;
+  }
+}
+@media screen and (max-width: 480px) {
+  body { font-size: 16px; line-height: 1.7; }
+  header.hero h1, header.top h1 { font-size: clamp(23px, 6.5vw, 28px); line-height: 1.3; }
+  h2 { font-size: 22px; }
+  h3 { font-size: 19px; }
+  .box, .q { margin-inline: 0; }
+  th, td { padding: 7px 9px; }
+  .backtop { bottom: max(14px, env(safe-area-inset-bottom)); right: 12px; }
+}
+@media print {
+  .mobile-toc-button { display: none !important; }
+  .mobile-table-scroll { display: contents !important; }
+}
+@media screen and (min-width: 901px) {
+  .mobile-toc-button { display: none !important; }
+  .mobile-table-scroll { display: contents; }
+}
+
+
+@media screen and (max-width: 900px) {
+  .m, .mn { white-space: normal !important; overflow-wrap: anywhere !important; }
+  .layout { display: block; width: 100%; }
+  main { padding: 20px 16px 90px; width: 100%; }
+  nav.toc {
+    position: sticky; top: 0; width: 100%; height: auto; max-height: 72dvh;
+    overflow-y: auto; border-right: 0; border-bottom: 1px solid var(--border);
+    background: var(--bg); padding: 5px 16px;
+  }
+  nav.toc details > summary { font-size: 15px; padding: 5px 0; }
+  nav.toc details[open] #tocList { padding: 0 0 10px; }
+  nav.toc a { min-height: 36px; padding: 7px 5px; }
+  .two { grid-template-columns: minmax(0,1fr); }
+  figure { padding: 10px; }
+  header.hero { margin-bottom: 20px; }
+  .box { margin-inline: 0; }
+}
+@media screen and (max-width: 390px) {
+  main { padding-inline: 13px; }
+  nav.toc { padding-inline: 13px; }
+}
+
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc"><details open><summary class="tt">目录 CONTENTS</summary><div id="tocList"></div></details></nav>
+<main>
+<header class="hero">
+  <div class="kicker">COMP3821/9801 · 2025 T3 MIDTERM · 解析</div>
+  <h1>期中考试题逐题解析 + NP-hard 问题清单 / 拟阵清单讲解</h1>
+  <p>每道题：题型归类 → 关键观察 → 算法 → 可以直接写在答卷上的正确性证明 → 复杂度 → 易错点。后半部分逐条解释附录里的 NP-hard 问题与拟阵，以及“该选哪个问题来归约”。</p>
+</header>
+
+<div class="box key"><div class="bt">先读规则：评分点在哪里</div>
+<ul>
+<li>五题各 20 分，24 小时开卷。每道算法题都有<b>目标时间界</b>；更快且自洽正确的算法最多加 5 分。</li>
+<li><b>贪心必须给证明</b>，否则即使算法对也不给分（Q1、Q3c、Q4 都是贪心！）。其他题给证明思路即可。</li>
+<li>复杂度要认真分析。</li>
+<li><b>NP-hard 证明要证明两个方向</b>（Q5a）。</li>
+<li>附录：NP-hard 问题清单、拟阵清单（可直接引用，不必再证）。</li>
+</ul></div>
+
+<h2 id="ov"><span class="num">0</span>题型一览</h2>
+<div class="tablewrap"><table>
+<tr><th>题</th><th>主题</th><th>所属知识点（Module 2/3）</th><th>核心技巧</th><th>目标复杂度</th></tr>
+<tr><td>Q1 灯笼</td><td>平面点 → 直线上的覆盖</td><td>M2 · 基站问题 / 区间刺穿</td><td>几何转化为区间；按右端点贪心；stays ahead 或“不相交区间”下界</td><td><span class="m">O(n log n)</span></td></tr>
+<tr><td>Q2(a)</td><td>DAG 最长路</td><td>M3 · 归约（变换输入调用黑盒）</td><td>边权取负</td><td><span class="m">O(V+E)</span></td></tr>
+<tr><td>Q2(b)</td><td>有环图上收集边奖励</td><td>M2 · SCC + 凝聚图 + 拓扑结构</td><td>缩点：SCC 内奖励全拿；在凝聚 DAG 上求最长路</td><td><span class="m">O(V+E)</span></td></tr>
+<tr><td>Q3(a)</td><td>拟阵交不是拟阵</td><td>M2 · 拟阵公理</td><td>两个划分拟阵构造反例，违反交换性</td><td>—</td></tr>
+<tr><td>Q3(b)</td><td>拟阵 ∩ 均匀拟阵</td><td>M2 · 拟阵公理</td><td>逐条验证，交换性用 M₁ 的交换 + 大小界</td><td>—</td></tr>
+<tr><td>Q3(c)</td><td>区限额 + 总限额选人</td><td>M2 · 加权拟阵贪心</td><td>划分拟阵 ∩ 均匀拟阵 = 拟阵（由 b）⇒ 贪心</td><td><span class="m">O(n log n)</span></td></tr>
+<tr><td>Q4</td><td>最小“恰好一个环”的连通生成子图</td><td>M2 · MST / 交换论证</td><td>MST + 最轻非树边</td><td><span class="m">O(E log V)</span></td></tr>
+<tr><td>Q5(a)</td><td>DAG 上的 Haunting Set</td><td>M3 · NP-hard 归约</td><td>从 Set Cover 归约；加一个“超级根”</td><td>多项式</td></tr>
+<tr><td>Q5(b)</td><td>竞赛图贪心</td><td>M2/M3 · 贪心分析（类似近似分析）</td><td>出度和 = C(n,2) ⇒ 每步删掉一半以上</td><td><span class="m">O(log n)</span> 个点</td></tr>
+<tr><td>Q5(c)</td><td>贪心是否最优</td><td>M2 · 构造反例</td><td>贪心删掉了“最优解需要的伙伴”</td><td>—</td></tr>
+</table></div>
+
+<!-- ====================================================== Q1 -->
+<h2 id="q1"><span class="num">Q1</span>Halloween 灯笼（20 分）</h2>
+<div class="box def"><div class="bt">题意</div><p>n 座房子 <span class="m">(x<sub>i</sub>, y<sub>i</sub>)</span>，<span class="m">y<sub>i</sub> ∈ [−d, d]</span> 是到路的垂直距离；灯笼只能放在路上（y = 0）。每座房子到某个灯笼的距离 ≤ d。求最少灯笼数，<span class="m">O(n log n)</span>。提示：先做 <span class="m">y<sub>i</sub> = 0</span> 的情况。</p></div>
+<p><span class="tag o">题型</span>Module 2 §5 基站问题（Cell Towers）的推广 → <b>区间刺穿（Interval Stabbing）</b>，贪心 + 证明。</p>
+
+<h3 id="q1-obs">关键观察：每座房子 = 路上的一个区间</h3>
+<p>灯笼在 <span class="m">(p, 0)</span>，覆盖房子 i ⇔ <span class="m">(p − x<sub>i</sub>)² + y<sub>i</sub>² ≤ d²</span> ⇔ <span class="m">p ∈ I<sub>i</sub> = [x<sub>i</sub> − r<sub>i</sub>, x<sub>i</sub> + r<sub>i</sub>]</span>，其中 <span class="m">r<sub>i</sub> = √(d² − y<sub>i</sub>²)</span>（<span class="m">|y<sub>i</sub>| = d</span> 时区间退化为一点，仍非空）。</p>
+<p>⇒ 问题等价于：<b>用最少的点刺穿所有区间 <span class="m">I<sub>1</sub>,…,I<sub>n</sub></span></b>。</p>
+<figure>
+<svg viewBox="0 0 600 232" width="600">
+  <g font-size="12" transform="translate(0,22)">
+  <line x1="10" y1="140" x2="590" y2="140" class="ln" stroke-width="2"/>
+  <text x="575" y="132" class="mut">路</text>
+  <circle cx="160" cy="80" r="100" fill="#3b7dd8" fill-opacity=".08" stroke="#3b7dd8" stroke-dasharray="5 4"/>
+  <circle cx="160" cy="80" r="6" fill="#e07a3f"/><text x="170" y="74">房子 (xᵢ, yᵢ)</text>
+  <line x1="160" y1="80" x2="160" y2="140" stroke="#e07a3f" stroke-dasharray="3 3"/><text x="166" y="115">yᵢ</text>
+  <line x1="160" y1="80" x2="80" y2="140" stroke="#3b7dd8"/><text x="96" y="104" fill="#3b7dd8">d</text>
+  <line x1="80" y1="140" x2="240" y2="140" stroke="#2e9e6a" stroke-width="6" stroke-linecap="round"/>
+  <text x="160" y="165" text-anchor="middle" fill="#2e9e6a" font-weight="700">Iᵢ = [xᵢ − rᵢ, xᵢ + rᵢ]</text>
+  <text x="160" y="182" text-anchor="middle" class="mut">rᵢ = √(d² − yᵢ²)</text>
+  <!-- counterexample -->
+  <circle cx="420" cy="140" r="6" fill="#e07a3f"/><text x="420" y="160" text-anchor="middle">A=(0,0)</text>
+  <line x1="340" y1="196" x2="500" y2="196" stroke="#2e9e6a" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="460" cy="44" r="6" fill="#e07a3f"/><text x="470" y="40">B=(d/2, ≈d)</text>
+  <line x1="454" y1="186" x2="466" y2="186" stroke="#c94040" stroke-width="5" stroke-linecap="round"/>
+  <text x="520" y="186" font-size="11" fill="#c94040">B 的区间很短</text>
+  <text x="340" y="25" font-size="11" class="mut">右：为何不能按 xᵢ 排序后放在 xᵢ + rᵢ</text>
+  </g>
+</svg>
+<figcaption>图 1　左：房子 i 的可行灯笼位置是路上的一段区间。右：A 在路上（区间 [−d, d]），B 几乎在 d 高度、横坐标 d/2（区间几乎只有一点 d/2）。按 x 排序先处理 A、把灯放在 A 的右端 d，会漏掉 B，用 2 个；而一个灯放在 d/2 同时覆盖二者。<b>区间长度不等时必须按右端点排序。</b></figcaption>
+</figure>
+
+<h3 id="q1-alg">算法</h3>
+<pre><code>for each house i: L[i] = x[i] - sqrt(d^2 - y[i]^2);  R[i] = x[i] + sqrt(d^2 - y[i]^2)
+sort houses by R[i] ascending                       // O(n log n)
+count = 0;  last = -infinity
+for each i in this order:
+    if L[i] > last:            // interval i not yet stabbed
+        last = R[i];  count++  // place a lantern at R[i]
+return count</code></pre>
+<p>先做提示的 <span class="m">y<sub>i</sub> = 0</span>：所有区间长 2d，就是基站问题（第一座未覆盖房子右侧 d 处放灯）。一般情形只是区间长度不同。</p>
+
+<h3 id="q1-proof">正确性证明（贪心，必须写）</h3>
+<div class="box proof"><div class="bt">可行性</div><p>考虑任一区间 <span class="m">I<sub>i</sub></span>。若处理它时 <span class="m">L<sub>i</sub> &gt; last</span>，算法在 <span class="m">R<sub>i</sub> ∈ I<sub>i</sub></span> 放灯。否则 <span class="m">L<sub>i</sub> ≤ last</span>；而 last 是某个更早处理的区间的右端点，按排序 <span class="m">last ≤ R<sub>i</sub></span>，所以 <span class="m">last ∈ [L<sub>i</sub>, R<sub>i</sub>]</span>，已被刺穿。之后 last 只增不减，但已放的灯不会移走。故每座房子都被覆盖。</p></div>
+<div class="box proof"><div class="bt">最优性（写法一：找 count 个两两不相交的区间作为下界）</div>
+<p>设贪心放了 <span class="m">g<sub>1</sub> &lt; g<sub>2</sub> &lt; … &lt; g<sub>r</sub></span>，第 k 盏灯由区间 <span class="m">J<sub>k</sub></span> 触发（<span class="m">g<sub>k</sub> = R(J<sub>k</sub>)</span>）。<span class="m">J<sub>k</sub></span> 触发时满足 <span class="m">L(J<sub>k</sub>) &gt; g<sub>k−1</sub></span>。因此对 <span class="m">j &lt; k</span>：<span class="m">R(J<sub>j</sub>) = g<sub>j</sub> ≤ g<sub>k−1</sub> &lt; L(J<sub>k</sub>)</span>，即 <span class="m">J<sub>1</sub>,…,J<sub>r</sub></span> <b>两两不相交</b>。一个点最多刺穿其中一个，所以任何可行方案至少要 r 盏灯。贪心用 r 盏，最优。∎</p></div>
+<div class="box proof"><div class="bt">最优性（写法二：stays ahead，与课件基站证明同构）</div>
+<p>设任一可行方案的灯为 <span class="m">a<sub>1</sub> ≤ a<sub>2</sub> ≤ …</span>。<b>断言</b>：<span class="m">a<sub>k</sub> ≤ g<sub>k</sub></span>（k ≤ 两者长度）。因为 <span class="m">J<sub>1</sub>,…,J<sub>k</sub></span> 两两不相交且从左到右排列，刺穿它们的必是 k 盏<b>不同</b>的灯，其中刺穿 <span class="m">J<sub>k</sub></span> 的那盏位置 ≤ <span class="m">R(J<sub>k</sub>) = g<sub>k</sub></span>，且它至少是第 k 小的，所以 <span class="m">a<sub>k</sub> ≤ g<sub>k</sub></span>。若方案只有 r−1 盏，则所有灯 ≤ <span class="m">a<sub>r−1</sub> ≤ g<sub>r−1</sub> &lt; L(J<sub>r</sub>)</span>，<span class="m">J<sub>r</sub></span> 没被覆盖，矛盾。∎</p>
+<p class="small">考场推荐写法一：更短、更不容易出漏洞。</p></div>
+
+<h3 id="q1-cx">复杂度与易错点</h3>
+<p>计算区间 <span class="m">O(n)</span>（假设开方 O(1)），排序 <span class="m">O(n log n)</span>，扫描 <span class="m">O(n)</span>。总 <span class="m">O(n log n)</span>。</p>
+<div class="box warn"><div class="bt">易错</div><ul>
+<li>按 <span class="m">x<sub>i</sub></span> 或左端点排序（见图 1 反例）。</li>
+<li>把灯放在“第一个未覆盖房子的 <span class="m">x<sub>i</sub> + d</span>”——忽略了 <span class="m">y<sub>i</sub></span>，可能根本覆盖不到这座房子本身。</li>
+<li>没写证明或只写“显然贪心最优”——按规则直接 0 分。</li>
+</ul></div>
+
+<!-- ====================================================== Q2 -->
+<h2 id="q2"><span class="num">Q2</span>黑盒最短路 + 闹鬼墓穴（20 分）</h2>
+<div class="box def"><div class="bt">黑盒</div><p><code>ShortestPath(G, s)</code>：输入有向无环带权图（权可正可负可零）与 s，输出 s 到每点的最短路权，<span class="m">O(|V|+|E|)</span>。</p></div>
+
+<h3 id="q2a">(a) DAG 上非负权的最长路（5 分）</h3>
+<p><span class="tag b">题型</span>归约：变换输入 → 调用黑盒 → 变换输出（Module 3 §16 的“Using a reduction”）。</p>
+<div class="box tpl"><div class="bt">答案</div>
+<p>构造 <span class="m">G′</span>：同样的点和边，权 <span class="m">w′(e) = −w(e)</span>。调用 <code>ShortestPath(G′, s)</code> 得到 <span class="m">d′(v)</span>，输出 <span class="m">L(v) = −d′(v)</span>（不可达时黑盒给 +∞，输出 −∞/“不可达”）。</p>
+<p><b>正确性</b>：G′ 仍是 DAG（边不变），满足黑盒前提；对任一 s→v 路径 P，<span class="m">w′(P) = −w(P)</span>，所以使 <span class="m">w′</span> 最小的路径恰是使 w 最大的路径。DAG 中所有路径都是简单路径，“最长路”定义良好。</p>
+<p><b>复杂度</b>：建 G′ <span class="m">O(V+E)</span>，黑盒 <span class="m">O(V+E)</span>，取负 <span class="m">O(V)</span>。</p></div>
+<div class="box ex"><div class="bt">联系</div><p>这正是黑盒允许负权的用意。在<b>一般图</b>上，最长简单路是附录里的 NP-hard 问题 <b>LongestPath</b>——DAG 的无环性才让它变容易。（非负性在这里其实不需要。）</p></div>
+
+<h3 id="q2b">(b) 有环图上收集一次性边奖励（15 分）</h3>
+<p><span class="tag g">题型</span>Module 2 §9：<b>强连通分量 + 凝聚图（DAG）</b>，再用 (a) 求 DAG 最长路。看到“图可能有环”+ 线性时间目标，第一反应就该是“缩 SCC”。</p>
+
+<div class="box key"><div class="bt">两个关键观察</div>
+<ol>
+<li><b>在一个 SCC 内部可以拿到全部奖励，并且能停在 SCC 的任意一点。</b>强连通 ⇒ 对 SCC 中每条边 (a,b)：从当前位置走到 a（存在路径），走 (a,b)；全部走完后再走到想离开的那个点。重复走的边没有奖励，但也没有损失。</li>
+<li><b>离开一个 SCC 后永远回不来</b>（否则两者应在同一 SCC）。所以一条游走经过的 SCC 序列是凝聚 DAG 上的一条路径，相邻 SCC 之间<b>只用一条</b>跨分量边。</li>
+</ol></div>
+
+<figure>
+<svg viewBox="0 -4 620 304" width="620">
+  <defs><marker id="q2ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <g font-size="12">
+  <rect x="15" y="15" width="200" height="150" rx="14" class="faint"/><rect x="290" y="15" width="170" height="150" rx="14" class="faint"/>
+  <g class="ln" marker-end="url(#q2ar)">
+    <path d="M62 52 Q 105 30 148 52"/><path d="M148 64 Q 105 86 62 64"/>
+    <line x1="160" y1="70" x2="122" y2="122"/><line x1="96" y1="124" x2="58" y2="72"/>
+    <line x1="176" y1="58" x2="320" y2="58"/>
+    <line x1="126" y1="138" x2="320" y2="128"/>
+    <path d="M335 70 Q 360 95 335 118"/><path d="M325 118 Q 300 95 325 70"/>
+    <line x1="126" y1="146" x2="525" y2="210"/>
+    <line x1="342" y1="138" x2="528" y2="200"/>
+  </g>
+  <circle cx="50" cy="58" r="14" fill="#3b7dd8"/><text x="50" y="63" text-anchor="middle" fill="#fff">s</text>
+  <circle cx="162" cy="58" r="14" class="nd"/><text x="162" y="63" text-anchor="middle">a</text>
+  <circle cx="110" cy="134" r="14" class="nd"/><text x="110" y="139" text-anchor="middle">b</text>
+  <circle cx="330" cy="58" r="14" class="nd"/><text x="330" y="63" text-anchor="middle">c</text>
+  <circle cx="330" cy="130" r="14" class="nd"/><text x="330" y="135" text-anchor="middle">d</text>
+  <circle cx="540" cy="210" r="14" class="nd"/><text x="540" y="215" text-anchor="middle">e</text>
+  <g fill="#e07a3f" font-weight="700">
+    <text x="100" y="32">3</text><text x="100" y="92">1</text><text x="146" y="104">2</text><text x="66" y="104">4</text>
+    <text x="240" y="52">5</text><text x="220" y="124">1</text><text x="358" y="98">2</text><text x="296" y="98">2</text>
+    <text x="300" y="186">7</text><text x="440" y="164">1</text>
+  </g>
+  <text x="115" y="182" text-anchor="middle" class="mut">C₁={s,a,b}，R=3+1+2+4=10</text>
+  <text x="375" y="10" text-anchor="middle" class="mut">C₂={c,d}，R=4</text>
+  <text x="540" y="240" text-anchor="middle" class="mut">C₃={e}，R=0</text>
+  <text x="10" y="270" font-size="12">最优游走：在 C₁ 内拿满 10，经 a→c 拿 5，在 C₂ 内拿满 4，经 d→e 拿 1，共 <tspan font-weight="700">20</tspan>。</text>
+  <text x="10" y="290" font-size="12">若从 b→e 直接离开只有 10+7=17。注意 a→c 与 b→d 只能用其中一条。</text>
+  </g>
+</svg>
+<figcaption>图 2　示例（边上数字为奖励）。边：s→a 3, a→s 1, a→b 2, b→s 4, a→c 5, b→d 1, c→d 2, d→c 2, b→e 7, d→e 1。</figcaption>
+</figure>
+
+<h3 id="q2b-alg">算法</h3>
+<ol>
+<li>Tarjan（或 Kosaraju）求 SCC，<span class="m">O(V+E)</span>。</li>
+<li>对每个 SCC C，<span class="m">R(C) = Σ{ p(e) : e 的两端都在 C 中 }</span>（含自环），一次扫描所有边 <span class="m">O(E)</span>。</li>
+<li>构造凝聚 DAG D：每个 SCC 一个点；对每条跨分量边 <span class="m">e = (u,v)</span>，加边 <span class="m">C(u) → C(v)</span>，权 <span class="m">p(e) + R(C(v))</span>（保留平行边或只保留最大的都可以）。<span class="m">O(V+E)</span>。</li>
+<li>只保留从 <span class="m">C(s)</span> 可达的部分（或让不可达为 −∞），用 (a) 的方法求 D 中从 <span class="m">C(s)</span> 出发的最长路 <span class="m">L(·)</span>，<span class="m">L(C(s)) = 0</span>。</li>
+<li>输出 <span class="m">R(C(s)) + max<sub>C</sub> L(C)</span>。</li>
+</ol>
+<p>技巧：把“点权” <span class="m">R(C)</span> 并入<b>进入</b> C 的边，使问题变成纯边权的 DAG 最长路，直接用 (a)。</p>
+
+<div class="box proof"><div class="bt">正确性（proof sketch 即可）</div>
+<p><b>上界（任何游走 ≤ 输出）</b>：设游走 W 从 s 出发，依次经过 SCC <span class="m">C<sub>1</sub>=C(s), C<sub>2</sub>, …, C<sub>t</sub></span>（由观察 2，这是 D 中的一条路径，无重复）。W 收集到的奖励来自：各 <span class="m">C<sub>i</sub></span> 内部的边（至多 <span class="m">R(C<sub>i</sub>)</span>），以及 t−1 条转移边 <span class="m">e<sub>1</sub>,…,e<sub>t−1</sub></span>（每次转移恰好一条跨分量边，且 W 不会使用其他跨分量边）。合计 ≤ <span class="m">R(C<sub>1</sub>) + Σ<sub>i</sub>[p(e<sub>i</sub>) + R(C<sub>i+1</sub>)]</span> = <span class="m">R(C(s))</span> + D 中对应路径权 ≤ 输出。</p>
+<p><b>下界（能达到输出）</b>：取 D 中最优路径 <span class="m">C<sub>1</sub> →<sup>e<sub>1</sub></sup> C<sub>2</sub> → … → C<sub>t</sub></span>，<span class="m">e<sub>i</sub> = (u<sub>i</sub>, v<sub>i+1</sub>)</span>。构造游走：在 <span class="m">C<sub>1</sub></span> 中从 s 出发走遍所有内部边并停在 <span class="m">u<sub>1</sub></span>（观察 1），走 <span class="m">e<sub>1</sub></span> 到 <span class="m">v<sub>2</sub></span>，在 <span class="m">C<sub>2</sub></span> 中走遍并停在 <span class="m">u<sub>2</sub></span>……它拿到了路径上的全部奖励。∎</p>
+<p><b>复杂度</b>：每一步都是 <span class="m">O(|V<sub>H</sub>| + |E<sub>H</sub>|)</span>。注意构造出来的游走可能很长，但我们只需要计算它的<b>值</b>。</p></div>
+<div class="box warn"><div class="bt">易错</div><ul>
+<li>直接对原图用 (a)：原图有环，黑盒前提不满足。</li>
+<li>以为是 NP-hard 的 LongestPath：本题是<b>游走</b>（可重复点和边），奖励只拿一次——正是 SCC 的结构让它变成多项式。</li>
+<li>把 SCC 之间的<b>所有</b>边奖励都加上：从 C 到 C′ 只能走一条。</li>
+<li>忘了起点所在 SCC 的奖励 <span class="m">R(C(s))</span>，或忘了单点 SCC 的自环。</li>
+</ul></div>
+
+<!-- ====================================================== Q3 -->
+<h2 id="q3"><span class="num">Q3</span>拟阵的交（20 分）</h2>
+<div class="box def"><div class="bt">定义</div><p><span class="m">M<sub>1</sub> ∩ M<sub>2</sub> = (S, 𝒥<sub>1</sub> ∩ 𝒥<sub>2</sub>)</span>：I 独立 ⇔ I 在两个拟阵中都独立。</p></div>
+<div class="box key"><div class="bt">通用观察（三问都用得上）</div><p>交集<b>永远</b>满足前两条公理：<span class="m">∅</span> 在两边都独立；若 <span class="m">X ∈ 𝒥<sub>1</sub>∩𝒥<sub>2</sub></span> 且 <span class="m">Y ⊆ X</span>，由各自遗传性 <span class="m">Y</span> 也在两边独立。<b>唯一可能出问题的是交换性。</b></p></div>
+
+<h3 id="q3a">(a) 给出交不是拟阵的例子（8 分）</h3>
+<p><span class="tag y">题型</span>拟阵公理 + 构造反例。可用清单里的拟阵（不必证明）。经典思路：<b>二分图匹配 = 两个划分拟阵之交</b>，而匹配不满足交换性。</p>
+<div class="box tpl"><div class="bt">答案</div>
+<p>地集 <span class="m">S = {1, 2, 3}</span>。</p>
+<ul>
+<li><span class="m">M<sub>1</sub></span>：划分拟阵，块 <span class="m">S<sub>1</sub> = {1,2}, S<sub>2</sub> = {3}</span>，<span class="m">k<sub>1</sub> = k<sub>2</sub> = 1</span>。</li>
+<li><span class="m">M<sub>2</sub></span>：划分拟阵，块 <span class="m">T<sub>1</sub> = {1}, T<sub>2</sub> = {2,3}</span>，<span class="m">k<sub>1</sub> = k<sub>2</sub> = 1</span>。</li>
+</ul>
+<p>两者都是附录中的 PartitionMatroid。交集的独立集：<span class="m">∅, {1}, {2}, {3}, {1,3}</span>（<span class="m">{1,2}</span> 违反 M₁，<span class="m">{2,3}</span> 违反 M₂）。</p>
+<p>取 <span class="m">X = {1,3}</span>、<span class="m">Y = {2}</span>，<span class="m">|X| &gt; |Y|</span>。<span class="m">X∖Y = {1,3}</span>：<span class="m">Y∪{1} = {1,2} ∉ 𝒥<sub>1</sub></span>，<span class="m">Y∪{3} = {2,3} ∉ 𝒥<sub>2</sub></span>。交换性不成立 ⇒ <span class="m">M<sub>1</sub>∩M<sub>2</sub></span> 不是拟阵。∎</p></div>
+<figure>
+<svg viewBox="0 0 520 170" width="520">
+  <g font-size="13">
+  <line x1="110" y1="45" x2="400" y2="45" stroke="#e07a3f" stroke-width="4"/>
+  <line x1="110" y1="45" x2="400" y2="125" stroke="#3b7dd8" stroke-width="4"/>
+  <line x1="110" y1="125" x2="400" y2="125" stroke="#e07a3f" stroke-width="4"/>
+  <text x="255" y="36" text-anchor="middle">元素 1</text><text x="220" y="98" text-anchor="middle">元素 2</text><text x="255" y="146" text-anchor="middle">元素 3</text>
+  <circle cx="110" cy="45" r="15" class="nd"/><text x="110" y="50" text-anchor="middle">u₁</text>
+  <circle cx="110" cy="125" r="15" class="nd"/><text x="110" y="130" text-anchor="middle">u₂</text>
+  <circle cx="400" cy="45" r="15" class="nd"/><text x="400" y="50" text-anchor="middle">v₁</text>
+  <circle cx="400" cy="125" r="15" class="nd"/><text x="400" y="130" text-anchor="middle">v₂</text>
+  <text x="20" y="90" class="mut" font-size="11">M₁：左端点</text><text x="430" y="90" class="mut" font-size="11">M₂：右端点</text>
+  </g>
+</svg>
+<figcaption>图 3　同一个例子的图论解读：元素是二分图的边，M₁ 要求每个左端点至多用一次，M₂ 要求每个右端点至多用一次，交集 = 匹配。X = {1,3}（橙）是大小 2 的匹配，Y = {2}（蓝）是极大匹配却只有 1 条边——“极大独立集大小不同”本身就说明不是拟阵。</figcaption>
+</figure>
+<div class="box warn"><div class="bt">易错</div><ul><li>只说“匹配不是拟阵”而不给具体 X、Y：要给出具体违反的实例。</li><li>用了清单外的结构却没证明它是拟阵（题目明确要求自证）。</li></ul></div>
+
+<h3 id="q3b">(b) <span class="m">M<sub>1</sub> ∩ U<sub>r</sub></span> 是拟阵（8 分）</h3>
+<div class="box proof"><div class="bt">证明</div>
+<p>令 <span class="m">𝒥 = 𝒥<sub>1</sub> ∩ 𝒥<sub>2</sub> = {I ∈ 𝒥<sub>1</sub> : |I| ≤ r}</span>。</p>
+<ol>
+<li><b>非空</b>：<span class="m">∅ ∈ 𝒥<sub>1</sub></span> 且 <span class="m">|∅| = 0 ≤ r</span>。</li>
+<li><b>遗传</b>：<span class="m">X ∈ 𝒥, Y ⊆ X</span> ⇒ <span class="m">Y ∈ 𝒥<sub>1</sub></span>（M₁ 遗传），<span class="m">|Y| ≤ |X| ≤ r</span>。</li>
+<li><b>交换</b>：<span class="m">X, Y ∈ 𝒥, |X| &gt; |Y|</span>。由 M₁ 的交换性，存在 <span class="m">x ∈ X∖Y</span> 使 <span class="m">Y∪{x} ∈ 𝒥<sub>1</sub></span>。又 <span class="m">|Y∪{x}| = |Y| + 1 ≤ |X| ≤ r</span>，所以 <span class="m">Y∪{x} ∈ 𝒥<sub>2</sub></span>。故 <span class="m">Y∪{x} ∈ 𝒥</span>。∎</li>
+</ol>
+<p class="small">关键一行：<span class="m">|Y| &lt; |X|</span> 推出 <span class="m">|Y| + 1 ≤ |X|</span>（整数）。这叫拟阵的“截断（truncation）”。对比 (a)：一般交集失败，是因为 M₁ 给出的 x 未必被 M₂ 接受；而均匀拟阵只看大小，x 自动被接受。</p></div>
+
+<h3 id="q3c">(c) 给孩子分糖（4 分）</h3>
+<p><span class="tag g">题型</span>识别拟阵 + 加权拟阵贪心（Module 2 §11）。</p>
+<div class="box tpl"><div class="bt">答案</div>
+<p><b>建模</b>：地集 = n 个孩子。约束“每区 <span class="m">D<sub>j</sub></span> 至多 <span class="m">d<sub>j</sub></span> 个”是<b>划分拟阵</b> <span class="m">M<sub>1</sub></span>（块 <span class="m">D<sub>1</sub>,…,D<sub>m</sub></span>，上限 <span class="m">d<sub>j</sub></span>；每个孩子恰属一个区 ⇒ 确实是划分）；“总数至多 k”是<b>均匀拟阵</b> <span class="m">U<sub>k</sub></span>。可行集族 = <span class="m">𝒥(M<sub>1</sub>) ∩ 𝒥(U<sub>k</sub>)</span>，由 (b) 是拟阵 M（k = 0 时答案为空集）。</p>
+<p><b>算法</b>：按 <span class="m">w<sub>i</sub></span> 降序排序；维护每区计数 <span class="m">cnt[j]</span> 与总数 <span class="m">tot</span>；依次考虑孩子 i（区 j）：若 <span class="m">cnt[j] &lt; d<sub>j</sub></span> 且 <span class="m">tot &lt; k</span> 则选入并更新计数。</p>
+<p><b>正确性</b>：这正是课上的加权拟阵贪心，独立性测试为“加入后仍满足两个计数约束”。贪心返回最大权<b>基</b>；由于 <span class="m">w<sub>i</sub> ≥ 0</span>，任何独立集都可扩充为基且权重不减，所以最大权基就是所有可行集合中权重最大的。</p>
+<p><b>复杂度</b>：排序 <span class="m">O(n log n)</span>；每次独立性测试 <span class="m">O(1)</span>，共 n 次 ⇒ <span class="m">O(n log n + n·1) = O(n log n)</span>（定理中的 <span class="m">O(n log n + n f(n))</span>，<span class="m">f = O(1)</span>）。</p></div>
+<div class="box warn"><div class="bt">易错</div><p>题目是 4 分，但“贪心要证明”仍适用——引用“M 是拟阵（由 b + 清单）+ 拟阵贪心定理”就是证明，<b>一定要写出这两句</b>，以及“权重非负 ⇒ 最大权基最优”。</p></div>
+
+<!-- ====================================================== Q4 -->
+<h2 id="q4"><span class="num">Q4</span>最小权“几乎是树”子图（20 分）</h2>
+<div class="box def"><div class="bt">题意</div><p>连通图 G、非负边权。almost-a-tree：连通、生成（含所有点）、<b>恰好一个环</b>。求最小权，<span class="m">O(|E| log |V|)</span>。</p></div>
+<p><span class="tag g">题型</span>MST（Kruskal + 并查集）+ 交换论证。</p>
+<div class="box key"><div class="bt">关键观察</div><ul>
+<li>连通生成子图恰有一个环 ⇔ 它有 <span class="m">|V|</span> 条边 ⇔ 它 = 某棵生成树 + 一条额外边。（删掉环上任意一条边就得到生成树。）</li>
+<li><b>答案 = MST 权 + 最轻的非 MST 边</b>。在 Kruskal 中，最轻的非树边就是<b>第一条被拒绝的边</b>。</li>
+</ul></div>
+<figure>
+<svg viewBox="0 0 520 200" width="520">
+  <g font-size="12">
+  <line x1="60" y1="60" x2="170" y2="30" stroke="#2e9e6a" stroke-width="3.5"/>
+  <line x1="170" y1="30" x2="160" y2="150" stroke="#2e9e6a" stroke-width="3.5"/>
+  <line x1="290" y1="150" x2="400" y2="70" stroke="#2e9e6a" stroke-width="3.5"/>
+  <line x1="60" y1="60" x2="160" y2="150" stroke="#e07a3f" stroke-width="3.5"/>
+  <line x1="160" y1="150" x2="290" y2="150" stroke="#2e9e6a" stroke-width="3.5"/>
+  <line x1="400" y1="70" x2="430" y2="170" stroke="#2e9e6a" stroke-width="3.5"/>
+  <line x1="170" y1="30" x2="290" y2="150" class="faint"/>
+  <line x1="290" y1="150" x2="430" y2="170" class="faint"/>
+  <g font-weight="700" fill="#e07a3f"><text x="110" y="36">1</text><text x="172" y="96">2</text><text x="340" y="104">3</text><text x="98" y="120">4</text><text x="222" y="166">5</text><text x="424" y="120">6</text><text x="236" y="84">7</text><text x="356" y="176">8</text></g>
+  <circle cx="60" cy="60" r="14" class="nd"/><text x="60" y="65" text-anchor="middle">A</text>
+  <circle cx="170" cy="30" r="14" class="nd"/><text x="170" y="35" text-anchor="middle">B</text>
+  <circle cx="160" cy="150" r="14" class="nd"/><text x="160" y="155" text-anchor="middle">C</text>
+  <circle cx="290" cy="150" r="14" class="nd"/><text x="290" y="155" text-anchor="middle">D</text>
+  <circle cx="400" cy="70" r="14" class="nd"/><text x="400" y="75" text-anchor="middle">E</text>
+  <circle cx="430" cy="170" r="14" class="nd"/><text x="430" y="175" text-anchor="middle">F</text>
+  <text x="10" y="195" font-size="11" class="mut">绿：MST（17）；橙：第一条被拒绝的边 AC（4）⇒ 唯一的环 A-B-C，总权 21</text>
+  </g>
+</svg>
+<figcaption>图 4　沿用讲义 1 的 Kruskal 例子：最优 almost-a-tree = MST + AC。</figcaption>
+</figure>
+
+<div class="box tpl"><div class="bt">算法</div><ol>
+<li>若 <span class="m">|E| &lt; |V|</span>（G 本身是树），不存在 almost-a-tree，报告无解。</li>
+<li>运行 Kruskal（并查集 + size 启发式）<b>处理完所有边</b>，得到 MST T，记录第一条被拒绝的边 <span class="m">e<sub>min</sub></span>（等价于：建完 T 后扫描所有非树边取最小）。</li>
+<li>输出 <span class="m">w(T) + w(e<sub>min</sub>)</span>（子图为 <span class="m">T ∪ {e<sub>min</sub>}</span>）。</li>
+</ol></div>
+<div class="box proof"><div class="bt">正确性（交换论证，应写完整）</div>
+<p><b>可行</b>：T 是生成树，加入非树边 <span class="m">e<sub>min</sub></span> 恰好产生一个环（基本环），仍连通、生成 ⇒ 是 almost-a-tree。</p>
+<p><b>最优</b>：任取 almost-a-tree H，记其唯一的环为 C。因为 T 无环，C 不可能全在 T 中 ⇒ C 上存在边 <span class="m">g ∉ T</span>。删去 g：<span class="m">H − g</span> 仍连通（g 在环上），有 <span class="m">|V|−1</span> 条边 ⇒ 是生成树，故 <span class="m">w(H − g) ≥ w(T)</span>。又 <span class="m">g ∉ T</span> ⇒ <span class="m">w(g) ≥ w(e<sub>min</sub>)</span>。于是</p>
+<p style="text-align:center" class="mn">w(H) = w(H − g) + w(g) ≥ w(T) + w(e<sub>min</sub>)。∎</p>
+<p><b>为什么第一条被拒绝的边是最轻的非树边</b>：Kruskal 按升序处理所有边，非树边恰好就是被拒绝的边。</p>
+<p><b>复杂度</b>：排序 <span class="m">O(E log E) = O(E log V)</span>；2E 次 Find、V−1 次 Union，各 <span class="m">O(log V)</span> ⇒ <span class="m">O(E log V)</span>。</p></div>
+<div class="box warn"><div class="bt">易错</div><ul>
+<li>“加全图最轻的边”：它往往已经在 MST 里了，必须是<b>非树边</b>。</li>
+<li>证明里直接断言“最优解一定包含 MST”——不对（最优解不一定含某棵特定 MST，例如权重相同时），要用上面“环上必有非树边 g”的交换。</li>
+<li>Kruskal 在凑够 n−1 条边后提前停止，就拿不到被拒绝的边——要么继续扫，要么事后扫一遍非树边。</li>
+</ul></div>
+
+<!-- ====================================================== Q5 -->
+<h2 id="q5"><span class="num">Q5</span>Haunting Set（20 分）</h2>
+<div class="box def"><div class="bt">定义</div><p>有向图中 u <b>haunts</b> v ⇔ <span class="m">u = v</span> 或 <span class="m">(u,v) ∈ E</span>。Haunting set H：每个点都被 H 中某点 haunt（即有向图的<b>支配集</b>：H ∪ N⁺(H) = V）。</p></div>
+
+<h3 id="q5a">(a) DAG 上的 Haunting Set 是 NP-hard（10 分）</h3>
+<p><span class="tag r">题型</span>Module 3 NP-hardness 归约，指定从 <b>Set Cover</b> 出发。</p>
+<div class="box key"><div class="bt">设计思路</div>
+<p>Set Cover：“选 ≤ k 个集合，盖住所有元素”。Haunting：“选 ≤ k′ 个点，haunt 所有点”。自然的对应：<b>集合 ↦ 点，元素 ↦ 点，集合 → 它包含的元素</b>。这样选中的集合点会 haunt 它的元素。</p>
+<p><b>问题</b>：集合点入度为 0，没人能 haunt 它们，只能自己进 H ⇒ 所有 m 个集合点都必须选，规模失控。<b>补丁</b>：加一个超级根 r，<span class="m">r → 每个集合点</span>。r 入度 0 必选，但它一个就 haunt 了全部集合点。预算设为 <span class="m">k + 1</span>。</p></div>
+
+<figure>
+<svg viewBox="0 0 560 250" width="560">
+  <defs><marker id="q5ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <g font-size="12">
+  <g class="ln" stroke-width="1.3" marker-end="url(#q5ar)">
+    <line x1="270" y1="44" x2="113" y2="102"/><line x1="272" y1="46" x2="218" y2="100"/><line x1="288" y1="46" x2="342" y2="100"/><line x1="290" y1="44" x2="447" y2="102"/>
+  </g>
+  <g stroke="currentColor" stroke-opacity=".55" stroke-width="1.2" marker-end="url(#q5ar)">
+    <line x1="114" y1="130" x2="72" y2="190"/><line x1="118" y1="131" x2="166" y2="190"/><line x1="124" y1="128" x2="262" y2="192"/>
+    <line x1="222" y1="131" x2="174" y2="190"/><line x1="230" y1="130" x2="360" y2="191"/>
+    <line x1="342" y1="131" x2="282" y2="190"/><line x1="350" y1="131" x2="366" y2="190"/><line x1="356" y1="128" x2="460" y2="192"/>
+    <line x1="446" y1="128" x2="84" y2="194"/><line x1="456" y1="131" x2="468" y2="190"/>
+  </g>
+  <circle cx="280" cy="32" r="15" fill="#e07a3f"/><text x="280" y="37" text-anchor="middle" fill="#fff">r</text>
+  <circle cx="120" cy="115" r="16" fill="#e07a3f"/><text x="120" y="120" text-anchor="middle" fill="#fff">S₁</text>
+  <circle cx="225" cy="115" r="16" class="nd"/><text x="225" y="120" text-anchor="middle">S₂</text>
+  <circle cx="345" cy="115" r="16" fill="#e07a3f"/><text x="345" y="120" text-anchor="middle" fill="#fff">S₃</text>
+  <circle cx="450" cy="115" r="16" class="nd"/><text x="450" y="120" text-anchor="middle">S₄</text>
+  <circle cx="70" cy="205" r="14" class="nd"/><text x="70" y="210" text-anchor="middle">1</text>
+  <circle cx="170" cy="205" r="14" class="nd"/><text x="170" y="210" text-anchor="middle">2</text>
+  <circle cx="270" cy="205" r="14" class="nd"/><text x="270" y="210" text-anchor="middle">3</text>
+  <circle cx="370" cy="205" r="14" class="nd"/><text x="370" y="210" text-anchor="middle">4</text>
+  <circle cx="470" cy="205" r="14" class="nd"/><text x="470" y="210" text-anchor="middle">5</text>
+  <text x="10" y="242" font-size="11" class="mut">S₁={1,2,3}, S₂={2,4}, S₃={3,4,5}, S₄={1,5}；k=2：覆盖 {S₁,S₃} ⇔ haunting set {r,S₁,S₃}（橙，大小 k+1）</text>
+  </g>
+</svg>
+<figcaption>图 5　三层 DAG：r → 集合点 → 元素点。所有边都向下，显然无环。</figcaption>
+</figure>
+
+<div class="box tpl"><div class="bt">完整答案（可直接照写）</div>
+<p><b>归约</b>：给定 Set Cover 实例：全集 <span class="m">U = {u<sub>1</sub>,…,u<sub>n</sub>}</span>，子集 <span class="m">S<sub>1</sub>,…,S<sub>m</sub></span>（并为 U），整数 k。构造有向图 G：</p>
+<ul>
+<li>点：根 r；每个集合一个点 <span class="m">s<sub>j</sub></span>；每个元素一个点 <span class="m">e<sub>i</sub></span>。</li>
+<li>边：<span class="m">r → s<sub>j</sub></span>（所有 j）；<span class="m">s<sub>j</sub> → e<sub>i</sub></span> ⇔ <span class="m">u<sub>i</sub> ∈ S<sub>j</sub></span>。</li>
+<li>参数：<span class="m">k′ = k + 1</span>。</li>
+</ul>
+<p>G 是 DAG（所有边从第 0 层到第 1 层或第 1 层到第 2 层）。点数 <span class="m">1+m+n</span>，边数 <span class="m">m + Σ|S<sub>j</sub>|</span>，多项式时间构造。</p>
+<p><b>(⇒)</b> 若存在大小 ≤ k 的覆盖 <span class="m">𝒞</span>，令 <span class="m">H = {r} ∪ {s<sub>j</sub> : S<sub>j</sub> ∈ 𝒞}</span>，<span class="m">|H| ≤ k+1</span>。r haunts 自己和所有 <span class="m">s<sub>j</sub></span>；每个 <span class="m">e<sub>i</sub></span>：<span class="m">u<sub>i</sub></span> 属于某个 <span class="m">S<sub>j</sub> ∈ 𝒞</span>，于是 <span class="m">s<sub>j</sub> ∈ H</span> haunts <span class="m">e<sub>i</sub></span>。H 是 haunting set。</p>
+<p><b>(⇐)</b> 设 H 是大小 ≤ k+1 的 haunting set。</p>
+<ol>
+<li>r 入度为 0，只有 r 自己能 haunt r ⇒ <span class="m">r ∈ H</span>。</li>
+<li><b>规范化</b>：若某个元素点 <span class="m">e<sub>i</sub> ∈ H</span>，它出度为 0，只 haunt 自己；把它换成任意一个包含 <span class="m">u<sub>i</sub></span> 的集合点 <span class="m">s<sub>j</sub></span>（存在，因为各集合的并为 U）。<span class="m">s<sub>j</sub></span> 同样 haunt <span class="m">e<sub>i</sub></span>，H 仍是 haunting set，大小不增。</li>
+<li>现在 <span class="m">H = {r} ∪ {s<sub>j</sub> : j ∈ J}</span>，<span class="m">|J| ≤ k</span>。每个 <span class="m">e<sub>i</sub></span> 不在 H 中、又不能被 r haunt，只能被某个 <span class="m">s<sub>j</sub>, j ∈ J</span> haunt ⇒ <span class="m">u<sub>i</sub> ∈ S<sub>j</sub></span>。故 <span class="m">{S<sub>j</sub> : j ∈ J}</span> 是大小 ≤ k 的覆盖。</li>
+</ol>
+<p>因此 Set Cover ≤<sub>P</sub> Haunting Set on DAGs，后者 NP-hard。∎</p>
+<p class="small">关于“恰好 k 个”与“至多 k 个”：清单里 SetCover 写的是“k 个子集”。若有 ≤ k 个的覆盖，补任意集合就有恰好 min(k, m) 个；k ≥ m 时实例平凡为 YES。写一句说明即可。（题目只要求 NP-hard；若要 NP-complete，再补一句“H 本身就是可在线性时间验证的证书”。）</p></div>
+<div class="box warn"><div class="bt">易错</div><ul>
+<li><b>漏了根 r</b>（或把预算设成 k）：集合点无人 haunt，归约直接错误。</li>
+<li>(⇐) 方向没处理“H 里可能有元素点”——需要规范化（替换）这一步。</li>
+<li>方向反了：把 Haunting Set 归约到 Set Cover 证明不了难度。</li>
+<li>构造的图有环（例如元素指回集合），题目要求 DAG。</li>
+</ul></div>
+
+<h3 id="q5b">(b) 竞赛图上 Greedy-THS 输出 O(log n) 大小的 haunting set（4 分）</h3>
+<div class="box proof"><div class="bt">证明</div>
+<p><b>输出是 haunting set</b>：每轮至少删除被选点 v 本身，算法终止。每个被删除的点 u 都被当轮选中的 v haunt（<span class="m">u = v</span> 或 <span class="m">(v,u) ∈ E</span>，剩余图是原图的诱导子图，边就是原图的边）。所有点最终都被删 ⇒ 每个点都被 H 中某点 haunt。</p>
+<p><b>规模</b>：剩余图始终是竞赛图（竞赛图的诱导子图仍是竞赛图）。设当前剩 <span class="m">n′</span> 个点：每对点恰贡献一条边，出度之和 = <span class="m">C(n′,2) = n′(n′−1)/2</span>，所以最大出度 ≥ <span class="m">(n′−1)/2</span>。选中 v 后删除 v 及其出邻居，至少 <span class="m">1 + (n′−1)/2 = (n′+1)/2</span> 个点，剩下至多 <span class="m">(n′−1)/2 &lt; n′/2</span>。每轮剩余点数至少减半，t 轮后 <span class="m">&lt; n/2<sup>t</sup></span>，所以至多 <span class="m">⌊log₂ n⌋ + 1</span> 轮 ⇒ <span class="m">|H| = O(log n)</span>。∎</p></div>
+<p class="small">与 Module 3 的关系：这是 Set Cover 型贪心的“每步至少覆盖一个常数比例”分析；也顺带说明竞赛图的最小 haunting set 总是 O(log n)。</p>
+
+<h3 id="q5c">(c) Greedy-THS 是否总是最优？——否（6 分）</h3>
+<p><span class="tag o">题型</span>贪心反例构造。“Prove or disprove” 题，几乎都是要你构造反例；最好让贪心的选择<b>唯一</b>，避免“平局时选得好就对了”的争议。</p>
+<div class="box key"><div class="bt">反例思路</div><p>让出度最大的点 v 是最优解的一部分，但它的“搭档” u 正好是 v 的出邻居——贪心选 v 后就把 u 删掉了（被 haunt 的点从图中移除，不能再作为 haunter），剩下的部分又是一个需要 2 个点的 3-环。</p></div>
+<figure>
+<svg viewBox="0 0 560 250" width="560">
+  <defs><marker id="q5c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <g font-size="13">
+  <rect x="200" y="20" width="160" height="80" rx="14" fill="#3b7dd8" fill-opacity=".12" stroke="#3b7dd8"/>
+  <text x="280" y="50" text-anchor="middle" font-weight="700">W = {w₀,…,w₆}</text>
+  <text x="280" y="70" text-anchor="middle" font-size="11">正则竞赛图：wᵢ → wᵢ₊₁, wᵢ₊₂, wᵢ₊₃ (mod 7)</text>
+  <text x="280" y="88" text-anchor="middle" font-size="11">每点在 W 内出度 3</text>
+  <circle cx="80" cy="150" r="22" fill="#e07a3f"/><text x="80" y="155" text-anchor="middle" fill="#fff">v</text>
+  <rect x="380" y="150" width="160" height="80" rx="14" fill="#2e9e6a" fill-opacity=".12" stroke="#2e9e6a"/>
+  <text x="460" y="176" text-anchor="middle" font-weight="700">R = {x, y, z}</text>
+  <text x="460" y="198" text-anchor="middle" font-size="11">3-环 x→y→z→x</text>
+  <g class="ln" stroke-width="2" marker-end="url(#q5c)">
+    <line x1="100" y1="138" x2="196" y2="80"/>
+    <line x1="362" y1="80" x2="430" y2="146"/>
+    <line x1="376" y1="200" x2="106" y2="156"/>
+  </g>
+  <text x="40" y="110" font-size="12">v → W 全部</text>
+  <text x="410" y="108" font-size="12">W → R 全部</text>
+  <text x="200" y="196" font-size="12">R → v 全部</text>
+  <text x="10" y="242" font-size="11" class="mut">出度：v = 7（唯一最大）；每个 w = 3 + 3 = 6；每个 R 中的点 = 1 + 1 = 2。共 11 个点。</text>
+  </g>
+</svg>
+<figcaption>图 6　11 个点的反例（已用程序穷举验证：最优为 2，贪心为 3）。</figcaption>
+</figure>
+<div class="box proof"><div class="bt">验证（写在答卷上）</div>
+<p><b>是竞赛图</b>：W 内部的旋转构造对每对 <span class="m">w<sub>i</sub>, w<sub>j</sub></span> 恰给一个方向（差为 1,2,3 时 i→j，差为 4,5,6 时 j→i）；v 与 W、W 与 R、R 与 v、R 内部每对恰一条边。</p>
+<p><b>最优 ≤ 2</b>：<span class="m">H* = {v, w<sub>0</sub>}</span>：v haunts v 和全部 W；<span class="m">w<sub>0</sub></span> haunts 全部 R。（且没有点出度为 10，所以最优恰为 2。）</p>
+<p><b>贪心 = 3</b>：v 的出度 7 是唯一最大值，贪心必选 v，删去 v 与 W，剩下 R（3-环）。在 3-环中每点出度 1，无论选谁，只删掉 2 个点，还剩 1 个，需再选它。贪心输出 3 个点 &gt; 2。∎</p>
+<p class="small">贪心错在：w₀ 本来是 v 的最佳搭档（它能一口气 haunt 整个 R），但它被 v haunt 后从图中删除了，后面没机会再被选作 haunter。</p></div>
+
+<!-- ====================================================== NP list -->
+<h2 id="np"><span class="num">L1</span>附录：NP-hard 问题清单逐条讲解</h2>
+<p>附录给了两版清单：第一版（期中卷里）多用<b>优化</b>说法（“最大/最小是多少”），第二版用<b>判定</b>说法（“是否存在大小为 k 的……”）。做 Karp 归约时用<b>判定版</b>：输入里多一个参数 k，答案是 YES/NO。优化版本身是 NP-hard（但不在 NP 中，因为输出不是 YES/NO）。</p>
+
+<figure>
+<svg viewBox="0 0 760 424" width="760">
+  <defs><marker id="mp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <g font-size="12">
+  <g class="ln" stroke-width="1.4" marker-end="url(#mp)">
+    <line x1="380" y1="44" x2="380" y2="72"/>
+    <line x1="350" y1="100" x2="140" y2="142"/><line x1="368" y1="102" x2="300" y2="142"/><line x1="392" y1="102" x2="460" y2="142"/><line x1="412" y1="100" x2="610" y2="142"/>
+    <line x1="120" y1="172" x2="70" y2="222"/>
+    <line x1="160" y1="172" x2="210" y2="222"/>
+    <line x1="290" y1="172" x2="236" y2="222"/>
+    <line x1="460" y1="172" x2="460" y2="222"/>
+    <line x1="600" y1="172" x2="580" y2="222"/><line x1="630" y1="172" x2="690" y2="222"/>
+    <line x1="60" y1="252" x2="60" y2="292"/>
+    <line x1="80" y1="252" x2="190" y2="294"/>
+    <line x1="350" y1="352" x2="420" y2="352"/><line x1="420" y1="366" x2="350" y2="366"/>
+  </g>
+  <g>
+  <rect x="330" y="14" width="100" height="30" rx="8" fill="#c94040" fill-opacity=".18" stroke="#c94040"/><text x="380" y="34" text-anchor="middle" font-weight="700">Sat</text>
+  <rect x="330" y="72" width="100" height="30" rx="8" fill="#c94040" fill-opacity=".18" stroke="#c94040"/><text x="380" y="92" text-anchor="middle" font-weight="700">3Sat</text>
+  <rect x="80" y="142" width="120" height="30" rx="8" class="nd"/><text x="140" y="162" text-anchor="middle">VertexCover</text>
+  <rect x="250" y="142" width="100" height="30" rx="8" class="nd"/><text x="300" y="162" text-anchor="middle">Clique</text>
+  <rect x="410" y="142" width="100" height="30" rx="8" class="nd"/><text x="460" y="162" text-anchor="middle">3Col</text>
+  <rect x="560" y="142" width="110" height="30" rx="8" class="nd"/><text x="615" y="162" text-anchor="middle">HamCycle/Path</text>
+  <rect x="10" y="222" width="110" height="30" rx="8" class="nd"/><text x="65" y="242" text-anchor="middle">SetCover</text>
+  <rect x="170" y="222" width="100" height="30" rx="8" class="nd"/><text x="220" y="242" text-anchor="middle">IndSet</text>
+  <rect x="395" y="222" width="140" height="30" rx="8" class="nd"/><text x="465" y="242" text-anchor="middle">ChromaticNumber</text>
+  <rect x="540" y="222" width="90" height="30" rx="8" class="nd"/><text x="585" y="242" text-anchor="middle">LongestPath</text>
+  <rect x="640" y="222" width="110" height="30" rx="8" class="nd"/><text x="695" y="242" text-anchor="middle">Travelling S.</text>
+  <rect x="10" y="292" width="110" height="30" rx="8" class="nd"/><text x="65" y="312" text-anchor="middle">HittingSet</text>
+  <rect x="140" y="294" width="120" height="30" rx="8" class="nd"/><text x="200" y="314" text-anchor="middle">SteinerTree</text>
+  <rect x="520" y="292" width="140" height="30" rx="8" fill="#e07a3f" fill-opacity=".15" stroke="#e07a3f"/><text x="590" y="312" text-anchor="middle">Haunting(DAG) Q5</text>
+  <rect x="240" y="342" width="110" height="34" rx="8" class="nd"/><text x="295" y="364" text-anchor="middle">SubsetSum</text>
+  <rect x="420" y="342" width="100" height="34" rx="8" class="nd"/><text x="470" y="364" text-anchor="middle">Partition</text>
+  <rect x="560" y="342" width="110" height="34" rx="8" class="nd"/><text x="615" y="364" text-anchor="middle">3Partition</text>
+  </g>
+  <line x1="200" y1="157" x2="250" y2="157" stroke="currentColor" stroke-dasharray="3 3"/>
+  <text x="225" y="136" text-anchor="middle" font-size="10" class="mut">补图</text>
+  <path d="M60 252 Q 300 290 520 300" fill="none" stroke="#e07a3f" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#mp)"/>
+  <text x="10" y="398" font-size="11" class="mut">箭头 A → B 表示 A ≤ₚ B（B 至少和 A 一样难）。实线：课上或标准教材的归约；橙色虚线：期中 Q5(a)。</text><text x="10" y="414" font-size="11" class="mut">数值类问题（底行）通常从 3Sat 经较复杂的构造得到，考试时直接引用清单即可。</text>
+  </g>
+</svg>
+<figcaption>图 7　清单问题之间的常见归约关系（不是全部）。挑选起点问题时，找与目标<b>结构最像</b>的那个。</figcaption>
+</figure>
+
+<div class="box tpl"><div class="bt">“该从哪个问题归约？”速查</div>
+<div class="tablewrap"><table>
+<tr><th>目标问题的样子</th><th>首选起点</th><th>理由</th></tr>
+<tr><td>选少量东西“覆盖/支配/触及”所有东西</td><td>SetCover、VertexCover、HittingSet</td><td>覆盖结构一一对应（Q5a 就是）</td></tr>
+<tr><td>选很多东西，两两“不冲突/都兼容”</td><td>IndSet、Clique</td><td>冲突 = 边</td></tr>
+<tr><td>把对象分到少量组，组内不能冲突</td><td>3Col、ChromaticNumber</td><td>组 = 颜色</td></tr>
+<tr><td>排一个顺序 / 走一条经过所有点的路</td><td>HamPath、HamCycle、TSP、LongestPath</td><td>顺序 = 路径</td></tr>
+<tr><td>数字、重量、时间凑成某个和 / 平均分</td><td>SubsetSum、Partition、3Partition</td><td>数值和约束</td></tr>
+<tr><td>一般的逻辑约束、需要设计小件</td><td>3Sat</td><td>最灵活：变量小件 + 子句小件</td></tr>
+<tr><td>连通少量指定点的最小结构</td><td>SteinerTree（或从 SetCover 构造）</td><td>连通性</td></tr>
+</table></div></div>
+
+<h3 id="np-logic">逻辑类</h3>
+<div class="box def"><div class="bt">Sat</div><p><b>问</b>：一个 CNF 公式（若干子句的 AND，每个子句是文字的 OR）是否有满足赋值？<br><b>例</b>：<span class="m">(x∨¬y) ∧ (y∨z) ∧ (¬x∨¬z)</span>：x=1, y=1, z=0 满足。<br><b>地位</b>：Cook 定理的第一个 NP-complete 问题。</p></div>
+<div class="box def"><div class="bt">3Sat</div><p><b>问</b>：每个子句恰有 3 个不同文字的 CNF 是否可满足？<br><b>为何常用</b>：结构整齐，适合“变量小件 + 子句小件 + 连接”的归约（课上的 VC、Clique、3Col 都从它出发）。<br><b>注意</b>：2Sat ∈ P，不能用作起点。</p></div>
+
+<h3 id="np-graph">图类：选点 / 选边</h3>
+<div class="box def"><div class="bt">VertexCover（点覆盖）</div><p><b>问</b>：是否有 k 个点，使每条边至少一个端点被选？<br><b>例</b>：星形图中心一个点即可覆盖所有边。<br><b>关系</b>：S 是点覆盖 ⇔ V∖S 是独立集。VC ≤ SetCover：元素 = 边，每个点对应“与它相连的边”的集合。<br><b>用于</b>：任何“每个约束对（边）至少选一个”的问题。</p></div>
+<div class="box def"><div class="bt">IndSet（独立集）</div><p><b>问</b>：是否有 k 个点两两不相邻？<br><b>例</b>：5-环的最大独立集为 2。<br><b>关系</b>：G 的独立集 = 补图 Ḡ 的团；大小 k 的独立集 ⇔ 大小 n−k 的点覆盖。<br><b>用于</b>：调度/选择中“冲突对不能同时选”的问题（区间图上是活动选择，多项式！一般图上难）。</p></div>
+<div class="box def"><div class="bt">Clique（团）</div><p><b>问</b>：是否有 k 个点两两相邻（完全子图）？<br><b>例</b>：三角形是 3-团。<br><b>关系</b>：3Sat ≤ Clique（k = 子句数）；VC ≤ Clique（补图，n−k）。<br><b>用于</b>：“选出的东西必须两两兼容”。</p></div>
+<div class="box def"><div class="bt">3Col 与 ChromaticNumber（着色）</div><p><b>3Col 问</b>：能否用 3 种颜色给点着色使相邻点不同色？<br><b>ChromaticNumber</b>：最少需要几种颜色（判定版：能否用 k 色）。3Col 是它在 k=3 的特例 ⇒ 后者也难。<br><b>例</b>：奇数环需要 3 色；完全图 K₄ 需要 4 色。<br><b>注意</b>：2 色（二分图判定）∈ P；区间图/完美图上着色多项式。<br><b>用于</b>：把东西分成若干组/时段/频道且冲突的不能同组（考试排时间表、寄存器分配）。</p></div>
+
+<h3 id="np-cover">集合类：覆盖与击中</h3>
+<div class="box def"><div class="bt">SetCover（集合覆盖）</div><p><b>问</b>：给全集 S 和子集 <span class="m">S<sub>1</sub>,…,S<sub>m</sub></span>（并为 S），能否选 k 个子集使并为 S？<br><b>例</b>：S={1..5}，子集 {1,2,3},{2,4},{3,4,5},{1,5}，k=2 时 {1,2,3}+{3,4,5} 可行。<br><b>用于</b>：Q5(a)；任何“选 k 个工具/站点/传感器盖住所有需求”的问题。归约时通常把“集合”和“元素”各变成一种对象，“包含”变成某种关系（边、覆盖、可达）。<br><b>相关</b>：贪心（每次选覆盖最多新元素的集合）是 <span class="m">ln n</span> 级近似——Q5(b) 的分析就是这个味道。</p></div>
+<div class="box def"><div class="bt">HittingSet（击中集）</div><p><b>问</b>：能否选 S 中 k 个元素，使每个子集 <span class="m">S<sub>i</sub></span> 都至少含一个被选元素？<br><b>关系</b>：它是 SetCover 的“转置”：把元素与集合的角色互换（元素 x 变成集合 {i : x ∈ S<sub>i</sub>}）。VertexCover 是每个集合大小为 2 的击中集（集合 = 边）。<br><b>用于</b>：“每个约束组里至少选一个”（如每门课至少一个助教会的时间）。</p></div>
+
+<h3 id="np-path">路径与巡回类</h3>
+<div class="box def"><div class="bt">HamCycle / HamPath（哈密顿回路 / 路径）</div><p><b>问</b>：（有向或无向）图中是否有经过每个点恰好一次的回路 / 路径？<br><b>对比</b>：每条<b>边</b>恰好一次（Euler）∈ P。<br><b>用于</b>：排序、排列、“访问每个对象一次”的问题。</p></div>
+<div class="box def"><div class="bt">LongestPath（最长简单路）</div><p><b>问</b>：是否存在长度为 k 的简单路径？（可带权）<br><b>关系</b>：HamPath ≤ LongestPath（k = n−1）。<br><b>对比</b>：最短路 ∈ P；<b>DAG 上最长路 ∈ P</b>（Q2a，取负 + 拓扑序）。<br><b>易错</b>：别把 DAG/可重复走的版本误判为 NP-hard（Q2b 就是陷阱）。</p></div>
+<div class="box def"><div class="bt">TravellingSalesperson（旅行商）</div><p><b>问</b>：正整数边权图中，是否有总权 ≤ k 的哈密顿回路（或路径）？<br><b>关系</b>：HamCycle ≤ TSP（原边权 1，非边权 2 或很大，k = n）。<br><b>近似</b>：满足三角不等式时 2-近似（MST 绕行）；一般情形无常数近似（除非 P=NP）。</p></div>
+<div class="box def"><div class="bt">SteinerTree（斯坦纳树）</div><p><b>问</b>：给图 G、终端点集 S，是否有至多 k 条边的子树连通 S 中所有点？（可以经过非终端点）<br><b>对比</b>：S = V 时就是生成树（∈ P）；|S| = 2 时就是最短路（∈ P）。<br><b>常见归约（SetCover ≤ SteinerTree）</b>：根 r 连到每个集合点，集合点连到所含元素点，终端 = {r} ∪ 元素；有 ≤ k 个集合的覆盖 ⇔ 有 ≤ k + n 条边的 Steiner 树。（与 Q5a 的三层结构几乎一样！）</p></div>
+
+<h3 id="np-num">数值类</h3>
+<div class="box def"><div class="bt">SubsetSum（子集和）</div><p><b>问</b>：正整数集合 X 是否有子集和恰为 t？<br><b>例</b>：X={3,5,6,8}，t=14：3+5+6 = 14 ✓；t=12 则无解。<br><b>注意</b>：DP <span class="m">O(n·t)</span> 只是<b>伪多项式</b>（t 用 log t 位表示）。精确指数算法：meet in the middle <span class="m">O(n 2<sup>n/2</sup>)</span>。</p></div>
+<div class="box def"><div class="bt">Partition（划分）</div><p><b>问</b>：能否把正整数集合分成和相等的两部分？<br><b>关系</b>：Partition ≤ SubsetSum（t = 总和/2，总和为奇数时直接 NO）；反方向也成立（加一两个辅助数）。<br><b>用于</b>：两台机器负载平衡、两人平分财产等。</p></div>
+<div class="box def"><div class="bt">3Partition（三元划分）</div><p><b>问</b>：3n 个正整数能否分成 n 个三元组，每组和相同？<br><b>特点</b>：<b>强 NP-hard</b>——即使数字用一进制写（数值很小）也难，所以不能靠伪多项式 DP 绕开。<br><b>用于</b>：多机调度、装箱（bin packing）、拼图类问题，尤其是目标问题里的数值本身不大时。</p></div>
+
+<div class="box tpl"><div class="bt">清单里几对“互相归约”的速记</div><ul>
+<li>IndSet ↔ VertexCover：取补集，k ↔ n−k。</li>
+<li>IndSet ↔ Clique：取补图，k 不变。</li>
+<li>SetCover ↔ HittingSet：元素与集合互换。</li>
+<li>3Col → ChromaticNumber：令 k=3。</li>
+<li>HamPath → LongestPath：k=n−1；HamCycle → TSP：权 1/2，k=n。</li>
+<li>Partition → SubsetSum：t = Σ/2。</li>
+<li><b>一般化原则</b>：目标问题包含清单问题作为特例 ⇒ 直接“嵌入”即证 NP-hard（如 Weighted Set Cover ⊇ Set Cover）。</li>
+</ul></div>
+
+<!-- ====================================================== matroid list -->
+<h2 id="mat"><span class="num">L2</span>附录：拟阵清单逐条讲解</h2>
+<p>考试可直接引用这四个拟阵，不必证明。最常见的用法：①把题目里的约束识别成它们（或它们的组合），然后套拟阵贪心；②用它们构造“不是拟阵”的反例（Q3a）。</p>
+
+<div class="box def"><div class="bt">CycleMatroid（环拟阵 / 图拟阵）</div>
+<p><b>定义</b>：G=(V,E)，地集为边 E，独立 ⇔ 边集无环（构成森林）。<b>基</b>：生成森林（G 连通时为生成树）。</p>
+<p><b>例</b>：三角形 abc：任意 ≤ 2 条边独立，3 条边成环不独立；基 = 任意两条边。</p>
+<p><b>用途</b>：最小/最大生成树（Kruskal = 拟阵贪心）；Q4。<b>交换性直觉</b>：边更多的森林连通分量更少，必有一条边跨越另一森林的两个分量。</p></div>
+<div class="box def"><div class="bt">MatchingMatroid（匹配拟阵）</div>
+<p><b>定义</b>：地集为<b>顶点</b> V，<span class="m">V′</span> 独立 ⇔ 存在一个匹配覆盖 <span class="m">V′</span> 中所有点。<b>基</b>：最大匹配所覆盖的顶点集。</p>
+<p><b>例</b>：路径 a–b–c：{a,b} 独立（匹配 ab），{a,c} 独立吗？需要一个匹配同时覆盖 a 和 c：ab 与 bc 共享 b，不行 ⇒ 不独立。{b} 独立。</p>
+<p><b>⚠ 易混</b>：<b>边的匹配集合本身不构成拟阵</b>（Q3a 图 3 就是反例：极大匹配大小不同）。匹配拟阵的元素是“被覆盖的顶点”，不是边。</p>
+<p><b>用途</b>：顶点有权重，想让被匹配的顶点总权最大 ⇒ 按顶点权贪心（每步检查是否还存在覆盖它们的匹配）。</p></div>
+<div class="box def"><div class="bt">PartitionMatroid（划分拟阵）</div>
+<p><b>定义</b>：地集 S 划分为 <span class="m">S<sub>1</sub>,…,S<sub>ℓ</sub></span>，独立 ⇔ <span class="m">|S′ ∩ S<sub>i</sub>| ≤ k<sub>i</sub></span> 对每块成立。</p>
+<p><b>例</b>：学生按年级分块，每年级最多选 2 人做代表。</p>
+<p><b>用途</b>：“每类最多若干个”的配额约束（Q3c 的区限额）。<b>交换性证明</b>：<span class="m">|X| &gt; |Y|</span> ⇒ 必有某块 i 满足 <span class="m">|X∩S<sub>i</sub>| &gt; |Y∩S<sub>i</sub>|</span>，取 <span class="m">x ∈ (X∖Y)∩S<sub>i</sub></span>，加入后 <span class="m">|Y∩S<sub>i</sub>|+1 ≤ |X∩S<sub>i</sub>| ≤ k<sub>i</sub></span>。</p>
+<p><b>注意</b>：块必须<b>不相交</b>。若一个元素同时属于多个组（如一个孩子属于两个区），就不再是划分拟阵，交集可能不是拟阵（Q3a 正是两种不同划分的交）。</p></div>
+<div class="box def"><div class="bt">UniformMatroid（均匀拟阵 <span class="m">U<sub>k</sub></span>）</div>
+<p><b>定义</b>：独立 ⇔ <span class="m">|S′| ≤ k</span>。<b>基</b>：大小恰为 k 的集合。</p>
+<p><b>例</b>：从 n 件物品中至多拿 k 件，最大化总价值 ⇒ 取最贵的 k 件（贪心）。</p>
+<p><b>用途</b>：“总数至多 k 个”。它是只有一块的划分拟阵。由 Q3b：<b>任何拟阵 ∩ 均匀拟阵仍是拟阵</b>（截断），所以“原约束 + 总数上限”总能直接用贪心。</p></div>
+
+<div class="box key"><div class="bt">拟阵相关题型的判断流程</div><ol>
+<li>题目问“选一个集合，满足某些<b>上限型</b>约束，最大化非负权和”？→ 怀疑是拟阵。</li>
+<li>能否写成清单里的拟阵，或 “某拟阵 ∩ 均匀拟阵”？能 → 引用 + 贪心 + 排序复杂度。</li>
+<li>是两个不同划分的交（如二分图匹配、带两种配额）？→ <b>一般不是拟阵</b>，贪心可能错（要么找反例，要么用其他算法如网络流）。</li>
+<li>自定义结构 → 逐条验证三公理；证否则给具体 X、Y。</li>
+</ol></div>
+
+<!-- ====================================================== template -->
+<h2 id="tmpl"><span class="num">L3</span>考场写作模板汇总</h2>
+<div class="box tpl"><div class="bt">NP-hard 证明（以 Q5a 为样板）</div><ol>
+<li>“We reduce from <i>X</i> (NP-hard by the list).” 写出 X 的输入。</li>
+<li>构造：点、边/元素、参数（k′ = …），说明满足目标问题的特殊要求（如 DAG、竞赛图、平面……）。</li>
+<li>构造是多项式规模、多项式时间。</li>
+<li>(⇒) 由 X 的解构造目标解。</li>
+<li>(⇐) 由目标问题的<b>任意</b>解，先规范化（WLOG 不含某类点/换成某类点），再读出 X 的解。</li>
+<li>结论。（如要 NP-complete，加上“在 NP 中”。）</li>
+</ol></div>
+<div class="box tpl"><div class="bt">贪心算法题（以 Q1 / Q4 为样板）</div><ol>
+<li>转化：把原问题变成熟悉的模型（区间、MST、拟阵）。</li>
+<li>算法：排序准则 + 扫描时维护的状态。</li>
+<li>可行性：输出满足约束。</li>
+<li>最优性：stays ahead / exchange / 下界构造（不相交区间、环上的非树边）/ 拟阵定理。</li>
+<li>复杂度：排序 + 每步代价。</li>
+<li>（自检）找一个反例试试“看似合理”的其他排序准则，确认自己没选错。</li>
+</ol></div>
+<div class="box tpl"><div class="bt">“Prove or disprove” 题（以 Q5c 为样板）</div><ol>
+<li>先在小例子上手算，判断方向（这类题多半是 disprove）。</li>
+<li>构造反例时让算法的每一步选择<b>唯一</b>（避免平局争议）。</li>
+<li>分别给出：算法的输出（数值）、更好的解（显式写出）、为什么算法的选择是被迫的。</li>
+</ol></div>
+<div class="box warn"><div class="bt">本卷最容易丢分的地方</div><ul>
+<li>Q1 按 x 排序 / 灯放在 x+d；没有贪心证明。</li>
+<li>Q2b 没想到 SCC，或者把跨分量的所有边奖励都加上。</li>
+<li>Q3a 给出的例子不在清单中又没证明它是拟阵；只说“匹配不是拟阵”没有具体 X、Y。</li>
+<li>Q3c 忘了说明为什么约束构成拟阵（应引用 b）。</li>
+<li>Q4 加的是全局最轻边而不是最轻<b>非树</b>边；证明里假设“最优解包含 MST”。</li>
+<li>Q5a 没有根 r，或只证一个方向，或 (⇐) 方向没处理元素点在 H 中。</li>
+<li>Q5c 反例中贪心有平局，或者没说明最优确实更小。</li>
+</ul></div>
+
+</main>
+</div>
+<a class="backtop" href="#">↑ 顶部</a>
+<script>
+(function(){
+  var nav=document.getElementById('tocList'); if(!nav) return;
+  var hs=document.querySelectorAll('main h2[id], main h3[id]');
+  hs.forEach(function(h){
+    var a=document.createElement('a'); a.href='#'+h.id;
+    var n=h.querySelector('.num'); var t=h.textContent; if(n){t=n.textContent+'  '+t.slice(n.textContent.length);} a.textContent=t.replace(/\s+/g,' ').trim();
+    a.className=h.tagName==='H2'?'lv1':'lv2'; nav.appendChild(a);
+  });
+})();
+</script>
+
+<script>
+/* Mobile interaction enhancements; educational text, equations and diagrams remain intact. */
+(function () {
+  'use strict';
+  var mq = window.matchMedia('(max-width: 900px)');
+  var nav = document.querySelector('nav.toc');
+  var isMobile = function () { return mq.matches; };
+
+  if (nav) {
+    var details = nav.querySelector('details');
+    if (details) {
+      function syncDisclosure(event) {
+        if (event && event.matches === undefined) return;
+        details.open = !isMobile();
+      }
+      syncDisclosure();
+      if (mq.addEventListener) mq.addEventListener('change', syncDisclosure);
+      else if (mq.addListener) mq.addListener(syncDisclosure);
+      nav.addEventListener('click', function (event) {
+        if (isMobile() && event.target.closest('a[href^="#"]')) details.open = false;
+      });
+    } else if (nav.querySelector('.brand') && nav.querySelector('a')) {
+      nav.classList.add('mobile-links-nav');
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'mobile-toc-button';
+      btn.textContent = '目录 ☰';
+      btn.setAttribute('aria-label', '展开或收起目录');
+      btn.setAttribute('aria-expanded', 'false');
+      nav.insertBefore(btn, nav.children[1] || null);
+      function closeMenu() {
+        nav.classList.remove('mobile-open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+      btn.addEventListener('click', function () {
+        var open = nav.classList.toggle('mobile-open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      nav.addEventListener('click', function (event) {
+        if (isMobile() && event.target.closest('a[href^="#"]')) closeMenu();
+      });
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') closeMenu();
+      });
+      if (mq.addEventListener) mq.addEventListener('change', closeMenu);
+    }
+  }
+
+  // Only wrap as needed; large data tables should scroll by themselves, not widen the page.
+  function wrapTables() {
+    if (!isMobile()) return;
+    document.querySelectorAll('main table').forEach(function (table) {
+      if (table.closest('.tablewrap, .tbl, .mobile-table-scroll')) return;
+      var scroll = document.createElement('div');
+      scroll.className = 'mobile-table-scroll';
+      scroll.setAttribute('role', 'region');
+      scroll.setAttribute('aria-label', '可横向滑动的完整表格');
+      scroll.setAttribute('tabindex', '0');
+      table.parentNode.insertBefore(scroll, table);
+      scroll.appendChild(table);
+    });
+  }
+  wrapTables();
+  if (mq.addEventListener) mq.addEventListener('change', wrapTables);
+
+  // Preserve diagram dimensions, offering horizontal pan instead of unreadable scaling.
+  document.querySelectorAll('main figure svg[viewBox]').forEach(function (svg) {
+    var vb = svg.viewBox && svg.viewBox.baseVal;
+    if (!vb || !vb.width) return;
+    if (vb.width >= 450) {
+      svg.style.setProperty('--mobile-diagram-width', Math.round(vb.width) + 'px');
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,943 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light"><meta name="description" content="COMP9517 2026 T3 Week 8 Deep Learning II 全面中文学习讲义：Object Detection、Segmentation、CLIP、LLaVA。离线阅读，手机与电脑自适应。"><title>COMP9517 Week 8｜Deep Learning II 中文完整精讲</title><style>
+:root{--bg:#f7f9fa;--paper:#fff;--ink:#19334a;--ink2:#39536a;--muted:#60778a;--line:#dce5eb;--blue:#206a94;--gold:#b57922;--green:#267d67;--wash:#eff5f7;--sidebar:296px;--header:64px;--page:830px;color-scheme:light}
+*{box-sizing:border-box} html{scroll-behavior:smooth;scroll-padding-top:93px}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.85 -apple-system,BlinkMacSystemFont,"Segoe UI", "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}a{color:#136a9a;text-decoration:none}a:hover{text-decoration:underline}a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #d2a348;outline-offset:3px}button,input{font:inherit}button{cursor:pointer} .header{position:sticky;top:0;z-index:50;height:var(--header);background:rgba(255,255,255,.98);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(12px,3vw,36px);gap:18px;box-shadow:0 3px 14px #102b4210} .brand{min-width:0;display:flex;gap:13px;align-items:center;white-space:nowrap;font-size:15px;letter-spacing:.01em}.brand-mark{background:#f6d14f;color:#1c2838;font-weight:900;border-radius:6px;padding:2px 9px}.brand b{font-size:16px}.brand span.small{font-size:13px;color:var(--muted);font-weight:500}.header-right{display:flex;gap:11px;align-items:center}.counter{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap}.menu-button{display:none;align-items:center;gap:5px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 12px;font-size:14px;color:var(--ink);font-weight:700}.reading-progress{position:absolute;bottom:-1px;left:0;height:3px;width:0;background:#bd8737;transition:width .1s linear}.sidebar{position:fixed;z-index:40;top:var(--header);bottom:0;left:0;width:var(--sidebar);border-right:1px solid var(--line);background:#fff;overflow-y:auto;padding:22px 17px 48px;scrollbar-width:thin}.search-wrap{margin:0 0 17px}.search-wrap label{display:block;font-size:12px;font-weight:800;letter-spacing:.03em;color:var(--muted);margin-bottom:6px}.search-wrap input{width:100%;border:1px solid #cfdce4;background:#f9fbfc;padding:10px 12px;border-radius:9px;outline:none;font-size:14px;color:var(--ink)}.search-wrap input:focus{border-color:var(--blue);background:#fff}.toc-group{padding-bottom:8px;margin-bottom:12px;border-bottom:1px solid #e9eef2}.toc-label{font-size:11px;color:#647788;font-weight:850;letter-spacing:.08em;margin:0 8px 7px}.toc-group a{display:block;color:#41556a;padding:7px 9px;line-height:1.5;border-radius:6px;font-size:13px;font-weight:550}.toc-group a:hover{background:#f0f6f8;text-decoration:none}.toc-group a.active{color:#0e618b;background:#e5f2f7;font-weight:800}.site-main{margin-left:var(--sidebar);min-height:100vh;padding:0 clamp(20px,4vw,64px) 70px}.main-wrap{max-width:var(--page);margin:0 auto}.hero{padding:63px 0 50px;border-bottom:1px solid var(--line)}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.09em;color:#9a681e;margin:0 0 17px}.hero h1{font-size:clamp(37px,4.6vw,62px);line-height:1.13;letter-spacing:-.035em;margin:0 0 20px;font-weight:830}.hero-lede{font-size:19px;line-height:1.8;color:var(--ink2);max-width:700px;margin:0 0 30px}.hero-meta{display:flex;flex-wrap:wrap;gap:9px}.hero-meta span{background:#fff;border:1px solid var(--line);padding:7px 12px;border-radius:50px;font-size:13px;font-weight:720;color:#456075}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:25px}.primary,.secondary{border-radius:9px;padding:10px 17px;font-weight:800;font-size:15px;border:1px solid #1d688e}.primary{background:#1b6a91;color:white}.secondary{background:#fff;color:#1b678c}.chapter{padding:62px 0 52px;border-bottom:1px solid var(--line);scroll-margin-top:83px}.chapter-top{display:flex;justify-content:space-between;align-items:center;gap:14px;min-height:33px;margin-bottom:11px}.chapter-tag{font-size:12px;letter-spacing:.04em;font-weight:800;color:#987128}.mark-done{font-size:12px;font-weight:750;padding:5px 10px;border:1px solid #cbdce5;color:#456c7f;background:#fff;border-radius:8px;white-space:nowrap}.mark-done[aria-pressed="true"]{border-color:#9bcebd;color:#23765c;background:#e7f7ef}.chapter h2{font-size:clamp(27px,3.2vw,34px);letter-spacing:-.025em;line-height:1.31;margin:0 0 9px;color:#142d42}.source-note{font-size:12px;color:#748696;margin:0 0 25px}.page-label{color:#69859a;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.chapter-content p{margin:14px 0;overflow-wrap:anywhere}.chapter-content h3{font-size:22px;line-height:1.4;letter-spacing:-.015em;margin:32px 0 12px;color:#1b4058}.chapter-content h4{font-size:18px;margin:25px 0 8px}.chapter-content ul,.chapter-content ol{padding-left:1.3em;margin:12px 0 17px}.chapter-content li{padding-left:4px;margin:7px 0}.chapter-content strong{color:#183c52;font-weight:790}.chapter-content blockquote{margin:22px 0;border-left:4px solid #cda04d;padding:8px 19px;background:#fbf8ef;color:#5d5141;border-radius:0 9px 9px 0}.chapter-content table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse;margin:24px 0 25px;white-space:normal;font-size:14px;scrollbar-width:thin}.chapter-content th,.chapter-content td{padding:12px 15px;min-width:135px;border:1px solid #dce4e9;text-align:left;vertical-align:top;line-height:1.65}.chapter-content th{font-weight:800;background:#eef4f7;color:#2c4b62}.chapter-content tr:nth-child(even) td{background:#fbfcfd}.chapter-content code{background:#eef3f6;color:#1c5979;font: .91em/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:2px 5px;border-radius:4px;overflow-wrap:anywhere}.chapter-content pre{background:#172a3b;color:#e6f0f5;padding:19px;overflow:auto;border-radius:10px;font-size:13px;line-height:1.7}.chapter-content pre code{background:transparent;color:inherit;padding:0}.formula{background:#f0f5f8;border-left:3px solid #4585a3;padding:15px 17px;border-radius:0 7px 7px 0;margin:13px 0;overflow-x:auto;white-space:nowrap;font:600 15px/2 ui-monospace,SFMono-Regular,Menlo,Consolas,'Noto Sans CJK SC',monospace;color:#254860}.figure{background:white;border:1px solid #dce5eb;border-radius:14px;padding:17px;margin:28px 0;box-shadow:0 3px 8px #1f4e6b08}.figure-scroll{overflow-x:auto;scrollbar-width:thin}.figure svg{display:block;max-width:100%;height:auto;min-width:570px;margin:0 auto}.figcap{margin:9px 5px 0;color:#607589;font-size:12px;line-height:1.65}.process{display:flex;align-items:center;gap:7px;overflow-x:auto;scrollbar-width:thin;margin:20px 0;padding:14px;border:1px solid var(--line);background:#fff;border-radius:9px}.process span{display:block;white-space:nowrap;background:#eaf3f6;padding:9px 13px;border-radius:7px;color:#254f68;font-weight:780;font-size:13px}.process i{color:#6c8ba0;font-style:normal;font-weight:900}.interactive{margin:22px 0 30px;padding:19px 20px;background:#fff;border:1px solid #cadde7;border-radius:13px}.interactive-head{display:flex;align-items:center;justify-content:space-between;gap:8px;line-height:1.5}.interactive-head strong{font-size:15px}.pill{font-size:12px;background:#e7f3f8;color:#236f94;padding:5px 10px;border-radius:100px;font-weight:800;white-space:nowrap}.interactive input[type=range]{width:100%;margin:10px 0 4px;accent-color:#236b95;height:27px}.interactive label{display:block;font-size:14px;color:#49677c;font-weight:720}.result-note{font-size:13px;line-height:1.6;color:#607487;min-height:20px;margin:0!important}.matrix-pair{display:flex;gap:22px;align-items:center;justify-content:flex-start;flex-wrap:wrap;padding:20px;background:#f1f6f8;border-radius:11px;margin:22px 0}.matrix-pair strong{font-size:14px;display:block;margin-bottom:10px}.mat-grid{display:grid;gap:4px}.mat-grid.cols2{grid-template-columns:repeat(2,34px)}.mat-grid.cols4{grid-template-columns:repeat(4,34px)}.mat-grid span{width:34px;height:34px;border-radius:5px;background:#fff;border:1px solid #c8dce4;text-align:center;line-height:32px;font-weight:700;color:#326681;font-size:15px}.matrix-arrow{color:#46788b;font-weight:900;font-size:29px}.quiz-intro{margin:30px 0 15px;color:var(--ink2)}.quiz-grid{display:grid;gap:15px;margin-top:21px}.quiz-card{border:1px solid #d4e1e8;border-radius:12px;padding:23px 24px;background:white}.quiz-meta{font-size:12px;color:#7e8d99;font-weight:700}.quiz-card h3{font-size:18px;line-height:1.55;margin:7px 0 16px}.quiz-option{display:flex;gap:10px;cursor:pointer;align-items:flex-start;padding:10px 12px;border:1px solid #e5ebef;border-radius:7px;margin:8px 0;font-size:15px;line-height:1.55}.quiz-option:has(input:checked){border-color:#86abc2;background:#edf6fa}.quiz-option input{flex:none;margin:5px 0 0;accent-color:#257396}.quiz-actions{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-top:14px}.check-answer{background:#1c6990;border:1px solid #1c6990;color:white;border-radius:7px;padding:7px 13px;font-size:13px;font-weight:800}.quiz-feedback{font-size:14px;font-weight:800}.quiz-feedback.good{color:#20785d}.quiz-feedback.bad{color:#b46a2c}.quiz-reason{font-size:14px;line-height:1.75;margin-top:10px;border-left:3px solid #d4a146;background:#fffaf1;padding:9px 13px;border-radius:0 7px 7px 0}.slide-details{margin:17px 0;border:1px solid #d6e3e9;border-radius:11px;background:#fff;overflow:hidden}.slide-details summary{cursor:pointer;list-style:none;padding:18px 21px;font-weight:800;font-size:17px;display:flex;justify-content:space-between;gap:12px;align-items:center}.slide-details summary::-webkit-details-marker{display:none}.slide-details summary span{font-size:12px;color:#6b8494;font-weight:650}.slide-details[open] summary{border-bottom:1px solid var(--line)}.slide-list{display:grid;grid-template-columns:1fr 1fr;gap:0 18px;padding:11px 19px 17px}.slide-list a{display:grid;grid-template-columns:48px 1fr;align-items:start;column-gap:12px;padding:10px 2px;border-bottom:1px solid #edf1f4;font-size:13px;line-height:1.5;color:#4b6679}.slide-list a strong{color:#186a95;font-variant-numeric:tabular-nums}.slide-list a small{display:none}.slide-list a:hover{text-decoration:none;background:#f3f8fa}.footer{padding:39px 0 8px;color:#607689;font-size:12px;line-height:1.85}.mobile-shade{display:none}.quiz-title{padding-top:60px}hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+@media(max-width:1040px){:root{--sidebar:264px}.site-main{padding:0 27px 60px}.sidebar{padding:19px 11px 40px}.chapter{padding:53px 0 45px}}
+@media(max-width:850px){:root{--header:58px}.menu-button{display:flex}.sidebar{transform:translateX(-102%);transition:transform .2s ease;width:min(83vw,350px);z-index:70;box-shadow:12px 0 18px #0f35471b}.sidebar.open{transform:translateX(0)}.mobile-shade.open{display:block;position:fixed;inset:var(--header) 0 0;z-index:65;background:#0b2e4372}.site-main{margin-left:0;padding:0 22px 52px}.hero{padding:49px 0 42px}.counter{display:none}.brand span.small{display:none}.toc-group a{font-size:15px;padding:9px 11px}.search-wrap input{font-size:16px}}
+@media(max-width:600px){:root{--header:55px}body{font-size:16px;line-height:1.84}.header{padding:0 13px;gap:9px}.brand{gap:7px;font-size:13px}.brand b{font-size:14px}.brand-mark{padding:1px 6px}.menu-button{padding:6px 9px;font-size:13px}.site-main{padding:0 17px 45px}.hero{padding:37px 0 32px}.hero h1{font-size:37px;letter-spacing:-.04em}.hero-lede{font-size:16px}.hero-meta span{font-size:12px;padding:5px 9px}.hero-meta{gap:5px}.actions{gap:8px}.primary,.secondary{font-size:13px;padding:8px 12px}.chapter{padding:44px 0 37px;scroll-margin-top:70px}.chapter h2{font-size:26px;line-height:1.35}.chapter-content h3{font-size:20px;margin:28px 0 9px}.chapter-top{align-items:center;margin-bottom:7px}.chapter-tag{font-size:11px}.source-note{font-size:11px;margin-bottom:19px}.figure{margin:23px -3px;padding:10px}.figure svg{min-width:560px}.figcap{font-size:11px}.chapter-content table{font-size:13px;margin:20px 0}.chapter-content th,.chapter-content td{padding:9px 11px;min-width:135px}.chapter-content code{font-size:.87em}.formula{font-size:13px;padding:11px 12px;white-space:normal;overflow-wrap:anywhere;word-break:break-word}.interactive{margin:20px -3px;padding:12px 13px}.interactive-head strong{font-size:13px}.matrix-pair{gap:12px;padding:12px}.mat-grid.cols2{grid-template-columns:repeat(2,28px)}.mat-grid.cols4{grid-template-columns:repeat(4,28px)}.mat-grid span{width:28px;height:28px;line-height:26px;font-size:13px}.quiz-card{padding:17px 13px}.quiz-card h3{font-size:16px}.quiz-option{padding:9px;font-size:14px}.slide-list{grid-template-columns:1fr;padding:9px 14px}.slide-details summary{font-size:15px;padding:16px 13px}.slide-details summary span{font-size:11px}.process span{font-size:12px;padding:8px 10px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reading-progress,.sidebar{transition:none}}
+@media print{body{background:white} .header,.sidebar,.mobile-shade,.mark-done,.interactive,.quiz-card{display:none!important}.site-main{margin:0;padding:0}.chapter{break-inside:avoid;page-break-inside:avoid}.hero{padding:20px 0}}
+</style></head><body>
+<header class="header"><button class="menu-button" id="menu-button" aria-controls="sidebar" aria-expanded="false" type="button">☰ 目录</button><div class="brand"><span class="brand-mark">9517</span><b>Deep Learning II</b><span class="small">· 中文学习讲义</span></div><div class="header-right"><span class="counter" id="done-counter"></span><a href="#exam" class="secondary" style="padding:5px 11px;font-size:12px;border-radius:6px">自测题</a></div><div id="reading-progress" class="reading-progress"></div></header>
+<div id="mobile-shade" class="mobile-shade"></div><nav id="sidebar" class="sidebar" aria-label="课程章节目录"><div class="search-wrap"><label for="toc-search">按章节名称检索</label><input type="search" id="toc-search" placeholder="例如：RoI Align、CLIP、卷积…" autocomplete="off"></div><div class="toc-group"><p class="toc-label">导读</p><a href="#intro" data-target="intro">学习路线与课程定位</a></div><div class="toc-group"><p class="toc-label">第一部分 · 目标检测</p><a href="#tasks" data-target="tasks">四类计算机视觉任务，究竟差在哪里？</a><a href="#bbox" data-target="bbox">从分类 CNN 到检测：损失函数与边界框</a><a href="#datasets" data-target="datasets">检测数据集：PASCAL VOC 与 MS COCO</a><a href="#multi" data-target="multi">为什么一张图里有多个物体，就会变难？</a><a href="#selective" data-target="selective">Selective Search：从百万窗口变成候选区域</a><a href="#rcnn" data-target="rcnn">R-CNN：候选框与卷积特征结合</a><a href="#spp" data-target="spp">SPP-Net：固定输入限制究竟来自哪儿？</a><a href="#fast" data-target="fast">Fast R-CNN：卷积只算一次</a><a href="#faster" data-target="faster">Faster R-CNN：让候选框也由网络学习</a><a href="#nms" data-target="nms">NMS：为什么检测框会重叠一大堆？</a><a href="#ohem" data-target="ohem">类别不平衡与 OHEM：模型为什么只会猜背景？</a><a href="#one-two" data-target="one-two">两阶段 vs 单阶段检测器</a><a href="#ssd" data-target="ssd">SSD：Single Shot MultiBox Detector</a><a href="#yolo" data-target="yolo">YOLO：把检测变成一次前向传播</a><a href="#fpn" data-target="fpn">FPN：为什么要融合不同分辨率的特征？</a><a href="#retina" data-target="retina">RetinaNet 与 Focal Loss：把注意力放在难例上</a><a href="#detect-history" data-target="detect-history">20 年检测技术脉络与实用代码入口</a></div><div class="toc-group"><p class="toc-label">第二部分 · 语义分割</p><a href="#semantic" data-target="semantic">语义分割：从一个类别到 H×W 个类别</a><a href="#patch" data-target="patch">逐像素分类与 Sliding Window Segmentation</a><a href="#fcn" data-target="fcn">FCN：为什么网络需要下采样、再上采样？</a><a href="#upsample" data-target="upsample">上采样：Nearest Neighbor、Unpooling、Max Unpooling</a><a href="#deconv" data-target="deconv">转置卷积 Transposed Convolution：逐格看懂</a><a href="#unet" data-target="unet">U-Net：把浅层位置细节传给深层语义</a><a href="#unetvariants" data-target="unetvariants">U-Net 家族：Attention U-Net、ResUNet、TransUNet</a></div><div class="toc-group"><p class="toc-label">第二部分 · 实例分割</p><a href="#instance" data-target="instance">实例分割：语义 mask 还差一步</a><a href="#mask" data-target="mask">Mask R-CNN：在 Faster R-CNN 上再加 Mask Head</a><a href="#roialign" data-target="roialign">RoI Align：细粒度分割为什么不能“随手取整”？</a></div><div class="toc-group"><p class="toc-label">第二部分 · 视觉语言</p><a href="#foundation" data-target="foundation">Foundation Models：从单任务训练到可迁移表征</a><a href="#clip" data-target="clip">CLIP：图像与文字进入同一向量空间</a><a href="#clip-uses" data-target="clip-uses">CLIP 预训练后：Zero-shot 与 Linear Probe</a><a href="#llava" data-target="llava">LLaVA：把视觉 token 接到语言模型里</a><a href="#seg-resources" data-target="seg-resources">分割与视觉语言的实现/论文入口</a></div><div class="toc-group"><p class="toc-label">复习 · 巩固</p><a href="#formula-sheet" data-target="formula-sheet">必会公式与张量维度速查</a><a href="#mistakes" data-target="mistakes">高频易错概念对照表</a></div><div class="toc-group"><p class="toc-label">附录</p><a href="#exam">互动自测题（含课件原题）</a><a href="#page-index">136 页逐页知识点索引</a></div></nav>
+<main class="site-main"><div class="main-wrap"><div class="hero"><p class="eyebrow">UNSW · COMP9517 COMPUTER VISION · 2026 T3 · WEEK 08</p><h1>深度学习 II<br>从目标检测到视觉语言</h1><p class="hero-lede">两份课件 · 136 页。用中文循序讲透每个概念、算法的动机、工作流程、关键公式与彼此的联系；附可操作示意图、复习对照和原题练习。</p><div class="hero-meta"><span>Object Detection</span><span>Semantic / Instance Segmentation</span><span>CLIP &amp; LLaVA</span><span>电脑 / 手机适配</span><span>离线可读</span></div><div class="actions"><a class="primary" href="#intro">从第一节开始</a><a class="secondary" href="#page-index">按原始页码查找</a></div></div>
+<section class="chapter" id="intro" data-part="导读">
+    <div class="chapter-top"><span class="chapter-tag">导读</span></div>
+    <h2>学习路线与课程定位</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">两份课件：第一份 1–74；第二份 1–62</a></p><div class="chapter-content"><p>本讲义逐页对照两份 <strong>COMP9517 · 2026 T3 Week 8 · Deep Learning II</strong> 课件，合计 <strong>136 页</strong>，将原本分散在多张幻灯片里的动画步骤、示意图和公式重组为可以顺着推理读下去的中文教材。</p>
+<p><strong>先掌握一条主线：模型输出的“粒度”越来越细。</strong></p>
+<ol>
+<li><strong>图像分类（Classification）</strong>：整张图是什么？</li>
+<li><strong>目标检测（Object Detection）</strong>：图中有什么？各在哪里？输出类别和矩形框。</li>
+<li><strong>语义分割（Semantic Segmentation）</strong>：每个像素属于哪种语义类别？</li>
+<li><strong>实例分割（Instance Segmentation）</strong>：每个像素属于哪个具体对象实例？</li>
+<li><strong>视觉语言模型（Vision + Language）</strong>：如何让图像和语言处于可比较、可联合处理的表示空间？</li>
+</ol>
+<p>这两份课件不是独立的：<strong>Faster R-CNN → Mask R-CNN</strong> 解释如何从“框”升级到“像素级实例”；<strong>分类 CNN → FCN / U-Net</strong> 解释如何从单个类别升级到整张像素标签图；<strong>CNN 图像特征 → CLIP → LLaVA</strong> 解释如何从视觉识别延伸到自然语言理解与回答。</p>
+<blockquote>
+<p>阅读标记：每节右上方标明“Part I / Part II 第几页”。“课件补充辨析”表示为理解原理而增加的解释，或对课件简化表述作必要澄清；不是课件声称的实验结果。</p>
+</blockquote>
+</div></section><section class="chapter" id="tasks" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="tasks" aria-pressed="false">标记已掌握</button></div>
+    <h2>四类计算机视觉任务，究竟差在哪里？</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 4–8；Part II: 4–6</a></p><div class="chapter-content"><p><strong>一张图片里有三只牛</strong>：图像分类只需给出 <code>cow</code>；目标检测要返回例如 <code>[(cow, box1), (cow, box2), (cow, box3)]</code>；语义分割要对每个像素判断 <code>cow</code>、<code>sky</code>、<code>grass</code>；实例分割不仅区分类别，还要区分 <code>cow #1 / cow #2 / cow #3</code>。</p>
+<div class="figure"><div class="figure-scroll"><svg viewBox="0 0 880 234" role="img" aria-label="图像分类、目标检测、语义分割、实例分割四种任务的差别"><defs><g id="animal"><ellipse cx="47" cy="56" rx="31" ry="24" fill="#bf8a53"/><circle cx="81" cy="46" r="16" fill="#d7a46b"/><rect x="26" y="74" width="8" height="35" rx="3" fill="#835b3b"/><rect x="61" y="74" width="8" height="35" rx="3" fill="#835b3b"/><path d="M73 33 l-7 -17 15 9" fill="#bf8a53"/></g></defs><g font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" fill="#23324a">
+<g transform="translate(10 8)"><rect width="200" height="170" rx="12" fill="#e8f1e6"/><rect x="0" y="117" width="200" height="53" rx="10" fill="#c8e0b5"/><use href="#animal" x="28" y="18"/><use href="#animal" x="92" y="33" transform="translate(92 33) scale(.72) translate(-92 -33)"/><text x="100" y="197" font-weight="700">图像分类</text><text x="100" y="219" font-size="12">整幅图：牛</text></g>
+<g transform="translate(230 8)"><rect width="200" height="170" rx="12" fill="#e8f1e6"/><rect y="117" width="200" height="53" rx="10" fill="#c8e0b5"/><use href="#animal" x="25" y="18"/><use href="#animal" x="93" y="24"/><rect x="35" y="24" width="96" height="120" rx="2" fill="none" stroke="#c75c45" stroke-width="3"/><rect x="110" y="35" width="81" height="109" rx="2" fill="none" stroke="#28639e" stroke-width="3"/><text x="100" y="197" font-weight="700">目标检测</text><text x="100" y="219" font-size="12">每只牛：类别 + 框</text></g>
+<g transform="translate(450 8)"><rect width="200" height="170" rx="12" fill="#cee4f0"/><path d="M0 116Q45 106 100 120T200 117V170H0Z" fill="#b5dbb1"/><g fill="#2c8d78"><ellipse cx="75" cy="73" rx="38" ry="27"/><circle cx="113" cy="57" r="19"/><rect x="49" y="92" width="9" height="38"/><rect x="90" y="92" width="9" height="38"/><ellipse cx="154" cy="76" rx="23" ry="18"/><circle cx="176" cy="63" r="12"/></g><text x="100" y="197" font-weight="700">语义分割</text><text x="100" y="219" font-size="12">所有牛像素同一类别</text></g>
+<g transform="translate(670 8)"><rect width="200" height="170" rx="12" fill="#cee4f0"/><path d="M0 116Q45 106 100 120T200 117V170H0Z" fill="#b5dbb1"/><g fill="#318bc4"><ellipse cx="75" cy="73" rx="38" ry="27"/><circle cx="113" cy="57" r="19"/><rect x="49" y="92" width="9" height="38"/><rect x="90" y="92" width="9" height="38"/></g><g fill="#df9b42"><ellipse cx="154" cy="76" rx="23" ry="18"/><circle cx="176" cy="63" r="12"/></g><text x="100" y="197" font-weight="700">实例分割</text><text x="100" y="219" font-size="12">牛 1 与牛 2 分开</text></g></g></svg></div><div class="figcap">原创示意图 · 同一场景的四种视觉任务。手机上可横向滚动图示。</div></div>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>常见输出</th>
+<th>是否定位</th>
+<th>能否区分同类不同个体</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Image Classification</td>
+<td>一个或多个类别分数</td>
+<td>通常不输出位置</td>
+<td>否</td>
+</tr>
+<tr>
+<td>Object Detection</td>
+<td><code>(class, confidence, bbox)</code> 列表</td>
+<td>用矩形框</td>
+<td>是（每个检测框为候选实例）</td>
+</tr>
+<tr>
+<td>Semantic Segmentation</td>
+<td><code>H×W</code> 类别图</td>
+<td>像素级</td>
+<td>否</td>
+</tr>
+<tr>
+<td>Instance Segmentation</td>
+<td>多个 <code>(class, box, binary mask)</code></td>
+<td>像素级</td>
+<td>是</td>
+</tr>
+</tbody>
+</table>
+<p><strong>框（bounding box）</strong> 常用两种表达：<code>(x, y, w, h)</code> 或 <code>(x_min, y_min, x_max, y_max)</code>。本课件第 6 页用的是 <code>(x, y, w, h)</code> 且图示 <code>(x, y)</code> 指框左上角。别混淆另一种常见约定 <code>(center_x, center_y, w, h)</code>；两者可以换算，但必须讲清坐标约定。</p>
+<p>传统分类 CNN（如课件中使用的 VGG-16）抽取特征后，经全连接层输出类别；若增加一个回归头输出四个连续数，就能在简单“单对象”情形下回归一个框。<strong>难点不是输出四个数，而是一张图中对象数量并不固定</strong>。</p>
+</div></section><section class="chapter" id="bbox" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="bbox" aria-pressed="false">标记已掌握</button></div>
+    <h2>从分类 CNN 到检测：损失函数与边界框</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 5–9, 12–14</a></p><div class="chapter-content"><h3>分类头与定位头</h3>
+<p>课件以 <strong>VGG-16</strong> 为例：共享的卷积特征进入两个分支。<strong>分类分支</strong>输出 <code>C</code> 个类别分数，经过 Softmax 得到 <code>p(class)</code>；<strong>框回归分支</strong>输出四个坐标或坐标修正量。课件示意中从 4096 维特征连接到 1000 类分数、另一路连接到 4 个坐标。1000 只是示意网络分类头的维度，实际检测类别数取决于数据集和设计。</p>
+<div class="formula">L_total = L_classification + λ · L_localization</div>
+<ul>
+<li><code>L_classification</code> 通常使用交叉熵（Cross-Entropy）：让真实类别的概率更大。</li>
+<li><code>L_localization</code> 是回归损失：课件第 12 页举 <strong>L2</strong> 为例。实际许多检测器会用 <strong>Smooth L1</strong> 等更稳健的回归损失。</li>
+<li><code>λ</code> 负责平衡两种目标；不一定固定为 1。</li>
+</ul>
+<h3>为什么需要 IoU？</h3>
+<p>预测框即使“类别正确”，位置也可能偏离。因此评价两个框的重合程度用 <strong>Intersection over Union（交并比）</strong>：</p>
+<div class="formula">IoU(P, G) = Area(P ∩ G) / Area(P ∪ G)</div>
+<ul>
+<li>交集：预测框 <code>P</code> 和真实框 <code>G</code> 同时覆盖的面积。</li>
+<li>并集：<code>Area(P) + Area(G) − Area(P∩G)</code>。</li>
+<li>IoU 在 0 到 1 之间：0 是不重合，1 是完全一致。课件第 9 页示例将 <strong>IoU ≥ 0.5</strong> 称为一次“正确匹配”；这是示范阈值，其他评估可能使用不同阈值。</li>
+</ul>
+<div class="interactive" id="iou-demo"><div class="interactive-head"><strong>互动实验 · 改变预测框水平偏移</strong><span id="iou-value" class="pill">IoU 0.00</span></div><svg id="iou-svg" viewBox="0 0 430 270" role="img" aria-label="蓝色真实框与橙色预测框的重合" style="width:100%;max-width:560px;display:block;margin:auto"><rect x="1" y="1" width="428" height="268" rx="12" fill="#f3f7fa"/><rect x="62" y="48" width="184" height="150" fill="#3987af" fill-opacity=".13" stroke="#2773a0" stroke-width="3"/><rect id="iou-pred" x="150" y="68" width="184" height="150" fill="#d58b38" fill-opacity=".15" stroke="#c47b2f" stroke-width="3"/><text x="68" y="36" font-size="15" fill="#226d95">Ground Truth（蓝）</text><text x="265" y="238" font-size="15" fill="#a66b2a">Prediction（橙）</text></svg><label for="iou-offset">偏移距离：<output id="offset-readout">88</output> px</label><input id="iou-offset" type="range" min="0" max="190" value="88" step="1" aria-label="改变预测框与真实框之间的水平偏移"><p id="iou-result" class="result-note" aria-live="polite"></p></div>
+<p>**手算例子：**两个框面积都为 100，重合面积为 60，则 <code>IoU = 60 / (100 + 100 − 60) = 60/140 ≈ 0.429</code>。不是 <code>60/100 = 0.6</code>，分母一定是并集。</p>
+<p><strong>课件补充辨析</strong>：<code>IoU</code> 是单对框的几何相似度，<code>AP/mAP</code> 是综合多张图、多检测分数阈值的检测质量指标；它们不是一个东西。课件后面的 RetinaNet 实验图用 AP 比较精度，不能将图中 AP 数值当成 IoU。</p>
+</div></section><section class="chapter" id="datasets" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="datasets" aria-pressed="false">标记已掌握</button></div>
+    <h2>检测数据集：PASCAL VOC 与 MS COCO</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 10–11</a></p><div class="chapter-content"><p>训练是<strong>监督学习</strong>：不仅有输入图像，还有该图中对象的真实类别和真实框。一张图片可能包含多个对象，标注文件记录每一个框的坐标、类别，有些数据集还会提供分割掩码、关键点、图像描述。</p>
+<h3>PASCAL VOC</h3>
+<p>课件给出的 <strong>20 类</strong>，按组记更快：</p>
+<ul>
+<li><strong>人</strong>：person（1 类）。</li>
+<li><strong>动物</strong>：bird、cat、cow、dog、horse、sheep（6 类）。</li>
+<li><strong>交通工具</strong>：aeroplane、bicycle、boat、bus、car、motorbike、train（7 类）。</li>
+<li><strong>室内物品</strong>：bottle、chair、dining table、potted plant、sofa、tv/monitor（6 类）。</li>
+</ul>
+<p>例如：同一图片里有三把椅子，就应有三个 <code>chair</code> 框，而不是单条 <code>chair</code> 标签。VOC 这类标注使检测器可以同时学习“是什么”和“在哪里”。</p>
+<h3>Microsoft COCO</h3>
+<p>课件展示 <strong>COCO</strong>：大规模的目标检测、分割与图像描述数据集，同时具有面向关键点等任务的标注类型。COCO 常用于比较检测器和实例分割器，后面 Faster R-CNN、SSD、RetinaNet、Mask R-CNN 的实验结果都与它有关。</p>
+<p>**理解数据格式：**检测任务的标注是 <code>image_id + category_id + bbox</code>；实例分割会进一步关联 <code>segmentation</code>。训练前需要核对类标号、框坐标体系、图片缩放和标注是否一同缩放。</p>
+<p><strong>官方资源（课件给出）：</strong> <a href="http://host.robots.ox.ac.uk/pascal/VOC/voc2012/">PASCAL VOC 2012</a> · <a href="https://cocodataset.org/">COCO</a>。</p>
+</div></section><section class="chapter" id="multi" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="multi" aria-pressed="false">标记已掌握</button></div>
+    <h2>为什么一张图里有多个物体，就会变难？</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 13–19</a></p><div class="chapter-content"><h3>核心矛盾：输出长度不固定</h3>
+<p>单对象情形输出四个框坐标即可；两个物体至少八个坐标；十个物体则更多。如果直接让普通全连接层预测固定数量的框，会遇到 <strong>“一张图到底需要几个输出？”</strong> 的问题。课件用牛、公牛、斑马、狗、兔子、绵羊和鸡等例子逐页展示这个挑战。</p>
+<h3>最原始方法：Sliding Windows</h3>
+<p>把图切成各种位置、尺寸、长宽比的窗口，对每个裁剪块运行 CNN，判断是某个类别还是背景。反复滑动即可覆盖多对象，<strong>但成本惊人</strong>：一个对象可能落在不同尺度的窗口里；相邻窗口高度重叠；同一张图要重复计算许多卷积特征。</p>
+<p>假设一张图有 30×30 个位置、10 种尺寸、5 种长宽比，那么就有 <code>30×30×10×5 = 45,000</code> 个候选窗口，逐个运行重型 CNN 并不实际。这个例子是为了说明计算量如何增长，不是课件中的固定参数。</p>
+<p>后续整条技术演进，就是在回答两个问题：<strong>能否少检查几个框？能否只计算一次共享特征？</strong></p>
+</div></section><section class="chapter" id="selective" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="selective" aria-pressed="false">标记已掌握</button></div>
+    <h2>Selective Search：从百万窗口变成候选区域</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 20–23</a></p><div class="chapter-content"><h3>直觉</h3>
+<p>不是在图片上穷举所有可能的矩形，而是先找“看起来像一块物体”的区域——<strong>Region Proposal（候选区域）</strong>。课件指出 Selective Search 能在 CPU 上约几秒生成大约 <strong>2,000 个</strong>跨尺度候选区域（具体数量随配置和图像变化）。</p>
+<h3>算法过程（按课件顺序）</h3>
+<ol>
+<li><strong>过分割（Over-segmentation）</strong>：先用图分割把图像切成很多局部相似的 <strong>superpixels（超像素）</strong>，形成初始区域。</li>
+<li><strong>邻接关系</strong>：只比较相邻区域，依据颜色、纹理、大小、填充紧凑程度等综合相似性 <code>S</code>。</li>
+<li><strong>贪心合并</strong>：选择相似性最高的一对邻接区域，将它们合并。</li>
+<li><strong>记录候选框</strong>：每产生一个新区域，就计算包围它的最小矩形框，加入 proposals。</li>
+<li><strong>更新相似性并继续</strong>：直到合并到整个图像。小区域、中区域、大区域都会在合并层级中出现。</li>
+</ol>
+<div class="process"><span>像素</span><i>→</i><span>超像素</span><i>→</i><span>相似区域合并</span><i>→</i><span>多尺度候选框</span></div>
+<p><strong>设计原则：<strong>覆盖各种尺度；通过颜色/纹理/明暗等不同策略保持提议多样性；速度足够快。它</strong>不是神经网络</strong>，也不会随着检测器训练而自动改进。这是 R-CNN 系列后来用 RPN 替换它的重要原因。</p>
+<p><strong>候选框不等于最终检测框</strong>：Selective Search 只负责“值得看哪里”，并不知道“里面是狗还是猫”。类别分类和框位置修正由下游检测模型完成。</p>
+</div></section><section class="chapter" id="rcnn" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="rcnn" aria-pressed="false">标记已掌握</button></div>
+    <h2>R-CNN：候选框与卷积特征结合</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 24–27</a></p><div class="chapter-content"><div class="figure"><div class="figure-scroll"><svg viewBox="0 0 920 356" role="img" aria-label="R-CNN、Fast R-CNN、Faster R-CNN 与单阶段检测器的处理流程" font-family="system-ui,sans-serif"><defs><marker id="arrow01" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="#728399"/></marker></defs><g font-size="16" fill="#1d344a"><text x="12" y="44" font-weight="700">R-CNN</text><text x="12" y="127" font-weight="700">Fast R-CNN</text><text x="12" y="210" font-weight="700">Faster R-CNN</text><text x="12" y="293" font-weight="700">SSD / YOLO</text></g>
+<g stroke="#728399" stroke-width="2" marker-end="url(#arrow01)"><path d="M242 38H280 M435 38H480 M629 38H674 M242 121H280 M435 121H480 M629 121H674 M242 204H280 M435 204H480 M629 204H674 M242 287H280 M435 287H480 M629 287H674"/></g>
+<g font-size="14" text-anchor="middle" fill="#234055">
+<g><rect x="127" y="10" width="115" height="55" rx="8" fill="#e9f0fa"/><text x="184" y="43">整张图</text><rect x="281" y="10" width="153" height="55" rx="8" fill="#f6ecc8"/><text x="357" y="34">Selective Search</text><text x="357" y="51" font-size="12">生成约 2000 框</text><rect x="480" y="10" width="149" height="55" rx="8" fill="#f3dfda"/><text x="554" y="33">每个框分别 CNN</text><text x="554" y="51" font-size="12">计算重复</text><rect x="675" y="10" width="227" height="55" rx="8" fill="#dcefe8"/><text x="788" y="42">SVM + 框回归</text></g>
+<g transform="translate(0 83)"><rect x="127" y="10" width="115" height="55" rx="8" fill="#e9f0fa"/><text x="184" y="43">整张图</text><rect x="281" y="10" width="153" height="55" rx="8" fill="#f6ecc8"/><text x="357" y="33">整图 CNN</text><text x="357" y="51" font-size="12">共用特征图</text><rect x="480" y="10" width="149" height="55" rx="8" fill="#f3dfda"/><text x="554" y="33">RoI Pooling</text><text x="554" y="51" font-size="12">仍用外部候选框</text><rect x="675" y="10" width="227" height="55" rx="8" fill="#dcefe8"/><text x="788" y="42">联合分类 + 回归</text></g>
+<g transform="translate(0 166)"><rect x="127" y="10" width="115" height="55" rx="8" fill="#e9f0fa"/><text x="184" y="43">整张图</text><rect x="281" y="10" width="153" height="55" rx="8" fill="#f6ecc8"/><text x="357" y="33">共享 CNN</text><text x="357" y="51" font-size="12">一次抽特征</text><rect x="480" y="10" width="149" height="55" rx="8" fill="#f3dfda"/><text x="554" y="34">RPN → RoI</text><text x="554" y="51" font-size="12">学习生成候选框</text><rect x="675" y="10" width="227" height="55" rx="8" fill="#dcefe8"/><text x="788" y="42">分类 + 框细调</text></g>
+<g transform="translate(0 249)"><rect x="127" y="10" width="115" height="55" rx="8" fill="#e9f0fa"/><text x="184" y="43">整张图</text><rect x="281" y="10" width="153" height="55" rx="8" fill="#f6ecc8"/><text x="357" y="43">共享 CNN</text><rect x="480" y="10" width="149" height="55" rx="8" fill="#f3dfda"/><text x="554" y="33">密集预测</text><text x="554" y="51" font-size="12">无需独立 RoI 阶段</text><rect x="675" y="10" width="227" height="55" rx="8" fill="#dcefe8"/><text x="788" y="42">框 + 类别 + NMS 等</text></g></g></svg></div><div class="figcap">原创流程对比 · Fast R-CNN 仍依赖外部候选区域；Faster R-CNN 将提议过程放入可学习的 RPN。</div></div>
+<h3>R-CNN（Regions with CNN Features）的四步</h3>
+<ol>
+<li>输入整张图。</li>
+<li>用 Selective Search 等方法产生约 2,000 个 <strong>RoI（Region of Interest）</strong>。</li>
+<li>把每个 RoI 裁剪、变形（warp）到网络固定输入尺寸，<strong>各自独立送进 CNN</strong> 抽特征。</li>
+<li>用 <strong>线性 SVM</strong> 给提议分类，再用单独训练的 <strong>bounding-box regressor</strong> 调整框位置。</li>
+</ol>
+<p><strong>问题 1：重复计算太多。</strong> 两个相邻候选框有 80% 面积重叠，R-CNN 仍然对这两块区域分别完整运行 CNN。</p>
+<p><strong>问题 2：训练被拆成多个阶段。</strong> 先微调 CNN，再抽取特征训练 SVM，再训练框回归器。这不是真正统一的端到端检测训练。</p>
+<p><strong>问题 3：特征存储很大。</strong> 课件引用历史实例：PASCAL VOC 2007 约 5k 图像的 VGG-16 特征处理约需 <strong>2.5 GPU-days</strong>、特征文件可占<strong>数百 GB</strong>，测试时约 <strong>47 秒/图</strong>。这些都是当时论文/实现的历史数字，不代表今天硬件的速度。</p>
+<p>R-CNN 的意义：首次把相对高质量的 <strong>候选区域</strong> 与强大的 <strong>深度 CNN 特征</strong>组合起来。但它暴露了效率瓶颈，直接引出 SPP-Net 和 Fast R-CNN。</p>
+</div></section><section class="chapter" id="spp" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="spp" aria-pressed="false">标记已掌握</button></div>
+    <h2>SPP-Net：固定输入限制究竟来自哪儿？</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 28–30</a></p><div class="chapter-content"><h3>一定要把每个 RoI 变成固定大小吗？</h3>
+<p><strong>卷积层</strong>本身可以处理不同空间尺寸的特征图；早期标准 CNN <strong>全连接层</strong>需要固定长度向量。R-CNN 先 warp 图像块，主要是为了把 CNN 后端输入统一起来。</p>
+<p>**Spatial Pyramid Pooling（空间金字塔池化，SPP）**不再要求直接将图片块扭成统一宽高，而是对不同大小的特征区域使用多个层级的空间池化，再拼成固定长度向量。例如分成 <code>1×1</code>、<code>2×2</code>、<code>4×4</code> 三层，池化后得到 <code>1 + 4 + 16 = 21</code> 个空间 bin（每个通道都有 21 个数）。这个例子说明固定向量如何形成，并不要求所有 SPP 论文配置相同。</p>
+<div class="process"><span>任意大小 RoI</span><i>→</i><span>多级空间划分与池化</span><i>→</i><span>固定长度特征</span></div>
+<p><strong>好处</strong>：使图像的卷积特征可以共享，缓解 R-CNN 测试慢的问题，还减少变形区域带来的问题。<strong>仍然不够</strong>：训练还复杂，SVM 和框回归等阶段未能彻底统一，课件特别指出尚不是真正 end-to-end。</p>
+<p>**区分概念：**SPP 是使用多个尺度的 pooling bin；之后 <strong>RoI Pooling</strong> 更常使用一个固定网格尺寸（如 <code>7×7</code>）。两者目的类似，但操作和架构细节不完全一致。</p>
+</div></section><section class="chapter" id="fast" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="fast" aria-pressed="false">标记已掌握</button></div>
+    <h2>Fast R-CNN：卷积只算一次</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 31–39</a></p><div class="chapter-content"><h3>关键结构</h3>
+<p>把 <strong>CNN 的运算顺序</strong>重排：先把整张图片送进 Backbone CNN 只算一份共享 feature map；再把 Selective Search 给出的 RoI 投影到特征图上，使用 <strong>RoI Pooling</strong> 抽固定大小的特征；最后通过同一网络的分类头和框回归头训练。</p>
+<div class="process"><span>图像 → CNN 特征图</span><i>→</i><span>按 RoI 截取特征</span><i>→</i><span>RoI Pooling</span><i>→</i><span>分类 + 回归</span></div>
+<h3>RoI Pooling 逐步理解（课件 33–37 页的动画）</h3>
+<ol>
+<li>原图中 RoI 的矩形坐标投影到 CNN 特征图；例如下采样 16 倍的特征图上，原图 <code>(x, y)</code> 变成大致 <code>(x/16, y/16)</code>。</li>
+<li>对投影后的区域进行<strong>坐标取整 / 量化</strong>，让它对齐特征图网格。</li>
+<li>把区域划分为固定数量网格，如 <code>7×7</code> 个 bin。</li>
+<li>每个 bin 内做 Max Pooling，形成固定的 <code>C×7×7</code> RoI 特征，无论原先区域有多大。</li>
+</ol>
+<p>这就是为什么它可以接固定输入大小的后续网络，也为什么不需要为每个候选框再运行整套卷积网络。</p>
+<h3>多任务学习与剩余瓶颈</h3>
+<p>分类与框回归共同训练，省去旧式 SVM 单独训练和存盘缓存特征；课件指出检测质量也改善。但 <strong>Selective Search 的外部提议速度</strong>开始成为主要瓶颈：Fast R-CNN 虽然把 CNN 部分加速了，区域建议却仍用不随训练学习的算法。</p>
+<h3>为什么 RoI Pooling 会造成“偏移”？</h3>
+<p>原图 1 像素的偏移，投射到低分辨率特征图以后，四舍五入可能把两个本来不同的边界变成相同整数位置，或者把一个位置挪到相邻网格。对矩形框检测影响有时还能接受；对<strong>精细像素掩码</strong>影响就更明显。所以第二份课件会讲 RoI Align。</p>
+</div></section><section class="chapter" id="faster" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="faster" aria-pressed="false">标记已掌握</button></div>
+    <h2>Faster R-CNN：让候选框也由网络学习</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 40–46</a></p><div class="chapter-content"><div class="figure"><div class="figure-scroll"><svg viewBox="0 0 730 240" role="img" aria-label="特征图单个位置的九个不同尺寸和长宽比的Anchor框"><g font-family="system-ui,sans-serif" text-anchor="middle" fill="#284054"><text x="360" y="24" font-size="20" font-weight="700">同一特征位置：3 scales × 3 aspect ratios</text></g><g transform="translate(60 55)" fill="none" stroke-width="2"><g stroke="#2b80ae"><rect x="46" y="54" width="44" height="44"/><rect x="31" y="38" width="74" height="74"/><rect x="14" y="20" width="108" height="108"/></g><g stroke="#c57b36"><rect x="40" y="60" width="56" height="28"/><rect x="21" y="50" width="94" height="47"/><rect x="0" y="39" width="135" height="67"/></g><g stroke="#6b68a2"><rect x="55" y="47" width="28" height="56"/><rect x="45" y="27" width="47" height="94"/><rect x="35" y="7" width="67" height="135"/></g><circle cx="68" cy="76" r="4" fill="#243c52" stroke="none"/></g><g transform="translate(270 61)" font-family="system-ui,sans-serif" font-size="18" fill="#2a4156"><text x="0" y="33">每个 Anchor：</text><text x="8" y="78" font-size="16">① 前景 / 背景分数</text><text x="8" y="111" font-size="16">② 4 个框调整量</text><text x="8" y="144" font-size="16">③ 修正后形成 Proposal</text></g><g transform="translate(580 64)" font-family="system-ui,sans-serif" font-size="15" fill="#2a4156"><rect width="16" height="16" fill="#2b80ae"/><text x="24" y="14">1:1</text><rect y="36" width="16" height="16" fill="#c57b36"/><text x="24" y="50">宽</text><rect y="72" width="16" height="16" fill="#6b68a2"/><text x="24" y="86">高</text></g></svg></div><div class="figcap">原创示意 · 3 种尺度与 3 种宽高比组合形成 9 种参考框（仅示意，不是论文中的精确像素尺寸）。</div></div><p><strong>问题：既然 CNN 已经算出了整张图的特征，为什么不让它顺便产生 proposals？</strong> Faster R-CNN 引入 <strong>Region Proposal Network（RPN）</strong>，并与后面的分类/回归检测头共享卷积特征。</p>
+<h3>什么是 Anchor Box？</h3>
+<p>在 feature map 上每个空间位置预先摆放几种不同大小、不同长宽比的<strong>参考框</strong>，叫 <strong>anchor</strong>。课件使用 <code>3 个尺度 × 3 个宽高比 = 9 个 anchors/位置</code> 的示例。RPN 对每个 anchor：</p>
+<ul>
+<li>预测 <strong>objectness</strong>：前景物体 / 背景的分数。</li>
+<li>预测 <strong>4 个回归量</strong>：相对于 anchor，怎样移动中心点、怎样调整宽高，才能更靠近真实框。</li>
+</ul>
+<p><strong>Anchor 是起点模板，不是网络预测出来的最终框；Proposal 是对 anchor 回归修正并筛选后的候选框。</strong> 比如 <code>11×15</code> 的特征图，9 anchors/位置，就有 <code>11×15×9 = 1485</code> 个原始 anchor 候选，对应课件第 46 页示例。</p>
+<h3>RPN 的输出维度</h3>
+<p>如果每个位置有 <code>k</code> 个 anchors，课件写：</p>
+<ul>
+<li>分类层输出 <code>2k</code> 个分数（每个 anchor 的前景/背景类别分数）。</li>
+<li>回归层输出 <code>4k</code> 个坐标调整量。</li>
+</ul>
+<p>这里的 2 是二分类的两个分数，不是“只能发现两个物体”。<code>k</code> 是每个位置的 anchor 数量，不是整个图里的物体数量。</p>
+<h3>如何表示框的回归目标？</h3>
+<p>一个常用参数化方式（帮助理解课件所说的 <strong>transform</strong>）是：</p>
+<div class="formula">t_x = (x_g − x_a) / w_a ， t_y = (y_g − y_a) / h_a<br>t_w = ln(w_g / w_a) ， t_h = ln(h_g / h_a)</div>
+<p>其中 <code>a</code> 表示 anchor，<code>g</code> 表示真实框；这里 <code>x,y</code> 使用<strong>中心点</strong>约定。预测这些偏移比直接预测像素绝对坐标更容易泛化到不同大小的框。</p>
+<h3>四种 Loss，分别对谁负责？</h3>
+<ol>
+<li><strong>RPN Classification Loss</strong>：anchor 是不是物体。</li>
+<li><strong>RPN Regression Loss</strong>：anchor → 更合适的 proposal。</li>
+<li><strong>Detection Classification Loss</strong>：proposal 具体属于什么类别 / 背景。</li>
+<li><strong>Detection Regression Loss</strong>：proposal → 最终更精确的检测框。</li>
+</ol>
+<p>这与早期“分类头 + 框头”相似，但多了负责提议的第一阶段。课件使用 joint training 讲解整体优化思想，原始 Faster R-CNN 的具体训练调度存在分阶段/近似联合等实现路径，不必把示意图误读成唯一训练程序。</p>
+</div></section><section class="chapter" id="nms" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="nms" aria-pressed="false">标记已掌握</button></div>
+    <h2>NMS：为什么检测框会重叠一大堆？</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 46–47</a></p><div class="chapter-content"><p>一个真实物体附近往往会有很多 anchor 产生<strong>高度重叠的框</strong>。例如课件的 <code>1485</code> 个初始候选，不可能都当成不同物体。**Non-Maximum Suppression（非极大值抑制，NMS）**是“优先保留高置信度，删除与其太相似的低分框”的去重方法。</p>
+<p><strong>按课件顺序：</strong></p>
+<ol>
+<li>在候选中选择分数最高的框，加入最终结果。</li>
+<li>计算其与其他框的 IoU。</li>
+<li>删除与该框的 IoU <strong>高于阈值</strong> 的重复候选。课件第 47 页举了 <code>0.7</code> 的例子。</li>
+<li>对剩余候选继续重复，直至没有待处理框。</li>
+</ol>
+<div class="interactive" id="nms-demo"><div class="interactive-head"><strong>互动实验 · 调节 NMS 阈值</strong><span id="nms-count" class="pill">保留 0 个框</span></div><svg id="nms-svg" viewBox="0 0 440 225" role="img" aria-label="五个重叠预测框的非极大值抑制示例" style="width:100%;max-width:540px;display:block;margin:auto"><rect x="1" y="1" width="438" height="223" rx="12" fill="#f2f6f8"/><g id="nms-boxes"></g></svg><label for="nms-threshold">IoU 阈值：<output id="nms-threshold-label">0.50</output></label><input type="range" id="nms-threshold" min="10" max="95" value="50" step="5"><p class="result-note" id="nms-explain" aria-live="polite"></p></div>
+<p><strong>IoU 在这里有两个不同身份：<strong>用于预测框与 Ground Truth 的匹配（评估/训练）；也可用于</strong>预测框之间</strong>的 NMS 去重。不能把“检测正确的 IoU ≥ 0.5”和“NMS 阈值 0.7”混为一谈。真实系统常按类别分别做 NMS，以避免不同类别框无故互相消除。</p>
+<p><strong>局限</strong>：两个真实物体靠得很近且框高度重叠时，NMS 可能误删一个。这并不是分类模型“完全没识别到”，而可能是后处理的副作用。</p>
+</div></section><section class="chapter" id="ohem" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="ohem" aria-pressed="false">标记已掌握</button></div>
+    <h2>类别不平衡与 OHEM：模型为什么只会猜背景？</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 48, 61</a></p><div class="chapter-content"><p>在候选框里，绝大多数位置是背景，少部分是真实物体。若训练时一视同仁地将所有例子输入损失，模型会倾向学习“预测背景很安全”，尤其会被大量<strong>容易判断的负样本</strong>主导。</p>
+<p>**在线困难样本挖掘（Online Hard Example Mining, OHEM）**的想法：根据当前模型的损失大小，优先挑选难预测的样本，让训练精力集中于真正的错误。与简单随机采样相比，它能减少大量冗余的容易负样本。</p>
+<p>课件第 48 页还给出 <strong>Faster R-CNN 256 anchors/mini-batch，通常最多 128 positive + 128 negative</strong> 的例子：如果 positive 不足，用 negative 补足。这是 RPN 常见的前景/背景采样策略。<strong>课件补充辨析：按正负比例采样与严格按损失选择 top-hard 样本并不完全等价</strong>，不要把二者当成同一个算法；RoI 检测头常见的负/正比例上限 <code>3:1</code> 也与 RPN 的 <code>128/128</code> 是不同阶段的配置。</p>
+<p>两阶段检测器由于 RPN 将海量候选位置缩到更小集合，更易控制前景与背景；单阶段检测器则直接面对大量密集位置，于是后面的 <strong>Focal Loss</strong> 尤其重要。</p>
+</div></section><section class="chapter" id="one-two" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="one-two" aria-pressed="false">标记已掌握</button></div>
+    <h2>两阶段 vs 单阶段检测器</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 49–52, 61</a></p><div class="chapter-content"><p><strong>Two-stage（两阶段）</strong>：先从整幅图产生一小批值得看的 RoIs，再逐个对它们分类、精修框。代表：<strong>R-CNN、Fast R-CNN、Faster R-CNN、R-FCN</strong>；<strong>Mask R-CNN</strong> 继承两阶段检测并额外输出实例 mask。</p>
+<p><strong>One-stage（单阶段）</strong>：不先执行一个独立的候选区域分类阶段，而是在整张共享特征图的许多空间位置，直接并行预测类别与框。代表：<strong>SSD、YOLO、RetinaNet</strong>。注意“proposal-free”是指<strong>没有两阶段 RoI proposal→RoI classification 流程</strong>，不代表没有 anchors、候选预测框或 NMS。</p>
+<table>
+<thead>
+<tr>
+<th>比较</th>
+<th>两阶段</th>
+<th>单阶段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>典型流程</td>
+<td>RPN / 外部提议 → RoI 特征 → 分类与回归</td>
+<td>Backbone → 密集预测头</td>
+</tr>
+<tr>
+<td>共享卷积</td>
+<td>Fast/Faster R-CNN 支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>背景类不平衡</td>
+<td>提议阶段主动筛掉许多背景</td>
+<td>密集位置多，背景负例多</td>
+</tr>
+<tr>
+<td>代表</td>
+<td>Faster R-CNN、Mask R-CNN</td>
+<td>SSD、YOLO、RetinaNet</td>
+</tr>
+<tr>
+<td>速度与精度</td>
+<td>传统上精度优势较明显</td>
+<td>传统上更快，技术演进后差异并非绝对</td>
+</tr>
+</tbody>
+</table>
+<p>第 49、50 页展示 Faster R-CNN 在 VOC 上的检测示例与历史速度对比。课件的“super fast”是<strong>相对于之前 R-CNN / Fast R-CNN 的发展阶段</strong>，并不表示它一定比今天的 YOLO 还快；应以同一硬件、同一输入尺寸、同一评价协议比较。</p>
+</div></section><section class="chapter" id="ssd" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="ssd" aria-pressed="false">标记已掌握</button></div>
+    <h2>SSD：Single Shot MultiBox Detector</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 53–57</a></p><div class="chapter-content"><p>SSD 把检测问题直接放在 <strong>多层 feature maps 上并行预测</strong>，不用先生成独立的 RoIs 再逐个 RoI Pooling。课件将它分成两部分：</p>
+<ul>
+<li><strong>Backbone</strong>：预训练的图像分类网络，负责抽取层级视觉特征（课件举 ResNet 一类网络说明概念，原始 SSD 论文典型使用 VGG 等骨干）。</li>
+<li><strong>SSD Head</strong>：由卷积预测头在不同空间尺度的特征图上输出类别分数和边界框 offsets。</li>
+</ul>
+<h3>三个关键修改</h3>
+<ol>
+<li><strong>卷积预测器而不是统一 FC 输出</strong>：在局部位置用小卷积核预测盒子与分类分数。</li>
+<li><strong>多种 default box（默认框）</strong>：不同长宽比、不同尺度的参考框，和 Faster R-CNN 的 anchors 在直觉上相近。</li>
+<li><strong>多尺度 feature maps</strong>：高分辨率的特征图帮助覆盖小目标，低分辨率的特征图更适于较大目标。</li>
+</ol>
+<div class="process"><span>输入图像</span><i>→</i><span>多尺度 CNN feature maps</span><i>→</i><span>每处多个 default boxes</span><i>→</i><span>类别 + 框修正</span></div>
+<h3>课件发现（第 57 页）</h3>
+<ul>
+<li><strong>Data augmentation 很关键</strong>：随机裁剪、翻转、缩放、光照等变化让模型见过更多对象尺度与位置。</li>
+<li><strong>更多 default box shapes</strong>：覆盖不同尺寸/宽高比更有利（不意味着无限增加一定更好）。</li>
+<li><strong>多层不同分辨率输出</strong>：比只在最后一层输出更有利于多尺度对象。</li>
+</ul>
+<p>第 56 页是 SSD 架构的示意大图；第 57 页给出 <strong>SSD512 在 COCO test-dev</strong> 的例子。它们说明检测头可从多个 feature maps 各自预测，再汇总候选框。</p>
+</div></section><section class="chapter" id="yolo" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="yolo" aria-pressed="false">标记已掌握</button></div>
+    <h2>YOLO：把检测变成一次前向传播</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 58–60</a></p><div class="chapter-content"><p><strong>YOLO（You Only Look Once）<strong>的核心不是“只可能检测一个对象”，而是</strong>让一套网络看到整张图，一次前向传播输出整幅图的框与类别信息</strong>，而不是对每个裁剪区域重复运行分类器。</p>
+<h3>理解课件里的经典 YOLO v1 输出：7×7×30</h3>
+<p>原版 YOLO 在 PASCAL VOC 的设定为 <code>S = 7</code> 的网格，<code>B = 2</code> 个预测框/网格，<code>C = 20</code> 个类别：</p>
+<div class="formula">每个 grid cell 的输出 = B × 5 + C = 2 × 5 + 20 = 30</div>
+<div class="formula">整张图的预测张量 = 7 × 7 × 30</div>
+<ul>
+<li>一个 box 的 <strong>5 个数</strong>：<code>x, y, w, h, confidence / objectness</code>。</li>
+<li>另有每个 cell 的 <strong>C 个类别概率</strong>（原版 v1 的组织方式）。</li>
+<li>每个 cell 负责与它关联的目标中心点，不等于“7×7 的最终图像分辨率”。</li>
+</ul>
+<h3>优势与局限</h3>
+<p>课件强调测试速度：它无需重复的区域裁剪和多次分类网络运行，原版论文与特定 R-CNN 基线相比速度有极大优势，<strong>“1000× / 100×” 是论文年代、模型与硬件依赖的历史对比</strong>。原版 YOLO 的定位误差和小目标/紧密对象表现曾是挑战；不同 YOLO 版本通过 anchors、多尺度、检测头设计、训练方式等持续改善。</p>
+<p>课件第 59 页将 YOLO 与 Fast R-CNN 等模型在 VOC 上比较，并展示<strong>定位错误、背景错误、类别错误</strong>等误差分析；第 60 页给出 YOLO 版本演进时间线，说明 YOLO 不是固定的一张架构图。<strong>课件第 58 页的 7×7×30 专指早期 YOLO v1，不能拿去描述全部现代 YOLO。</strong></p>
+</div></section><section class="chapter" id="fpn" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="fpn" aria-pressed="false">标记已掌握</button></div>
+    <h2>FPN：为什么要融合不同分辨率的特征？</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 61–63</a></p><div class="chapter-content"><div class="figure"><div class="figure-scroll"><svg viewBox="0 0 810 275" role="img" aria-label="FPN低层特征与高层语义融合示意"><defs><marker id="ar05" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="#668099"/></marker></defs><g font-family="system-ui,sans-serif" text-anchor="middle" font-size="16" fill="#243b52"><text x="150" y="24" font-size="20" font-weight="700">Bottom-up</text><text x="470" y="24" font-size="20" font-weight="700">Top-down + Lateral</text><text x="735" y="24" font-size="20" font-weight="700">Predict</text><g fill="#dfeaf4" stroke="#5d7da2" stroke-width="2"><rect x="75" y="57" width="150" height="38" rx="5"/><rect x="95" y="113" width="110" height="38" rx="5"/><rect x="115" y="169" width="70" height="38" rx="5"/></g><text x="150" y="81">高分辨率 C3</text><text x="150" y="138">中分辨率 C4</text><text x="150" y="193">低分辨率 C5</text><g fill="#dcefe5" stroke="#529677" stroke-width="2"><rect x="405" y="57" width="130" height="38" rx="5"/><rect x="415" y="113" width="110" height="38" rx="5"/><rect x="425" y="169" width="90" height="38" rx="5"/></g><text x="470" y="81">P3（细）</text><text x="470" y="138">P4（中）</text><text x="470" y="193">P5（粗）</text><g stroke="#668099" stroke-width="2.3" fill="none" marker-end="url(#ar05)"><path d="M150 95V113 M150 151V169 M225 76H405 M205 131H415 M185 188H425 M470 169V151 M470 113V95 M535 76H670 M525 132H670 M515 188H670"/></g><g fill="#f0e3cb" stroke="#ca9d58" stroke-width="2"><rect x="670" y="56" width="119" height="40" rx="7"/><rect x="670" y="113" width="119" height="40" rx="7"/><rect x="670" y="170" width="119" height="40" rx="7"/></g><text x="729" y="82">小目标</text><text x="729" y="139">中目标</text><text x="729" y="196">大目标</text><text x="405" y="250" fill="#627788" font-size="14">高层语义沿上采样通路向下融合到细粒度特征</text></g></svg></div><div class="figcap">原创 FPN 示意 · 箭头仅说明层级关系，实际融合一般包含 1×1 / 3×3 卷积与逐级上采样。</div></div><p>CNN 越往深层，一般<strong>空间分辨率越低、语义抽象能力越强</strong>。浅层 feature map 还保留细节和小物体位置，但“它到底是什么”不一定清楚；深层更知道“这是一只狗”，可是分辨率较小，难以精确定位小物体。</p>
+<p>**Feature Pyramid Network（FPN）**将两者结合：</p>
+<ol>
+<li><strong>Bottom-up pathway</strong>：Backbone 逐层提取 <code>C2, C3, C4, C5</code> 等不同分辨率特征。</li>
+<li><strong>Top-down pathway</strong>：从深层粗特征开始上采样，把强语义信息传回较浅层。</li>
+<li><strong>Lateral connections</strong>：把上采样特征与同分辨率的底层特征（通常先经 <code>1×1 conv</code>）融合。</li>
+<li>得到多个同时拥有<strong>不同分辨率、较强语义</strong>的金字塔层，可用于检测不同大小的物体。</li>
+</ol>
+<div class="process"><span>深层：语义强 / 分辨率低</span><i>+</i><span>浅层：位置细 / 语义弱</span><i>→</i><span>各尺度都有更好语义</span></div>
+<p>这里的 <strong>FPN 与 SPP 都叫 Pyramid</strong>，但完全不是一回事：<strong>SPP</strong> 是在一个区域中做多个空间 bin 的池化，最后输出定长向量；<strong>FPN</strong> 是构建不同尺度、融合高低层语义的多级<strong>特征金字塔</strong>。</p>
+<p>第 62 页同时将 FPN 放在前景/背景不平衡的讨论之后。这里要分清：<strong>FPN 主要改善多尺度表征，Focal Loss 主要缓解样本不平衡。</strong> RetinaNet 把两者结合。</p>
+</div></section><section class="chapter" id="retina" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="retina" aria-pressed="false">标记已掌握</button></div>
+    <h2>RetinaNet 与 Focal Loss：把注意力放在难例上</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 64–66</a></p><div class="chapter-content"><p><strong>RetinaNet = FPN Backbone + 两个预测子网络 + Focal Loss。</strong> 在不同尺度特征图上，通过共享结构的分类子网络预测每个 anchor 的类别，通过回归子网络预测其边界框 offset。</p>
+<h3>为什么普通 Cross-Entropy 不够？</h3>
+<p>单阶段网络在图上密集枚举大量位置，背景 anchor 数量极多。许多背景样本已经非常容易分类，普通交叉熵仍会给它们贡献累计损失，导致训练时的优化被容易样本淹没。</p>
+<p><strong>Focal Loss</strong> 在交叉熵上加一个“容易就降权”的因子：</p>
+<div class="formula">FL(pₜ) = − αₜ · (1 − pₜ)<sup>γ</sup> · log(pₜ)</div>
+<p>其中 <code>pₜ</code> 是预测分配给<strong>真实类别</strong>的概率；<code>αₜ</code> 用来调节类别权重；<code>γ ≥ 0</code> 控制对简单样本的降权程度：</p>
+<ul>
+<li>正确类别概率 <code>pₜ ≈ 1</code>：<code>(1−pₜ)^γ</code> 很小，容易样本损失被压低。</li>
+<li><code>pₜ</code> 很小：表示预测错得多，调制因子更接近 1，继续重点学习。</li>
+<li><code>γ = 0</code> 时，Focal Loss 退化为带 α 权重的交叉熵。</li>
+</ul>
+<p>以 <code>γ=2</code> 为例：如果 <code>pₜ=0.9</code>，调制因子是 <code>0.01</code>；如果 <code>pₜ=0.2</code>，则是 <code>0.64</code>。这不是简单地“删掉所有背景”，而是连续地<strong>重分配训练重心</strong>。</p>
+<p>第 65 页架构图包括：Bottom-up 主干、多级 Top-down + Lateral 融合、<strong>分类子网</strong>与<strong>框回归子网</strong>。第 66 页是当年 **COCO test-dev 上 AP（纵轴）与推理时间毫秒（横轴）**的速度-精度权衡图：位于更高、更左的位置一般更理想，但要核对实验硬件与模型输入。</p>
+</div></section><section class="chapter" id="detect-history" data-part="第一部分 · 目标检测">
+    <div class="chapter-top"><span class="chapter-tag">第一部分 · 目标检测</span><button class="mark-done" type="button" data-key="detect-history" aria-pressed="false">标记已掌握</button></div>
+    <h2>20 年检测技术脉络与实用代码入口</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 67–73</a></p><div class="chapter-content"><p>课件第 67 页将目标检测发展划分为较早的传统视觉方法与深度学习检测方法，并给出发展里程碑。学这条线时，不要背年份代替理解，而是记住每一步解决了什么瓶颈：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>代表</th>
+<th>核心转变</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>手工特征与传统检测</td>
+<td>滑窗、HOG、DPM 等（综述中的传统范式）</td>
+<td>显式特征设计与分类</td>
+</tr>
+<tr>
+<td>CNN 与 Proposal</td>
+<td>R-CNN（2014）</td>
+<td>CNN 强特征，但候选框独立计算</td>
+</tr>
+<tr>
+<td>特征共享</td>
+<td>SPP-Net（2014）、Fast R-CNN（2015）</td>
+<td>整图卷积、RoI 共享特征</td>
+</tr>
+<tr>
+<td>学习候选框</td>
+<td>Faster R-CNN（2015）</td>
+<td>RPN 与检测网络统一</td>
+</tr>
+<tr>
+<td>单阶段检测</td>
+<td>YOLO（2016）、SSD（2016）</td>
+<td>密集、并行输出</td>
+</tr>
+<tr>
+<td>多尺度 / 训练改进</td>
+<td>FPN（2017）、RetinaNet（2017）</td>
+<td>多尺度强语义 + Focal Loss</td>
+</tr>
+<tr>
+<td>实例级像素预测</td>
+<td>Mask R-CNN（2017）</td>
+<td>检测框上再预测精细掩码</td>
+</tr>
+</tbody>
+</table>
+<h3>课件给出的实现与阅读入口</h3>
+<ul>
+<li><a href="https://pytorch.org/vision/main/models/faster_rcnn.html">PyTorch torchvision · Faster R-CNN</a></li>
+<li><a href="https://www.tensorflow.org/hub/tutorials/object_detection">TensorFlow object detection tutorial</a></li>
+<li><a href="https://github.com/facebookresearch/detectron2">Detectron2</a> 与 <a href="https://github.com/open-mmlab/mmdetection">MMDetection</a></li>
+<li><a href="https://pytorch.org/hub/nvidia_deeplearningexamples_ssd/">PyTorch SSD 示例</a></li>
+<li><a href="https://github.com/ultralytics/yolov5">Ultralytics YOLOv5 开源仓库</a></li>
+<li><a href="https://github.com/spmallick/learnopencv/blob/master/PyTorch-faster-RCNN/PyTorch_faster_RCNN.ipynb">Faster R-CNN 实例 Notebook</a></li>
+<li><a href="https://cv.gluon.ai/build/examples_detection/train_faster_rcnn_voc.html">Faster R-CNN PASCAL VOC 示例</a></li>
+</ul>
+<p>经典论文可从课件引用继续查：<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf">R-CNN</a> · <a href="https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Girshick_Fast_R-CNN_ICCV_2015_paper.pdf">Fast R-CNN</a> · <a href="https://papers.nips.cc/paper_files/paper/2015/hash/14bfa6bb14875e45bba028a21ed38046-Abstract.html">Faster R-CNN</a> · <a href="https://link.springer.com/chapter/10.1007/978-3-319-46448-0_2">SSD</a> · <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Redmon_You_Only_Look_CVPR_2016_paper.pdf">YOLO</a> · <a href="https://arxiv.org/abs/1708.02002">RetinaNet / Focal Loss</a> · <a href="https://arxiv.org/abs/1905.05055">Object Detection Survey</a>。</p>
+<p>课件第 70–73 页还整理参考书：Goodfellow 等人的 <a href="https://www.deeplearningbook.org/">Deep Learning</a>、<em>Practical Machine Learning for Computer Vision</em> 第 4 章、<em>Deep Learning for Vision Systems</em> 第 7 章，以及来自 Stanford CS231n 的相关授课素材。参考文献页属于阅读资源，不要求记忆所有 URL。</p>
+</div></section><section class="chapter" id="semantic" data-part="第二部分 · 语义分割">
+    <div class="chapter-top"><span class="chapter-tag">第二部分 · 语义分割</span><button class="mark-done" type="button" data-key="semantic" aria-pressed="false">标记已掌握</button></div>
+    <h2>语义分割：从一个类别到 H×W 个类别</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part II: 4–6</a></p><div class="chapter-content"><p>目标检测输出一个矩形框，其中可能还包含背景；<strong>Semantic Segmentation</strong> 要求对图片中<strong>每个像素</strong>赋予类别。输入为 <code>3×H×W</code> RGB 图像，输出通常是 <code>H×W</code> 个离散类别索引；训练时模型内部先输出 <code>C×H×W</code> 的各类分数（logits）。</p>
+<p>例如对 CT 图像做肺部区域分割：<strong>输入 CT slice → 网络逐像素预测 → 黑白肺部 mask</strong>。课件展示了输入 CT、训练标注（ground-truth mask）以及测试阶段由模型输出像素分类的流程。类似地，在羊群照片中，羊、草地和背景分别被标成不同颜色。</p>
+<h3>训练数据与损失如何对应？</h3>
+<p>如果有 <code>C</code> 个类别，每个像素 <code>u</code> 有真实类别 <code>yᵤ</code>，网络给出该像素的预测概率 <code>pᵤ,c</code>。最基础做法是<strong>把分类交叉熵应用于每个像素再求平均</strong>：</p>
+<div class="formula">L_pixel = − (1 / HW) · Σ<sub>u=1…HW</sub> log p<sub>u,yᵤ</sub></div>
+<p>预测时每个像素通常取 <code>argmax_c pᵤ,c</code>。二分类掩码也可以使用每像素 Sigmoid/BCE。像素级标注提供比一个“整图类别”密得多的监督信号。</p>
+<p>**课件补充辨析：**语义分割不会自动区分两头同类别的羊；即使两块羊的区域彼此不相连，只要都标 <code>sheep</code>，语义 mask 中仍属于同一个语义类别。</p>
+</div></section><section class="chapter" id="patch" data-part="第二部分 · 语义分割">
+    <div class="chapter-top"><span class="chapter-tag">第二部分 · 语义分割</span><button class="mark-done" type="button" data-key="patch" aria-pressed="false">标记已掌握</button></div>
+    <h2>逐像素分类与 Sliding Window Segmentation</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part II: 7–10</a></p><div class="chapter-content"><h3>为什么不能只拿单个像素的 RGB 来分类？</h3>
+<p>同样的浅灰色可能出现在羊毛、云、墙上；像素本身不含足够上下文。课件第 7、8 页先提出逐像素分类，并立刻指出 <strong>No Context!</strong>。</p>
+<h3>改良：对每个中心像素取一个 Patch</h3>
+<p>把待分类像素附近的一小块图片提取出来，让 CNN 判断<strong>中心像素</strong>属于什么类别。相同的局部纹理加上邻域形状，就更容易辨别天空、牛和草地。课件第 9 页展示了 <code>Sky / Cow / Grass</code> 三个中心像素分别使用 patch 分类。</p>
+<p><strong>致命问题：窗口大量重叠，不能复用特征。</strong> 为了对整张 <code>H×W</code> 图预测，每个位置都重复调用 CNN；相邻像素 patch 几乎一样，卷积却反复计算。对 512×512 的图片有 262,144 个像素，逐 patch 运行高成本网络很不划算。</p>
+<p>课件将其引出 <strong>Fully Convolutional Networks（FCN）</strong>：一次处理整张图、保留空间结构、输出像素网格，而不是一个中心像素一次分类。</p>
+</div></section><section class="chapter" id="fcn" data-part="第二部分 · 语义分割">
+    <div class="chapter-top"><span class="chapter-tag">第二部分 · 语义分割</span><button class="mark-done" type="button" data-key="fcn" aria-pressed="false">标记已掌握</button></div>
+    <h2>FCN：为什么网络需要下采样、再上采样？</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part II: 11–16, 28</a></p><div class="chapter-content"><p>**FCN（Fully Convolutional Network）**的重点是把网络设计成可以接收空间输入、输出空间预测图的体系，避免传统分类 CNN 最后把空间结构压扁成一个类别分数。</p>
+<h3>思路 1：只做不改变尺寸的卷积</h3>
+<p>令所有卷积都 stride=1、适当 padding，空间尺寸保持 <code>H×W</code>，最终 <code>1×1 conv</code> 映射为 <code>C×H×W</code> 的类别分数。<strong>理论简单，代价很高</strong>：每一层都在原分辨率上运行，显存与计算量明显上升。这正是课件 13、14 页强调的缺点。</p>
+<h3>思路 2：Encoder–Decoder</h3>
+<ul>
+<li><strong>Encoder / Downsampling</strong>：通过 pooling 或 stride&gt;1 卷积逐步降低空间分辨率，使 CNN 能经济地提取更大感受野、更强语义的特征。</li>
+<li><strong>Decoder / Upsampling</strong>：逐步恢复空间分辨率，输出与输入同样宽高的像素分类图。</li>
+<li><strong>End-to-end</strong>：从输入图像到分割损失可以联合训练。</li>
+</ul>
+<div class="figure"><div class="figure-scroll"><svg viewBox="0 0 760 236" role="img" aria-label="FCN Encoder Decoder：先下采样再逐级上采样"><g font-family="system-ui,sans-serif" text-anchor="middle" fill="#1d4258"><text x="380" y="25" font-weight="700" font-size="21">FCN：保留空间预测，逐级恢复分辨率</text><g fill="#e3edf6" stroke="#5786a5" stroke-width="2"><rect x="24" y="66" width="125" height="129" rx="9"/><rect x="167" y="87" width="108" height="108" rx="9"/><rect x="291" y="111" width="94" height="84" rx="9"/><rect x="397" y="111" width="94" height="84" rx="9"/><rect x="507" y="87" width="108" height="108" rx="9"/><rect x="631" y="66" width="105" height="129" rx="9"/></g><g font-size="16"><text x="86" y="138">H×W</text><text x="221" y="148">H/2</text><text x="338" y="157">H/4</text><text x="444" y="157">H/4</text><text x="561" y="148">H/2</text><text x="683" y="138">H×W</text></g><g stroke="#6b8e9f" stroke-width="3" fill="none"><path d="M149 151H167 M275 151H291 M385 151H397 M491 151H507 M615 151H631"/></g><text x="200" y="220" font-size="14">Downsampling</text><text x="556" y="220" font-size="14">Upsampling</text></g></svg></div><div class="figcap">原创示意 · 这是 FCN 的一般编码-解码思想，暂不引入 U-Net 的跨层连接。</div></div>
+<p>课件第 15、28 页强调<strong>不要一下把很小的特征图突然拉回原图大小</strong>，可以逐级上采样并在中间进一步卷积细化。最后通常产生 <code>C×H×W</code> logits，再沿类别维度 argmax 得到 <code>H×W</code> 掩码。</p>
+<p><strong>细节提醒：<strong>FCN 不等于“完全不能使用下采样”，这只是课件先讲的朴素方案；经典 FCN 完全可以有下采样并通过上采样恢复。FCN 的本质是</strong>以卷积式空间预测取代固定长度全连接分类输出</strong>。</p>
+</div></section><section class="chapter" id="upsample" data-part="第二部分 · 语义分割">
+    <div class="chapter-top"><span class="chapter-tag">第二部分 · 语义分割</span><button class="mark-done" type="button" data-key="upsample" aria-pressed="false">标记已掌握</button></div>
+    <h2>上采样：Nearest Neighbor、Unpooling、Max Unpooling</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part II: 16–19</a></p><div class="chapter-content"><h3>Nearest-neighbor upsampling（最近邻插值）</h3>
+<p>把每个原始值复制成相邻的多个值。课件示例：</p>
+<div class="matrix-pair"><div><strong>输入 2×2</strong><div class="mat-grid cols2"><span>1</span><span>2</span><span>3</span><span>4</span></div></div><div class="matrix-arrow">→</div><div><strong>输出 4×4</strong><div class="mat-grid cols4"><span>1</span><span>1</span><span>2</span><span>2</span><span>1</span><span>1</span><span>2</span><span>2</span><span>3</span><span>3</span><span>4</span><span>4</span><span>3</span><span>3</span><span>4</span><span>4</span></div></div></div>
+<p>它不需要训练参数，简单快速，但会产生块状边界。它<strong>不是</strong> Max Unpooling。</p>
+<h3>朴素 Unpooling（空位填零）</h3>
+<p>课件第 18 页展示另一种做法：把 2×2 的特征值放回更大网格的某些固定位置，剩下位置填 0，例如在二维网格的间隔位置填入 1、2、3、4。这样不会凭空制造新的高频细节；接着通常用卷积融合周围信息。</p>
+<h3>Max Unpooling（记住池化时最大的元素在哪）</h3>
+<p>Max Pooling 对每个 <code>2×2</code> 块保留<strong>最大值</strong>。课件用 <code>4×4 → 2×2</code> 得到 <code>[[5,6],[7,8]]</code>，并记录每块最大值所在的位置（max indices）。Max Unpooling 恢复空间尺寸时，把值放回对应的最大值原位置，其余填 0。</p>
+<p>重要：<strong>Max Unpooling 不是 Max Pooling 的逆运算</strong>。其他被舍弃的数字没有恢复；它只利用记录的索引把保留值放回相应位置。对 SegNet 这类架构，保留 pooling indices 有助于恢复空间定位。课件第 19 页通过不同颜色的原始最大值位置说明这一点。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>是否可学习</th>
+<th>需要额外信息</th>
+<th>核心思想</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>最近邻插值</td>
+<td>否</td>
+<td>无</td>
+<td>复制邻近值</td>
+</tr>
+<tr>
+<td>固定插零 / 简单 unpool</td>
+<td>否</td>
+<td>无</td>
+<td>稀疏填入旧值</td>
+</tr>
+<tr>
+<td>Max Unpooling</td>
+<td>否</td>
+<td>pooling indices</td>
+<td>放回最大值原所在位置</td>
+</tr>
+<tr>
+<td>Transposed convolution</td>
+<td><strong>是</strong></td>
+<td>可学习的 kernel</td>
+<td>通过卷积权重学习上采样</td>
+</tr>
+</tbody>
+</table>
+</div></section><section class="chapter" id="deconv" data-part="第二部分 · 语义分割">
+    <div class="chapter-top"><span class="chapter-tag">第二部分 · 语义分割</span><button class="mark-done" type="button" data-key="deconv" aria-pressed="false">标记已掌握</button></div>
+    <h2>转置卷积 Transposed Convolution：逐格看懂</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part II: 20–28</a></p><div class="chapter-content"><h3>先回顾普通卷积</h3>
+<p>课件第 20–24 页利用连续动画复习 <code>3×3 kernel</code> 的普通卷积。kernel 滑过输入，逐元素相乘并求和，得到输出某个位置的数值。Stride=1 时每走 1 格输出一个位置；Stride=2 时在输入上跳 2 格，输出空间尺寸通常降低。</p>
+<h3>反过来：一个输入值向输出贡献一个 kernel 形状的区域</h3>
+<p><strong>Transposed Convolution（转置卷积）<strong>常用作可学习的上采样。可以把输入特征图中的每个数看作</strong>缩放一个可学习的 kernel</strong>，再把这些 kernel 按 stride 指定的间隔写到大输出网格；重叠位置的数值<strong>相加</strong>。课件第 25 页强调“输入给 kernel 加权、stride 控制输出移动步长”，第 26 页特别标注“重叠部分求和”。</p>
+<div class="process"><span>2×2 特征</span><i>→</i><span>每个数 × 3×3 kernel</span><i>→</i><span>错位放置并求和</span><i>→</i><span>更大特征图</span></div>
+<p><strong>注意术语</strong>：它不是真的把卷积过程“可逆还原”出原始输入；名字中的 transposed 是指<strong>线性算子表示的矩阵转置</strong>，也不代表权重一定是普通卷积的逆矩阵。</p>
+<h3>尺寸公式（常见二维情形，单个空间轴）</h3>
+<div class="formula">H_out = (H_in − 1) × stride − 2 × padding + dilation × (kernel − 1) + output_padding + 1</div>
+<p>课件第 25–26 页的示意使用 <strong><code>2×2 → 4×4</code>、kernel=3、stride=2、padding=1</strong>。代入公式，若 <code>output_padding=0</code> 则输出是 <code>3×3</code>；要得到课件图中的 <code>4×4</code>，还需要 <strong><code>output_padding=1</code></strong>（或等价的边界尺寸设定）。这是课件图形为了可视化简化而没有单列的参数，编程时不能忽略。</p>
+<p>例如 PyTorch：</p>
+<pre><code class="language-python">import torch
+from torch import nn
+x = torch.randn(1, 8, 2, 2)  # N, C, H, W
+up = nn.ConvTranspose2d(8, 4, kernel_size=3,
+                        stride=2, padding=1,
+                        output_padding=1)
+y = up(x)
+print(y.shape)  # torch.Size([1, 4, 4, 4])
+</code></pre>
+<p><strong>为什么需要学习？</strong> 最近邻插值仅复制数字；转置卷积能通过训练优化生成空间结构。但转置卷积也可能出现棋盘状伪影（checkerboard artefacts），在有些实现中可用“插值上采样 + 普通卷积”作为替代。后一个判断属于帮助选择架构的延伸说明。</p>
+</div></section><section class="chapter" id="unet" data-part="第二部分 · 语义分割">
+    <div class="chapter-top"><span class="chapter-tag">第二部分 · 语义分割</span><button class="mark-done" type="button" data-key="unet" aria-pressed="false">标记已掌握</button></div>
+    <h2>U-Net：把浅层位置细节传给深层语义</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part II: 29</a></p><div class="chapter-content"><div class="figure"><div class="figure-scroll"><svg viewBox="0 0 890 282" role="img" aria-label="全卷积编码解码架构及 U-Net 跳跃连接"><defs><marker id="ar02" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="#56758e"/></marker></defs><g font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" fill="#25384b"><text x="445" y="22" font-size="20" font-weight="700">U-Net：编码器 + 解码器 + Skip Connections</text>
+<g fill="#dce7f6" stroke="#4775ae" stroke-width="2"><rect x="65" y="76" width="112" height="140" rx="8"/><rect x="201" y="98" width="100" height="118" rx="8"/><rect x="325" y="126" width="95" height="90" rx="8"/><rect x="446" y="126" width="95" height="90" rx="8"/><rect x="565" y="98" width="100" height="118" rx="8"/><rect x="689" y="76" width="112" height="140" rx="8"/></g>
+<g fill="#22384b"><text x="121" y="153">H×W</text><text x="251" y="163">H/2</text><text x="372" y="177">H/4</text><text x="494" y="177">H/4</text><text x="615" y="163">H/2</text><text x="745" y="153">H×W</text></g>
+<g stroke="#56758e" stroke-width="3" fill="none" marker-end="url(#ar02)"><path d="M177 166H201 M301 166H325 M420 166H446 M541 166H565 M665 166H689"/></g>
+<g stroke="#d28f45" stroke-width="3" fill="none" marker-end="url(#ar02)"><path d="M121 76V44H745V76 M251 98V61H615V98"/></g><text x="445" y="47" fill="#a8661a">复制浅层细节</text><text x="445" y="81" fill="#a8661a">同尺度连接</text><text x="445" y="248" fill="#687d8f">左侧：高分辨率→低分辨率 · 右侧：逐级恢复位置精度</text></g></svg></div><div class="figcap">原创 U-Net 示意 · 实际网络还包含多层卷积、通道变化和拼接；此图省略细节以强调主线。</div></div><p>U-Net 继承 Encoder–Decoder 的结构，但多了非常重要的 <strong>Skip Connections（跨层连接）</strong>。它的结构像字母 <strong>U</strong>：左边一路下采样，底部表示高层语义，右边一路上采样。</p>
+<h3>为什么只用低分辨率瓶颈不够？</h3>
+<p>例如原图里的细小血管或羊腿：下采样以后可能只剩一两个特征位置，精确边界信息被压缩。Decoder 即使放大，也不一定能凭空恢复这部分细节。</p>
+<p><strong>U-Net 用同分辨率的 Encoder 特征直接帮助 Decoder。</strong> 常见做法是将 Encoder 的特征 map 与 Decoder 上采样后的 feature map 在<strong>通道维度拼接（concatenate）</strong>，然后继续卷积融合。</p>
+<div class="formula">F_decoder,new = Conv(Concat(F_encoder, Up(F_decoder,low)))</div>
+<p>这同时提供两种信息：<strong>浅层“在哪里”</strong> 和 <strong>深层“是什么”</strong>。可用于医学、卫星、自然场景等像素级分割任务。课件强调 U-Net 可以 <strong>end-to-end</strong> 学习。</p>
+<p><strong>别和 ResNet 跳跃连接混淆：</strong> U-Net 跨 Encoder–Decoder 通常 <strong>concat</strong> 不同层特征；ResNet 的 residual connection 典型操作是<strong>逐元素相加</strong> <code>y = F(x) + x</code>。这也是后面 ResUNet 既使用 U 形结构又使用 Residual Blocks 的原因。</p>
+</div></section><section class="chapter" id="unetvariants" data-part="第二部分 · 语义分割">
+    <div class="chapter-top"><span class="chapter-tag">第二部分 · 语义分割</span><button class="mark-done" type="button" data-key="unetvariants" aria-pressed="false">标记已掌握</button></div>
+    <h2>U-Net 家族：Attention U-Net、ResUNet、TransUNet</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part II: 30–32</a></p><div class="chapter-content"><p>三者均不是“抛弃 U-Net”，而是针对 U-Net 的某个瓶颈增加新机制。</p>
+<h3>Attention U-Net（课件第 30 页）</h3>
+<p>保持 U 形编码器-解码器，但在 <strong>skip connections 上加入注意力门控（attention-gated skip）</strong>。它学习哪些位置/通道的低层特征更值得传给 Decoder。例如背景很复杂、目标是少量细小器官时，希望减少无关背景的传入。它不是简单给整个网络塞一个完整大型 Transformer。</p>
+<h3>ResUNet / ResUNet-a（第 31 页）</h3>
+<p>在 U-Net 主干中加入 <strong>Residual Blocks</strong>，用 <code>F(x) + x</code> 形式的残差通路改善较深网络的优化、梯度传播；课件引用遥感语义分割中的 <strong>ResUNet-a</strong>。<strong>注意：跨层 U-Net skip 和块内部残差 skip 可以同时存在</strong>，功能不同。</p>
+<h3>TransUNet（第 32 页）</h3>
+<p>将 <strong>Transformer 的全局建模能力</strong>与 CNN/U-Net 的局部与多尺度恢复相结合，通常由 CNN 提取局部特征，Transformer 建模较长距离的依赖，再用 U 形 Decoder 恢复空间细节。课件引用其在医学图像分割的工作。</p>
+<table>
+<thead>
+<tr>
+<th>变体</th>
+<th>最主要新增机制</th>
+<th>主要想解决的问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>原版 U-Net</td>
+<td>Encoder–Decoder Skip Concat</td>
+<td>细节恢复困难</td>
+</tr>
+<tr>
+<td>Attention U-Net</td>
+<td>注意力门控 Skip</td>
+<td>无关背景干扰</td>
+</tr>
+<tr>
+<td>ResUNet</td>
+<td>残差块</td>
+<td>深网络优化与特征提取</td>
+</tr>
+<tr>
+<td>TransUNet</td>
+<td>Transformer + CNN / U-Net</td>
+<td>远距离上下文与局部细节协同</td>
+</tr>
+</tbody>
+</table>
+<p>**选择原则：**不是新模型一定比旧模型强。课件展示的是代表性结构与论文，不是声称 Attention / Residual / Transformer 在任何数据集上都会更高分。医学小样本、内存预算、输入分辨率与训练量会影响结果。</p>
+</div></section><section class="chapter" id="instance" data-part="第二部分 · 实例分割">
+    <div class="chapter-top"><span class="chapter-tag">第二部分 · 实例分割</span><button class="mark-done" type="button" data-key="instance" aria-pressed="false">标记已掌握</button></div>
+    <h2>实例分割：语义 mask 还差一步</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part II: 33–34</a></p><div class="chapter-content"><p>语义分割可以把图里所有的“人”标成同一个语义类别，但若两个人碰在一起，它通常不输出一个独立的“这是第 1 个人 / 第 2 个人”的对象列表。</p>
+<p><strong>Instance Segmentation</strong>输出多个对象实例：每个实例可拥有<strong>类别、置信度、矩形框和属于该实例的像素掩码</strong>。同类对象必须区分开来。</p>
+<p>比如两个相邻的骑车者：</p>
+<ul>
+<li>目标检测：输出两个人框与两辆自行车框。</li>
+<li>语义分割：所有人的像素标为 <code>person</code>，所有车的像素标为 <code>bicycle</code>。</li>
+<li>实例分割：分别给 <code>person #1</code>, <code>person #2</code>, <code>bicycle #1</code>, <code>bicycle #2</code> 建立单独 mask。</li>
+</ul>
+<p>这一任务就自然引出 <strong>Mask R-CNN</strong>——把已经能够找出每个对象 RoI 的 Faster R-CNN 进一步拓展到像素级预测。</p>
+</div></section><section class="chapter" id="mask" data-part="第二部分 · 实例分割">
+    <div class="chapter-top"><span class="chapter-tag">第二部分 · 实例分割</span><button class="mark-done" type="button" data-key="mask" aria-pressed="false">标记已掌握</button></div>
+    <h2>Mask R-CNN：在 Faster R-CNN 上再加 Mask Head</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part II: 34–40</a></p><div class="chapter-content"><h3>网络结构</h3>
+<p>Mask R-CNN 继承 <strong>Backbone（可以结合 ResNet / ResNeXt 与 FPN）+ RPN + RoI 特征 + 分类与框回归</strong>。在每个 RoI 上额外增加一个<strong>全卷积 mask branch（Mask Head）</strong>，为检测到的对象输出小尺寸的二值 mask，再映射回图像位置。</p>
+<div class="process"><span>图像</span><i>→</i><span>Backbone + FPN</span><i>→</i><span>RPN 候选框</span><i>→</i><span>RoI Align</span><i>→</i><span>Class / Box / Mask</span></div>
+<p><strong>一个检测到的实例不只是一个像素类别</strong>：Mask Head 对 RoI 内部的像素做 foreground / background 判断，从而分辨出矩形框内哪些像素真属于该对象。</p>
+<h3>三项任务损失</h3>
+<div class="formula">L = L_cls + L_box + L_mask</div>
+<ul>
+<li><code>L_cls</code>：这个 RoI 是什么类别。</li>
+<li><code>L_box</code>：检测框的位置修正。</li>
+<li><code>L_mask</code>：这个 RoI 的像素 mask 是否接近真实 mask（典型实现使用每像素二元交叉熵）。</li>
+</ul>
+<p>第 39 页直接列出这个多任务损失。第 40 页展示以 <strong>ResNet-101</strong> 为骨干，在 <strong>MS COCO test set</strong> 上的实验结果图，用于说明实例分割质量。实验图代表论文时代与特定配置的结果，不能脱离条件视为当前最好水平。</p>
+<p><strong>为什么不是直接拿 Faster R-CNN 的框涂满？</strong> 框里还包含许多背景，只标矩形无法描出真实物体边界。因此要独立 mask head。</p>
+</div></section><section class="chapter" id="roialign" data-part="第二部分 · 实例分割">
+    <div class="chapter-top"><span class="chapter-tag">第二部分 · 实例分割</span><button class="mark-done" type="button" data-key="roialign" aria-pressed="false">标记已掌握</button></div>
+    <h2>RoI Align：细粒度分割为什么不能“随手取整”？</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part I: 33–37；Part II: 35–38</a></p><div class="chapter-content"><div class="figure"><div class="figure-scroll"><svg viewBox="0 0 800 270" role="img" aria-label="RoI Pooling 取整与 RoI Align 连续采样对比"><g font-family="system-ui,sans-serif" fill="#213a50" text-anchor="middle"><text x="195" y="26" font-size="20" font-weight="700">RoI Pooling</text><text x="605" y="26" font-size="20" font-weight="700">RoI Align</text><text x="195" y="254" font-size="15">投影框坐标量化 → 边界错位</text><text x="605" y="254" font-size="15">保留小数位置 → 双线性插值</text></g><g stroke="#b2c4ce" stroke-width="1"><rect x="75" y="48" width="240" height="180" fill="#edf4f8"/><rect x="485" y="48" width="240" height="180" fill="#edf4f8"/></g><g stroke="#bdced8" stroke-width="1"><path d="M115 48V228 M155 48V228 M195 48V228 M235 48V228 M275 48V228 M75 78H315 M75 108H315 M75 138H315 M75 168H315 M75 198H315"/><path d="M525 48V228 M565 48V228 M605 48V228 M645 48V228 M685 48V228 M485 78H725 M485 108H725 M485 138H725 M485 168H725 M485 198H725"/></g><g fill="none" stroke-width="3"><rect x="118" y="84" width="146" height="98" stroke="#d7a13a" stroke-dasharray="8 5"/><rect x="115" y="78" width="160" height="120" stroke="#b54844"/><rect x="528" y="84" width="146" height="98" stroke="#d7a13a" stroke-dasharray="8 5"/><rect x="528" y="84" width="146" height="98" stroke="#26769f"/></g><g fill="#26769f"><circle cx="546" cy="105" r="5"/><circle cx="565" cy="105" r="5"/><circle cx="623" cy="140" r="5"/><circle cx="642" cy="140" r="5"/></g><g font-family="system-ui,sans-serif" font-size="13" fill="#627789"><text x="84" y="241">橙色虚线：真实连续 RoI</text><text x="494" y="241">蓝色点：非整数位置的插值采样</text></g></svg></div><div class="figcap">原创示意 · 实际 RoI Align 的采样点在浮点坐标上，周围网格经双线性插值形成特征，而不是将边界先强制取整。</div></div><p>这是两份课件<strong>连接最紧密</strong>的知识点之一。</p>
+<h3>RoI Pooling 的问题</h3>
+<p>在 Fast R-CNN 的 RoI Pooling 中，候选框坐标投影到较粗的 feature map 后会<strong>量化（rounding / snapping to grid）</strong>，之后又按整数网格分 bin。框坐标可能只偏了几个像素，但被取整后特征采样对应的真实空间位置就产生误差。</p>
+<h3>RoI Align 的做法（课件第 36–38 页动画）</h3>
+<ol>
+<li>将候选区域按连续的、<strong>带小数的坐标</strong>映射到 feature map；不先强制对齐格点。</li>
+<li>把 RoI 划分为固定数量的 bin（比如 <code>7×7</code> 或 mask head 常用其他空间大小）。</li>
+<li>在每个 bin 的<strong>指定采样点</strong>上使用<strong>双线性插值（bilinear interpolation）</strong>，根据周围四个网格值计算连续位置的特征值。</li>
+<li>对各采样点做聚合（常见 average / max 等实现），得到固定大小的特征。</li>
+</ol>
+<p>双线性插值可以直观理解为：采样点落在四个像素中心之间，按水平和垂直距离分别加权，而不是直接去最近格点取整。</p>
+<div class="formula">f(x, y) ≈ Σ<sub>i∈四邻点</sub> wᵢ(x,y) · fᵢ，且 Σ wᵢ = 1</div>
+<p><strong>核心优势是空间对齐精度</strong>，不是换了另一套分类器。对像素级实例边界尤其重要；在目标检测仅预测矩形框时，量化误差相对容易被容忍。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>RoI Pooling</th>
+<th>RoI Align</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>空间位置</td>
+<td>先量化到整数网格</td>
+<td>保留浮点坐标</td>
+</tr>
+<tr>
+<td>取样</td>
+<td>整数 bin 上池化</td>
+<td>连续坐标双线性插值</td>
+</tr>
+<tr>
+<td>主要风险/优势</td>
+<td>特征轻微错位</td>
+<td>更精确的空间对齐</td>
+</tr>
+<tr>
+<td>课件出现</td>
+<td>Fast R-CNN</td>
+<td>Mask R-CNN</td>
+</tr>
+</tbody>
+</table>
+<p>**常见误解：**RoI Align 仍会输出固定尺寸的 RoI 特征，不等于取消 RoI，也不等于把图片恢复成原分辨率。</p>
+</div></section><section class="chapter" id="foundation" data-part="第二部分 · 视觉语言">
+    <div class="chapter-top"><span class="chapter-tag">第二部分 · 视觉语言</span><button class="mark-done" type="button" data-key="foundation" aria-pressed="false">标记已掌握</button></div>
+    <h2>Foundation Models：从单任务训练到可迁移表征</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part II: 41–44</a></p><div class="chapter-content"><p>两份课件前面主要是<strong>为特定任务设计的监督学习架构</strong>。第二份后半段转向 <strong>Foundation Models（基础模型）</strong>：先在非常大规模的数据上预训练一个通用表征系统，再迁移到分类、检测、分割、问答等下游任务。</p>
+<p>课件强调三点：</p>
+<ul>
+<li>训练往往需要大规模数据和大量模型参数。</li>
+<li>通常使用自监督学习目标（Self-supervised Objective），减少逐张人工打类别标签的需求。</li>
+<li>通过少量微调、线性探针、提示词或其他适配方式用于下游任务，期望在没有专门训练过的情形也具有泛化性。</li>
+</ul>
+<h3>课件的模型分类</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>课件列举</th>
+<th>主要能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>语言模型</td>
+<td><strong>BERT、T5、GPT</strong></td>
+<td>文本理解、生成或表示学习</td>
+</tr>
+<tr>
+<td>图文嵌入</td>
+<td><strong>CLIP、CoCa</strong></td>
+<td>图文共同表征与跨模态匹配</td>
+</tr>
+<tr>
+<td>视觉 + 语言</td>
+<td><strong>LLaVA、GPT、Gemini、Qwen</strong></td>
+<td>图文联合输入、用语言回答或生成</td>
+</tr>
+<tr>
+<td>其他视觉基础模型</td>
+<td><strong>Segment Anything、Stable Diffusion、Flux</strong></td>
+<td>分割提示或图像生成等特定视觉能力</td>
+</tr>
+</tbody>
+</table>
+<p>这只是课件举例，不代表所有同名产品版本都必然接受图像，也不代表所有基础模型都使用完全相同的自监督目标。</p>
+<h3>什么叫“相似的概念靠近，不同的概念分开”？</h3>
+<p>自监督/对比式表征学习中，模型把输入映射到<strong>Embedding Space（向量空间）</strong>。一张猫图与描述“一只猫”的文本，应得到方向相近的向量；与“飞机在跑道上”的文本则应较远。这样训练出的向量在新任务上可能具有迁移性。</p>
+<p>注意：<strong>自监督（self-supervised）描述监督信号如何来自数据本身；对比学习（contrastive learning）是一类训练目标</strong>。二者相关但并不完全同义。</p>
+</div></section><section class="chapter" id="clip" data-part="第二部分 · 视觉语言">
+    <div class="chapter-top"><span class="chapter-tag">第二部分 · 视觉语言</span><button class="mark-done" type="button" data-key="clip" aria-pressed="false">标记已掌握</button></div>
+    <h2>CLIP：图像与文字进入同一向量空间</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part II: 44–50</a></p><div class="chapter-content"><p><strong>CLIP = Contrastive Language–Image Pre-training</strong>。课件介绍的原始 CLIP 在预训练时使用约 <strong>4 亿（400M）图文配对</strong>，不是要求模型根据图片精确逐字复述文本，而是判断：<strong>这些文字是否描述了这张图片？</strong></p>
+<div class="figure"><div class="figure-scroll"><svg viewBox="0 0 850 310" role="img" aria-label="CLIP图文编码器与相似度矩阵"><defs><marker id="ar03" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="#6b8193"/></marker></defs><g font-family="system-ui,sans-serif" fill="#234055" text-anchor="middle"><rect x="20" y="20" width="185" height="118" rx="10" fill="#e8f1fb"/><text x="112" y="56" font-size="18" font-weight="700">三张图像</text><text x="112" y="89" font-size="15">猫 / 山 / 汽车</text><rect x="20" y="169" width="185" height="118" rx="10" fill="#f3ead5"/><text x="112" y="205" font-size="18" font-weight="700">三句文本</text><text x="112" y="237" font-size="15">猫 / 山 / 汽车的描述</text><rect x="266" y="28" width="164" height="90" rx="9" fill="#d5e7f5"/><text x="348" y="77" font-size="19" font-weight="700">Image Encoder</text><rect x="266" y="178" width="164" height="90" rx="9" fill="#e8dfc5"/><text x="348" y="228" font-size="19" font-weight="700">Text Encoder</text><g stroke="#6b8193" stroke-width="3" fill="none" marker-end="url(#ar03)"><path d="M205 78H266 M205 222H266 M430 74H475V143H517 M430 222H475V173H517"/></g><text x="658" y="35" font-size="18" font-weight="700">相似度矩阵</text><text x="658" y="294" font-size="15" fill="#667b8e">对角线 = 正确配对</text></g><g transform="translate(535 51)" stroke="#fff" stroke-width="3"><rect width="75" height="68" fill="#2a778c"/><rect x="80" width="75" height="68" fill="#e8eef2"/><rect x="160" width="75" height="68" fill="#e8eef2"/><rect y="73" width="75" height="68" fill="#e8eef2"/><rect x="80" y="73" width="75" height="68" fill="#2a778c"/><rect x="160" y="73" width="75" height="68" fill="#e8eef2"/><rect y="146" width="75" height="68" fill="#e8eef2"/><rect x="80" y="146" width="75" height="68" fill="#e8eef2"/><rect x="160" y="146" width="75" height="68" fill="#2a778c"/></g><g font-size="21" font-weight="700" text-anchor="middle" font-family="system-ui,sans-serif" fill="#fff"><text x="572" y="92">高</text><text x="652" y="165">高</text><text x="733" y="238">高</text></g></svg></div><div class="figcap">原创图示 · 图文分别编码成向量，通过对比学习使匹配对的相似度高、其他配对低。</div></div>
+<h3>训练时每一批数据做什么？</h3>
+<p>假设一个 batch 里有 <code>N</code> 组配对 <code>(I₁,T₁),…,(I_N,T_N)</code>：</p>
+<ol>
+<li><strong>Image Encoder</strong> 将每张图片变成向量 <code>vᵢ</code>；<strong>Text Encoder</strong> 将每句文本变成向量 <code>tⱼ</code>。</li>
+<li>对向量归一化后计算两两相似度（常见是点积/余弦相似度），得到 <code>N×N</code> 矩阵。</li>
+<li>矩阵的<strong>主对角线</strong> <code>(i,i)</code> 是真实配对，应得高分；其余 <code>(i,j), i≠j</code> 在 batch 中作为负配对应得低分。</li>
+<li>使用双向对比损失：图片找对的文本、文本找对的图片。反向传播更新编码器和可训练投影等参数。</li>
+</ol>
+<h3>Symmetric InfoNCE（双向对比损失）</h3>
+<div class="formula">sᵢⱼ = cosine(vᵢ, tⱼ) / τ</div>
+<div class="formula">L_image→text = −(1/N) Σᵢ log [ exp(sᵢᵢ) / Σⱼ exp(sᵢⱼ) ]</div>
+<div class="formula">L_text→image = −(1/N) Σᵢ log [ exp(sᵢᵢ) / Σⱼ exp(sⱼᵢ) ]</div>
+<div class="formula">L_CLIP = (L_image→text + L_text→image) / 2</div>
+<p><code>τ</code> 是 temperature 温度参数，控制相似度 Softmax 的尖锐程度；课件第 49 页注明<strong>省略温度等细节</strong>，上式是为帮助理解而补充的常见完整写法。课件第 46、49、50 页不断重复的核心就是<strong>最大化主对角线图文相似度</strong>并最小化错配相似度。</p>
+<h3>手算直觉</h3>
+<p>如果图 <code>I1</code> 真的是猫，文本 <code>T1</code> 是“猫”，文本 <code>T2</code> 是“飞机”；相似度 <code>[3.0, 0.5]</code> 经 Softmax，正确文本的概率显著更高。若另一次相似度 <code>[1.0, 1.1]</code>，模型当前反而略偏向飞机，那么损失会更大，训练会推动它纠正。</p>
+<p><strong>CLIP 与 LLaVA 不同：<strong>CLIP 主要提供</strong>图文对齐和相似度/嵌入</strong>，并非天然就会像聊天机器人一样输出长段回答。</p>
+</div></section><section class="chapter" id="clip-uses" data-part="第二部分 · 视觉语言">
+    <div class="chapter-top"><span class="chapter-tag">第二部分 · 视觉语言</span><button class="mark-done" type="button" data-key="clip-uses" aria-pressed="false">标记已掌握</button></div>
+    <h2>CLIP 预训练后：Zero-shot 与 Linear Probe</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part II: 51–52</a></p><div class="chapter-content"><h3>Zero-shot classification：不专门训练一个新分类头</h3>
+<p>假如要在 <code>cat / dog / horse</code> 之间分类：</p>
+<ol>
+<li>把候选类别包装成文本提示，如 <code>a photo of a cat</code>、<code>a photo of a dog</code>、<code>a photo of a horse</code>。</li>
+<li>分别经 Text Encoder 编码为类别文本向量。</li>
+<li>新图片经 Image Encoder 编码。</li>
+<li>计算图像向量与三个文本向量的相似度，选择分数最高者。</li>
+</ol>
+<div class="process"><span>输入图</span><i>→</i><span>CLIP 图像向量</span><i>↔</i><span>类别文字向量</span><i>→</i><span>最高匹配类别</span></div>
+<p>这样即使没有为这个特定标签集训练专用分类器，已有图文对齐能力也可能迁移过去。这就是课件第 51 页所示的 <strong>zero-shot prediction</strong>；但“零样本”不意味着无预训练数据或永远准确。</p>
+<h3>Linear Probe / Linear Classifier</h3>
+<p>另一种做法是<strong>冻结或复用 Image Encoder</strong>，提取训练图像的 embedding，再在少量带标签的下游样本上训练一个线性分类器。这和 zero-shot 使用文本提示不同，后者通常不需要新的标签训练步骤。</p>
+<p>课件还提到下游图像分类、目标检测、语义分割等。不过<strong>仅用一个全局 CLIP 向量并不能直接输出每个像素的 mask 或全部对象的 bounding boxes</strong>，要完成检测/分割还需空间特征、检测头、分割头或相关架构适配。</p>
+</div></section><section class="chapter" id="llava" data-part="第二部分 · 视觉语言">
+    <div class="chapter-top"><span class="chapter-tag">第二部分 · 视觉语言</span><button class="mark-done" type="button" data-key="llava" aria-pressed="false">标记已掌握</button></div>
+    <h2>LLaVA：把视觉 token 接到语言模型里</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part II: 53–56</a></p><div class="chapter-content"><p><strong>LLaVA = Large Language and Vision Assistant</strong>。课件从 LLM 的自回归训练切入：大语言模型最熟悉的任务是<strong>根据前面的 token 预测下一个 token</strong>，但它天生输入的是语言 token。问题是：如何让它“看见”图像，并据此回答自然语言提问？</p>
+<div class="figure"><div class="figure-scroll"><svg viewBox="0 0 900 165" role="img" aria-label="LLaVA图像编码器、投影层与语言模型之间的处理流程"><defs><marker id="ar04" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="#667b8d"/></marker></defs><g font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" fill="#243f54"><rect x="8" y="36" width="135" height="82" rx="10" fill="#e7f0f9"/><text x="75" y="71" font-weight="700">输入图片</text><text x="75" y="95" font-size="13">Image</text><rect x="193" y="36" width="155" height="82" rx="10" fill="#dfece7"/><text x="270" y="70" font-weight="700">视觉编码器</text><text x="270" y="94" font-size="13">如 CLIP ViT</text><rect x="398" y="36" width="147" height="82" rx="10" fill="#f6ebd2"/><text x="472" y="70" font-weight="700">投影 / 连接层</text><text x="472" y="94" font-size="13">对齐向量维度</text><rect x="595" y="36" width="142" height="82" rx="10" fill="#e8e1ef"/><text x="666" y="70" font-weight="700">语言模型</text><text x="666" y="94" font-size="13">图像 token + 提问</text><rect x="788" y="36" width="104" height="82" rx="10" fill="#d9eee9"/><text x="840" y="73" font-weight="700">文字回答</text><g stroke="#667b8d" stroke-width="3" fill="none" marker-end="url(#ar04)"><path d="M143 77H193 M348 77H398 M545 77H595 M737 77H788"/></g></g></svg></div><div class="figcap">原创 LLaVA 工作流示意 · 视觉信息转为 LLM 能处理的 token 表示，再通过自回归预测生成回答。</div></div>
+<h3>三个组件</h3>
+<ol>
+<li><strong>视觉编码器（Vision Encoder）</strong>：将图像编码为视觉特征或一组图像 tokens；课件 LLaVA 结构图举了 CLIP 视觉编码器。</li>
+<li><strong>连接 / 投影模块（Projection）</strong>：如线性层，把视觉特征投影到 LLM 能接收的 embedding 维度，形成可与文本 token 放在统一序列中的表示。</li>
+<li><strong>语言模型（LLM）</strong>：在带有视觉信息与用户提问的上下文中，自回归输出回答 token。</li>
+</ol>
+<h3>训练过程直觉</h3>
+<p>课件第 55 页引用 LLaVA 的训练配方和原始架构图，突出<strong>视觉编码器、投影层和 LLM</strong> 的连接。典型原始 LLaVA 训练思路分为<strong>图文特征对齐（feature alignment）<strong>与</strong>视觉指令微调（visual instruction tuning）</strong>：先让视觉信息进入 LLM 的输入空间，再用图像问答、描述、推理等指令数据学习回答方式。不同 LLaVA 版本在冻结哪些模块、训练哪些参数上可能有不同配置。</p>
+<p>课件第 56 页展示原始 <em>Visual Instruction Tuning</em> 的视觉问答例子：<strong>图片 + 用户自然语言要求 → 多模态模型生成对图片内容的描述、解释或回答</strong>。因此这是“视觉内容参与生成语言回答”，而不是 CLIP 那样仅返回图文匹配分数。</p>
+<h3>对比 CLIP 与 LLaVA</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>CLIP</th>
+<th>LLaVA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输入</td>
+<td>图片、文本，可分别编码</td>
+<td>图片 + 用户文本提示</td>
+</tr>
+<tr>
+<td>核心输出</td>
+<td>向量、相似度、分类分数</td>
+<td>自然语言 token 序列</td>
+</tr>
+<tr>
+<td>关键训练理念</td>
+<td>对比式图文对齐</td>
+<td>视觉特征对接 LLM + 指令训练</td>
+</tr>
+<tr>
+<td>适合举例</td>
+<td>图文检索、zero-shot 分类</td>
+<td>解释图片、回答视觉问题</td>
+</tr>
+</tbody>
+</table>
+<p><strong>局限</strong>：从图片中生成语言，不代表生成内容必然真实。若图像模糊、视觉编码损失细节或语言模型猜测内容，可能出现视觉幻觉；这是多模态生成系统普遍需要评估的风险。</p>
+</div></section><section class="chapter" id="seg-resources" data-part="第二部分 · 视觉语言">
+    <div class="chapter-top"><span class="chapter-tag">第二部分 · 视觉语言</span><button class="mark-done" type="button" data-key="seg-resources" aria-pressed="false">标记已掌握</button></div>
+    <h2>分割与视觉语言的实现/论文入口</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">Part II: 57–61</a></p><div class="chapter-content"><p>课件最后两组幻灯片列出用于复现或拓展学习的现成实现。下面保留对学习最有帮助的入口：</p>
+<ul>
+<li><a href="https://nn.labml.ai/unet/index.html">labml · U-Net PyTorch 从头实现</a></li>
+<li><a href="https://pytorch.org/hub/mateuszbuda_brain-segmentation-pytorch_unet/">PyTorch Hub · U-Net 脑部 MRI 分割</a></li>
+<li><a href="https://pyimagesearch.com/2021/11/08/u-net-training-image-segmentation-models-in-pytorch/">PyImageSearch · U-Net 训练教程</a></li>
+<li><a href="https://www.tensorflow.org/tfmodels/vision/semantic_segmentation">TensorFlow Model Garden · Semantic Segmentation</a></li>
+<li><a href="https://pytorch.org/vision/main/models/mask_rcnn.html">torchvision · Mask R-CNN</a></li>
+<li><a href="https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html">torchvision · Mask R-CNN 实例分割微调</a></li>
+<li><a href="https://arxiv.org/pdf/2304.08485">LLaVA 原始 Visual Instruction Tuning 论文</a></li>
+<li><a href="https://lilianweng.github.io/posts/2021-05-31-contrastive/">CLIP 对比学习深入阅读（课件引用）</a></li>
+</ul>
+<p>课件参考的经典论文：<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Long_Fully_Convolutional_Networks_2015_CVPR_paper.pdf">FCN (2015)</a> · <a href="https://link.springer.com/chapter/10.1007/978-3-319-24574-4_28">U-Net (2015)</a> · <a href="https://openreview.net/forum?id=Skft7cijM">Attention U-Net (2018)</a> · <a href="https://www.sciencedirect.com/science/article/abs/pii/S0924271620300149">ResUNet-a</a> · <a href="https://arxiv.org/abs/2102.04306">TransUNet</a> · <a href="https://openaccess.thecvf.com/content_ICCV_2017/papers/He_Mask_R-CNN_ICCV_2017_paper.pdf">Mask R-CNN</a>。</p>
+<p>第 59–61 页也复用了第一份的参考书以及 CS231n 部分授课材料作为来源。这里保留原始学习路径，但这些链接的即时可用性并未在制作时逐个联网验证；如果网页迁移，可使用论文名查找官方版本。</p>
+</div></section><section class="chapter" id="formula-sheet" data-part="复习 · 巩固">
+    <div class="chapter-top"><span class="chapter-tag">复习 · 巩固</span><button class="mark-done" type="button" data-key="formula-sheet" aria-pressed="false">标记已掌握</button></div>
+    <h2>必会公式与张量维度速查</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">两份课件相关公式汇总</a></p><div class="chapter-content"><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>公式 / 张量</th>
+<th>这表示什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IoU</td>
+<td><code>Intersection / Union</code></td>
+<td>两个矩形重合比例</td>
+</tr>
+<tr>
+<td>单对象检测</td>
+<td><code>class logits + 4 bbox values</code></td>
+<td>类别和位置两分支</td>
+</tr>
+<tr>
+<td>RPN（每位置 k anchors）</td>
+<td><code>2k class scores + 4k bbox offsets</code></td>
+<td>对 k 个 anchor 分别二分类和回归</td>
+</tr>
+<tr>
+<td>RPN 候选数量示例</td>
+<td><code>11×15×9 = 1485</code></td>
+<td>特征图位置数乘以每位置 anchor 数</td>
+</tr>
+<tr>
+<td>YOLO v1 每格输出</td>
+<td><code>B×5+C = 2×5+20=30</code></td>
+<td>2 框 + VOC 20 类</td>
+</tr>
+<tr>
+<td>YOLO v1 整图输出</td>
+<td><code>7×7×30</code></td>
+<td>S×S 个网格预测</td>
+</tr>
+<tr>
+<td>Semantic segmentation logits</td>
+<td><code>N×C×H×W</code></td>
+<td>每像素 C 个类别分数</td>
+</tr>
+<tr>
+<td>Semantic segmentation 预测</td>
+<td><code>N×H×W</code></td>
+<td><code>argmax</code> 后类别索引</td>
+</tr>
+<tr>
+<td>转置卷积尺寸</td>
+<td><code>(H−1)s−2p+d(k−1)+op+1</code></td>
+<td>注意 <code>output_padding</code></td>
+</tr>
+<tr>
+<td>Mask R-CNN loss</td>
+<td><code>L_cls + L_box + L_mask</code></td>
+<td>分类、框回归、像素 mask</td>
+</tr>
+<tr>
+<td>RetinaNet Focal Loss</td>
+<td><code>−αₜ(1−pₜ)^γ log(pₜ)</code></td>
+<td>易样本自动降权</td>
+</tr>
+<tr>
+<td>CLIP batch 相似度</td>
+<td><code>N×N</code></td>
+<td>对角线是 N 组正确配对</td>
+</tr>
+<tr>
+<td>CLIP 双向 loss</td>
+<td><code>(L_i2t+L_t2i)/2</code></td>
+<td>图片检索文本 + 文本检索图片</td>
+</tr>
+</tbody>
+</table>
+<h3>三个非常容易错的地方</h3>
+<ul>
+<li><strong>张量的 <code>N, C, H, W</code></strong>：<code>N</code> 是 batch size；<code>C</code> 可能是 RGB 输入的 3，也可能是分割类别数或中间特征通道数，需要看上下文。</li>
+<li><strong>Downsampling 与 Upsampling</strong>：上采样恢复了网格尺寸，<strong>不意味着所有丢失的信息自动恢复</strong>；U-Net skips 恰好是为了帮助传递原来的细节。</li>
+<li><strong>“One-stage” 与 “only one output”</strong>：One-stage 指检测架构的处理流程，不限制输出框的数量，更不意味着不需要后处理。</li>
+</ul>
+</div></section><section class="chapter" id="mistakes" data-part="复习 · 巩固">
+    <div class="chapter-top"><span class="chapter-tag">复习 · 巩固</span><button class="mark-done" type="button" data-key="mistakes" aria-pressed="false">标记已掌握</button></div>
+    <h2>高频易错概念对照表</h2><p class="source-note">对应课件：<a href="#page-index" class="page-label" title="查看课件页码对照表">汇总两份课件</a></p><div class="chapter-content"><table>
+<thead>
+<tr>
+<th>容易混淆</th>
+<th>正确区别</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Anchor vs Proposal</strong></td>
+<td>Anchor 是预设参考框；Proposal 是筛选/回归得到的候选区域</td>
+</tr>
+<tr>
+<td><strong>Proposal vs Detection</strong></td>
+<td>候选区域不一定是真物体；最终检测包含类别、得分、位置</td>
+</tr>
+<tr>
+<td><strong>IoU vs NMS</strong></td>
+<td>IoU 是计算重叠的公式；NMS 是利用 IoU 去除重复候选的算法</td>
+</tr>
+<tr>
+<td><strong>AP vs IoU</strong></td>
+<td>AP 是检测排序与查准/查全的综合指标；IoU 判断具体框的匹配程度</td>
+</tr>
+<tr>
+<td><strong>SPP vs FPN</strong></td>
+<td>SPP 将任意大小区域池化成固定向量；FPN 融合多尺度语义特征</td>
+</tr>
+<tr>
+<td><strong>RoI Pooling vs RoI Align</strong></td>
+<td>前者取整易错位；后者双线性插值保留连续坐标</td>
+</tr>
+<tr>
+<td><strong>Selective Search vs RPN</strong></td>
+<td>前者是固定图像区域合并算法；后者是可训练的 proposal 网络</td>
+</tr>
+<tr>
+<td><strong>SSD default boxes vs RPN anchors</strong></td>
+<td>都是参考框思想，但位于不同检测器的不同预测路径</td>
+</tr>
+<tr>
+<td><strong>OHEM vs Focal Loss</strong></td>
+<td>前者显式选困难样本；后者对每个样本的损失连续调整权重</td>
+</tr>
+<tr>
+<td><strong>Semantic vs Instance Segmentation</strong></td>
+<td>前者每像素类别；后者还识别属于哪个具体个体</td>
+</tr>
+<tr>
+<td><strong>Unpooling vs Transposed Conv</strong></td>
+<td>Unpooling 还原空间布局；转置卷积用可训练权重生成大特征图</td>
+</tr>
+<tr>
+<td><strong>U-Net Skip vs Residual Skip</strong></td>
+<td>U-Net 同尺度常 concat；ResNet 内部常 addition</td>
+</tr>
+<tr>
+<td><strong>CLIP vs LLaVA</strong></td>
+<td>CLIP 对齐图文向量；LLaVA 用图像信息指导语言 token 生成</td>
+</tr>
+<tr>
+<td><strong>Zero-shot vs Linear Probe</strong></td>
+<td>Zero-shot 可直接比较文本标签与图向量；Linear Probe 需要训练线性分类头</td>
+</tr>
+</tbody>
+</table>
+<h3>用两条“为何升级”问题检测是否真正掌握</h3>
+<p>**第一条：**R-CNN 太慢 → 怎样避免对 2000 个窗口重复跑 CNN？（SPP / Fast R-CNN）→ 为什么 Fast 还慢？（外部候选框）→ 如何解决？（RPN）→ 为什么一阶段更难训练？（海量背景）→ 怎样改进？（Focal Loss 与多尺度特征）。</p>
+<p>**第二条：**逐像素 patch 太慢 → 如何一次输出整幅 mask？（FCN）→ 低分辨率怎么变回输入大小？（Upsampling）→ 小边界如何恢复？（U-Net skip）→ 如何分开相同类别的不同个体？（Mask R-CNN）→ 为什么 RoI Pooling 不够？（RoI Align）。</p>
+</div></section>
+<section class="chapter" id="exam"><div class="chapter-top"><span class="chapter-tag">复习 · 巩固</span></div><h2>互动自测 · 12 题</h2><p class="source-note">前两题来自课件最后一页；其余是依据两份课件知识点设计的讲解练习。</p><p class="quiz-intro">每题选择答案后点击“检查答案”，页面会立即给出正误和原因。所有交互均在浏览器本地完成。</p><div class="quiz-grid"><article class="quiz-card" data-quiz="0" data-correct="2"><div class="quiz-meta">Part I p74 · 课件原题 · 第 1 / 12 题</div><h3>Which one of the following statements about data augmentation is correct?（数据增强的正确描述是什么？）</h3><div class="quiz-options"><label class="quiz-option"><input type="radio" name="question-0" value="0"><span>A. 会增加模型参数量</span></label><label class="quiz-option"><input type="radio" name="question-0" value="1"><span>B. 会减小数据集大小以加快训练</span></label><label class="quiz-option"><input type="radio" name="question-0" value="2"><span>C. 通过变换现有数据生成新的训练样本</span></label><label class="quiz-option"><input type="radio" name="question-0" value="3"><span>D. 会减少网络深度</span></label></div><div class="quiz-actions"><button type="button" class="check-answer">检查答案</button><div class="quiz-feedback" role="status" aria-live="polite"></div></div><p class="quiz-reason" hidden>C 正确。翻转、裁剪、颜色扰动、尺度变化等扩大训练样本的变化范围，不会必然改变网络参数量或结构。</p></article><article class="quiz-card" data-quiz="1" data-correct="1"><div class="quiz-meta">Part II p62 · 课件原题 · 第 2 / 12 题</div><h3>What kind of neural network is most suited for image segmentation tasks?（下列哪类网络最适合图像分割？）</h3><div class="quiz-options"><label class="quiz-option"><input type="radio" name="question-1" value="0"><span>A. Multilayer perceptron（MLP）</span></label><label class="quiz-option"><input type="radio" name="question-1" value="1"><span>B. Fully convolutional network（FCN）</span></label><label class="quiz-option"><input type="radio" name="question-1" value="2"><span>C. Region proposal network（RPN）</span></label><label class="quiz-option"><input type="radio" name="question-1" value="3"><span>D. Recurrent neural network（RNN）</span></label></div><div class="quiz-actions"><button type="button" class="check-answer">检查答案</button><div class="quiz-feedback" role="status" aria-live="polite"></div></div><p class="quiz-reason" hidden>B 正确。FCN 可保留并恢复空间结构，对整幅图输出逐像素预测；RPN 主要提出候选区域。</p></article><article class="quiz-card" data-quiz="2" data-correct="1"><div class="quiz-meta">目标检测 · 第 3 / 12 题</div><h3>R-CNN 相比 Fast R-CNN 最明显的效率问题是什么？</h3><div class="quiz-options"><label class="quiz-option"><input type="radio" name="question-2" value="0"><span>A. 完全无法预测类别</span></label><label class="quiz-option"><input type="radio" name="question-2" value="1"><span>B. 每个候选区域单独进行 CNN 特征提取</span></label><label class="quiz-option"><input type="radio" name="question-2" value="2"><span>C. 使用太少的训练数据</span></label><label class="quiz-option"><input type="radio" name="question-2" value="3"><span>D. 不允许多个目标</span></label></div><div class="quiz-actions"><button type="button" class="check-answer">检查答案</button><div class="quiz-feedback" role="status" aria-live="polite"></div></div><p class="quiz-reason" hidden>R-CNN 在大量相似 RoI 上重复 CNN 前向传播；Fast R-CNN 对整张图抽共享特征再做 RoI Pooling。</p></article><article class="quiz-card" data-quiz="3" data-correct="1"><div class="quiz-meta">区域提议 · 第 4 / 12 题</div><h3>哪项说法最准确描述 Anchor 和 Proposal？</h3><div class="quiz-options"><label class="quiz-option"><input type="radio" name="question-3" value="0"><span>A. Anchor 是最终检测框，Proposal 是真实标注</span></label><label class="quiz-option"><input type="radio" name="question-3" value="1"><span>B. Anchor 是参考框，Proposal 可由 Anchor 经预测修正和筛选得到</span></label><label class="quiz-option"><input type="radio" name="question-3" value="2"><span>C. 二者都必须由 Selective Search 生成</span></label><label class="quiz-option"><input type="radio" name="question-3" value="3"><span>D. Anchor 只在 CLIP 使用</span></label></div><div class="quiz-actions"><button type="button" class="check-answer">检查答案</button><div class="quiz-feedback" role="status" aria-live="polite"></div></div><p class="quiz-reason" hidden>Anchor 是预设尺度/宽高比的参考框；RPN 预测前景分数与偏移，得到候选区域。</p></article><article class="quiz-card" data-quiz="4" data-correct="0"><div class="quiz-meta">检测后处理 · 第 5 / 12 题</div><h3>NMS 中阈值从 0.7 降到 0.3，通常会怎样？</h3><div class="quiz-options"><label class="quiz-option"><input type="radio" name="question-4" value="0"><span>A. 更严格地删除重叠框，可能漏掉紧邻物体</span></label><label class="quiz-option"><input type="radio" name="question-4" value="1"><span>B. 更容易保留大量重复框</span></label><label class="quiz-option"><input type="radio" name="question-4" value="2"><span>C. 消除所有目标定位误差</span></label><label class="quiz-option"><input type="radio" name="question-4" value="3"><span>D. 改变 CNN 权重</span></label></div><div class="quiz-actions"><button type="button" class="check-answer">检查答案</button><div class="quiz-feedback" role="status" aria-live="polite"></div></div><p class="quiz-reason" hidden>IoU 大于阈值的框会被删除。阈值变低更容易触发抑制，保留的高重叠框通常会更少。</p></article><article class="quiz-card" data-quiz="5" data-correct="1"><div class="quiz-meta">YOLO · 第 6 / 12 题</div><h3>早期 YOLO v1 在 PASCAL VOC 上为什么输出 7×7×30？</h3><div class="quiz-options"><label class="quiz-option"><input type="radio" name="question-5" value="0"><span>A. 30 代表 30 张输入图片</span></label><label class="quiz-option"><input type="radio" name="question-5" value="1"><span>B. 每格 2×5 个框相关量 + 20 个类别量</span></label><label class="quiz-option"><input type="radio" name="question-5" value="2"><span>C. 只允许 30 个物体</span></label><label class="quiz-option"><input type="radio" name="question-5" value="3"><span>D. 7×7 是整个输出图片像素</span></label></div><div class="quiz-actions"><button type="button" class="check-answer">检查答案</button><div class="quiz-feedback" role="status" aria-live="polite"></div></div><p class="quiz-reason" hidden>7×7 是 S×S 网格，30=2×5+20，是原版 YOLO v1 在 VOC 20 类上的设计，不代表所有 YOLO 版本。</p></article><article class="quiz-card" data-quiz="6" data-correct="2"><div class="quiz-meta">单阶段训练 · 第 7 / 12 题</div><h3>Focal Loss 的核心作用是什么？</h3><div class="quiz-options"><label class="quiz-option"><input type="radio" name="question-6" value="0"><span>A. 将图像变成黑白</span></label><label class="quiz-option"><input type="radio" name="question-6" value="1"><span>B. 完全删除所有负样本</span></label><label class="quiz-option"><input type="radio" name="question-6" value="2"><span>C. 自动降低容易分类样本对损失的贡献</span></label><label class="quiz-option"><input type="radio" name="question-6" value="3"><span>D. 让所有卷积都不需要梯度</span></label></div><div class="quiz-actions"><button type="button" class="check-answer">检查答案</button><div class="quiz-feedback" role="status" aria-live="polite"></div></div><p class="quiz-reason" hidden>通过 (1−pₜ)^γ 因子降低高置信度正确样本的权重，减轻密集检测中易负样本的主导影响。</p></article><article class="quiz-card" data-quiz="7" data-correct="1"><div class="quiz-meta">语义分割 · 第 8 / 12 题</div><h3>为什么分割网络的普通 Encoder 最后还需要 Decoder？</h3><div class="quiz-options"><label class="quiz-option"><input type="radio" name="question-7" value="0"><span>A. 必须输出一个 1000 类向量</span></label><label class="quiz-option"><input type="radio" name="question-7" value="1"><span>B. 下采样减少空间尺寸，需要恢复像素预测分辨率</span></label><label class="quiz-option"><input type="radio" name="question-7" value="2"><span>C. 因为下采样会把颜色转为灰度</span></label><label class="quiz-option"><input type="radio" name="question-7" value="3"><span>D. 为了训练 SVM</span></label></div><div class="quiz-actions"><button type="button" class="check-answer">检查答案</button><div class="quiz-feedback" role="status" aria-live="polite"></div></div><p class="quiz-reason" hidden>分类 CNN 的深层特征空间尺寸变小；语义分割需要恢复到 H×W 的像素标签布局。</p></article><article class="quiz-card" data-quiz="8" data-correct="1"><div class="quiz-meta">上采样 · 第 9 / 12 题</div><h3>Max Unpooling 可以从 pooled 的最大值完全恢复原始 2×2 数字吗？</h3><div class="quiz-options"><label class="quiz-option"><input type="radio" name="question-8" value="0"><span>A. 可以，它是数学上的完美逆变换</span></label><label class="quiz-option"><input type="radio" name="question-8" value="1"><span>B. 只能用记录的最大值位置放回保留值，其他信息丢失</span></label><label class="quiz-option"><input type="radio" name="question-8" value="2"><span>C. 一定产生 7×7 的输出</span></label><label class="quiz-option"><input type="radio" name="question-8" value="3"><span>D. 只能用于目标检测</span></label></div><div class="quiz-actions"><button type="button" class="check-answer">检查答案</button><div class="quiz-feedback" role="status" aria-live="polite"></div></div><p class="quiz-reason" hidden>Max Pooling 丢弃非最大值；Max Unpooling 用 indices 定位最大值的位置，其他位置通常填零。</p></article><article class="quiz-card" data-quiz="9" data-correct="1"><div class="quiz-meta">实例分割 · 第 10 / 12 题</div><h3>为什么 Mask R-CNN 使用 RoI Align 而不是普通 RoI Pooling？</h3><div class="quiz-options"><label class="quiz-option"><input type="radio" name="question-9" value="0"><span>A. 因为 RoI Align 完全不使用 CNN</span></label><label class="quiz-option"><input type="radio" name="question-9" value="1"><span>B. 为了提升像素 mask 的空间对齐精度，避免坐标量化</span></label><label class="quiz-option"><input type="radio" name="question-9" value="2"><span>C. 因为它能自动扩大训练集</span></label><label class="quiz-option"><input type="radio" name="question-9" value="3"><span>D. 因为它只能处理一个目标</span></label></div><div class="quiz-actions"><button type="button" class="check-answer">检查答案</button><div class="quiz-feedback" role="status" aria-live="polite"></div></div><p class="quiz-reason" hidden>RoI Align 不做粗暴坐标取整，用双线性插值在连续位置采样，减轻分割边界错位。</p></article><article class="quiz-card" data-quiz="10" data-correct="2"><div class="quiz-meta">视觉语言 · 第 11 / 12 题</div><h3>CLIP 的 N×N 相似度矩阵中，训练最希望哪些位置分数较高？</h3><div class="quiz-options"><label class="quiz-option"><input type="radio" name="question-10" value="0"><span>A. 所有位置一样</span></label><label class="quiz-option"><input type="radio" name="question-10" value="1"><span>B. 随机选出的某一行</span></label><label class="quiz-option"><input type="radio" name="question-10" value="2"><span>C. 每个正确图文配对的对角线位置</span></label><label class="quiz-option"><input type="radio" name="question-10" value="3"><span>D. 所有非对角线位置</span></label></div><div class="quiz-actions"><button type="button" class="check-answer">检查答案</button><div class="quiz-feedback" role="status" aria-live="polite"></div></div><p class="quiz-reason" hidden>一个 batch 中第 i 张图片与第 i 个正确文本描述配对，所以对角线应高，其他配对较低。</p></article><article class="quiz-card" data-quiz="11" data-correct="1"><div class="quiz-meta">视觉语言 · 第 12 / 12 题</div><h3>LLaVA 中连接视觉编码器和 LLM 的投影层主要做什么？</h3><div class="quiz-options"><label class="quiz-option"><input type="radio" name="question-11" value="0"><span>A. 直接进行 NMS</span></label><label class="quiz-option"><input type="radio" name="question-11" value="1"><span>B. 把图像特征映射到 LLM 可接受的 token embedding 空间</span></label><label class="quiz-option"><input type="radio" name="question-11" value="2"><span>C. 把所有图像变成同一类别</span></label><label class="quiz-option"><input type="radio" name="question-11" value="3"><span>D. 生成 GT bounding boxes</span></label></div><div class="quiz-actions"><button type="button" class="check-answer">检查答案</button><div class="quiz-feedback" role="status" aria-live="polite"></div></div><p class="quiz-reason" hidden>视觉编码器提供图像表示，投影层桥接向量空间，LLM 才能在视觉和文本上下文中预测输出 token。</p></article></div></section>
+<section class="chapter" id="page-index"><div class="chapter-top"><span class="chapter-tag">附录 · 按原始课件逐页对照</span></div><h2>136 页完整页码索引</h2><p>这里为两份 PDF 的每一页都保留了页码、主题及通向本讲义对应解释的链接；包括封面、引用、示范图和考试例题。重复呈现同一动画的连续页面被合并到同一个原理章节，**不是只挑其中一页讲解**。</p><details class="slide-details"><summary>第一份：目标检测（74 页）<span>展开逐页索引</span></summary><div class="slide-list"><a href="#intro"><strong>p.01</strong><span>封面：Object Detection Using CNNs</span><small>查看讲解</small></a><a href="#intro"><strong>p.02</strong><span>著作权使用提示</span><small>查看讲解</small></a><a href="#intro"><strong>p.03</strong><span>Outline</span><small>查看讲解</small></a><a href="#tasks"><strong>p.04</strong><span>Vision tasks</span><small>查看讲解</small></a><a href="#tasks"><strong>p.05</strong><span>Image Classification</span><small>查看讲解</small></a><a href="#tasks"><strong>p.06</strong><span>Object Detection</span><small>查看讲解</small></a><a href="#tasks"><strong>p.07</strong><span>How to use CNNs</span><small>查看讲解</small></a><a href="#tasks"><strong>p.08</strong><span>Object Detection</span><small>查看讲解</small></a><a href="#bbox"><strong>p.09</strong><span>Intersection over Union (IoU)</span><small>查看讲解</small></a><a href="#datasets"><strong>p.10</strong><span>Dataset: PASCAL VOC challenge dataset</span><small>查看讲解</small></a><a href="#datasets"><strong>p.11</strong><span>Dataset: Microsoft COCO dataset</span><small>查看讲解</small></a><a href="#bbox"><strong>p.12</strong><span>Object Detection Actual Class</span><small>查看讲解</small></a><a href="#multi"><strong>p.13</strong><span>Object Detection</span><small>查看讲解</small></a><a href="#multi"><strong>p.14</strong><span>Object Detection</span><small>查看讲解</small></a><a href="#multi"><strong>p.15</strong><span>Object Detection</span><small>查看讲解</small></a><a href="#multi"><strong>p.16</strong><span>Object Detection</span><small>查看讲解</small></a><a href="#multi"><strong>p.17</strong><span>Object Detection</span><small>查看讲解</small></a><a href="#multi"><strong>p.18</strong><span>Object Detection</span><small>查看讲解</small></a><a href="#multi"><strong>p.19</strong><span>Object Detection</span><small>查看讲解</small></a><a href="#selective"><strong>p.20</strong><span>Selective Search — Region Proposals</span><small>查看讲解</small></a><a href="#selective"><strong>p.21</strong><span>Selective Search — The Algorithm</span><small>查看讲解</small></a><a href="#selective"><strong>p.22</strong><span>Selective Search — Design Constraints &amp; Similarity Cues</span><small>查看讲解</small></a><a href="#selective"><strong>p.23</strong><span>Region Proposals</span><small>查看讲解</small></a><a href="#rcnn"><strong>p.24</strong><span>R-CNN: Regions Proposals with CNN Features</span><small>查看讲解</small></a><a href="#rcnn"><strong>p.25</strong><span>R-CNN: Regions with CNN Features</span><small>查看讲解</small></a><a href="#rcnn"><strong>p.26</strong><span>R-CNN: Regions with CNN Features</span><small>查看讲解</small></a><a href="#rcnn"><strong>p.27</strong><span>R-CNN was very slow!</span><small>查看讲解</small></a><a href="#spp"><strong>p.28</strong><span>Spatial Pyramid Pooling (SPP-Net)</span><small>查看讲解</small></a><a href="#spp"><strong>p.29</strong><span>Spatial Pyramid Pooling (SPP-Net)</span><small>查看讲解</small></a><a href="#spp"><strong>p.30</strong><span>Spatial Pyramid Pooling (SPP-Net)</span><small>查看讲解</small></a><a href="#fast"><strong>p.31</strong><span>Fast R-CNN</span><small>查看讲解</small></a><a href="#fast"><strong>p.32</strong><span>Fast R-CNN training</span><small>查看讲解</small></a><a href="#fast"><strong>p.33</strong><span>RoI Pooling</span><small>查看讲解</small></a><a href="#fast"><strong>p.34</strong><span>RoI Pooling</span><small>查看讲解</small></a><a href="#fast"><strong>p.35</strong><span>RoI Pooling</span><small>查看讲解</small></a><a href="#fast"><strong>p.36</strong><span>RoI Pooling</span><small>查看讲解</small></a><a href="#fast"><strong>p.37</strong><span>RoI Pooling</span><small>查看讲解</small></a><a href="#fast"><strong>p.38</strong><span>Fast R-CNN</span><small>查看讲解</small></a><a href="#fast"><strong>p.39</strong><span>R-CNN vs SPP-Net vs Fast R-CNN</span><small>查看讲解</small></a><a href="#faster"><strong>p.40</strong><span>How to improve Fast R-CNN?</span><small>查看讲解</small></a><a href="#faster"><strong>p.41</strong><span>Region Proposal Network (RPN)</span><small>查看讲解</small></a><a href="#faster"><strong>p.42</strong><span>Faster R-CNN</span><small>查看讲解</small></a><a href="#faster"><strong>p.43</strong><span>Faster R-CNN</span><small>查看讲解</small></a><a href="#faster"><strong>p.44</strong><span>Faster R-CNN</span><small>查看讲解</small></a><a href="#faster"><strong>p.45</strong><span>Faster R-CNN loss</span><small>查看讲解</small></a><a href="#faster"><strong>p.46</strong><span>Region Proposals and Anchor Boxes</span><small>查看讲解</small></a><a href="#nms"><strong>p.47</strong><span>Reduce redundancy by Non-Maximum Suppression (NMS)</span><small>查看讲解</small></a><a href="#ohem"><strong>p.48</strong><span>Online hard example mining (OHEM)</span><small>查看讲解</small></a><a href="#one-two"><strong>p.49</strong><span>Faster R-CNN selected examples</span><small>查看讲解</small></a><a href="#one-two"><strong>p.50</strong><span>Faster R-CNN speed</span><small>查看讲解</small></a><a href="#one-two"><strong>p.51</strong><span>Two-stage vs One-stage Detectors</span><small>查看讲解</small></a><a href="#one-two"><strong>p.52</strong><span>Two-stage vs One-stage Detectors</span><small>查看讲解</small></a><a href="#ssd"><strong>p.53</strong><span>SSD: Single Shot MultiBox Detector</span><small>查看讲解</small></a><a href="#ssd"><strong>p.54</strong><span>SSD: Single Shot MultiBox Detector</span><small>查看讲解</small></a><a href="#ssd"><strong>p.55</strong><span>SSD: Single Shot MultiBox Detector</span><small>查看讲解</small></a><a href="#ssd"><strong>p.56</strong><span>SSD 多层 feature maps 与 default boxes 的架构图</span><small>查看讲解</small></a><a href="#ssd"><strong>p.57</strong><span>SSD: Single Shot MultiBox Detector</span><small>查看讲解</small></a><a href="#yolo"><strong>p.58</strong><span>YOLO: You Only Look Once</span><small>查看讲解</small></a><a href="#yolo"><strong>p.59</strong><span>YOLO: You Only Look Once</span><small>查看讲解</small></a><a href="#yolo"><strong>p.60</strong><span>YOLO 版本演进时间线</span><small>查看讲解</small></a><a href="#one-two"><strong>p.61</strong><span>Why one stage detectors trails accuracy?</span><small>查看讲解</small></a><a href="#fpn"><strong>p.62</strong><span>Feature Pyramid Network (FPN)</span><small>查看讲解</small></a><a href="#fpn"><strong>p.63</strong><span>Feature Pyramid Network (FPN)</span><small>查看讲解</small></a><a href="#retina"><strong>p.64</strong><span>RetinaNet</span><small>查看讲解</small></a><a href="#retina"><strong>p.65</strong><span>RetinaNet Architecture</span><small>查看讲解</small></a><a href="#retina"><strong>p.66</strong><span>RetinaNet Results</span><small>查看讲解</small></a><a href="#detect-history"><strong>p.67</strong><span>Object Detection in 20 Years</span><small>查看讲解</small></a><a href="#detect-history"><strong>p.68</strong><span>Implementations</span><small>查看讲解</small></a><a href="#detect-history"><strong>p.69</strong><span>Implementations</span><small>查看讲解</small></a><a href="#detect-history"><strong>p.70</strong><span>Further reading on discussed topics</span><small>查看讲解</small></a><a href="#detect-history"><strong>p.71</strong><span>Acknowledgements</span><small>查看讲解</small></a><a href="#detect-history"><strong>p.72</strong><span>References</span><small>查看讲解</small></a><a href="#detect-history"><strong>p.73</strong><span>References</span><small>查看讲解</small></a><a href="#exam"><strong>p.74</strong><span>Example exam questions</span><small>查看讲解</small></a></div></details><details class="slide-details"><summary>第二份：分割与视觉语言（62 页）<span>展开逐页索引</span></summary><div class="slide-list"><a href="#intro"><strong>p.01</strong><span>封面：Segmentation / Vision + Language</span><small>查看讲解</small></a><a href="#intro"><strong>p.02</strong><span>著作权使用提示</span><small>查看讲解</small></a><a href="#intro"><strong>p.03</strong><span>Outline</span><small>查看讲解</small></a><a href="#semantic"><strong>p.04</strong><span>Vision tasks</span><small>查看讲解</small></a><a href="#semantic"><strong>p.05</strong><span>Semantic Segmentation</span><small>查看讲解</small></a><a href="#semantic"><strong>p.06</strong><span>How to train semantic segmentation network?</span><small>查看讲解</small></a><a href="#patch"><strong>p.07</strong><span>Sliding Window approach</span><small>查看讲解</small></a><a href="#patch"><strong>p.08</strong><span>Sliding Window approach</span><small>查看讲解</small></a><a href="#patch"><strong>p.09</strong><span>Sliding Window approach</span><small>查看讲解</small></a><a href="#patch"><strong>p.10</strong><span>Sliding Window approach</span><small>查看讲解</small></a><a href="#fcn"><strong>p.11</strong><span>Semantic Segmentation using Convolution</span><small>查看讲解</small></a><a href="#fcn"><strong>p.12</strong><span>Semantic Segmentation using Convolution</span><small>查看讲解</small></a><a href="#fcn"><strong>p.13</strong><span>Fully Convolutional Networks for Semantic Segmentation</span><small>查看讲解</small></a><a href="#fcn"><strong>p.14</strong><span>Fully Convolutional Networks for Semantic Segmentation</span><small>查看讲解</small></a><a href="#fcn"><strong>p.15</strong><span>Fully Convolutional Networks for Semantic Segmentation</span><small>查看讲解</small></a><a href="#fcn"><strong>p.16</strong><span>Fully Convolutional Networks for Semantic Segmentation</span><small>查看讲解</small></a><a href="#upsample"><strong>p.17</strong><span>In-network Upsampling: Unpooling</span><small>查看讲解</small></a><a href="#upsample"><strong>p.18</strong><span>In-network Upsampling: Unpooling</span><small>查看讲解</small></a><a href="#upsample"><strong>p.19</strong><span>In-network Upsampling: Max Unpooling</span><small>查看讲解</small></a><a href="#deconv"><strong>p.20</strong><span>Learning Upsampling: Transpose Convolution</span><small>查看讲解</small></a><a href="#deconv"><strong>p.21</strong><span>Learning Upsampling: Transpose Convolution</span><small>查看讲解</small></a><a href="#deconv"><strong>p.22</strong><span>Learning Upsampling: Transpose Convolution</span><small>查看讲解</small></a><a href="#deconv"><strong>p.23</strong><span>Learning Upsampling: Transpose Convolution</span><small>查看讲解</small></a><a href="#deconv"><strong>p.24</strong><span>Learning Upsampling: Transpose Convolution</span><small>查看讲解</small></a><a href="#deconv"><strong>p.25</strong><span>Learning Upsampling: Transpose Convolution</span><small>查看讲解</small></a><a href="#deconv"><strong>p.26</strong><span>Learning Upsampling: Transpose Convolution</span><small>查看讲解</small></a><a href="#deconv"><strong>p.27</strong><span>Learning Upsampling: Transpose Convolution</span><small>查看讲解</small></a><a href="#fcn"><strong>p.28</strong><span>Fully Convolutional Networks for Semantic Segmentation</span><small>查看讲解</small></a><a href="#unet"><strong>p.29</strong><span>U-Net</span><small>查看讲解</small></a><a href="#unetvariants"><strong>p.30</strong><span>U-Net variants</span><small>查看讲解</small></a><a href="#unetvariants"><strong>p.31</strong><span>U-Net variants</span><small>查看讲解</small></a><a href="#unetvariants"><strong>p.32</strong><span>U-Net variants</span><small>查看讲解</small></a><a href="#instance"><strong>p.33</strong><span>Instance Segmentation</span><small>查看讲解</small></a><a href="#mask"><strong>p.34</strong><span>Mask R-CNN</span><small>查看讲解</small></a><a href="#roialign"><strong>p.35</strong><span>Need for RoI Align (Flashback to ROI Pooling)</span><small>查看讲解</small></a><a href="#roialign"><strong>p.36</strong><span>ROI Align</span><small>查看讲解</small></a><a href="#roialign"><strong>p.37</strong><span>ROI Align</span><small>查看讲解</small></a><a href="#roialign"><strong>p.38</strong><span>ROI Align</span><small>查看讲解</small></a><a href="#mask"><strong>p.39</strong><span>Mask R-CNN Architecture</span><small>查看讲解</small></a><a href="#mask"><strong>p.40</strong><span>Mask R-CNN Results</span><small>查看讲解</small></a><a href="#foundation"><strong>p.41</strong><span>Foundation Models</span><small>查看讲解</small></a><a href="#foundation"><strong>p.42</strong><span>Different Foundation Models</span><small>查看讲解</small></a><a href="#foundation"><strong>p.43</strong><span>Different Foundation Models</span><small>查看讲解</small></a><a href="#foundation"><strong>p.44</strong><span>Self-Supervised Pre-Training</span><small>查看讲解</small></a><a href="#clip"><strong>p.45</strong><span>Self-Supervised Pre-Training</span><small>查看讲解</small></a><a href="#clip"><strong>p.46</strong><span>CLIP</span><small>查看讲解</small></a><a href="#clip"><strong>p.47</strong><span>CLIP</span><small>查看讲解</small></a><a href="#clip"><strong>p.48</strong><span>CLIP</span><small>查看讲解</small></a><a href="#clip"><strong>p.49</strong><span>CLIP</span><small>查看讲解</small></a><a href="#clip"><strong>p.50</strong><span>CLIP</span><small>查看讲解</small></a><a href="#clip-uses"><strong>p.51</strong><span>CLIP (after pre-training)</span><small>查看讲解</small></a><a href="#clip-uses"><strong>p.52</strong><span>CLIP (after pre-training)</span><small>查看讲解</small></a><a href="#llava"><strong>p.53</strong><span>(Large Language and Vision Assistant)LLaVA</span><small>查看讲解</small></a><a href="#llava"><strong>p.54</strong><span>(Large Language and Vision Assistant)LLaVA</span><small>查看讲解</small></a><a href="#llava"><strong>p.55</strong><span>LLaVA Overall Architecture + Training Recipe</span><small>查看讲解</small></a><a href="#llava"><strong>p.56</strong><span>LLaVA Visual Instruction Tuning 视觉问答案例</span><small>查看讲解</small></a><a href="#seg-resources"><strong>p.57</strong><span>Implementation</span><small>查看讲解</small></a><a href="#seg-resources"><strong>p.58</strong><span>Implementation</span><small>查看讲解</small></a><a href="#seg-resources"><strong>p.59</strong><span>Further reading on discussed topics</span><small>查看讲解</small></a><a href="#seg-resources"><strong>p.60</strong><span>Acknowledgements</span><small>查看讲解</small></a><a href="#seg-resources"><strong>p.61</strong><span>References</span><small>查看讲解</small></a><a href="#exam"><strong>p.62</strong><span>Example exam question</span><small>查看讲解</small></a></div></details></section>
+<footer class="footer"><p><strong>资料来源：</strong>用户提供的《COMP9517_26T3W8_Deep_Learning_Part_2-1.pdf》（74 页）与《COMP9517_26T3W8_Deep_Learning_Part_2-2.pdf》（62 页）。中文讲解根据课程课件重写，额外的概念辨析与推导已在文中区分；原创示意图用于理解原理，并非课件截图。所有内容仅用于私人课程学习。</p><p>本文件为独立 HTML，无字体、脚本或图片 CDN 依赖；可存到手机并通过浏览器离线打开。浏览器允许本地存储时，“已掌握”进度会在本设备保存。</p></footer>
+</div></main><script>
+(function(){
+ const $=(s,root=document)=>root.querySelector(s),$$=(s,root=document)=>[...root.querySelectorAll(s)];
+ const toc=$('#sidebar'),shade=$('#mobile-shade'),menu=$('#menu-button');
+ function closeMenu(){toc.classList.remove('open');shade.classList.remove('open');menu.setAttribute('aria-expanded','false')}
+ menu.addEventListener('click',()=>{let open=!toc.classList.contains('open');toc.classList.toggle('open',open);shade.classList.toggle('open',open);menu.setAttribute('aria-expanded',String(open))});shade.addEventListener('click',closeMenu);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+ $$('.toc-group a').forEach(a=>a.addEventListener('click',closeMenu));
+ const search=$('#toc-search');search.addEventListener('input',()=>{const q=search.value.toLocaleLowerCase().trim();$$('.toc-group a').forEach(a=>a.hidden=!!q && !a.textContent.toLocaleLowerCase().includes(q));$$('.toc-group').forEach(g=>g.hidden=!$$('a:not([hidden])',g).length)});
+ const targets=$$('.toc-group a'); const chapters=$$('.chapter'); let lastActive='';
+ function handleScroll(){const max=document.documentElement.scrollHeight-window.innerHeight;$('#reading-progress').style.width=(max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):0).toFixed(2)+'%';let curr='';chapters.forEach(c=>{if(c.getBoundingClientRect().top<155)curr=c.id});if(curr&&curr!==lastActive){lastActive=curr;targets.forEach(a=>a.classList.toggle('active',a.dataset.target===curr))}}
+ document.addEventListener('scroll',handleScroll,{passive:true});handleScroll();
+ let saved=[];try{saved=JSON.parse(localStorage.getItem('comp9517w8-done')||'[]')}catch(e){};const done=new Set(Array.isArray(saved)?saved:[]);
+ const buttons=$$('.mark-done');function updateDone(){buttons.forEach(b=>{const yes=done.has(b.dataset.key);b.setAttribute('aria-pressed',String(yes));b.textContent=yes?'已掌握 ✓':'标记已掌握'});$('#done-counter').textContent=`已掌握 ${done.size} / ${buttons.length} 节`}
+ buttons.forEach(b=>b.addEventListener('click',()=>{done.has(b.dataset.key)?done.delete(b.dataset.key):done.add(b.dataset.key);try{localStorage.setItem('comp9517w8-done',JSON.stringify([...done]))}catch(e){}updateDone()}));updateDone();
+ function intersection(a,b){const w=Math.max(0,Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x));const h=Math.max(0,Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y));return w*h}
+ function iou(a,b){const inter=intersection(a,b),den=a.w*a.h+b.w*b.h-inter;return den>0?inter/den:0}
+ const off=$('#iou-offset'),pred=$('#iou-pred');const gt={x:62,y:48,w:184,h:150};function updateIou(){const dx=+off.value;const box={x:62+dx,y:68,w:184,h:150};pred.setAttribute('x',box.x);const v=iou(gt,box);$('#offset-readout').textContent=dx;$('#iou-value').textContent=`IoU = ${v.toFixed(3)}`;$('#iou-result').textContent=`交集 ${intersection(gt,box).toLocaleString()} px² · 并集 ${(gt.w*gt.h+box.w*box.h-intersection(gt,box)).toLocaleString()} px² · 按课件 IoU≥0.5 示例：${v>=.5?'匹配成功':'未达到阈值'}`}off.addEventListener('input',updateIou);updateIou();
+ const boxes=[{x:24,y:25,w:140,h:128,s:.96},{x:36,y:31,w:141,h:128,s:.86},{x:49,y:34,w:145,h:129,s:.73},{x:264,y:62,w:123,h:109,s:.91},{x:273,y:73,w:119,h:107,s:.65}];
+ const nmsRange=$('#nms-threshold'),nmsg=$('#nms-boxes');function updateNms(){const threshold=+nmsRange.value/100,sorted=[...boxes].sort((a,b)=>b.s-a.s),kept=[];while(sorted.length){const best=sorted.shift();kept.push(best);for(let k=sorted.length-1;k>=0;k--){if(iou(best,sorted[k])>threshold)sorted.splice(k,1)}}nmsg.innerHTML=boxes.map((b,i)=>{const keep=kept.includes(b),stroke=keep?'#1e7d69':'#c5876c';return `<g opacity="${keep?1:.37}"><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" fill="none" stroke="${stroke}" stroke-width="${keep?3.5:2}" stroke-dasharray="${keep?'none':'6 4'}"/><rect x="${b.x}" y="${b.y-17}" width="76" height="18" rx="4" fill="${stroke}"/><text x="${b.x+5}" y="${b.y-4}" font-size="12" font-family="system-ui" fill="white">#${i+1} ${b.s.toFixed(2)}</text></g>`}).join('');$('#nms-threshold-label').textContent=threshold.toFixed(2);$('#nms-count').textContent=`保留 ${kept.length} / ${boxes.length} 个框`;$('#nms-explain').textContent='绿色实线为保留的框；淡色虚线为被压制的框。本例假设这 5 个候选属于同一类别。'}nmsRange.addEventListener('input',updateNms);updateNms();
+ $$('.quiz-card').forEach(card=>{const idx=+card.dataset.quiz;$('.check-answer',card).addEventListener('click',()=>{let choice=$('input:checked',card);let feedback=$('.quiz-feedback',card);if(!choice){feedback.className='quiz-feedback bad';feedback.textContent='请先选择一个选项。';return}const ok=+choice.value===+card.dataset.correct;feedback.className='quiz-feedback '+(ok?'good':'bad');feedback.textContent=ok?'回答正确':'正确答案：'+String.fromCharCode(65+(+card.dataset.correct));$('.quiz-reason',card).hidden=false;$$('.quiz-option',card).forEach((o,i)=>{o.style.borderColor=i===+card.dataset.correct?'#7cbaa7':(i===+choice.value&&!ok?'#d8aa86':'#e5ebef');o.style.background=i===+card.dataset.correct?'#f0faf5':(i===+choice.value&&!ok?'#fff5ee':'')})})});
+})();
+</script></body></html>
