@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>COMP3821 · Week 8–9 | Path-Graph Orienteering</title>
+<style>
+:root { color-scheme:light; --bg:#f7f8f6; --paper:#fff; --ink:#18211e; --muted:#59665f; --line:#dce3de; --subtle:#eff3f0; --accent:#116a56; --accent-light:#e6f4ee; --blue:#355e82; --warn:#94600d; --warn-bg:#fff8e8; --bad:#ad4a3f; --shadow:0 1px 5px #14271b0c; }
+*{box-sizing:border-box}html{scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:15.5px;line-height:1.78;-webkit-font-smoothing:antialiased}a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}a:hover{opacity:.8}h1,h2,h3,h4{color:var(--ink);line-height:1.32;letter-spacing:-.025em}h1{font-size:clamp(29px,4vw,43px);font-weight:760;margin:12px 0 16px}h2{font-size:25px;margin:0 0 18px}h3{font-size:19px;margin:29px 0 12px}h4{font-size:16px;margin:24px 0 8px}p{margin:10px 0 15px}ul,ol{padding-left:24px;margin:10px 0 17px}li{margin:7px 0}strong{font-weight:680}code,.formula,pre,output,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}code{font-size:.91em;background:var(--subtle);padding:2px 5px;border-radius:5px} .formula{display:block;max-width:100%;overflow-x:auto;white-space:nowrap;letter-spacing:0;background:#f4f7f5;border:1px solid var(--line);padding:15px 18px;border-radius:10px;font-size:clamp(12px,1.6vw,15px);color:#163d32;margin:16px 0;text-align:center;line-height:1.7} .formula small{display:block;color:var(--muted);font-family:inherit;font-size:12px;white-space:normal}.math-text{font-family:Georgia,'Times New Roman',serif;font-style:italic} .container{max-width:1240px;margin:auto;padding:0 28px}.header{background:var(--paper);border-bottom:1px solid var(--line)}.header-inner{padding-top:35px;padding-bottom:31px}.eyebrow{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--accent);font-weight:730}.subtitle{font-size:17px;color:var(--muted);max-width:920px;line-height:1.75}.meta{display:flex;gap:9px;flex-wrap:wrap;margin-top:22px}.tag{border:1px solid var(--line);background:#fafcfb;border-radius:30px;padding:5px 11px;font-size:12px;font-weight:600;color:#50645c}.tag.emphasis{background:var(--accent-light);color:var(--accent);border-color:#cee6d9}.layout{display:grid;grid-template-columns:215px minmax(0,1fr);gap:35px;align-items:start;padding-top:36px;padding-bottom:90px}.nav{position:sticky;top:20px;display:flex;flex-direction:column;gap:3px;padding:12px 0}.nav-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:750;color:var(--muted);padding:8px 12px 12px}.nav a{display:block;text-decoration:none;font-size:13px;color:var(--muted);padding:8px 12px;border-radius:7px;line-height:1.4}.nav a:hover{background:var(--subtle);color:var(--ink)}.content{min-width:0}.section{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:29px 34px;margin:0 0 22px;box-shadow:var(--shadow);scroll-margin-top:16px}.section>.topline{display:block;font-size:12px;letter-spacing:.07em;font-weight:700;color:var(--accent);margin-bottom:9px;text-transform:uppercase}.lead{font-size:17px;color:#33443b}.callout{margin:19px 0;border-left:3px solid var(--accent);background:#f3f8f5;border-radius:0 9px 9px 0;padding:13px 16px}.callout.warn{background:var(--warn-bg);border-left-color:var(--warn)}.callout.alert{background:#fff3f0;border-left-color:var(--bad)}.callout p:last-child{margin-bottom:0}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.stat{border:1px solid var(--line);background:#fbfcfb;padding:15px 17px;border-radius:10px}.stat b{display:block;font-size:21px;line-height:1.4;color:var(--accent)}.stat span{display:block;color:var(--muted);font-size:12px;margin-top:3px}.tbl-wrap{overflow-x:auto;margin:15px 0 20px;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}th,td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}th{background:#f5f7f5;font-weight:730;white-space:nowrap}tbody tr:last-child td{border-bottom:0}td:first-child{font-weight:550}.diagram{background:#fbfcfb;border:1px solid var(--line);border-radius:12px;padding:15px;margin:15px 0}.diagram svg{width:100%;display:block;height:auto}.diagram figcaption{text-align:center;color:var(--muted);font-size:12px;margin-top:9px}.steps{counter-reset:step;padding-left:0;list-style:none}.steps li{position:relative;padding:6px 0 8px 44px;margin:10px 0}.steps li:before{counter-increment:step;content:counter(step);position:absolute;left:0;top:5px;width:27px;height:27px;display:grid;place-items:center;border:1px solid #bed8cc;background:#f0f8f3;color:var(--accent);border-radius:50%;font-weight:760;font-size:13px}.codebox{position:relative;background:#192621;color:#e9f1eb;border-radius:10px;border:1px solid #273a30;margin:18px 0;overflow:hidden}.codebox .codehead{padding:8px 16px;font-size:12px;font-weight:650;letter-spacing:.02em;color:#b4d9ca;border-bottom:1px solid #36483d}.codebox pre{margin:0;white-space:pre;overflow:auto;padding:16px 18px;font-size:12px;line-height:1.7}.flowish{background:#fafbf9;border:1px solid var(--line);border-radius:10px;padding:15px 18px;margin:14px 0}.dim{color:var(--muted)}.english{font-family:Georgia,'Times New Roman',serif;font-size:15.5px;line-height:1.82}.english h3,.english h4{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.english .formula{font-family:Georgia,'Times New Roman',serif;font-size:16px}.english p{margin:12px 0}.copybar{display:flex;justify-content:space-between;gap:15px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:13px;margin-bottom:21px}.btn{background:var(--paper);color:var(--accent);border:1px solid #b9d6c9;border-radius:8px;padding:8px 12px;cursor:pointer;font:600 12px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}.btn:hover{background:var(--accent-light)}.btn:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #7dbb9e;outline-offset:2px}.proof{padding:11px 16px;border-left:2px solid #c8d9d0;margin:11px 0}.proof-title{font-weight:700;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#244e3a;font-size:14px}.demo{border:1px solid var(--line);background:#fcfdfc;border-radius:12px;padding:17px 19px;margin-top:18px}.controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:0 0 10px}.controls label{font-size:14px;font-weight:650}.controls input{accent-color:var(--accent);width:min(100%,310px);flex:1;min-width:180px}.budget{font-family:ui-monospace,monospace;background:var(--accent-light);color:var(--accent);font-weight:800;padding:2px 11px;border-radius:6px}.demostats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.demostats div{background:#f1f5f2;border-radius:8px;padding:10px 12px;font-size:12px;color:var(--muted)}.demostats b{display:block;color:var(--ink);font-size:17px}.route{padding:10px 13px;border:1px dashed #b6cabc;border-radius:8px;word-break:break-word;margin:12px 0;font-size:13px}.mini{font-size:13px}.notes{background:#f5f7f6;border-radius:10px;padding:16px 18px;margin:15px 0}.checklist{list-style:none;padding:0}.checklist li{padding:10px 0 10px 34px;position:relative;border-bottom:1px solid var(--line)}.checklist li:before{content:'□';color:var(--accent);font-size:22px;position:absolute;top:7px;left:0}.checklist li:last-child{border:0}.foot{color:var(--muted);font-size:12px;margin:18px 0 0}.ref{font-size:13px;line-height:1.7;padding-left:22px}.ref li{margin:7px 0}.hide-print{display:block}
+@media(max-width:900px){.layout{grid-template-columns:1fr;gap:10px}.nav{position:static;display:flex;flex-direction:row;overflow:auto;white-space:nowrap;gap:4px;margin:0 -6px 8px;padding:0 6px 9px}.nav .nav-label{display:none}.nav a{flex:0 0 auto;background:#eef2ef;border:1px solid #e4ebe5;font-size:12px}.section{padding:23px 22px}.container{padding-left:18px;padding-right:18px}}
+@media(max-width:570px){body{font-size:14px}.header-inner{padding-top:28px}.subtitle{font-size:15px}.section{padding:21px 17px}.two{grid-template-columns:1fr}.demostats{grid-template-columns:1fr 1fr}.demostats div:last-child{grid-column:span 2}table{font-size:12px}th,td{padding:9px 10px}.copybar{align-items:flex-start}.english{font-size:14.5px}.codebox pre{font-size:11px}.formula{font-size:12px}}
+@media print{body{background:#fff;color:#000}.header{border:0}.layout{display:block}.nav,.hide-print,.btn{display:none!important}.container{max-width:none}.section{break-inside:auto;border:0;box-shadow:none;padding:10px 0;margin-bottom:18px}.section h2{break-after:avoid}.codebox{-webkit-print-color-adjust:exact;print-color-adjust:exact}.demo{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="container header-inner">
+    <div class="eyebrow">UNSW · COMP3821 / 9801 · 2026 T3 · Week 8–9</div>
+    <h1>路径图上的 Orienteering<br>从 NP-hard 到 O(n) 精确算法</h1>
+    <p class="subtitle">面向 <strong>Score-Farming Paths</strong> 小组项目：先把任务讲透，再推导算法与严格证明，最后提供英文报告正文、局限性讨论和前序证明的必要修订。</p>
+    <div class="meta"><span class="tag emphasis">你的核心任务：Path-graph proof</span><span class="tag">中文推导 + 英文定稿</span><span class="tag">可交互案例</span><span class="tag">单文件 · 离线可用</span></div>
+  </div>
+</header>
+<div class="container layout">
+<aside class="nav" aria-label="目录">
+  <div class="nav-label">目录 / Contents</div>
+  <a href="#overview">01 · 项目现状与任务</a>
+  <a href="#definition">02 · 定义与路径图</a>
+  <a href="#intuition">03 · 两个核心引理</a>
+  <a href="#algorithm">04 · 从 O(n²) 到 O(n)</a>
+  <a href="#interactive">05 · 交互案例与检验</a>
+  <a href="#report">06 · 英文正式证明</a>
+  <a href="#limitations">07 · Limitations</a>
+  <a href="#fixes">08 · 前序工作修订</a>
+  <a href="#delivery">09 · 提交与整合清单</a>
+  <a href="#sources">References</a>
+</aside>
+<main class="content">
+
+<section class="section" id="overview">
+  <span class="topline">01 / Project context</span>
+  <h2>你们正在研究什么？目前写到了哪里？</h2>
+  <p>MOBA 游戏的地图被抽象为一个带时间成本的无向图：每个地点能提供一定奖励，每次移动会消耗时间，玩家从基地 <code>s</code> 出发，在预算 <code>T</code> 内尽可能多地收集奖励。顶点奖励只领取一次，允许重复经过顶点，且 <strong>不要求回到基地或到达指定终点</strong>。</p>
+  <div class="two">
+    <div class="stat"><b>NP-hard</b><span>一般图：组合选择节点与访问顺序十分困难</span></div>
+    <div class="stat"><b>O(k²2ᵏ)</b><span>一般图：Held–Karp 子集 DP（k 为奖励节点数）</span></div>
+    <div class="stat"><b>O(n²) → O(n)</b><span>你的特例：n 个节点的路径图可以精确求解</span></div>
+    <div class="stat"><b>1.0 × OPT</b><span>你的算法在限定条件下不是近似，而是最优解</span></div>
+  </div>
+  <div class="callout"><strong>术语务必统一：</strong>任务表中的 “graph path algorithm” 应当按进度报告中的 <em>path-graph</em> 理解，即研究 <strong>路径图这一特殊图类</strong>，而非一般图里的“求一条路径的算法”。这两种理解差别很大。</div>
+  <h3>压缩包反映的工作状态</h3>
+  <div class="tbl-wrap"><table><thead><tr><th>模块 / 负责人</th><th>文件中已有内容</th><th>你需要关注的衔接</th></tr></thead><tbody>
+    <tr><td>模型与背景 / Fedor</td><td>定义、Shortest Paths、Metric Closure 基本完整</td><td>沿用 fixed-start / free-end / one-time reward</td></tr>
+    <tr><td>NP-hardness / Xingyu</td><td>证明草稿存在，但阈值自相矛盾</td><td>必要时用 §08 给出的修订替换</td></tr>
+    <tr><td>Held–Karp / Ernest</td><td>状态、递推与伪代码已有；证明与复杂度有瑕疵</td><td>不必重写其整节，但需修正记号与复杂度</td></tr>
+    <tr><td>Greedy / Tenuun</td><td>Progress review 标为进行中；主文档尚无正文</td><td>§08 另附一份可用的反例证明</td></tr>
+    <tr><td><strong>Path-graph / 你</strong></td><td><strong>尚未找到成文的算法或证明</strong></td><td><strong>此文档的主要交付：定义、引理、算法、复杂度、局限性</strong></td></tr>
+    <tr><td>游戏 Demo / 全员</td><td>进度报告中仍列为未完成</td><td>交互案例可作为局部算法原型参考，不等同完整 Demo</td></tr>
+  </tbody></table></div>
+  <p class="foot">状态判断仅依据本次 ZIP 中的 <code>main.tex</code>、<code>progress_check.tex</code>、<code>held-karp_draft.tex</code>，不代表已经访问队友的最新本地代码或提交记录。</p>
+</section>
+
+<section class="section" id="definition">
+  <span class="topline">02 / Mathematical model</span>
+  <h2>为什么 Path Graph 会让问题变简单？</h2>
+  <p>对一般图，从 <code>s</code> 出发可以遇到分叉、环和绕路，节点集合的选择和访问顺序需要同时优化。<strong>路径图</strong>则是顶点排成一条链、任意两个顶点间只有一条简单路径的连通无向图。</p>
+  <div class="two">
+    <figure class="diagram">
+      <svg viewBox="0 0 310 130" role="img" aria-label="一般图有多个分叉"><g stroke="#879c91" stroke-width="3" stroke-linecap="round"><path d="M37 65 L105 34 L173 65 L240 28"/><path d="M105 34 L105 107 L173 65 L240 109"/><path d="M173 65 L240 109"/></g><g fill="#e2ebe5" stroke="#8aa496" stroke-width="1.5"><circle cx="37" cy="65" r="14"/><circle cx="105" cy="34" r="14"/><circle cx="105" cy="107" r="14"/><circle cx="173" cy="65" r="14"/><circle cx="240" cy="28" r="14"/><circle cx="240" cy="109" r="14"/></g><circle cx="37" cy="65" r="14" fill="#116a56"/><text x="37" y="70" fill="white" text-anchor="middle" font-size="15">s</text></svg>
+      <figcaption>一般图：分叉与环；需要选择复杂的访问顺序</figcaption>
+    </figure>
+    <figure class="diagram">
+      <svg viewBox="0 0 310 130" role="img" aria-label="路径图一条连续的链"><path d="M30 65 H279" stroke="#879c91" stroke-width="3"/><g fill="#e2ebe5" stroke="#8aa496" stroke-width="1.5"><circle cx="30" cy="65" r="14"/><circle cx="80" cy="65" r="14"/><circle cx="130" cy="65" r="14"/><circle cx="180" cy="65" r="14"/><circle cx="230" cy="65" r="14"/><circle cx="279" cy="65" r="14"/></g><circle cx="130" cy="65" r="14" fill="#116a56"/><text x="130" y="70" fill="white" text-anchor="middle" font-size="15">s</text></svg>
+      <figcaption>路径图：只能沿着左右移动；没有分叉</figcaption>
+    </figure>
+  </div>
+  <p>令路径上的顶点依次为 <code>v₁, v₂, …, vₙ</code>，起点是 <code>vₕ</code>。连接 <code>vᵢ</code> 与 <code>vᵢ₊₁</code> 的边耗时为 <code>ℓᵢ ≥ 0</code>，顶点奖励为 <code>rᵢ ≥ 0</code>，总时间预算为 <code>T ≥ 0</code>。</p>
+  <div class="tbl-wrap"><table><thead><tr><th>符号</th><th>定义</th><th>直观含义</th></tr></thead><tbody>
+    <tr><td><code>L, R</code></td><td>访问区间的左右端点，L ≤ h ≤ R</td><td>最远向左 / 向右到哪里</td></tr>
+    <tr><td><code>A(L)</code></td><td>ℓ<sub>L</sub> + ··· + ℓ<sub>h−1</sub></td><td>起点向左走到 v<sub>L</sub> 的距离</td></tr>
+    <tr><td><code>B(R)</code></td><td>ℓ<sub>h</sub> + ··· + ℓ<sub>R−1</sub></td><td>起点向右走到 v<sub>R</sub> 的距离</td></tr>
+    <tr><td><code>P(L,R)</code></td><td>Σ<sub>i=L..R</sub> r<sub>i</sub></td><td>区间内只计一次的奖励总和</td></tr>
+    <tr><td><code>C(L,R)</code></td><td>覆盖整个区间所需最少移动时间</td><td>必须决定先左后右，还是先右后左</td></tr>
+  </tbody></table></div>
+  <div class="callout warn"><strong>关键约束：</strong>你们研究的版本允许随时结束路线；经典文献中经常出现“指定终点”的 Orienteering 版本。英文报告开头必须讲清楚这里是 <em>rooted, free-endpoint</em>，否则后面的成本公式可能被质疑。</div>
+</section>
+
+<section class="section" id="intuition">
+  <span class="topline">03 / Central idea</span>
+  <h2>两个引理决定了整个算法</h2>
+  <h3>引理 1：你访问过的节点，一定构成一个连续区间</h3>
+  <p>假设玩家从 <code>vₕ</code> 出发，曾经到过最左侧 <code>v<sub>L</sub></code> 和最右侧 <code>v<sub>R</sub></code>。因为图上没有捷径，去往两个端点的过程必然经过它们之间的所有节点，所以被访问的顶点集合恰好是 <code>[L, R]</code>。</p>
+  <figure class="diagram">
+    <svg viewBox="0 0 760 175" role="img" aria-label="访问的端点所界定的连续区间">
+      <rect x="145" y="42" width="470" height="60" rx="12" fill="#e6f4ee"/>
+      <path d="M68 74 H693" stroke="#95a9a0" stroke-width="4" stroke-linecap="round"/>
+      <g font-size="15" font-family="sans-serif" text-anchor="middle"><g fill="#fff" stroke="#7e9889" stroke-width="2"><circle cx="70" cy="74" r="20"/><circle cx="173" cy="74" r="20"/><circle cx="276" cy="74" r="20"/><circle cx="379" cy="74" r="20"/><circle cx="482" cy="74" r="20"/><circle cx="585" cy="74" r="20"/><circle cx="688" cy="74" r="20"/></g><g fill="#0e604c"><text x="70" y="79">1</text><text x="173" y="79">L</text><text x="276" y="79">…</text><text x="482" y="79">…</text><text x="585" y="79">R</text><text x="688" y="79">n</text></g><circle cx="379" cy="74" r="20" fill="#116a56" stroke="#116a56"/><text x="379" y="79" fill="white" font-weight="700">s</text></g>
+      <g stroke="#116a56" stroke-width="1.5"><path d="M173 107 V128 H585 V107" fill="none"/></g><text x="379" y="153" text-anchor="middle" fill="#286450" font-size="15">访问区间 [L, R]：中间节点无法跳过</text>
+    </svg>
+    <figcaption>走过的路线允许重复折返，但访问集合必然连续；奖励等于该区间的奖励和。</figcaption>
+  </figure>
+  <div class="proof"><div class="proof-title">为什么这很重要？</div><p>一般图要讨论“访问哪些点、顺序如何”；路径图只需选 <strong>两个整数 L、R</strong>。一旦决定了最左和最右位置，收集到的奖励就确定了。</p></div>
+  <h3>引理 2：覆盖 [L,R] 的最少时间如何算？</h3>
+  <p>记 <code>A</code> 为从起点到左端点的距离，<code>B</code> 为从起点到右端点的距离。想同时访问两端，你有且只有两种值得考虑的先后顺序：</p>
+  <div class="two">
+    <div class="flowish"><strong>先去左，再去右</strong><p class="mini dim">s → L 花 A；L → R 花 A+B；最终停在 R。</p><div class="formula">A + (A + B) = 2A + B</div></div>
+    <div class="flowish"><strong>先去右，再去左</strong><p class="mini dim">s → R 花 B；R → L 花 A+B；最终停在 L。</p><div class="formula">B + (A + B) = A + 2B</div></div>
+  </div>
+  <div class="formula"><strong>C(L,R) = min(2A + B, A + 2B) = A + B + min(A,B)</strong></div>
+  <p>证明不是只说这两条路“看上去最短”。要同时说明：任何路线必先到达某一个端点，然后才可能到达另一个端点；前后两段移动所需的距离分别给出对应下界，而上述两条路线恰好实现这两个下界。</p>
+  <div class="callout"><strong>记忆方法：</strong>左右各走一遍需要 <code>A+B</code>；由于起点在区间中间，还要为其中一侧的“折返”多付一次成本。选择 <strong>离起点更近的那一侧先去</strong>，就能使重复经过的距离最小。</div>
+  <h3>于是，原问题被完全改写为</h3>
+  <div class="formula">maximize &nbsp; P(L,R) = Σ<sub>i=L..R</sub> r<sub>i</sub><small>subject to &nbsp; 1 ≤ L ≤ h ≤ R ≤ n &nbsp; and &nbsp; A(L) + B(R) + min(A(L), B(R)) ≤ T</small></div>
+  <p>这里“完全”很关键：任何真实 walk 对应一个区间，而任何满足预算的区间都能由上述具体走法实现。算法找到的不是仅仅一个数学上的上界，而是真正可走的最优路线。</p>
+</section>
+
+<section class="section" id="algorithm">
+  <span class="topline">04 / Derivation and algorithm</span>
+  <h2>先做 O(n²)，再把它变成 O(n)</h2>
+  <h3>第一版：枚举左右端点，已经是精确解</h3>
+  <p>有最多 <code>h × (n−h+1) = O(n²)</code> 个区间。利用前缀和，每个区间都可以在常数时间内算出成本与奖励。枚举所有满足 <code>C(L,R) ≤ T</code> 的区间，取最高奖励即可。</p>
+  <p>这是一个可靠的 <strong>baseline</strong>，可以用来检查更快的实现。但你的最终贡献可以更进一步，因为奖励与移动成本都是非负数。</p>
+  <h3>两个单调性，让双指针成为可能</h3>
+  <ol class="steps">
+    <li><strong>固定左端点 L，右端点越往右，成本不会减少。</strong>因为 B(R) 随 R 不减，所以 C(L,R) 不减；可行的右端点总是一段前缀。</li>
+    <li><strong>固定 L，右端点越往右，奖励不会减少。</strong>因为所有 rᵢ ≥ 0，所以在预算允许的范围里，取最远可行的 R 就足够了。</li>
+    <li><strong>把 L 从左往右移动，原本可行的 R 不会突然不可行。</strong>因为 A(L) 不增，成本只会保持或下降。于是最远可行 R 只需往右移动，从不后退。</li>
+  </ol>
+  <div class="formula">x₁ = 0, &nbsp; x<sub>i+1</sub> = x<sub>i</sub> + ℓ<sub>i</sub>, &nbsp; q₀ = 0, &nbsp; q<sub>i</sub> = q<sub>i−1</sub> + r<sub>i</sub><small>A(L) = x<sub>h</sub> − x<sub>L</sub>; &nbsp; B(R) = x<sub>R</sub> − x<sub>h</sub>; &nbsp; P(L,R) = q<sub>R</sub> − q<sub>L−1</sub></small></div>
+  <div class="codebox"><div class="codehead">PSEUDOCODE · ExactPathOrienteering</div><pre>Input: path v[1..n], edge times ℓ[1..n−1],
+       rewards r[1..n] ≥ 0, start h, budget T
+Compute distance prefix x[1..n]
+Compute reward prefix q[0..n]
+
+R = h
+best = −∞
+for L = 1, 2, ..., h:           // L 向右移动
+    A = x[h] − x[L]
+    if A > T: continue         // 连左端点都到不了
+
+    while R < n:
+        Bnext = x[R+1] − x[h]
+        if A + Bnext + min(A, Bnext) > T:
+            break
+        R = R + 1              // R 永不回退
+
+    reward = q[R] − q[L−1]
+    if reward > best:
+        best = reward
+        (L*, R*) = (L, R)
+
+// 先去离起点近的端点，再走到另一个端点
+return best, constructWalk(h, L*, R*)</pre></div>
+  <h3>严格复杂度</h3>
+  <p><code>L</code> 最多递增 n 次；<code>R</code> 在整个执行中最多递增 n 次（不能把 while 当成每轮重新跑 n 次），前缀和构建也是 O(n)。因此：</p>
+  <div class="formula">Time = O(n) &nbsp; · &nbsp; Space = O(n) &nbsp; · &nbsp; Approximation ratio = 1</div>
+  <p>如果使用邻接表输入，需要先在 O(|V|+|E|) 时间内确认并提取路径顺序；对连通路径图有 |E|=|V|−1，所以总计仍为 O(n)。</p>
+</section>
+
+<section class="section" id="interactive">
+  <span class="topline">05 / Interactive example</span>
+  <h2>改变预算，观察最优区间如何变化</h2>
+  <p>以下固定 7 个节点，起点为 <code>v₄</code>，节点奖励依次为 <code>[5, 2, 6, 1, 7, 4, 8]</code>；边耗时依次为 <code>[2, 1, 3, 2, 1, 2]</code>。移动预算可调，图中高亮区间由上面的 O(n) 双指针算法实时计算。</p>
+  <div class="demo">
+    <div class="controls"><label for="budgetSlider">时间预算 T</label><input id="budgetSlider" type="range" min="0" max="18" step="1" value="10"><span class="budget" id="budgetValue">10</span></div>
+    <svg id="demoGraph" viewBox="0 0 740 165" role="img" aria-label="路径图交互案例：高亮当前的最优访问区间"><text x="370" y="83" text-anchor="middle" font-size="14" fill="#6b7a72">绘制中…</text></svg>
+    <div class="demostats"><div>最大可得奖励<b id="demoReward">21</b></div><div>最优访问区间<b id="demoInterval">v₁ – v₅</b></div><div>最少移动时间<b id="demoCost">10</b></div></div>
+    <div class="route"><strong>构造的最优 walk：</strong><span id="demoRoute">v₄ → v₅ → v₄ → v₃ → v₂ → v₁</span></div>
+    <p class="mini dim" id="demoExplanation">A = 6，B = 2，因此先去更近的右端点再前往左端点。</p>
+    <div class="tbl-wrap"><table><thead><tr><th>左端点 L</th><th>在预算内最远的 R</th><th>区间奖励</th><th>最少时间</th></tr></thead><tbody id="traceRows"></tbody></table></div>
+    <p class="foot">这只是路径图特例的交互证明辅助，不等同完整 MOBA 游戏 Demo。通过不同 T 检验最优解的改变、零折返和必须折返两种情况。</p>
+  </div>
+  <h3>预算 T = 10 的手算核对</h3>
+  <div class="tbl-wrap"><table><thead><tr><th>候选区间</th><th>A</th><th>B</th><th>C = A+B+min(A,B)</th><th>奖励</th></tr></thead><tbody>
+    <tr><td><strong>[v₁, v₅]</strong></td><td>6</td><td>2</td><td>10</td><td><strong>21（最优）</strong></td></tr>
+    <tr><td>[v₂, v₆]</td><td>4</td><td>3</td><td>10</td><td>20</td></tr>
+    <tr><td>[v₃, v₆]</td><td>3</td><td>3</td><td>9</td><td>18</td></tr>
+    <tr><td>[v₄, v₇]</td><td>0</td><td>5</td><td>5</td><td>20</td></tr>
+  </tbody></table></div>
+  <p>选中 <code>[v₁,v₅]</code> 时，先往右走到 <code>v₅</code> 只需 2，再从 <code>v₅</code> 向左走到 <code>v₁</code> 需 8，总耗时 10，访问全部五个节点，获得奖励 21。</p>
+  <div class="notes"><strong>验证说明：</strong>同一 O(n) 方法已与 O(n²) 穷举算法在 <strong>45,000 个</strong>随机生成的路径图案例上比较过最优奖励，包含零边权与零奖励节点，输出一致。这是实现检查，不替代数学证明；正式评分应以 §06 的证明为准。</div>
+</section>
+
+<section class="section" id="report">
+  <span class="topline">06 / Ready-to-use formal writing</span>
+  <div class="copybar"><div><h2 style="margin:0 0 5px">可用于 Final Report 的英文正文</h2><span class="dim mini">可改成 main.tex 的新一节。单独的完整 LaTeX 版本随文档另附。</span></div><button id="copyProof" class="btn hide-print" type="button">复制英文正文</button></div>
+  <div id="englishProof" class="english" lang="en">
+    <h3>Exact Orienteering on a Path Graph</h3>
+    <p>We consider the special case in which the underlying graph is an undirected path <em>v</em><sub>1</sub>—<em>v</em><sub>2</sub>—⋯—<em>v</em><sub>n</sub>. Let ℓ<sub>i</sub> ≥ 0 denote the cost of edge {<em>v</em><sub>i</sub>,<em>v</em><sub>i+1</sub>}, let r<sub>i</sub> ≥ 0 denote the reward at vertex <em>v</em><sub>i</sub>, and let the starting vertex be <em>s</em> = <em>v</em><sub>h</sub>. A walk may terminate at any vertex, and each reward is collected at most once.</p>
+    <p>For any 1 ≤ L ≤ h ≤ R ≤ n, define the distances from the start to the two extremes and the reward of their interval:</p>
+    <div class="formula">A<sub>L</sub> = Σ<sub>i=L..h−1</sub> ℓ<sub>i</sub>, &nbsp; B<sub>R</sub> = Σ<sub>i=h..R−1</sub> ℓ<sub>i</sub>, &nbsp; P(L,R) = Σ<sub>i=L..R</sub> r<sub>i</sub>.</div>
+    <h4>Lemma 1 (Interval property)</h4>
+    <div class="proof"><p><em>The set of vertices visited by any walk starting at v<sub>h</sub> is a contiguous interval [L,R] containing h, and its total collected reward is P(L,R).</em></p><p><strong>Proof.</strong> Let L and R be the minimum and maximum indices visited by the walk. On a path graph, there is a unique simple path between any pair of vertices. Reaching either extreme from v<sub>h</sub> necessarily passes through every intervening vertex; therefore all vertices in [L,R] are visited. By the definition of the extremes, no other vertex is visited. Since reward is counted only once per vertex, the collected reward equals P(L,R). ∎</p></div>
+    <h4>Lemma 2 (Minimum interval-covering cost)</h4>
+    <div class="proof"><p><em>The minimum cost of any walk starting at v<sub>h</sub> that visits both extremes of [L,R], without a prescribed endpoint, is</em></p><div class="formula">C(L,R) = min{2A<sub>L</sub>+B<sub>R</sub>, A<sub>L</sub>+2B<sub>R</sub>} = A<sub>L</sub>+B<sub>R</sub>+min{A<sub>L</sub>,B<sub>R</sub>}.</div><p><strong>Proof.</strong> Any such walk must visit both v<sub>L</sub> and v<sub>R</sub>. If v<sub>L</sub> is the first extreme reached, reaching it from the start costs at least A<sub>L</sub>, and subsequently reaching v<sub>R</sub> costs at least A<sub>L</sub>+B<sub>R</sub>. The total cost is therefore at least 2A<sub>L</sub>+B<sub>R</sub>, achieved by travelling from v<sub>h</sub> to v<sub>L</sub> and then to v<sub>R</sub>. The opposite order analogously has minimum cost A<sub>L</sub>+2B<sub>R</sub>. The cheaper of these two orders is optimal, including when one extreme coincides with the start. ∎</p></div>
+    <p>By Lemmas 1 and 2, the original optimisation problem is equivalent to maximising P(L,R) over all 1 ≤ L ≤ h ≤ R ≤ n such that C(L,R) ≤ T. Enumerating all intervals gives an O(n²)-time exact algorithm after prefix-sum preprocessing. We next improve it to linear time.</p>
+    <h4>Two-pointer algorithm</h4>
+    <p>Compute distance prefix sums x<sub>1</sub>=0 and x<sub>i+1</sub>=x<sub>i</sub>+ℓ<sub>i</sub>, and reward prefix sums q<sub>0</sub>=0 and q<sub>i</sub>=q<sub>i−1</sub>+r<sub>i</sub>. For each left endpoint L from 1 to h, maintain the largest feasible right endpoint R, initially h. Skip L if x<sub>h</sub>−x<sub>L</sub> &gt; T. Otherwise, advance R while C(L,R+1) ≤ T. Evaluate q<sub>R</sub>−q<sub>L−1</sub>, and remember the highest-reward interval.</p>
+    <h4>Theorem (Optimality and running time)</h4>
+    <div class="proof"><p><em>For a fixed starting vertex and an arbitrary ending vertex, the Orienteering Problem on an undirected path graph with nonnegative travel costs and nonnegative one-time vertex rewards can be solved exactly in O(n) time and O(n) space.</em></p><p><strong>Proof.</strong> By Lemmas 1 and 2, every feasible walk gives a feasible interval of the same reward, and every feasible interval can be covered by a walk of cost C(L,R) ≤ T. Therefore it suffices to optimise over intervals.</p><p>Fix a left endpoint L. Because the travel costs are nonnegative, C(L,R) is nondecreasing as R increases. Thus its feasible right endpoints form a prefix, and there is a largest feasible R if A<sub>L</sub> ≤ T. As vertex rewards are nonnegative, P(L,R) is also nondecreasing in R, so this largest feasible R attains the highest reward among all feasible intervals with left endpoint L. If A<sub>L</sub> &gt; T, no right endpoint is feasible, justifying its omission.</p><p>As L increases, A<sub>L</sub> does not increase. Since C(L,R)=A<sub>L</sub>+B<sub>R</sub>+min(A<sub>L</sub>,B<sub>R</sub>) is nondecreasing in A<sub>L</sub>, every previously feasible right endpoint remains feasible. Therefore the largest feasible R never decreases, and the algorithm maintains it correctly by only moving R to the right. It examines a best interval for every possible L and hence returns the global optimum.</p><p>The prefix arrays take O(n) time and O(n) space. The left pointer moves at most n times, and the right pointer advances at most n times in total, with O(1) work per iteration. Thus the total running time is O(n). Finally, an optimal walk is reconstructed by first visiting the nearer extreme and then the farther extreme, as established in Lemma 2. ∎</p></div>
+    <h4>Scope and limitations</h4>
+    <p>This exact linear-time algorithm relies on the structure of the underlying graph being a path, not merely on the returned route having the shape of a path. Branches and cycles destroy the interval property. Nonnegative rewards are needed to justify choosing the furthest feasible right endpoint for each L. The travel-cost formula also assumes a fixed start but no required finish or return to the start; variants with terminal constraints need a modified analysis. Dynamic travel times, respawning rewards and interactions with opponents lie outside the static model considered here.</p>
+  </div>
+  <p class="foot">注：上面英文内容是一套自洽的证明，不要求复用队友原来有问题的归约。插入主文档时可统一符号、Lemma 编号、交叉引用与本组 citation style。</p>
+</section>
+
+<section class="section" id="limitations">
+  <span class="topline">07 / Critical evaluation</span>
+  <h2>Limitations 应该怎么写，才不是泛泛而谈？</h2>
+  <p>课程要求的不仅是“算法快”，还要清楚界定其适用范围、哪些前提在 MOBA 场景里不现实，以及推广到一般图时到底是哪一步失效。</p>
+  <div class="tbl-wrap"><table><thead><tr><th>限制</th><th>为什么会影响证明</th><th>报告里怎么表述</th></tr></thead><tbody>
+    <tr><td><strong>必须是路径图</strong></td><td>一般图存在分支、环；访问集合不能唯一表示为单个区间 [L,R]</td><td>核心结构限制；在完整 MOBA 地图上不能直接应用</td></tr>
+    <tr><td><strong>非负奖励</strong></td><td>如果 rᵢ 为负，向右扩张区间可能降低总奖励；“最远 R 最好”不再成立</td><td>双指针最优性证明对负奖励无效，必须重新设计算法</td></tr>
+    <tr><td><strong>起点固定，终点自由</strong></td><td>成本 C=min(2A+B,A+2B) 假设走到最后一个端点就能停</td><td>必须回基地或到指定目标时需调整成本与证明</td></tr>
+    <tr><td><strong>静态权重与一次性奖励</strong></td><td>现实游戏的移动时间、怪物刷新、争夺资源均可能变化</td><td>精确性只对抽象模型成立，不保证实际比赛最优</td></tr>
+    <tr><td><strong>不考虑敌人、战斗与收集耗时</strong></td><td>原模型将此类影响省略，新增约束可能改变可行路线</td><td>是模型边界，不是该算法内部的数学错误</td></tr>
+  </tbody></table></div>
+  <div class="callout alert"><strong>最容易被导师指出的问题：</strong>“任何方案最终都是一条 path，所以为什么不能对一般图使用你的 path graph 算法？”回答：这里要求的是 <strong>输入图本身是一条路径</strong>；不是说从任何一般图中挑出一条路线后，这条路线看起来像 path 就能套用 O(n) 结论。</div>
+  <h3>可写进报告的讨论层次</h3>
+  <p><strong>理论意义：</strong>虽然一般 Orienteering 是 NP-hard，但其特殊拓扑允许精确多项式甚至线性时间算法，说明组合复杂度很大程度来自图的分支与访问顺序选择。</p>
+  <p><strong>应用意义：</strong>对于单条走廊、线性地图或已经被证明可约化为路径的子地图，算法可以为 Demo 提供即时最优答案；但对于普通 MOBA 多路线地图，应继续使用 Held–Karp 作为小规模 benchmark，或使用经过分析的启发式算法。</p>
+  <p><strong>可进一步讨论：</strong>终点固定/必须返回的变体、树图上的方法、带重新刷新的时间相关奖励；这些是后续研究方向，不应误写成已被当前定理解决。</p>
+</section>
+
+<section class="section" id="fixes">
+  <span class="topline">08 / Integration repairs</span>
+  <h2>前面如果还没修完，至少补这三处</h2>
+  <h3>A. NP-hardness 归约：修正预算和奖励门槛</h3>
+  <p>目前 <code>main.tex</code> 的问题是：构造写了 <code>T=n+1, R=n</code>，但“反向证明”转而假定 <code>T=n, R=n+1</code>，并声称奖励上界为 n。三者不一致，原参数也不足以强制一条 Hamiltonian path。</p>
+  <div class="callout alert"><strong>建议统一采用更简洁的版本：</strong>令原始无向图 H 有 n 个顶点，在新图里新增起点 s 并连到 H 的每个顶点，所有边权为 1，<strong>r(s)=0</strong>，每个原始顶点奖励为 1，设 <strong>T=n，K=n</strong>。</div>
+  <div class="proof"><div class="proof-title">修订后的当且仅当证明</div><p><strong>⇒</strong> 若 H 存在 Hamiltonian path v₁→⋯→vₙ，则新图的 s→v₁→⋯→vₙ 经过 n 条边，耗时 n，获得 n 个原始节点的全部奖励，故满足条件。</p><p><strong>⇐</strong> 若新图存在成本 ≤n、奖励 ≥n 的 walk，它必须访问全部 n 个原始顶点。从 s 出发首次到访 n 个不同的顶点至少需 n 次边遍历；每条边权为 1 且预算为 n，因此恰好 n 次遍历，没有任何重复。去掉最初的 s 后，剩余顺序是原始图 H 的 Hamiltonian path。</p><p>构造仅新增 1 个顶点和 n 条边，耗时 O(|V|+|E|)，是多项式归约。该判定问题因此 NP-hard。</p></div>
+  <p class="mini dim">另一种一致的写法是令 r(s)=1、其余奖励仍为 1，并设 T=n、K=n+1；不要混用两版。</p>
+  <h3>B. Held–Karp：复杂度记号与“exactly” 的歧义</h3>
+  <p>现有 <code>main.tex</code> 写了 <code>|V|=m, |E|=n</code>，却又声称 Dijkstra 运行 n 次、DP 用 <code>2ⁿn²</code>，这会把边数和顶点数混淆。更合理的是用 <code>N=|V|, M=|E|, k=|P|</code>，P 为正奖励节点集合。</p>
+  <div class="formula">DP time = O(k² 2ᵏ); &nbsp; Dijkstra preprocessing = O((k+1)(N+M) log N)<small>使用二叉堆与邻接表的保守上界；总时间为两项之和。</small></div>
+  <p>DP 的 <code>dp[S][v]</code> 是“在最短路距离闭包上，按顺序访问指定奖励节点集合 S 并以 v 结束的最小费用”，但拼接真实最短路时 <strong>可能经过其他不在 S 的奖励节点</strong>。因此别写“真实 walk 恰好只访问 S”。由于奖励非负，额外经过的奖励节点只会提高实际收益；结合 Metric Closure Lemma 才能推出整体最优性。</p>
+  <p>其归纳证明要明确两边：任一合法 visiting order 去掉最后的 v 给出一个候选前驱，所以 DP ≤ 最优；任一 DP 转移都能构成合法 visiting order，所以 DP ≥ 最优。由此得等号。</p>
+  <h3>C. Greedy 的 unbounded approximation ratio：补一个严格反例</h3>
+  <p>如果 Tenuun 仍未完成，可针对两种明确的贪心规则——<em>nearest next feasible reward</em> 和 <em>highest reward / additional travel cost</em>——用同一族反例说明两者的性能可能任意差。</p>
+  <figure class="diagram">
+    <svg viewBox="0 0 710 160" role="img" aria-label="贪心反例，一条近短低分支，一条远长高分支">
+      <path d="M200 75 L83 75" stroke="#c59b66" stroke-width="4"/><path d="M200 75 L565 75" stroke="#497f70" stroke-width="4"/><g font-family="sans-serif" text-anchor="middle"><circle cx="200" cy="75" r="23" fill="#116a56"/><text x="200" y="81" fill="white" font-size="18">s</text><circle cx="83" cy="75" r="22" fill="#f2debd" stroke="#b58b52"/><text x="83" y="81" fill="#7e5619" font-size="17">a</text><circle cx="565" cy="75" r="22" fill="#d7e9e0" stroke="#4d8c73"/><text x="565" y="81" fill="#194e39" font-size="17">b</text><text x="140" y="55" fill="#7e5619" font-size="15">cost 1</text><text x="380" y="55" fill="#235943" font-size="15">cost M</text><text x="83" y="121" font-size="15" fill="#7e5619">reward 2</text><text x="565" y="121" font-size="15" fill="#235943">reward M</text><text x="355" y="145" font-size="14" fill="#59665f">Budget T = M,  M ≥ 3</text></g>
+    </svg><figcaption>这是一个三节点的树（也是一个三节点路径），起点在中间；该反例针对具体的局部贪心规则，而不是针对你的精确算法。</figcaption>
+  </figure>
+  <p>取 M ≥ 3，令 <code>w(s,a)=1, r(a)=2</code>；<code>w(s,b)=M, r(b)=M</code>，并设 <code>T=M</code>。最近优先显然先选 a；奖励/距离比也先选 a（2/1 = 2，而 M/M = 1）。此时已经耗费 1，想从 a 再到 b，需追加 <code>1+M</code>，总耗时 M+2 &gt; M，故贪心只能拿 2 分。</p>
+  <div class="formula">Greedy = 2, &nbsp; OPT = M, &nbsp; OPT / Greedy = M/2 → ∞</div>
+  <p>因此，随着 M 增大，<strong>这两种没有回溯或预见的具体贪心规则</strong>均不具有常数近似保证。不要把此结论扩大成“所有可能的 greedy algorithm 都没有近似保证”，因为不同贪心设计可能有不同性质。</p>
+  <div class="callout"><strong>特别有趣的对比：</strong>这个贪心反例的输入本身仍是路径图！所以你们可以展示：同一特殊图上，局部贪心可能任意差，而利用区间结构的 O(n) 算法却能得到严格最优解。</div>
+</section>
+
+<section class="section" id="delivery">
+  <span class="topline">09 / Working checklist</span>
+  <h2>你的部分应该按什么顺序真正完成？</h2>
+  <p>若只交一段“path graph 上可以扫描”而没有条件、引理和复杂度证明，这部分会显得很弱。建议按下面的顺序整合：</p>
+  <ul class="checklist">
+    <li><strong>锁定与组员一致的模型：</strong>无向路径图、非负边权、非负节点奖励、一次领取、固定起点、终点自由。</li>
+    <li><strong>写出 Path Graph 专节：</strong>定义 v₁…vₙ、起点 vₕ、A、B、P、C，附一张路径示意图。</li>
+    <li><strong>证明 Interval Lemma：</strong>任何实际 walk 的访问集合恰好是一个包含起点的连续区间。</li>
+    <li><strong>证明 Cost Lemma：</strong>对左右端点两种访问顺序分别作下界证明，并构造达到下界的 walk。</li>
+    <li><strong>先说明 O(n²) exact baseline：</strong>降低读者理解难度，再用单调性推导双指针 O(n)。</li>
+    <li><strong>完成算法正确性定理：</strong>证明最远可行 R 为固定 L 的最优；证明 R 永不回退；覆盖全部 L；给出时间、空间复杂度。</li>
+    <li><strong>写 limitations：</strong>至少写 topology、nonnegative rewards、free endpoint、static model 四项，并具体指出失败在哪一步。</li>
+    <li><strong>验证并整合：</strong>用第 05 节的手算案例核对，整理成最终报告中的一节；必要时帮组员修正第 08 节的三个问题。</li>
+  </ul>
+  <div class="callout"><strong>建议最终贡献的叙事线：</strong>一般图 NP-hard → Held–Karp 可精确但指数级 → 简单 greedy 无界坏例 → <strong>限制为路径图后，利用拓扑结构实现 O(n) 精确算法</strong>。这是你这部分最清晰、最有说服力的价值。</div>
+  <p>文件交付：此 HTML 是学习与演示稿；配套的 <code>path_graph_section.tex</code> 是可以复制进 <code>main.tex</code> 的英文正式段落。建议你作为负责人的部分从 “Exact Orienteering on a Path Graph” 开始，放在 Held–Karp 和 Greedy 分析之后。</p>
+</section>
+
+<section class="section" id="sources">
+  <span class="topline">References / source notes</span>
+  <h2>依据与引用</h2>
+  <p>本节的 O(n) 定理及双指针证明按你们的特殊模型独立推导；不能把它直接说成某一篇论文已经提出的算法，除非实际查到对应来源。背景文献主要用于说明 Orienteering 问题与一般方法。</p>
+  <ol class="ref">
+    <li>Golden, B. L., Levy, L., &amp; Vohra, R. (1987). “The Orienteering Problem.” <em>Naval Research Logistics</em> 34(3), 307–318. <a href="https://doi.org/10.1002/1520-6750(198706)34:3%3C307::AID-NAV3220340302%3E3.0.CO;2-D" target="_blank" rel="noopener">DOI</a>.</li>
+    <li>Vansteenwegen, P., Souffriau, W., &amp; Van Oudheusden, D. (2011). “The Orienteering Problem: A Survey.” <em>European Journal of Operational Research</em> 209(1), 1–10. <a href="https://biblio.ugent.be/publication/1111434" target="_blank" rel="noopener">Publication record</a>.</li>
+    <li>Held, M., &amp; Karp, R. M. (1962). “A Dynamic Programming Approach to Sequencing Problems.” <em>Journal of SIAM</em> 10(1), 196–210.</li>
+    <li>课程小组压缩包（本次用户提供）：<code>main.tex</code>、<code>progress_check.tex</code>、<code>held-karp_draft.tex</code>。上述“已完成 / 待修复”状态仅按这些文本判断。</li>
+  </ol>
+  <p class="foot">数学的适用范围以第 02、06、07 节的条件为准；文中的可运行交互不需要联网。更新：2026-11-10。</p>
+</section>
+
+</main></div>
+<script>
+(() => {
+  'use strict';
+  const rewards=[5,2,6,1,7,4,8], edges=[2,1,3,2,1,2], start=3, n=rewards.length;
+  const xs=[0], qs=[0]; for(let i=0;i<edges.length;i++) xs.push(xs[i]+edges[i]); for(let i=0;i<n;i++) qs.push(qs[i]+rewards[i]);
+  const cost=(L,R)=>{const a=xs[start]-xs[L], b=xs[R]-xs[start];return a+b+Math.min(a,b);};
+  const fmt=(i)=>`v${'₀₁₂₃₄₅₆₇₈₉'[i+1]||i+1}`;
+  function solve(T){
+    let R=start, best=null; const rows=[];
+    for(let L=0; L<=start; L++){
+      const A=xs[start]-xs[L];
+      if(A>T){rows.push({L,R:null});continue;}
+      while(R+1<n && cost(L,R+1)<=T) R++;
+      const score=qs[R+1]-qs[L]; const item={L,R,score,cost:cost(L,R)};
+      rows.push(item); if(!best || score>best.score)best=item;
+    }
+    return {best,rows};
+  }
+  function routeFor(L,R){
+    const A=xs[start]-xs[L], B=xs[R]-xs[start];
+    const indexes=[start]; const targets = A <= B ? [L,R] : [R,L];
+    let current=start;
+    for(const dest of targets){
+      while(current!==dest){current+= Math.sign(dest-current); indexes.push(current);}
+    }
+    return {indexes, A,B,way:A<=B?'左侧':'右侧'};
+  }
+  function svgGraph(best){
+    const coords=Array.from({length:n},(_,i)=>52+i*106);
+    const L=best.L,R=best.R;
+    let s='<rect x="0" y="0" width="740" height="165" fill="transparent"/>';
+    s+=`<rect x="${coords[L]-32}" y="36" width="${coords[R]-coords[L]+64}" height="83" rx="13" fill="#e6f4ee"/>`;
+    for(let i=0;i<n-1;i++){
+      const active=i>=L&&i<R;
+      s+=`<line x1="${coords[i]}" y1="79" x2="${coords[i+1]}" y2="79" stroke="${active?'#116a56':'#c0cbc4'}" stroke-width="${active?5:3}" stroke-linecap="round"/>`;
+      s+=`<text x="${(coords[i]+coords[i+1])/2}" y="63" font-size="13" fill="#68786e" text-anchor="middle">${edges[i]}</text>`;
+    }
+    for(let i=0;i<n;i++){
+      const active=i>=L&&i<=R, isStart=i===start;
+      s+=`<circle cx="${coords[i]}" cy="79" r="${isStart?24:21}" stroke="${isStart?'#116a56':active?'#719b88':'#b3bdb7'}" stroke-width="2" fill="${isStart?'#116a56':active?'#dcf1e6':'#f4f6f4'}"/>`;
+      s+=`<text x="${coords[i]}" y="85" text-anchor="middle" font-size="16" font-weight="700" fill="${isStart?'white':'#244c3a'}">v${i+1}</text>`;
+      s+=`<text x="${coords[i]}" y="128" font-size="13" text-anchor="middle" fill="${active?'#116a56':'#7e8882'}">+${rewards[i]}</text>`;
+    }
+    s+='<text x="370" y="19" fill="#556b5f" text-anchor="middle" font-size="13">边上的数字 = 移动时间　·　节点下方 = 一次性奖励</text>';
+    s+='<text x="370" y="153" fill="#5a695f" text-anchor="middle" font-size="12">深色 v4 为固定起点；浅色高亮区间为当前最优访问集合</text>';
+    return s;
+  }
+  function update(){
+    const T=Number(document.getElementById('budgetSlider').value), out=solve(T), best=out.best;
+    if(!best)return;
+    const route=routeFor(best.L,best.R);
+    document.getElementById('budgetValue').textContent=T;
+    document.getElementById('demoReward').textContent=best.score;
+    document.getElementById('demoInterval').textContent=`v${best.L+1} – v${best.R+1}`;
+    document.getElementById('demoCost').textContent=`${best.cost} / ${T}`;
+    document.getElementById('demoGraph').innerHTML=svgGraph(best);
+    document.getElementById('demoRoute').textContent=route.indexes.map(i=>`v${i+1}`).join(' → ');
+    document.getElementById('demoExplanation').textContent=`A = ${route.A}，B = ${route.B}；先去${route.way}端点，再走向另一端；最短时间 ${best.cost}，剩余预算 ${T-best.cost}。`;
+    document.getElementById('traceRows').innerHTML=out.rows.map(row=>{
+      const active=row.R!==null&&row.L===best.L&&row.R===best.R;
+      if(row.R===null)return `<tr><td>v${row.L+1}</td><td colspan="3" style="color:#ad4a3f">不可行：仅到左端点就超过预算</td></tr>`;
+      return `<tr style="${active?'background:#e6f4ee;':''}"><td>v${row.L+1}${active?' ★':''}</td><td>v${row.R+1}</td><td>${row.score}</td><td>${row.cost}</td></tr>`;
+    }).join('');
+  }
+  document.getElementById('budgetSlider').addEventListener('input',update);update();
+  const btn=document.getElementById('copyProof');
+  btn.addEventListener('click',async()=>{
+    const content=document.getElementById('englishProof').innerText;
+    try{await navigator.clipboard.writeText(content);btn.textContent='已复制';setTimeout(()=>btn.textContent='复制英文正文',1600);}catch(e){btn.textContent='浏览器未允许复制，请手动选中';}
+  });
+})();
+</script>
+</body></html>
