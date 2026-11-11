@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>COMP9444 Week 9 · Sequence Modelling 2｜中文详解与参考例题</title>
+<style>
+:root{--bg:#fafaf9;--paper:#fff;--text:#1f2723;--muted:#66716b;--border:#e2e6e3;--soft:#f2f5f3;--accent:#187d61;--accent-soft:#eaf5ef;--shadows:0 12px 28px rgba(20,40,25,.045)}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:22px}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;font-size:16px;line-height:1.83;-webkit-font-smoothing:antialiased}
+::selection{background:#c8e7d7}a{color:#137759;text-decoration-thickness:1px;text-underline-offset:3px}button,input{font:inherit}button{cursor:pointer}
+#progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:110;transition:width .08s linear}
+.shell{display:grid;grid-template-columns:270px minmax(0,1fr);max-width:1560px;margin:0 auto;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;overflow:auto;background:#f6f7f5;border-right:1px solid var(--border);padding:30px 18px 26px;align-self:start;scrollbar-width:thin}
+.brand{display:flex;align-items:center;gap:12px;padding:3px 9px 23px;border-bottom:1px solid var(--border);margin-bottom:16px}.brandmark{width:40px;height:40px;border:1px solid #b9d4c5;background:#e9f3ed;border-radius:12px;display:grid;place-items:center;font-size:18px;font-weight:800;color:#12634d}.brand b{font-size:16px;letter-spacing:-.03em}.brand small{display:block;font-size:11px;color:var(--muted);line-height:1.6}
+.side-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#77837b;padding:10px 12px 8px;font-weight:700}.sidebar nav a{display:block;padding:10px 11px;font-size:12.6px;line-height:1.55;text-decoration:none;color:#4b5750;border-radius:8px;border-left:2px solid transparent;margin:1px 0;transition:background .15s}.sidebar nav a:hover{background:#eaeeea}.sidebar nav a.active{background:#e8f0ea;color:#176e53;border-left-color:var(--accent);font-weight:650}
+.side-bottom{margin-top:22px;padding:18px 10px;border-top:1px solid var(--border);font-size:11px;line-height:1.7;color:var(--muted)}.side-bottom strong{color:var(--text)}
+.main{min-width:0}.topbar{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:26px clamp(22px,5vw,74px) 0;max-width:1100px;margin:auto}.topbar button,.mobile-menu{border:1px solid #dce3de;background:#fff;color:#41564b;padding:6px 13px;border-radius:8px;font-size:12px;line-height:1.6}.topbar button:hover,.mobile-menu:hover{border-color:#a4c8b5}.mobile-menu{display:none}.topbar .subtle{font-size:11px;color:var(--muted);margin-right:auto}
+article.content{max-width:995px;margin:0 auto;padding:10px clamp(22px,5vw,74px) 130px}
+h1{font-size:clamp(29px,4vw,45px);font-weight:760;line-height:1.28;letter-spacing:-.045em;margin:18px 0 18px;color:#1c2720}
+h2{font-size:clamp(23px,2.5vw,29px);line-height:1.37;font-weight:730;letter-spacing:-.027em;border-top:1px solid var(--border);margin:73px 0 14px;padding-top:32px;scroll-margin-top:22px}
+h3{font-size:19px;line-height:1.5;font-weight:700;letter-spacing:-.012em;margin:32px 0 10px;color:#27352c}
+h4{font-size:16px;margin:20px 0 8px}p{margin:12px 0 17px}strong,b{font-weight:680;color:#25352c}ul,ol{padding-left:1.45em;margin:11px 0 19px}li{padding-left:.18em;margin:5px 0}li::marker{color:#6d8e79}
+blockquote{margin:23px 0 28px;padding:13px 0 13px 20px;border-left:3px solid #a3cbb4;color:#44544b;font-size:17px;background:transparent}blockquote p{margin:0}
+.range{display:block;margin:0 0 23px;color:#7a8980;font-size:12px}
+.intro-points{display:flex;flex-wrap:wrap;gap:9px;margin:22px 0 38px}.intro-points span{font-size:12px;padding:5px 11px;border:1px solid #e1e6e1;background:#f5f7f5;border-radius:100px;color:#5b6d62}
+.note,.trap{border:1px solid #dfe7e1;border-left:3px solid #7eab92;background:#f7faf8;border-radius:4px 10px 10px 4px;padding:14px 18px;margin:22px 0;line-height:1.78}.trap{border-left-color:#a99764;background:#faf8f1;border-color:#e8e3d6}.note b,.trap b{color:#2e4535}
+.math,.key-formula{display:block;overflow:auto;max-width:100%;border-radius:9px;background:#f2f4f2;border:1px solid #e6eae6;color:#273a30;padding:13px 17px;margin:16px 0 19px;font-family:"SFMono-Regular",Consolas,"Noto Sans Mono CJK SC",monospace;font-size:14px;line-height:1.8;white-space:nowrap;scrollbar-width:thin}.key-formula{background:#eaf3ed;border-color:#c8dfd0;color:#175c46;font-weight:680;font-size:15px;padding:17px 19px}
+code{font-family:"SFMono-Regular",Consolas,monospace;background:#f1f3f0;border:1px solid #e9ece8;border-radius:4px;padding:1px 4px;font-size:.88em;overflow-wrap:anywhere}.math code,.key-formula code{background:transparent;border:0}
+.table-wrap{width:100%;overflow-x:auto;margin:21px 0 27px;border:1px solid var(--border);border-radius:10px;background:#fff;scrollbar-width:thin}table{border-collapse:collapse;width:100%;min-width:600px;font-size:13.5px;line-height:1.7}th{text-align:left;background:#f4f6f4;font-weight:700;color:#34463a}th,td{padding:11px 13px;vertical-align:top;border-bottom:1px solid #ebeeeb}tr:last-child td{border-bottom:none}tr:nth-child(even) td{background:#fcfdfc}
+.diagram{overflow:auto;max-width:100%;border:1px solid #e2e8e3;border-radius:13px;padding:13px 8px;background:#fff;margin:21px 0 27px;scrollbar-width:thin}.diagram svg{display:block;min-width:580px;max-width:100%;width:100%;height:auto;margin:0 auto}.svg-title{font-size:17px;font-weight:700;fill:#273a30}.svg-txt{font-family:system-ui,"PingFang SC",sans-serif;font-size:16px;fill:#26352d}.svg-caption{font-family:system-ui,"PingFang SC",sans-serif;font-size:14px;fill:#65786a}.svg-box rect{fill:#f3f6f4;stroke:#a5b8ac;stroke-width:1.2}
+.mask-group{display:flex;flex-wrap:wrap;gap:23px;margin:20px 0 24px}.mask-group>div{border:1px solid var(--border);padding:14px;border-radius:12px;background:#fff;flex:1;min-width:160px}.mask-group b{display:block;font-size:13px;margin-bottom:10px}.mask-group small{color:var(--muted);font-size:11px}.mask-grid{display:grid;gap:4px;max-width:185px;aspect-ratio:1.15;margin-bottom:9px}.mask-cell{display:block;border-radius:3px}.mask-cell.yes{background:#7db7a0}.mask-cell.no{background:#eaeeea}
+.exercises-header{margin:66px 0 22px;padding:30px 31px;background:#f0f4f0;border:1px solid #dce5de;border-radius:14px}.exercises-header h2{border:0;margin:0;padding:0}.exercises-header p{margin:10px 0 0;color:#4c6252}.q-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:25px 0 20px}.q-tools input{flex:1;min-width:210px;border:1px solid #d5dfd8;background:#fff;border-radius:9px;padding:10px 13px;font-size:13px;outline-offset:2px}.q-tools button{padding:9px 13px;border:1px solid #cfdbd2;border-radius:9px;background:#fff;font-size:12px;color:#38634b}
+.question{border:1px solid #dfe5e0;border-radius:13px;background:#fff;margin:12px 0;padding:21px 23px 0;box-shadow:0 2px 5px rgba(20,30,20,.017)}.q-top{display:flex;gap:11px;align-items:center;margin:0 0 8px;font-size:13px}.q-number{font-weight:760;color:#136d4e}.q-type{font-weight:700;color:#39473d}.q-points{margin-left:auto;color:#849087;font-size:12px}.q-prompt{font-size:14px;line-height:1.85}.q-prompt p{margin:9px 0 18px}.answer{margin:0 -23px;border-top:1px solid #e6ebe7}.answer summary{list-style:none;cursor:pointer;color:#25654d;font-weight:600;font-size:13px;display:flex;justify-content:space-between;padding:13px 23px;background:#fbfcfb;border-radius:0 0 13px 13px}.answer summary::-webkit-details-marker{display:none}.answer[open] summary{border-bottom:1px solid #e4eae6;border-radius:0}.summary-arrow{font-size:20px;line-height:1;transform:rotate(0deg);transition:transform .2s}.answer[open] .summary-arrow{transform:rotate(180deg)}.answer-body{padding:14px 23px 19px;font-size:13.8px;line-height:1.9;color:#3f5345;background:#fafcfb;border-radius:0 0 13px 13px}.answer-body p{margin:4px 0}.answer-body strong{color:#176748}
+.references{margin:66px 0 40px;padding-top:32px;border-top:1px solid var(--border)}.references h2{border:0;margin:0 0 15px;padding:0}.references p{font-size:13px;color:#5a6b60}.references ul{font-size:12.5px;line-height:1.8;color:#5b6a60}
+.footer{border-top:1px solid var(--border);padding:25px 0;color:#88928b;font-size:12px}.floating{position:fixed;right:23px;bottom:24px;background:#fff;color:#477056;border:1px solid #d5e4d9;border-radius:11px;padding:7px 11px;font-size:12px;box-shadow:var(--shadows);z-index:20;display:none}
+@media(max-width:1050px){.shell{grid-template-columns:230px minmax(0,1fr)}.sidebar{padding:25px 10px}.sidebar nav a{font-size:12px}.diagram svg{min-width:550px}}
+@media(max-width:740px){html{scroll-padding-top:66px}.shell{display:block}.sidebar{position:fixed;top:0;left:0;bottom:0;width:min(83vw,310px);z-index:101;transform:translateX(-104%);box-shadow:15px 0 30px rgba(0,0,0,.12);transition:transform .2s ease}.sidebar.visible{transform:translateX(0)}.shade{position:fixed;inset:0;background:rgba(22,38,27,.27);z-index:100;display:none}.shade.visible{display:block}.topbar{padding:14px 18px 4px;position:sticky;top:3px;background:rgba(250,250,249,.94);backdrop-filter:blur(13px);z-index:70;border-bottom:1px solid #edf0eb}.topbar .subtle{font-size:11px}.mobile-menu{display:inline-block;margin-right:auto}.topbar button{padding:6px 8px}.main{width:100%}article.content{padding:14px 18px 85px}h1{font-size:29px;margin-top:22px}h2{font-size:24px;margin-top:50px;padding-top:28px;scroll-margin-top:70px}h3{font-size:18px}.range{font-size:12px}.diagram{margin-left:-4px;margin-right:-4px}.diagram svg{min-width:610px;max-width:none}.math,.key-formula{font-size:12.6px}.question{padding:16px 17px 0}.answer{margin:0 -17px}.answer summary,.answer-body{padding-left:17px;padding-right:17px}.exercises-header{padding:20px 19px;margin-top:53px}.intro-points{gap:6px}.mask-group{gap:10px}.mask-group>div{min-width:125px}.floating{display:block}}
+@media(max-width:420px){body{font-size:15px}.topbar .subtle{display:none}.topbar button{font-size:11px}.diagram svg{min-width:585px}.mask-group>div{min-width:145px}.q-tools input{min-width:100%}.math{font-size:12px}}
+@media print{*{color-adjust:exact;-webkit-print-color-adjust:exact}body{background:white;font-size:11pt}.shell{display:block}.sidebar,.topbar,.floating,.shade,#progress,.q-tools{display:none!important}article.content{max-width:none;padding:0 12mm}.table-wrap{overflow:visible;break-inside:avoid}.table-wrap table{min-width:0}.diagram{break-inside:avoid}.diagram svg{min-width:0}.question{break-inside:avoid}h2{break-after:avoid}h3{break-after:avoid}.answer:not([open]) .answer-body{display:block!important}.answer summary{display:none}}
+</style>
+</head>
+<body>
+<div id="progress" aria-hidden="true"></div><div class="shade" id="shade"></div>
+<div class="shell">
+<aside class="sidebar" id="sidebar" aria-label="章节目录">
+ <div class="brand"><div class="brandmark">9</div><div><b>COMP9444</b><small>Sequence Modelling 2<br>中文学习手册</small></div></div>
+ <div class="side-label">内容目录 / CONTENTS</div>
+ <nav id="toc"><a href="#overview" data-to="overview"><span>先建立整张知识地图</span></a>
+<a href="#transformer" data-to="transformer"><span>01 · Transformer 的动机与三种结构</span></a>
+<a href="#bert" data-to="bert"><span>02 · BERT：完整 Encoder 从输入到输出</span></a>
+<a href="#gpt" data-to="gpt"><span>03 · GPT：Causal Decoder 与下一 Token 预测</span></a>
+<a href="#encdec" data-to="encdec"><span>04 · 原始 Encoder–Decoder：翻译时如何协作</span></a>
+<a href="#longcontext" data-to="longcontext"><span>05 · Long Context：Sparse、Flash、Linear Attention</span></a>
+<a href="#mamba" data-to="mamba"><span>06 · Mamba 与 State-Space Models：把过去压进状态</span></a>
+<a href="#moe" data-to="moe"><span>07 · Mixture of Experts（MoE）：参数多但只用一部分</span></a>
+<a href="#hybrid" data-to="hybrid"><span>08 · Hybrid Architectures：为什么全注意力与状态模型要混用</span></a>
+<a href="#diffusion" data-to="diffusion"><span>09 · Diffusion Language Models：不是只向右写，而是反复修改</span></a>
+<a href="#rope" data-to="rope"><span>10 · Rotary Position Embedding（RoPE）</span></a>
+<a href="#rag" data-to="rag"><span>11 · Retrieval-Augmented Generation（RAG）</span></a>
+<a href="#research" data-to="research"><span>12 · 课件的 2026 研究方向总结</span></a>
+<a href="#formula-sheet" data-to="formula-sheet"><span>一页掌握：关键公式与考点索引</span></a>
+<a href="#exercises" data-to="exercises"><span>参考例题 · 28 题</span></a>
+<a href="#references" data-to="references"><span>课件来源与参考论文</span></a></nav>
+ <div class="side-bottom"><strong>课件范围</strong><br>Week 9 · 共 133 页<br>12 大主题 + 28 道解析题<br><br>按教师讲义整理，例题为额外编写。无外部脚本依赖，支持本地打开。</div>
+</aside>
+<main class="main">
+<div class="topbar"><button class="mobile-menu" id="menuBtn" aria-controls="sidebar" aria-expanded="false">☰ 目录</button><span class="subtle">COMP9444 / WEEK 9</span><button id="showAnswers" title="展开全部题目答案">显示答案</button><button id="printBtn" title="使用浏览器打印或另存为 PDF">打印 / PDF</button></div>
+<article class="content" id="main-content">
+<h1>COMP9444 · Week 9 · Sequence Modelling 2</h1>
+<blockquote>
+<p><strong>学习目标</strong>：不仅知道 Transformer、BERT、GPT、Mamba 等模型的名称，而且能够从输入 Token 开始，写出向量与矩阵的变化、解释 Mask / Softmax / Cross-attention、推导计算复杂度，并判断不同架构的适用场景。</p>
+</blockquote>
+<p>这是根据课程 <strong>《Sequence Modelling 2: Transformers and beyond》133 页讲义</strong>整理的中文学习讲义。按课件的 12 个主题组织，加入分步推导、易错点、结构图和自主练习。文中<strong>标注“课件示例”</strong>的模型规模与数据来自讲义；<strong>标注“教学补充”</strong>的解释和新题是为了帮助理解，并不代表老师已公布考题。末尾的“可能考题”是依据内容重点推测的练习，不是官方预测。</p>
+<div class="intro-points"><span>12 个知识模块</span><span>逐步公式与维度</span><span>架构比较</span><span>带解析的参考题</span><span>手机端可读</span></div>
+<h2 class="chapter-head" id="overview">先建立整张知识地图</h2>
+<p>这份课件其实在回答三个连续的问题：<strong>（1）序列如何表示？（2）如何让位置之间交流？（3）上下文非常长时，怎样降低成本而不损失关键信息？</strong></p>
+<div aria-label="可横向滚动的对照表" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>体系</th>
+<th>信息如何传递</th>
+<th>看得到哪些位置</th>
+<th>主要用途与特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Encoder-only（BERT）</td>
+<td>双向 Self-Attention</td>
+<td>左右两侧所有输入 Token</td>
+<td>理解、分类、NER、检索、抽取式 QA</td>
+</tr>
+<tr>
+<td>Decoder-only（GPT）</td>
+<td>Causal Self-Attention</td>
+<td>自己及之前的 Token</td>
+<td>一次生成一个 Token，聊天、代码</td>
+</tr>
+<tr>
+<td>Encoder–Decoder（Transformer/T5）</td>
+<td>Encoder 双向；Decoder 因果；跨层 Cross-Attention</td>
+<td>来源序列全部 + 目标前缀</td>
+<td>翻译、摘要、语音转文本</td>
+</tr>
+<tr>
+<td>Sparse / Flash / Linear Attention</td>
+<td>减少配对 / 减少显存读写 / 改写运算</td>
+<td>取决于方法</td>
+<td>长上下文的不同工程权衡</td>
+</tr>
+<tr>
+<td>Mamba（SSM）</td>
+<td>递推状态、按 Token 选择性记忆</td>
+<td>通过固定大小状态总结过去</td>
+<td>长序列线性成本、固定状态</td>
+</tr>
+<tr>
+<td>MoE</td>
+<td>多个 FFN 专家，按 Token 路由</td>
+<td>不改变 Attention 的可见性</td>
+<td>参数容量大，但每次激活部分专家</td>
+</tr>
+<tr>
+<td>Hybrid</td>
+<td>Attention + SSM / Linear / RNN</td>
+<td>局部或少量全局可见性 + 状态</td>
+<td>同时保留精确查找和效率</td>
+</tr>
+<tr>
+<td>Diffusion LM</td>
+<td>多轮去噪、逐步去 Mask</td>
+<td>通常双向</td>
+<td>并行改写多个 Token</td>
+</tr>
+<tr>
+<td>RAG</td>
+<td>先检索外部段落，再由模型生成</td>
+<td>受检索材料与上下文限制</td>
+<td>引入可更新的外部证据</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>统一记号</strong>（全篇会反复使用）：</p>
+<ul>
+<li><code>n</code>：输入序列长度；<code>d_model</code>：每个 Token 的隐藏向量宽度。</li>
+<li><code>h</code>：Attention Head 数；<code>d_k</code>：每个 Head 的 Query/Key 宽度；<code>d_v</code>：Value 宽度。</li>
+<li><code>X ∈ ℝ^{n×d_model}</code>：一行对应一个 Token；<code>Q、K、V</code> 分别是 Query、Key、Value。</li>
+<li><code>W_Q、W_K、W_V</code>：可学习投影矩阵；<code>A</code>：Attention 权重矩阵；<code>M</code>：Mask。</li>
+<li><code>L</code>：神经网络层数；<code>d_ff</code>：Feed-forward 隐层宽度。</li>
+</ul>
+<div class="note"><b>课程的主线</b>：第 8–47 页先用一套玩具 BERT 数字走完 Encoder；第 49–76 页再用 GPT 对照；第 78–87 页拼回原始 Encoder–Decoder。掌握了这三段，后续章节大多是在回答“哪些地方要换、为什么要换”。</div>
+<h2 class="chapter-head" id="transformer">01 · Transformer 的动机与三种结构</h2>
+<p><small class="range">对应课件第 3–6 页</small></p>
+<h3>1. 为什么不一直用 RNN / LSTM？</h3>
+<p>RNN 的基本形式是 <code>h_t = f(h_{t−1}, x_t)</code>：计算第 <code>t</code> 个状态前，必须先得到第 <code>t−1</code> 个状态，因此长度为 <code>n</code> 的句子在时间方向上至少有 <code>n</code> 个依赖步骤。LSTM 的门能够缓解梯度消失，但仍沿时间依次更新。</p>
+<p>考虑课件例句 <strong>“The dogs that the cat chased were …”</strong>。要判断用 <code>were</code> 还是 <code>was</code>，模型需要把较早出现的复数主语 <code>dogs</code> 和后面空缺相连。RNN 需要通过很多次状态传递，而 Self-Attention 可以在一层内直接建立远距离位置之间的关系。</p>
+<p>Transformer 的关键变化：<strong>不靠时序递推传信息，而让所有位置各自提出一个 Query，查询其他位置的 Key，然后对相应的 Value 加权求和。</strong> 这样训练时同层不同 Token 可以并行。</p>
+<div class="diagram">
+<svg aria-label="RNN逐步传递与Transformer直接注意力比较" role="img" viewbox="0 0 860 196">
+<text class="svg-title" x="20" y="24">RNN / LSTM：状态必须沿序列传递</text>
+<g fill="#e5e7eb" stroke="#8a9199" stroke-width="1.4">
+<rect height="42" rx="9" width="108" x="22" y="42"></rect><rect height="42" rx="9" width="108" x="153" y="42"></rect><rect height="42" rx="9" width="108" x="284" y="42"></rect><rect height="42" rx="9" width="108" x="415" y="42"></rect><rect height="42" rx="9" width="108" x="546" y="42"></rect>
+</g><g class="svg-txt" text-anchor="middle"><text x="76" y="68">dogs</text><text x="207" y="68">that</text><text x="338" y="68">the cat</text><text x="469" y="68">chased</text><text x="600" y="68">were?</text></g>
+<g fill="none" stroke="#6b7280" stroke-width="2"><path d="M130 63 H153"></path><path d="M261 63 H284"></path><path d="M392 63 H415"></path><path d="M523 63 H546"></path></g>
+<text class="svg-title" x="20" y="121">Self-Attention：远距离 Token 可以直接建立联系</text>
+<g fill="#e6f3ef" stroke="#167960" stroke-width="1.2"><rect height="38" rx="9" width="108" x="22" y="139"></rect><rect height="38" rx="9" width="108" x="546" y="139"></rect></g><g class="svg-txt" text-anchor="middle"><text x="76" y="162">dogs</text><text x="600" y="162">were?</text></g><path d="M130 159 Q338 96 546 159" fill="none" stroke="#167960" stroke-width="3"></path><path d="M534 153 L547 159 L534 166" fill="none" stroke="#167960" stroke-width="2"></path><text class="svg-caption" x="680" y="159">直接连接，易于并行</text>
+</svg>
+</div>
+<h3>2. 三种 Transformer 的差别一定要分清</h3>
+<p><strong>Encoder-only（例如 BERT）</strong>：所有输入 Token 彼此可见，没有因果遮挡。模型输出每个位置的<strong>上下文化表示</strong>；分类时读 <code>[CLS]</code>，序列标注时读每个 Token，抽取式问答时预测答案起止位置。</p>
+<p><strong>Decoder-only（例如 GPT）</strong>：第 <code>i</code> 个 Token 只能看位置 <code>0…i</code>。模型用这些前缀信息预测位置 <code>i+1</code> 的 Token。训练时可以对已知文本的全部位置同时计算 Loss；生成时不能一次知道未来，只能逐步追加。</p>
+<p><strong>Encoder–Decoder（例如原始 Transformer/T5）</strong>：Encoder 读完整输入，Decoder 读取已经生成的目标前缀，且 Decoder 通过 Cross-Attention 查 Encoder 的输出。这种结构适合输入和输出不是同一序列的任务。</p>
+<h3>3. Attention Mask 的形状（用 4 个 Token 理解）</h3>
+<div class="mask-group">
+<div><b>BERT · 双向</b><div class="mask-grid" data-mask="full" style="grid-template-columns: repeat(4, 1fr)"><span class="mask-cell yes" title="query 1 → key 1: allowed"></span><span class="mask-cell yes" title="query 1 → key 2: allowed"></span><span class="mask-cell yes" title="query 1 → key 3: allowed"></span><span class="mask-cell yes" title="query 1 → key 4: allowed"></span><span class="mask-cell yes" title="query 2 → key 1: allowed"></span><span class="mask-cell yes" title="query 2 → key 2: allowed"></span><span class="mask-cell yes" title="query 2 → key 3: allowed"></span><span class="mask-cell yes" title="query 2 → key 4: allowed"></span><span class="mask-cell yes" title="query 3 → key 1: allowed"></span><span class="mask-cell yes" title="query 3 → key 2: allowed"></span><span class="mask-cell yes" title="query 3 → key 3: allowed"></span><span class="mask-cell yes" title="query 3 → key 4: allowed"></span><span class="mask-cell yes" title="query 4 → key 1: allowed"></span><span class="mask-cell yes" title="query 4 → key 2: allowed"></span><span class="mask-cell yes" title="query 4 → key 3: allowed"></span><span class="mask-cell yes" title="query 4 → key 4: allowed"></span></div><small>4 × 4，所有位置可见</small></div>
+<div><b>GPT · 因果</b><div class="mask-grid" data-mask="causal" style="grid-template-columns: repeat(4, 1fr)"><span class="mask-cell yes" title="query 1 → key 1: allowed"></span><span class="mask-cell no" title="query 1 → key 2: blocked"></span><span class="mask-cell no" title="query 1 → key 3: blocked"></span><span class="mask-cell no" title="query 1 → key 4: blocked"></span><span class="mask-cell yes" title="query 2 → key 1: allowed"></span><span class="mask-cell yes" title="query 2 → key 2: allowed"></span><span class="mask-cell no" title="query 2 → key 3: blocked"></span><span class="mask-cell no" title="query 2 → key 4: blocked"></span><span class="mask-cell yes" title="query 3 → key 1: allowed"></span><span class="mask-cell yes" title="query 3 → key 2: allowed"></span><span class="mask-cell yes" title="query 3 → key 3: allowed"></span><span class="mask-cell no" title="query 3 → key 4: blocked"></span><span class="mask-cell yes" title="query 4 → key 1: allowed"></span><span class="mask-cell yes" title="query 4 → key 2: allowed"></span><span class="mask-cell yes" title="query 4 → key 3: allowed"></span><span class="mask-cell yes" title="query 4 → key 4: allowed"></span></div><small>4 × 4，只允许 j ≤ i</small></div>
+<div><b>Cross-Attention</b><div class="mask-grid" data-mask="cross" style="grid-template-columns: repeat(4, 1fr)"><span class="mask-cell yes" title="query 1 → key 1: allowed"></span><span class="mask-cell yes" title="query 1 → key 2: allowed"></span><span class="mask-cell yes" title="query 1 → key 3: allowed"></span><span class="mask-cell yes" title="query 1 → key 4: allowed"></span><span class="mask-cell yes" title="query 2 → key 1: allowed"></span><span class="mask-cell yes" title="query 2 → key 2: allowed"></span><span class="mask-cell yes" title="query 2 → key 3: allowed"></span><span class="mask-cell yes" title="query 2 → key 4: allowed"></span><span class="mask-cell yes" title="query 3 → key 1: allowed"></span><span class="mask-cell yes" title="query 3 → key 2: allowed"></span><span class="mask-cell yes" title="query 3 → key 3: allowed"></span><span class="mask-cell yes" title="query 3 → key 4: allowed"></span></div><small>目标 3 × 源 4，矩形</small></div>
+</div>
+<p>看矩阵时记住：<strong>行代表发起查询的 Query Token，列代表被查询的 Key Token</strong>。图中深色格表示允许关注。上方的因果遮挡用于阻止模型偷看未来，而不是阻止模型并行计算所有已有位置。</p>
+<h3>4. Transformer 的代价</h3>
+<p>标准密集 Self-Attention 需要 <code>n × n</code> 对 Query–Key 打分，形成每 Head 的 <code>n × n</code> 权重矩阵；一个层的核心注意力乘法大致为 <code>O(n² d_model)</code>（简化的课堂比较，不含全部投影与 FFN 项）。这在短文本可接受，但当 <code>n</code> 翻 10 倍，配对数量约翻 100 倍，这也是后面 Sparse / Flash / Linear / Mamba 等方法出现的原因。</p>
+<h2 class="chapter-head" id="bert">02 · BERT：完整 Encoder 从输入到输出</h2>
+<p><small class="range">对应课件第 8–47 页；本课篇幅最大、公式最密集的核心部分</small></p>
+<h3>1. BERT 究竟学到了什么？</h3>
+<p>BERT 是 <strong>Bidirectional Encoder Representations from Transformers</strong>。同一个 Token 的向量会受整句话上下文影响，例如 <code>it</code> 可通过 Attention 聚合 <code>animal</code> 的信息；这和只有固定 Embedding 词表向量的表示不同。</p>
+<p>课件的玩具例句：<code>[CLS] the animal didn't cross the street because it was too tired [SEP]</code>。原讲义用 <code>n=13</code>、<code>d_model=4</code>、<code>h=2</code>、每 Head <code>d_k=2</code>、<code>d_v=3</code> 的小模型，把每一步的数值列出来。下文沿着它的处理顺序讲解。</p>
+<h3>2. Tokenisation 与输入 Embedding</h3>
+<p><strong>Step 1：Token → ID → 向量。</strong> Token 可以是完整单词，也可能是子词。BERT 特殊 Token 常见有 <code>[CLS]</code>（起始，常用于整句任务）、<code>[SEP]</code>（分隔）、<code>[MASK]</code>（预训练遮挡）。每个 ID 从学习到的 Embedding 表 <code>E ∈ ℝ^{|Vocab| × d_model}</code> 中选一行。</p>
+<p><strong>Step 2：加入位置信息和 Segment 信息。</strong> BERT 的原版输入可以写成：</p>
+<div class="math">xᵢ = E[tokenᵢ] + P[i] + S[segmentᵢ]</div>
+<ul>
+<li><code>E[tokenᵢ]</code> 告诉模型这是什么 Token；<code>P[i]</code> 告诉模型在第几个位置；<code>S[A/B]</code> 告诉模型属于两段输入中的哪一段。</li>
+<li>相同的 <code>the</code> 在两个位置的 <code>E</code> 相同，但 <code>P</code> 不同，所以最终输入不同。</li>
+<li>原版 BERT 用可训练的<strong>绝对位置向量表</strong>；原始 2017 Transformer 则使用固定正弦/余弦编码，不能混淆。</li>
+<li>课件玩具算例 <code>it</code> 的三组向量：<code>E=[−0.2,−1.7,−1.5,2.2]</code>、<code>S=[0.1,−0.1,0,0.1]</code>、<code>P=[−0.4,0.4,−0.1,−0.3]</code>，相加得到 <strong><code>[−0.5,−1.4,−1.6,2.0]</code></strong>（第 15 页）。</li>
+</ul>
+<p><strong>为什么 Attention 需要位置编码？</strong> 不编码位置信息时，注意力本身对输入的排列不敏感（严格说是排列等变）；它只处理 Token 内容间的配对，无法仅靠注意力区分 <code>dog bites man</code> 与 <code>man bites dog</code> 的语序。</p>
+<p><strong>Step 2b：Layer Normalisation。</strong> 对每一个 Token 的 <code>d_model</code> 维向量，计算均值 <code>μ</code> 和标准差 <code>σ</code>，按维度标准化后再用学习到的 <code>γ、β</code> 调整。</p>
+<div class="math">LayerNorm(x) = γ ⊙ (x − μ) / √(Var(x)+ε) + β</div>
+<p>在课件的数字示范中先使用简化的 <code>(x−μ)/σ</code>。例如 <code>it</code> 的输入归一化约为 <code>[−0.08,−0.71,−0.85,1.66]</code>（第 16 页）。注意 LayerNorm <strong>沿一个 Token 的特征维度</strong>计算，而非跨 Batch 或全句位置。</p>
+<h3>3. Self-Attention 的核心：Q、K、V 在做什么？</h3>
+<p>把归一化后的输入堆成矩阵 <code>X ∈ ℝ^{n×d_model}</code>。每个 Attention Head 有三套可学习的投影：</p>
+<div class="math">Q = XW_Q,　K = XW_K,　V = XW_V</div>
+<ul>
+<li><strong>Query（Q）</strong>：当前 Token 希望寻找什么信息。</li>
+<li><strong>Key（K）</strong>：当前 Token 提供什么“检索索引”，以便与别人的 Query 匹配。</li>
+<li><strong>Value（V）</strong>：当被注意到时，真正传给查询者的内容。</li>
+</ul>
+<p>以 <code>it</code> 找 <code>animal</code> 为例：<code>it</code> 的 Query 与 <code>animal</code> 的 Key 匹配度很高，于是 <code>it</code> 的输出会得到较大比例的 <code>animal</code> 的 Value。<strong>注意：相似度由 Q·K 决定，被混合的是 V，而不是 K。</strong></p>
+<div class="diagram">
+<svg aria-label="注意力从输入X生成QKV后缩放打分softmax再加权V的流程" role="img" viewbox="0 0 880 300">
+<defs><marker id="arr" markerheight="9" markerwidth="9" orient="auto" refx="7" refy="3"><path d="M0 0L7 3L0 6" fill="none" stroke="#53635e" stroke-width="1.4"></path></marker></defs>
+<g class="svg-box"><rect height="58" rx="10" width="95" x="18" y="116"></rect><rect height="54" rx="9" width="105" x="170" y="22"></rect><rect height="54" rx="9" width="105" x="170" y="124"></rect><rect height="54" rx="9" width="105" x="170" y="225"></rect><rect height="62" rx="10" width="125" x="325" y="64"></rect><rect height="62" rx="10" width="120" x="488" y="64"></rect><rect height="62" rx="10" width="118" x="651" y="64"></rect><rect height="62" rx="10" width="118" x="651" y="204"></rect></g>
+<g class="svg-txt" text-anchor="middle"><text x="65" y="138">X</text><text x="65" y="156">n×d</text><text x="223" y="45">Q=XWq</text><text x="223" y="63">n×dk</text><text x="223" y="146">K=XWk</text><text x="223" y="164">n×dk</text><text x="223" y="247">V=XWv</text><text x="223" y="265">n×dv</text><text x="388" y="88">QKᵀ</text><text x="388" y="108">n×n</text><text x="548" y="89">÷√dk</text><text x="548" y="108">+ Mask</text><text x="710" y="88">Softmax</text><text x="710" y="108">A: n×n</text><text x="710" y="227">A·V</text><text x="710" y="245">Z: n×dv</text></g>
+<g fill="none" marker-end="url(#arr)" stroke="#53635e" stroke-width="2"><path d="M113 140 L154 50 L170 50"></path><path d="M113 145 H170"></path><path d="M113 152 L154 252 L170 252"></path><path d="M275 50 L325 84"></path><path d="M275 151 L325 107"></path><path d="M450 96 H488"></path><path d="M608 96 H651"></path><path d="M710 126 V204"></path><path d="M275 252 H651"></path></g><text class="svg-caption" x="801" y="239">加权信息</text>
+</svg>
+</div>
+<h3>4. 一次 Attention 如何算出来？（考试必练）</h3>
+<p><strong>Step 3：矩阵维度。</strong> 对课件玩具单 Head：<code>X(13×4)</code> 乘 <code>W_Q(4×2)</code> 得 <code>Q(13×2)</code>；同理 <code>K(13×2)</code>；<code>X(13×4)</code> 乘 <code>W_V(4×3)</code> 得 <code>V(13×3)</code>。</p>
+<p><strong>Step 4：Query 与所有 Key 做点积，并除以 √dₖ。</strong></p>
+<div class="math">S = QKᵀ / √dₖ，　sᵢⱼ = qᵢ · kⱼ / √dₖ</div>
+<p><code>S</code> 是 <code>13×13</code>；第 <code>i</code> 行是位置 <code>i</code> 在问，第 <code>j</code> 列是被问的 Token。课件中 <code>q_it=[−1.05,1.18]</code>、<code>k_animal=[−1.73,1.66]</code>，因此：</p>
+<div class="math">q_it · k_animal = (−1.05)(−1.73) + (1.18)(1.66) ≈ 3.78</div>
+<div class="math">s_it,animal = 3.78 / √2 ≈ 2.67</div>
+<p><strong>为什么要除以 √dₖ？</strong> 维度越大，独立分量点积的方差通常越大，未经缩放的分数可能让 Softmax 过度尖锐、梯度太小。按 <code>√d_k</code> 缩放能让分数规模更稳定。</p>
+<p><strong>Step 5：对每一行做 Softmax。</strong></p>
+<div class="math">aᵢⱼ = exp(sᵢⱼ) / Σₖ exp(sᵢₖ)，　Σⱼ aᵢⱼ = 1</div>
+<p>Softmax 后每行都非负且和为 1。它不在整个 <code>n×n</code> 矩阵上统一归一化，也不是对每列归一化。为了数值稳定，可以先从每一行分数中减去该行最大值。</p>
+<p><strong>Step 6–7：由权重混合 Value。</strong></p>
+<div class="math">Z = AV，　zᵢ = Σⱼ aᵢⱼ vⱼ</div>
+<p>结果 <code>Z ∈ ℝ^{13×3}</code>。这里是对<strong>所有可见位置的 Value</strong> 做加权平均，不是取分数最大那个 Token 直接复制。</p>
+<div class="key-formula">Attention(Q,K,V) = softmax(QKᵀ / √dₖ + M) V</div>
+<p>其中 BERT 标准双向 Self-Attention 的 <code>M=0</code>（忽略 Padding Mask），GPT 的 <code>M</code> 是因果遮挡；被遮挡分数为 <code>−∞</code>，Softmax 后对应权重为 <code>0</code>。</p>
+<h3>5. Multi-Head：为什么不只算一次？</h3>
+<p>一个 Head 用一组 <code>W_Q,W_K,W_V</code> 学一种信息联系；不同 Head 可以同时关注语法、邻近词、指代、分隔符等不同模式。课件引用 Clark 等对 BERT Head 的分析（第 30 页），但要理解：<strong>Head 的语义不是固定手工规定的，且并非每个 Head 都有可解释的单一功能。</strong></p>
+<div class="math">headᵣ = Attention(XW_Qʳ, XW_Kʳ, XW_Vʳ)</div>
+<div class="math">MultiHead(X) = Concat(head₁,…,headₕ)W_O</div>
+<p>课件玩具 <code>h=2,d_v=3</code>，拼接后是 <code>13×6</code>，再用 <code>W_O(6×4)</code> 投影回 <code>13×4</code>，这样才能与原来的 <code>X</code> 做 Residual Addition。实际 BERT-base：<code>d_model=768,h=12,d_k=d_v=64</code>；拼接 <code>12×64=768</code>。</p>
+<h3>6. 一个完整 Encoder Layer 的后半段</h3>
+<p>课件 BERT 栈采用 <strong>Post-Norm</strong> 的教学写法：</p>
+<div class="math">H = LN(X + MultiHead(X))</div>
+<div class="math">FFN(hᵢ) = GELU(hᵢW₁+b₁)W₂+b₂</div>
+<div class="math">Y = LN(H + FFN(H))</div>
+<ul>
+<li><strong>Residual Connection</strong> <code>X + …</code>：保留原始信息，并让梯度更容易跨层传播。</li>
+<li><strong>LayerNorm</strong>：稳定表示的尺度；Post-Norm 是先加 Residual，再归一化。</li>
+<li><strong>Feed-forward Network（FFN）</strong>：对每个 Token 的向量独立使用<strong>同一套</strong>两层线性网络，中间用 GELU；它混合特征维度，不直接进行跨 Token 交流。</li>
+<li><strong>堆叠 N 层</strong>：前一层输出是下一层输入，Token 的语义表示逐层变成上下文化表示。</li>
+</ul>
+<p>BERT-base（课件）：<code>12 层、768 维、12 Heads、FFN=3072、约 110M 参数、原版位置上限 512</code>；BERT-large 是 <code>24 层、1024 维、约 340M</code>。</p>
+<h3>7. BERT 怎么训练？怎么应用？</h3>
+<p><strong>Masked Language Modelling（MLM）</strong>：随机遮挡部分 Token，模型借助左右上下文去预测正确 Token；把隐藏向量送入 Vocabulary 分类 Head，再与真实 Token 计算 Cross-Entropy。原版 BERT 还训练 Next Sentence Prediction（NSP），判断 B 是否紧随 A；后续 RoBERTa/ModernBERT 等不一定保留 NSP。</p>
+<p><strong>Fine-tuning：预训练参数复用 + 小任务头。</strong> 分类可以用 <code>[CLS]</code> 的隐藏向量，NER 对每个 Token 预测标签，Extractive QA 则让两个 Head 分别预测答案的开始和结束位置。医学应用如 BioBERT 依然是 Encoder，特别之处在于继续使用领域文本预训练，而不是把它变成 GPT。</p>
+<div aria-label="可横向滚动的对照表" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>任务</th>
+<th>读哪个输出</th>
+<th>预测什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>整句分类</td>
+<td><code>[CLS]</code> 对应的最终向量</td>
+<td>类别概率</td>
+</tr>
+<tr>
+<td>NER / POS</td>
+<td>每个 Token 的向量</td>
+<td>每个 Token 的标签</td>
+</tr>
+<tr>
+<td>抽取式问答</td>
+<td>问题与文章的联合表示</td>
+<td>文章中答案起始、结束的索引</td>
+</tr>
+<tr>
+<td>Search / Ranking</td>
+<td>查询、文档的表示或联合输入</td>
+<td>相似度或相关性</td>
+</tr>
+<tr>
+<td>MLM 预训练</td>
+<td>被选为 Mask 的位置</td>
+<td>原词表中的目标 Token</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>原版的输入限制为何是 512 Token？</strong> BERT-base 使用 512 个学习到的位置条目，并且按该范围训练；即便改了位置表，密集 Attention 的 <code>n²</code> 成本仍然存在。课件还介绍 ModernBERT（第 45 页）：<code>8192</code> 长度、RoPE、局部+每隔几层全局 Attention、更现代的 FFN 和训练方法。</p>
+<div class="trap"><b>高频易错</b>：BERT 的双向可见性不等于“可以自然地像 GPT 一样连续聊天”；MLM 是填空的训练目标，模型不是原生的左到右生成器。`[CLS]` 是输入特殊 Token，分类头只是常见用法，不表示每个 BERT 任务都只能读 `[CLS]`。</div>
+<h2 class="chapter-head" id="gpt">03 · GPT：Causal Decoder 与下一 Token 预测</h2>
+<p><small class="range">对应课件第 49–76 页</small></p>
+<h3>1. GPT 和 BERT 真正只差一个 Mask 吗？</h3>
+<p>它们共享“Embedding → 注意力 → FFN → 残差 → 归一化”的基本组件，但<strong>可见性、训练目标、使用方式</strong>都有明显差异。GPT 的目标是给定前缀 <code>x₀,…,x_t</code>，预测 <code>x_{t+1}</code>：</p>
+<div class="math">P(x₀,…,xₙ) = ∏ₜ P(xₜ | x₀,…,xₜ₋₁)</div>
+<p>这叫 <strong>Autoregressive factorisation（自回归分解）</strong>。例如已见 <code>the animal didn't cross the street because it was too</code>，模型要预测 <code>tired</code>，不能读取还没出现的 <code>tired</code>。</p>
+<p>课件以 GPT-2 风格 Pre-Norm Decoder 为例，输入用 Token 和 Position Embedding（不需要 BERT 那样的 <code>[CLS]、[SEP]</code> 及 Segment Embedding）。相较于 BERT 的 Post-Norm，本例在每个子层前先归一化：</p>
+<div class="math">X′ = LN(X)，　H = X + MaskedMHA(X′)</div>
+<div class="math">Y = H + FFN(LN(H))</div>
+<p>最后还做 Final LayerNorm，线性映射到词表大小，然后 Softmax。要记住：<strong>Pre-Norm / Post-Norm 是组件的顺序，不是 Encoder / Decoder 的绝对定义</strong>；这里是课件中 BERT 与 GPT-2 实例的对比。</p>
+<h3>2. Causal Mask 为什么有效？</h3>
+<p>先算 <code>S = QKᵀ/√d_k</code>，然后加上 Mask：</p>
+<div class="math">Mᵢⱼ = 0（当 j ≤ i）；　Mᵢⱼ = −∞（当 j &gt; i）</div>
+<div class="math">A = softmax(S + M)，　Aᵢⱼ = 0（当 j &gt; i）</div>
+<p>例如长度 <code>4</code> 的 Token 序列，允许关注矩阵是下三角形：第 1 行仅能看第 1 个 Token；第 2 行看前两个；第 4 行能看所有前四个。<strong>防泄漏原则</strong>：训练时完整输入虽已知，但每一行预测只依赖对应的过去前缀。</p>
+<div class="trap"><b>对比题常见陷阱</b>：“GPT 只能逐 Token 顺序训练”是错误的。在已给出完整训练序列、且使用因果遮挡时，所有时间位置的 Q/K/V、Softmax 和 Loss 可以并行计算。真正必须循环的是**自回归生成新 Token**。</div>
+<h3>3. GPT 的 Head、FFN 和输出层</h3>
+<p>每一个 Masked Attention Head 仍是同样公式，只是多了 <code>M</code>。Multi-Head 拼接后由 <code>W_O</code> 混合。课件介绍了 <strong>Induction Heads</strong>：若上下文此前出现 <code>Harry Potter</code>，后来再次遇到 <code>Harry</code>，某些 Head 能利用“上次 Harry 后面是什么”的匹配，帮助预测 <code>Potter</code>。这说明多层注意力能学到简单的上下文复制和模式续写机制，但并非所有 Head 都是 Induction Head。</p>
+<p>模型最后对某位置向量 <code>y_t ∈ ℝ^{d_model}</code> 算词表 Logits：</p>
+<div class="math">ℓₜ = yₜ W_vocab + b，　pₜ = softmax(ℓₜ)</div>
+<p>若词表为 <code>|V|</code>，则 <code>W_vocab</code> 可表示成 <code>d_model×|V|</code>，每个位置得到 <code>|V|</code> 个概率。课件示例使用 <code>Eᵀ</code> 作为输出投影（<strong>Weight Tying</strong>，输入 Embedding 表与输出映射共享参数）：<code>ℓ = Y Eᵀ</code>。</p>
+<h3>4. Next-token Loss：为什么标签要右移？</h3>
+<p>假设训练文本为 <code>[the, animal, didn't, cross]</code>。每个位置看到的输入和应当预测的正确目标为：</p>
+<div aria-label="可横向滚动的对照表" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>输入位置所见 Token</th>
+<th>正确目标（下一 Token）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>the</code></td>
+<td><code>animal</code></td>
+</tr>
+<tr>
+<td><code>animal</code></td>
+<td><code>didn't</code></td>
+</tr>
+<tr>
+<td><code>didn't</code></td>
+<td><code>cross</code></td>
+</tr>
+<tr>
+<td><code>cross</code></td>
+<td>后续 Token 或结束标记</td>
+</tr>
+</tbody>
+</table></div>
+<p>这里的“右移”是<strong>输入与目标序列的对齐关系</strong>，不是把下一 Token 的真实答案放入当前 Query 的可见输入中。</p>
+<p>若模型赋予正确 Token 的概率为 <code>p_t</code>，单位置 Cross-Entropy 为 <code>−ln(p_t)</code>：</p>
+<div class="math">L = − Σₜ ln P(xₜ₊₁ | x₀,…,xₜ)</div>
+<p>实际训练一般对有效 Token 的损失求平均，并忽略 Padding 位置。反向传播同时更新 <code>Embedding、W_Q/W_K/W_V/W_O、FFN、Norm</code> 等模型参数。</p>
+<p><strong>小例子</strong>：三个真实目标分别得到概率 <code>0.8、0.5、0.25</code>。平均损失为 <code>−(ln0.8 + ln0.5 + ln0.25)/3 ≈ 0.768</code>。这并不是 <code>1 − 平均准确率</code>。</p>
+<h3>5. 生成策略：Greedy、Sampling、Temperature、Top-k、Top-p</h3>
+<p>训练完后，GPT 反复执行：当前前缀 → 输出末尾位置概率 → 选择一个 Token → 把它添加到上下文 → 再运行。</p>
+<ul>
+<li><strong>Greedy</strong>：每次取最大概率。稳定、可复现，但可能重复或缺少多样性。</li>
+<li><strong>Sampling</strong>：按整个概率分布随机抽样，允许多样化输出。</li>
+<li><strong>Temperature</strong>：对 Logits 除以 <code>T</code> 后 Softmax；<code>T&lt;1</code> 分布变尖，<code>T&gt;1</code> 变平（不是对已归一化概率随意除以 T）。</li>
+<li><strong>Top-k</strong>：仅在概率最高的 <code>k</code> 个候选中重新归一化并抽样。</li>
+<li><strong>Top-p / Nucleus</strong>：选择从高到低累积概率至少达到 <code>p</code> 的最小候选集合，再抽样。</li>
+</ul>
+<h3>6. 从 GPT 到对话助手</h3>
+<p>课件把语言模型发展分为三个概念层次：<strong>Pre-training</strong>（下一个 Token 预测）→ <strong>Instruction / Preference Post-training</strong>（让输出更符合指令与偏好）→ 某些模型的 <strong>Reasoning-oriented RL</strong>（可检查问题上的强化学习）。InstructGPT 课程中的典型流程为：监督示例微调 → 人类偏好训练奖励模型 → PPO 优化。</p>
+<p>GPT 也可以生成代码：预测下一个 Token 的机制不变，只是训练数据和输出任务变成代码。课件用 Codex 与 HumanEval 说明，<strong>生成看似合理的代码不等于单元测试通过</strong>。阅读第 73–74 页题例时，要特别注意要求的边界条件，例如 <code>y</code> 只在字符串末尾算元音等。</p>
+<h3>7. 缓存有什么作用？</h3>
+<p>生成第 <code>t+1</code> 个 Token 时，之前位置在同层得到的 Key/Value 可以缓存（KV Cache），无须把每个旧位置重新计算一遍。这样每步仍需让新 Query 与已有 <code>t</code> 个 Key 比较，故<strong>每层的缓存容量大致随上下文长度线性增长</strong>，以及新 Token 的注意力计算随 <code>t</code> 增长。KV Cache 解释了为什么生成长文本时显存与速度成为问题，也是 Hybrid / Mamba 要解决的核心问题之一。</p>
+<h2 class="chapter-head" id="encdec">04 · 原始 Encoder–Decoder：翻译时如何协作</h2>
+<p><small class="range">对应课件第 78–87 页</small></p>
+<h3>1. 三个 Attention 不能混为一谈</h3>
+<p>原始 2017 Transformer 有一个 Encoder 栈和一个 Decoder 栈。课件的翻译例子是 <strong><code>the black cat</code> → <code>le chat noir</code></strong>（法语形容词位置不同）。三种 Attention 的来源分别为：</p>
+<div aria-label="可横向滚动的对照表" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>Q 来源</th>
+<th>K 来源</th>
+<th>V 来源</th>
+<th>Mask / 作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Encoder Self-Attention</td>
+<td>英文 Encoder</td>
+<td>英文 Encoder</td>
+<td>英文 Encoder</td>
+<td>双向理解英文</td>
+</tr>
+<tr>
+<td>Decoder Masked Self-Attention</td>
+<td>法文 Decoder 当前前缀</td>
+<td>同一法文前缀</td>
+<td>同一法文前缀</td>
+<td>不能看未来法文</td>
+</tr>
+<tr>
+<td><strong>Decoder Cross-Attention</strong></td>
+<td><strong>法文 Decoder</strong></td>
+<td><strong>英文 Encoder 输出</strong></td>
+<td><strong>英文 Encoder 输出</strong></td>
+<td>查找输入中的相关词</td>
+</tr>
+</tbody>
+</table></div>
+<div class="diagram">
+<svg aria-label="Transformer编码器解码器和Cross Attention数据流" role="img" viewbox="0 0 860 264">
+<defs><marker id="arrowB" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0 0L6 3L0 6" fill="none" stroke="#52645d" stroke-width="1.4"></path></marker></defs>
+<g class="svg-box"><rect height="66" rx="12" width="220" x="28" y="30"></rect><rect height="66" rx="12" width="220" x="28" y="153"></rect><rect height="66" rx="12" width="220" x="340" y="30"></rect><rect height="66" rx="12" width="220" x="340" y="153"></rect><rect height="67" rx="12" width="188" x="645" y="98"></rect></g>
+<g class="svg-txt" text-anchor="middle"><text x="138" y="55">英文输入</text><text x="138" y="76">the black cat</text><text x="138" y="180">Encoder</text><text x="138" y="202">双向 Self-Attention</text><text x="450" y="57">法文前缀</text><text x="450" y="78">〈s〉 le chat</text><text x="450" y="178">Decoder</text><text x="450" y="200">Causal Self-Attention</text><text x="738" y="125">Cross-Attention</text><text x="738" y="145">Q来自法文 / KV来自英文</text></g>
+<g fill="none" marker-end="url(#arrowB)" stroke="#52645d" stroke-width="2"><path d="M138 96 V153"></path><path d="M450 96 V153"></path><path d="M248 185 H310 V127 H645"></path><path d="M560 185 H608 V148 H645"></path></g><text class="svg-caption" x="670" y="224">输出：下一个法文 Token</text>
+</svg>
+</div>
+<p><strong>为什么 Cross-Attention 不直接把中英文一起送给 Decoder？</strong> Encoder 先为所有英文位置生成双向上下文化表示，Decoder 再根据当前法文前缀动态查询它们；这是输入与输出分别建模的一种明确、可解释的结构。</p>
+<h3>2. 位置编码：原始论文使用 Sinusoidal Encoding</h3>
+<p>原始 Transformer 的每个位置 <code>i</code> 和特征对 <code>c</code> 采用：</p>
+<div class="math">PE(i,2c) = sin(i / 10000^{2c/d_model})</div>
+<div class="math">PE(i,2c+1) = cos(i / 10000^{2c/d_model})</div>
+<p><code>d_model=4</code> 时：<code>PE(i)=[sin(i), cos(i), sin(i/100), cos(i/100)]</code>。例如 <code>i=2</code> 近似 <code>[0.91, −0.42, 0.02, 1.00]</code>（弧度制）。高频分量区分近邻，低频分量提供更长跨度的位置变化。</p>
+<p>课件还强调原始模型输入层做 <code>√d_model · Embedding + PositionalEncoding</code>；在示例 <code>d_model=4</code> 时就是 <code>2E+PE</code>，不同于 BERT 示例中的简单相加。正余弦编码公式<strong>无需学习每个位置的单独参数</strong>，但不代表一个未在超长文本上训练的模型一定能在任意长度上可靠工作。</p>
+<h3>3. Shift Right 与 Teacher Forcing</h3>
+<p>完整目标 <code>le chat noir</code> 已知时，Decoder <strong>输入</strong>为 <code>〈s〉 le chat</code>，<strong>预测目标</strong>为 <code>le chat noir</code>，整体右移一位。因果 Mask 确保第 <code>i</code> 位不能读取第 <code>i+1</code> 位的目标。</p>
+<p><strong>Training</strong>：目标 Token 全部已知，可一次并行训练三个位置。<strong>Inference</strong>：先从 <code>〈s〉</code> 生成 <code>le</code>，下一步用 <code>〈s〉 le</code> 生成 <code>chat</code>，再生成 <code>noir</code>。此时 Encoder 对英文原句通常只需要计算一次，后续重复使用其输出。</p>
+<h3>4. Cross-Attention 的尺寸计算</h3>
+<p>若英文有 <code>n_s=3</code> 个 Token，法文输入前缀有 <code>n_t=3</code> 个位置，且 Head 宽度 <code>d_k</code>：</p>
+<div class="math">Q = H_dec W_Q ∈ ℝ^{n_t×d_k}</div>
+<div class="math">K = Y_enc W_K ∈ ℝ^{n_s×d_k}，　V = Y_enc W_V ∈ ℝ^{n_s×d_v}</div>
+<div class="math">A_cross = softmax(QKᵀ/√d_k) ∈ ℝ^{n_t×n_s}</div>
+<div class="math">Z_cross = A_cross V ∈ ℝ^{n_t×d_v}</div>
+<p><strong>矩形是合理的！</strong> 如果目标有 5 个位置、源语言有 8 个，则 Cross-Attention 权重是 <code>5×8</code>，不需要两侧 Token 数量相同。课件第 83 页给出了“法文行查询英文列”的具体数值图。</p>
+<h3>5. 最终如何输出？</h3>
+<p>原始 Decoder 每层包含三组子层：<strong>Masked Self-Attention → Add&amp;Norm → Cross-Attention → Add&amp;Norm → FFN → Add&amp;Norm</strong>。最终隐藏向量经线性层到词表 Logits，经过 Softmax 选出下一个法文 Token。课件小模型在三个目标位置分别有 <code>0.94、0.96、0.96</code> 的正确词概率，对应 <code>−ln</code> 损失求和约 <code>0.14</code>（第 85 页）。</p>
+<h3>6. 论文为什么认为 Self-Attention 有优势？</h3>
+<p>课件第 87 页在特定简化设定下比较：Self-Attention 每层计算 <code>O(n²d)</code>，顺序依赖步骤 <code>O(1)</code>，两个位置的最短信息路径 <code>O(1)</code>；传统 Recurrent Layer 每层计算 <code>O(nd²)</code>，时间方向顺序依赖 <code>O(n)</code>，最长路径 <code>O(n)</code>。因此当 <code>n &lt; d</code> 时，Self-Attention 的主导乘法在这一简化比较中可能比 Recurrent 更少，但这<strong>不是所有硬件、所有序列长度都更快</strong>的证明。</p>
+<h2 class="chapter-head" id="longcontext">05 · Long Context：Sparse、Flash、Linear Attention</h2>
+<p><small class="range">对应课件第 89–95 页</small></p>
+<h3>1. 先分清三个“节省”的方向</h3>
+<p>这部分最容易考“哪一个是真的线性复杂度”和“FlashAttention 是否近似”。</p>
+<div aria-label="可横向滚动的对照表" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>改变什么</th>
+<th>核心复杂度 / 内存结论</th>
+<th>代价</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sparse Attention</strong></td>
+<td>只计算某些 Query–Key 对</td>
+<td><code>O(nk)</code>，每 Token 约 <code>k</code> 条联系</td>
+<td>未选中的直接联系被忽略</td>
+</tr>
+<tr>
+<td><strong>FlashAttention</strong></td>
+<td>Tile 分块，改 GPU SRAM/HBM 数据流</td>
+<td>仍计算<strong>精确 Softmax Attention</strong>，主算术仍约 <code>O(n²d)</code>；无需显式保存完整 <code>n²</code> 权重表</td>
+<td>实现复杂、硬件相关</td>
+</tr>
+<tr>
+<td><strong>Linear Attention</strong></td>
+<td>用核特征 <code>φ</code> 替代 Softmax 相关形式，重排乘法</td>
+<td>固定特征宽度时可随 <code>n</code> 近似线性，维护固定大小状态</td>
+<td>不完全等价于 Softmax，精确查找能力可能下降</td>
+</tr>
+</tbody>
+</table></div>
+<p>普通因果 Self-Attention 在一层一 Head 对 <code>n</code> 个位置大约需要 <code>n(n+1)/2</code> 个有效配对。例如 <code>n=100,000</code>，大约有 <code>5×10⁹</code> 个位置对；若每个分数采用 16-bit，<strong>单个</strong>完整三角分数表就约 10 GB（课件第 89 页的估算），尚未包括其他 Head、层和梯度。</p>
+<h3>2. Sparse Attention：更少的配对</h3>
+<p>Longformer：让大多数位置只看附近的窗口，同时保留少量 Global Tokens；BigBird 额外引入 Random Links；二者的目标是在长序列中减少直接配对并保留远距离的信息路径。若每个位置有窗口 <code>w</code>、全局链接 <code>g</code>、随机链接 <code>r</code>，常用近似为：</p>
+<div class="math">计算配对数 ∝ n(w + g + r)</div>
+<p>课件还讨论 <strong>Native Sparse Attention（NSA）</strong> 与 <strong>DeepSeek Sparse Attention（DSA）</strong> 的思路：不是只用固定窗口，而让模型先评估哪些块/哪些 Token 更值得精确读取。概念上的取舍是：<strong>先做廉价筛选，之后在少数候选上做精细注意力</strong>。</p>
+<h3>3. FlashAttention：省的是内存流量，不是偷偷少算</h3>
+<p>GPU 的 HBM 容量大但数据搬运慢，片上 SRAM 小但速度快。FlashAttention 将 Q、K、V 分块载入 SRAM，在 Tile 内计算局部分数，使用<strong>在线 Softmax 的归一化量</strong>累积最终输出，在反向传播时可重算中间值，避免把整个 <code>n×n</code> 中间矩阵反复写回 HBM。</p>
+<p>因此它和普通 Softmax 的数学目标一致（容许不同浮点舍入误差），<strong>并没有自动将 <code>O(n²)</code> 算术变为 <code>O(n)</code></strong>。课件第 92–93 页还介绍 FlashAttention-2、3、4，重点分别是并行分工、异步执行/低精度，以及更新硬件上的 Kernel Pipeline。</p>
+<h3>4. Linear Attention：用矩阵乘法结合律重排</h3>
+<p>标准注意力因为中间有按行的 Softmax，不能简单把 <code>Q(KᵀV)</code> 当作相同结果。Linear Attention 引入特征变换 <code>φ</code>，使非负相似度近似为 <code>φ(q)ᵀφ(k)</code>，从而重排：</p>
+<div class="math">(φ(Q) φ(K)ᵀ) V = φ(Q) (φ(K)ᵀ V)</div>
+<p>令特征宽度为 <code>d</code>、Value 宽度也约 <code>d</code>，括号内 <code>φ(K)ᵀ V</code> 是 <code>d×d</code> 而不是 <code>n×n</code>；随序列累积一个状态：</p>
+<div class="math">Sₜ = Sₜ₋₁ + φ(kₜ) vₜᵀ</div>
+<p>为了保留加权平均的归一化，完整形式还维护 <code>zₜ = zₜ₋₁+φ(kₜ)</code>：</p>
+<div class="math">outputₜ = [φ(qₜ)ᵀ Sₜ] / [φ(qₜ)ᵀ zₜ]</div>
+<p>这是“教学补充”的完整归一化形式，帮助理解为什么不仅要存 <code>S</code>，还要存分母。课件举了 <code>φ(x)=ELU(x)+1</code>，如 <code>φ([0.5,−1])≈[1.50,0.37]</code>。相同宽度下线性状态像一本<strong>小笔记本</strong>：高效保存总体信息，但多个不同 Key 的 Value 会叠加，精确回忆很久以前某个细节可能变难。</p>
+<h3>5. 一个判断口诀</h3>
+<p><strong>Sparse：少看一些；Flash：都看，但搬数据更聪明；Linear：换数学，把历史压缩为状态。</strong> 三者也能组合：例如一部分层采用局部/稀疏，部分层使用 Flash Kernel；它们不是互斥的模型大类。</p>
+<h2 class="chapter-head" id="mamba">06 · Mamba 与 State-Space Models：把过去压进状态</h2>
+<p><small class="range">对应课件第 97–108 页</small></p>
+<h3>1. SSM 想实现什么？</h3>
+<p>在 GPT 里，新 Token 的 Query 往往要与大量过去的 Key 比较；在 Mamba 中，每层只维护一个<strong>固定大小</strong>的状态。目标是：<strong>训练像 Transformer 一样能做并行算法，生成像 RNN 一样只更新少量状态</strong>。</p>
+<p>先看最简化的离散 State-Space Model（SSM）：</p>
+<div class="math">hₜ = Ā hₜ₋₁ + B̄ xₜ，　yₜ = C hₜ</div>
+<p><code>h_t</code> 是内部记忆；<code>Ā</code> 决定旧状态留多少，<code>B̄</code> 决定本次输入写入多少，<code>C</code> 决定怎样从状态读出输出。它与 Vanilla RNN <code>h_t=tanh(W_hh h_{t−1}+W_xh x_t+b)</code> 的重要区别是：<strong>状态更新对过去状态是线性的（没有逐步套入 tanh）</strong>。</p>
+<p>固定参数情况下，展开递推：</p>
+<div class="math">hₜ = Āᵗ h₀ + Σₖ₌₁ᵗ Āᵗ⁻ᵏ B̄ xₖ</div>
+<p>因此每个旧输入经 <code>Ā</code> 的不同幂衰减。若每一步的变换是线性的或仿射的，多步状态转换可以通过结合律并行 Scan；这也是 Mamba 的 Sequence Parallelism 思想来源。<strong>注意</strong>：它并非把所有递推依赖“从数学上删掉”，而是利用特殊结构给出可并行的计算算法。</p>
+<h3>2. 为什么固定遗忘率不够？</h3>
+<p>课件引入连续状态离散化的 Step Size <code>Δ</code>。若单一状态分量的连续参数 <code>A&lt;0</code>，则：</p>
+<div class="math">Ā = exp(ΔA) = exp(−Δ|A|)</div>
+<ul>
+<li><code>Δ</code> 很小：<code>Ā≈1</code>，保留旧记忆多、写入新内容少。</li>
+<li><code>Δ</code> 很大：<code>Ā≈0</code>，快速忘掉旧记忆，允许新的信息替换它。</li>
+</ul>
+<p>以 <code>|A|=1</code> 为例：<code>Δ=0.01</code> 时 <code>Ā≈0.99</code>；<code>Δ=1</code> 时 <code>Ā≈0.37</code>；<code>Δ=2</code> 时 <code>Ā≈0.14</code>。如果所有 Token 都用同一个 <code>Δ</code>，既要记住关键名字，又要忽略大量无关词，会非常困难。</p>
+<p><strong>Mamba 的 Selection 机制</strong>：让 <code>Δ_t、B_t、C_t</code> 都依赖当前 Token 的内容，即状态<strong>何时记、记什么、读什么</strong>可以变化，而不仅仅把整段历史等比例衰减。</p>
+<div class="math">Δₜ = softplus(W_Δ xₜ + b_Δ)，　Bₜ=W_B xₜ，　Cₜ=W_C xₜ</div>
+<div class="math">hₜ = Āₜhₜ₋₁ + B̄ₜxₜ，　yₜ=Cₜhₜ</div>
+<p><code>softplus(u)=ln(1+eᵘ)&gt;0</code> 保证 <code>Δ_t</code> 为正。课件第 106 页进一步列出了通过连续参数 <code>A</code> 和 <code>Δ_t</code> 计算 <code>Ā_t、B̄_t</code> 的离散化表达式。考核若只需解释架构，能够明确 <strong>内容相关的更新 / 选择性遗忘</strong> 即已抓住核心。</p>
+<h3>3. Mamba Block 的八步（按课件第 101 页）</h3>
+<div class="diagram">
+<svg aria-label="Mamba block的RMSNorm投影卷积SiLU SelectiveSSM门控输出与残差" role="img" viewbox="0 0 860 228">
+<defs><marker id="arrM" markerheight="9" markerwidth="9" orient="auto" refx="7" refy="3"><path d="M0 0L7 3L0 6" fill="none" stroke="#52645d" stroke-width="1.3"></path></marker></defs>
+<g class="svg-box"><rect height="58" rx="10" width="95" x="16" y="80"></rect><rect height="58" rx="10" width="95" x="139" y="80"></rect><rect height="58" rx="10" width="115" x="264" y="80"></rect><rect height="58" rx="10" width="125" x="412" y="26"></rect><rect height="58" rx="10" width="125" x="412" y="139"></rect><rect height="58" rx="10" width="101" x="576" y="80"></rect><rect height="58" rx="10" width="138" x="707" y="80"></rect></g><g class="svg-txt" text-anchor="middle"><text x="63" y="104">输入</text><text x="63" y="123">D</text><text x="186" y="104">RMSNorm</text><text x="186" y="123">D</text><text x="321" y="104">两路 Linear</text><text x="321" y="123">2D + 2D</text><text x="475" y="51">Conv1d → SiLU</text><text x="475" y="69">Selective SSM</text><text x="475" y="163">门控支路</text><text x="475" y="183">SiLU(z)</text><text x="625" y="104">逐元素 ×</text><text x="625" y="123">门控</text><text x="777" y="103">Linear → D</text><text x="777" y="123">+ Residual</text></g><g fill="none" marker-end="url(#arrM)" stroke="#52645d" stroke-width="2"><path d="M111 109 H139"></path><path d="M234 109 H264"></path><path d="M379 107 L412 55"></path><path d="M379 107 L412 169"></path><path d="M537 55 L576 102"></path><path d="M537 169 L576 118"></path><path d="M677 109 H707"></path></g><path d="M62 138 V218 H778 V138" fill="none" stroke="#88978f" stroke-dasharray="5 4" stroke-width="2"></path><text class="svg-caption" x="402" y="211">Residual skip：原输入直达末端相加</text>
+</svg>
+</div>
+<ol>
+<li><strong>RMSNorm</strong>：缩放输入每个 Token 的特征向量，避免尺度不稳定。</li>
+<li><strong>Linear Projection</strong>：将 <code>D</code> 维投影到更宽的 <code>2D</code>，分成 SSM 主路径和门控支路。</li>
+<li><strong>Causal Conv1d</strong>：主路径用短窗口的一维卷积整合近邻 Token，提供局部上下文。</li>
+<li><strong>SiLU</strong>：主路径非线性；<code>SiLU(x)=x·sigmoid(x)</code>。</li>
+<li><strong>Selective SSM</strong>：长距离信息通过状态递推，并由 Token 产生 <code>Δ、B、C</code>。</li>
+<li><strong>Gate</strong>：对 SSM 结果与另一分支的 <code>SiLU</code> 输出逐元素相乘，控制哪些通道通过。</li>
+<li><strong>Linear Projection</strong>：从 <code>2D</code> 投影回 <code>D</code>。</li>
+<li><strong>Residual Addition</strong>：把输入 <code>x</code> 加回去，便于训练深层网络。</li>
+</ol>
+<p>课件第 102 页比较了 <strong>RMSNorm 与 LayerNorm</strong>：RMSNorm 只按均方根归一化，不减去均值；例如 <code>[2,−1,0,3]</code> 的均方根是 <code>√3.5≈1.87</code>，RMSNorm（取 <code>g=1</code>）输出约 <code>[1.07,−0.53,0,1.60]</code>。<strong>RMSNorm 不是在每个特征上做独立的零均值化</strong>。</p>
+<h3>4. Mamba 与 Transformer 的优劣</h3>
+<div aria-label="可横向滚动的对照表" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>能力 / 成本</th>
+<th>Causal Transformer</th>
+<th>Mamba / Selective SSM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>读取精确的早期 Token</td>
+<td>可以用 KV Cache 直接找到</td>
+<td>过去已压缩成状态，可能失真</td>
+</tr>
+<tr>
+<td>文本变长时计算</td>
+<td>全序列密集 Attention <code>O(n²)</code></td>
+<td>固定状态下的序列处理可近似 <code>O(n)</code></td>
+</tr>
+<tr>
+<td>自回归生成记忆</td>
+<td>KV Cache 随 <code>n</code> 增长</td>
+<td>每层状态大小固定</td>
+</tr>
+<tr>
+<td>原地复制 / 查“电话簿”</td>
+<td>通常擅长</td>
+<td>长列表中的精确查询可能弱</td>
+</tr>
+<tr>
+<td>长文主题 / 总体趋势</td>
+<td>擅长，但成本变高</td>
+<td>可能以更低成本维持摘要</td>
+</tr>
+</tbody>
+</table></div>
+<p>课件第 108 页特别提醒：Mamba 在一些基准和长距离模式任务上有优势，不代表<strong>所有需要精确 Copy/Lookup 的任务</strong>都优于 Transformer。新课件还提及 Mamba-2 的 SSD 和 Mamba-3 研究方向；它们是该模型族的后续算法变化，不要把所有结果归结为最早的 Mamba-1。</p>
+<h2 class="chapter-head" id="moe">07 · Mixture of Experts（MoE）：参数多但只用一部分</h2>
+<p><small class="range">对应课件第 110–111 页</small></p>
+<h3>1. Dense 与 Sparse MoE 的差别</h3>
+<p>在 Dense FFN 中，每个 Token 都走同一个 FFN。<strong>MoE</strong> 将某些 FFN 子层换成多个可学习的 Expert（每个 Expert 通常也是 FFN），并由 Router 为每个 Token 选择少数专家。这样模型可以有很多参数，但一次只激活其中一部分。</p>
+<p>重要的是：<strong>MoE 不一定替换 Self-Attention。它经常主要替换 FFN 子层；共享 Attention、Embedding、Norm 仍要执行。</strong></p>
+<h3>2. Top-k 路由算例：课件的八专家两激活</h3>
+<p>课件第 110 页设八个 Expert 的 Router Logits 为 <code>[0.5,−1,2,0.1,−0.5,1,−2,0.3]</code>。分数最高的是 Expert 3：<code>2</code>，其次是 Expert 6：<code>1</code>。只在这两个保留 Expert 上做 Softmax：</p>
+<div class="math">w₃ = e²/(e²+e¹) ≈ 0.731，　w₆ = e¹/(e²+e¹) ≈ 0.269</div>
+<div class="math">y = 0.731·Expert₃(x) + 0.269·Expert₆(x)</div>
+<div class="diagram">
+<svg aria-label="八个专家中Router只选择第三和第六个" role="img" viewbox="0 0 850 218">
+<defs><marker id="arrE" markerheight="9" markerwidth="9" orient="auto" refx="7" refy="3"><path d="M0 0L7 3L0 6" fill="none" stroke="#52645d" stroke-width="1.3"></path></marker></defs>
+<rect fill="#e5f2ec" height="54" rx="11" stroke="#418e72" width="244" x="300" y="14"></rect><text class="svg-txt" text-anchor="middle" x="422" y="37">Router：为每个 Expert 打分</text><text class="svg-caption" text-anchor="middle" x="422" y="55">Top-2 → E3、E6</text>
+<g class="svg-box"><rect height="48" rx="8" width="91" x="16" y="116"></rect><rect height="48" rx="8" width="91" x="119" y="116"></rect><rect height="48" rx="8" width="91" x="222" y="116"></rect><rect height="48" rx="8" width="91" x="325" y="116"></rect><rect height="48" rx="8" width="91" x="428" y="116"></rect><rect height="48" rx="8" width="91" x="531" y="116"></rect><rect height="48" rx="8" width="91" x="634" y="116"></rect><rect height="48" rx="8" width="91" x="737" y="116"></rect></g><g class="svg-txt" text-anchor="middle"><text x="61" y="145">E1</text><text x="164" y="145">E2</text><text x="267" y="145">E3</text><text x="370" y="145">E4</text><text x="473" y="145">E5</text><text x="576" y="145">E6</text><text x="679" y="145">E7</text><text x="782" y="145">E8</text></g>
+<rect fill="none" height="48" rx="8" stroke="#167960" stroke-width="3" width="91" x="222" y="116"></rect><rect fill="none" height="48" rx="8" stroke="#167960" stroke-width="3" width="91" x="531" y="116"></rect>
+<g fill="none" marker-end="url(#arrE)" stroke="#167960" stroke-width="2.4"><path d="M383 68 L267 116"></path><path d="M467 68 L576 116"></path></g><text class="svg-caption" text-anchor="middle" x="267" y="96">0.73</text><text class="svg-caption" text-anchor="middle" x="576" y="96">0.27</text><text class="svg-caption" text-anchor="middle" x="422" y="205">其余 6 个 Expert 本次跳过，不执行其 FFN</text>
+</svg>
+</div>
+<p>注意 Top-k 操作分两步：先根据 Logits <strong>挑选专家</strong>，再对入选专家的分数做 Softmax（课件以 Mixtral 的规则示范）。如果先对八个专家 Softmax 再直接取两项，这两项概率和<strong>通常不为 1</strong>；要看具体路由算法是否还会重归一化。</p>
+<h3>3. 总参数与激活参数不能混为一谈</h3>
+<p>课件举的 Mixtral 8×7B：约 <code>47B</code> 总参数，每个 Token 约 <code>13B</code> 被用到。不是“只存 13B 参数”，而是<strong>只运行涉及其中部分专家的计算</strong>。不同 Token 可以选不同 Expert，因此同一 Batch 的路由、专家负载和硬件通信会影响实际效率。</p>
+<div class="note"><b>教学补充 · MoE 的工程问题</b>：若大量 Token 都偏好同一专家，可能发生专家拥塞，其他专家训练不足；实际系统常用路由平衡策略和容量管理。但这些细节不是课件第 110–111 页的重点；考试优先掌握 Router、Top-k、Active vs Total Parameters 的定义及简单算例。</div>
+<h2 class="chapter-head" id="hybrid">08 · Hybrid Architectures：为什么全注意力与状态模型要混用</h2>
+<p><small class="range">对应课件第 113–119 页</small></p>
+<h3>1. 一本“书”和一本“笔记本”</h3>
+<p>课件用非常好记的比喻：<strong>Attention 像一整本打开的书</strong>，过去每个 Token 的 Key/Value 仍在，能按需查阅，但缓存随文本增长；<strong>SSM / Linear Attention 像一本固定大小的笔记本</strong>，写入和读取快，但无法无限制保留每条具体事实。Hybrid 在大多数层使用“笔记本”，在少数层保留“书”。</p>
+<p><strong>需求例 1</strong>：理解 100 万 Token 小说的大致主题，压缩状态往往很有用。<strong>需求例 2</strong>：从前面 1000 个电话号码中找到某个人的精确数字，少量 Full Attention 对精确查找更重要。</p>
+<h3>2. Full Attention 与 Sliding Window</h3>
+<p>Full Attention：第 <code>t</code> 个位置可看到所有旧 Token；它的 KV Cache 长度随 <code>t</code> 增长。Sliding-Window Attention：只看最近的 <code>w</code> 个 Token，缓存可限制为 <code>w</code>，全序列总配对量约 <code>O(nw)</code>。它能精确回忆<strong>窗口内</strong>细节，但较远的 Token 只能依靠跨层传播或其他模块；<strong>局部注意力不等于直接拥有无限全局记忆</strong>。</p>
+<h3>3. 讲义中的代表性混合方法</h3>
+<div aria-label="可横向滚动的对照表" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>架构</th>
+<th>混合方式（按课件）</th>
+<th>想解决的问题 / 局限</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Jamba（2024）</strong></td>
+<td>8 层为一组，1 Attention + 7 Mamba；穿插 MoE</td>
+<td>少数 Attention 提供精确上下文访问，大多数 Mamba 降低长序列成本</td>
+</tr>
+<tr>
+<td><strong>Griffin（2024）</strong></td>
+<td>2 Recurrent + 1 Local Attention（窗口约 1024）</td>
+<td>固定记忆承载远期概况，短窗精确访问；窗口外直接精确查找较弱</td>
+</tr>
+<tr>
+<td><strong>Hymba（2024）</strong></td>
+<td>在同一层并行 Attention Heads 与 Mamba Heads；部分全局、其余局部</td>
+<td>不同类型的 Heads 分担精确查找和信息压缩</td>
+</tr>
+<tr>
+<td><strong>Kimi Linear（2025）</strong></td>
+<td>3 Linear-Attention 层 + 1 Full-Attention 层；配合 MoE</td>
+<td>大部分层无长 KV Cache，保留少量全局访问</td>
+</tr>
+<tr>
+<td><strong>Nemotron 3 Super（课件 2026）</strong></td>
+<td>大量 Mamba-2 + MoE，少量 Global Attention Anchor</td>
+<td>面向长输出及 Agent 任务控制 Attention 缓存成本</td>
+</tr>
+</tbody>
+</table></div>
+<p>这张表应优先记住<strong>设计原则</strong>，而非死背所有年份、参数规模。不同 Hybrid 的结构不必完全一样：可在<strong>层之间</strong>交替（Jamba），也可在<strong>同一层内部</strong>并排使用多种 Head（Hymba）。</p>
+<h3>4. 混合结构是否一定优于纯 Transformer？</h3>
+<p>不是。Hybrid 会增加路由、训练、Kernel 与部署复杂度；对于短文本或需要大量精确 Token-by-Token Copy 的任务，Full Attention 可能仍更合适。比较性能时要尽可能控制<strong>模型规模、训练数据、硬件与评测任务</strong>，不能仅凭“线性复杂度”就断言它在所有任务上更快、更好。</p>
+<h2 class="chapter-head" id="diffusion">09 · Diffusion Language Models：不是只向右写，而是反复修改</h2>
+<p><small class="range">对应课件第 121–126 页</small></p>
+<h3>1. 从图像 Diffusion 的“去噪”理解文本</h3>
+<p>图像 DDPM 的前向过程逐步给干净图像 <code>x₀</code> 添加高斯噪声，训练神经网络根据带噪图像 <code>x_t</code> 和噪声步 <code>t</code> 预测加入的噪声 <code>ε</code>。经典训练目标近似为：</p>
+<div class="math">L_DDPM = || ε − ε_θ(xₜ,t) ||²</div>
+<p>生成时从纯噪声开始，多轮预测并移除部分噪声，逐渐得到清晰图像。关键并非一定是图像，而是<strong>定义一个简单的“破坏数据”过程，再学习其逆过程</strong>。</p>
+<h3>2. 为什么文本不直接加高斯噪声？</h3>
+<p>文本 Token 是离散的 ID，而不是连续像素值，不能把加 <code>0.1</code> 的噪声后 ID 当成合法词。因此离散 Diffusion 的一种办法是 <strong>Masking</strong>：</p>
+<ul>
+<li>前向：按噪声强度 <code>t</code> 将某些位置换成 <code>[MASK]</code>，最终全部 Mask。</li>
+<li>训练：模型读带 Mask 的整段序列，预测被 Mask 的原词，通常使用 Cross-Entropy。</li>
+<li>逆向生成：从一串 Mask 开始，预测候选 Token，保留置信度较高的结果，其余继续 Mask 并重复。</li>
+</ul>
+<p>课件将 D3PM（Discrete Diffusion）与 BERT MLM 联系起来：<strong>BERT 的 Masked Prediction 可以视作某个单一固定噪声水平的去噪任务</strong>，但 BERT 并不是完整的多步生成式 Diffusion LM。LLaDA 将多步 Mask-and-Refine 用于语言生成。</p>
+<div class="diagram">
+<svg aria-label="LLaDA从全部mask到反复解除mask并生成一句话" role="img" viewbox="0 0 850 220">
+<g font-family="system-ui, sans-serif" font-size="16"><text fill="currentColor" font-weight="600" x="12" y="29">Step 0</text><text fill="currentColor" font-weight="600" x="12" y="76">Step 1</text><text fill="currentColor" font-weight="600" x="12" y="123">Step 2</text><text fill="currentColor" font-weight="600" x="12" y="170">Step 4</text></g>
+<g font-family="system-ui, sans-serif" font-size="17" text-anchor="middle"><g fill="#e6e8e7" stroke="#a5adaa"><rect height="33" rx="6" width="82" x="106" y="8"></rect><rect height="33" rx="6" width="82" x="198" y="8"></rect><rect height="33" rx="6" width="82" x="290" y="8"></rect><rect height="33" rx="6" width="82" x="382" y="8"></rect><rect height="33" rx="6" width="82" x="474" y="8"></rect><rect height="33" rx="6" width="82" x="566" y="8"></rect><rect height="33" rx="6" width="82" x="658" y="8"></rect></g><g fill="currentColor"><text x="147" y="30">[M]</text><text x="239" y="30">[M]</text><text x="331" y="30">[M]</text><text x="423" y="30">[M]</text><text x="515" y="30">[M]</text><text x="607" y="30">[M]</text><text x="699" y="30">[M]</text></g>
+<g fill="#e1f0e9" stroke="#a7cbbc"><rect height="33" rx="6" width="82" x="382" y="55"></rect><rect height="33" rx="6" width="82" x="106" y="102"></rect><rect height="33" rx="6" width="82" x="290" y="102"></rect><rect height="33" rx="6" width="82" x="382" y="102"></rect><rect height="33" rx="6" width="82" x="106" y="149"></rect><rect height="33" rx="6" width="82" x="198" y="149"></rect><rect height="33" rx="6" width="82" x="290" y="149"></rect><rect height="33" rx="6" width="82" x="382" y="149"></rect><rect height="33" rx="6" width="82" x="474" y="149"></rect><rect height="33" rx="6" width="82" x="566" y="149"></rect><rect height="33" rx="6" width="82" x="658" y="149"></rect></g><g fill="currentColor"><text x="423" y="77">tired</text><text x="147" y="124">It</text><text x="331" y="124">too</text><text x="423" y="124">tired</text><text x="147" y="171">It</text><text x="239" y="171">was</text><text x="331" y="171">too</text><text x="423" y="171">tired</text><text x="515" y="171">to</text><text x="607" y="171">cross</text><text x="699" y="171">.</text></g><g fill="currentColor" opacity=".6"><text x="147" y="77">[M]</text><text x="239" y="77">[M]</text><text x="331" y="77">[M]</text><text x="515" y="77">[M]</text><text x="607" y="77">[M]</text><text x="699" y="77">[M]</text><text x="239" y="124">[M]</text><text x="515" y="124">[M]</text><text x="607" y="124">[M]</text><text x="699" y="124">[M]</text></g></g><text class="svg-caption" x="12" y="207">教学示意；实际每一步重新预测待填位置，并根据调度策略保留或再次 Mask</text>
+</svg>
+</div>
+<p>课件第 124 页的例子是“WHY DIDN’T THE ANIMAL CROSS?”，从全 Mask 开始，把最确定的 <code>tired</code> 等词先填出，经过 4 步写出 <code>It was too tired to cross .</code>。需要注意：<strong>模型并非严格从左到右解除 Mask</strong>。</p>
+<h3>3. Diffusion LM 与 GPT 的对照</h3>
+<div aria-label="可横向滚动的对照表" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>特征</th>
+<th>GPT 自回归</th>
+<th>Masked Diffusion LM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>生成单元</td>
+<td>通常每次 1 个 Token</td>
+<td>一步可以提出多个位置的 Token</td>
+</tr>
+<tr>
+<td>顺序</td>
+<td>左→右，前缀固定</td>
+<td>任意位置可反复更新/再 Mask</td>
+</tr>
+<tr>
+<td>注意力</td>
+<td>一般 Causal</td>
+<td>可利用整段候选输出的双向上下文</td>
+</tr>
+<tr>
+<td>训练</td>
+<td>Next-token CE</td>
+<td>去 Mask / 去噪 CE 等</td>
+</tr>
+<tr>
+<td>潜在优势</td>
+<td>成熟、精确前缀生成</td>
+<td>并行候选、逐步全局修正</td>
+</tr>
+<tr>
+<td>潜在局限</td>
+<td>长生成耗时、KV Cache</td>
+<td>多轮迭代仍有成本；质量、调度策略要权衡</td>
+</tr>
+</tbody>
+</table></div>
+<p>课件给出的 LLaDA、Mercury、DiffusionGemma 等速度与准确率是<strong>各研究报告中的特定硬件、模型大小和任务设置</strong>；如第 125–126 页的近千 Token/s 数字，不能直接当作跨平台、同质量标准下的绝对排名。考试更重要的是理解 <strong>“多位置并行生成”不等于“一次就全部写好”</strong>。</p>
+<h2 class="chapter-head" id="rope">10 · Rotary Position Embedding（RoPE）</h2>
+<p><small class="range">对应课件第 128 页</small></p>
+<h3>1. 从绝对位置向量到相对位置的注意力分数</h3>
+<p>BERT 的学习式位置表和原始 Transformer 的 Sinusoidal Encoding，是将位置向量<strong>加到输入表示</strong>上。RoPE 不同：对每个 Attention Head 中 Query/Key 的成对特征做<strong>旋转</strong>；角度取决于 Token 的绝对位置。</p>
+<p>二维向量按角度 <code>α</code> 旋转，矩阵是：</p>
+<div class="math">R(α) = [[cosα, −sinα], [sinα, cosα]]</div>
+<p>某个二维特征对，在位置 <code>i</code> 的 Query 旋转 <code>iθ</code>，位置 <code>j</code> 的 Key 旋转 <code>jθ</code>：</p>
+<div class="math">q′ᵢ = R(iθ)qᵢ，　k′ⱼ = R(jθ)kⱼ</div>
+<p>注意力分数的点积变成：</p>
+<div class="math">q′ᵢ · k′ⱼ = qᵢᵀ R(iθ)ᵀ R(jθ)kⱼ = qᵢᵀ R((j−i)θ)kⱼ</div>
+<p><strong>关键结论：旋转后的点积会通过角度差 <code>j−i</code> 感知相对距离。</strong> 同一组两个 Token 整体向后平移相同距离，它们之间的相对旋转角不变。</p>
+<h3>2. 不同频率的多组旋转</h3>
+<p>对 Head 宽度 <code>d_k</code> 的不同二维分量使用不同频率，课件写成 <code>θ_c = 10000^{−2c/d_k}</code>。较前面的维度转得快，较后面的维度转得慢，与 Sinusoidal 多尺度的直觉相近。</p>
+<p><strong>一个小验证</strong>：若位置 <code>i=3</code>、Key 位置 <code>j=1</code>，距离为 <code>−2</code>；整体后移 2 到 <code>i=5,j=3</code>，距离仍为 <code>−2</code>。两对在相同内容向量下的相对旋转关系一致。</p>
+<h3>3. 容易混淆的地方</h3>
+<p>RoPE 通常作用在 <strong>Q 与 K</strong>，而不是把旋转直接施加到 Value 或最终输出；它<strong>不是一种 Attention 复杂度优化算法</strong>，位置感知方式变了，不代表 <code>n²</code> 配对自然消失。RoPE 允许在形式上为更多位置计算旋转，但实际长上下文表现仍依赖训练范围和外推/缩放策略。</p>
+<h2 class="chapter-head" id="rag">11 · Retrieval-Augmented Generation（RAG）</h2>
+<p><small class="range">对应课件第 130–131 页</small></p>
+<h3>1. 为什么需要 RAG？</h3>
+<p>语言模型的参数不是实时更新的数据库；模型可能不认识新文件，也可能把不确定的事实“顺畅地说错”。RAG 让模型<strong>先从外部文档找到证据，再带着证据回答</strong>。这不是新的 Attention 公式，而是一个组合工作流。</p>
+<div class="diagram">
+<svg aria-label="RAG文档分段编码索引检索及语言模型生成完整流程" role="img" viewbox="0 0 860 252">
+<defs><marker id="arrR" markerheight="9" markerwidth="9" orient="auto" refx="7" refy="3"><path d="M0 0L7 3L0 6" fill="none" stroke="#52645d" stroke-width="1.3"></path></marker></defs>
+<g class="svg-box"><rect height="48" rx="10" width="144" x="20" y="20"></rect><rect height="48" rx="10" width="144" x="216" y="20"></rect><rect height="48" rx="10" width="154" x="412" y="20"></rect><rect height="48" rx="10" width="144" x="20" y="163"></rect><rect height="48" rx="10" width="144" x="216" y="163"></rect><rect height="48" rx="10" width="154" x="412" y="163"></rect><rect height="80" rx="10" width="191" x="636" y="85"></rect></g><g class="svg-txt" text-anchor="middle"><text x="92" y="50">资料 / 文档</text><text x="288" y="50">分段 + 编码</text><text x="489" y="50">向量索引</text><text x="92" y="193">用户问题</text><text x="288" y="193">Question Encoder</text><text x="489" y="193">Top-k 检索段落</text><text x="731" y="113">问题 + 相关段落</text><text x="731" y="138">→ GPT Decoder 回答</text></g><g fill="none" marker-end="url(#arrR)" stroke="#52645d" stroke-width="2"><path d="M164 44 H216"></path><path d="M360 44 H412"></path><path d="M164 187 H216"></path><path d="M360 187 H412"></path><path d="M488 68 V163"></path><path d="M566 185 L636 140"></path></g><text class="svg-caption" x="20" y="240">上方：离线建索引（可复用）　　下方：每次提问做检索、组装 Prompt、生成答案</text>
+</svg>
+</div>
+<h3>2. 两个阶段：建索引与每次问答</h3>
+<p><strong>离线阶段</strong>：收集文档 → 分 Chunk → 用 Embedding Encoder 将每段转成向量 → 记录在向量索引中。<strong>在线阶段</strong>：把用户问题也转成 Query 向量 → 算与候选段落的相似度 → 取 Top-k → 将问题和检索段落放到 Decoder 的 Prompt 中 → 生成答案。</p>
+<p>Encoder/Decoder 分工是<strong>概念模型</strong>：课件以 BERT-like Encoder 与 GPT-like Decoder 展示实际协作。现实中也可采用不同独立模型做嵌入、重排和生成，具体实现不一定由原版 BERT 直接完成。</p>
+<h3>3. Cosine Similarity：必须会手算</h3>
+<div class="math">cos(q,d) = (q · d) / (||q||₂ ||d||₂)</div>
+<p>课件第 131 页用“澳大利亚首都是哪里？”作例：<code>q=[0.8,0.5,0.1,0.2]</code>，与 <code>Canberra</code> 文章的向量 <code>[0.7,0.6,0.2,0.1]</code> 点积是 <code>0.90</code>，两者长度约 <code>0.97</code>、<code>0.95</code>，相似度约 <code>0.98</code>。课件中的 <code>Sydney</code> 段落约 <code>0.60</code>，<code>Paris</code> 段落约 <code>0.58</code>，因此选 Canberra 段落进入 Prompt。</p>
+<p>余弦相似度比较<strong>向量方向</strong>；若向量已 L2 Normalize，Cosine Similarity 等于 Dot Product。高相似度表示嵌入空间更匹配，<strong>不自动证明段落内容真实、更新或足以回答问题</strong>。</p>
+<h3>4. RAG 常见失败源（教学补充）</h3>
+<ul>
+<li><strong>Chunk 分错</strong>：答案跨越两个 Chunk，单个段落不完整。</li>
+<li><strong>Retrieval miss</strong>：正确段落没有进入 Top-k；生成模型只能靠不充分的上下文回答。</li>
+<li><strong>Stale source</strong>：检索到旧版本材料，答错最新事实。</li>
+<li><strong>Grounding failure</strong>：找到了证据，生成时却误读或无视证据。</li>
+</ul>
+<p>因此可靠 RAG 应当尽可能展示检索来源并控制模型“超出材料的补充”，不是加了检索就自动消除 Hallucination。</p>
+<h2 class="chapter-head" id="research">12 · 课件的 2026 研究方向总结</h2>
+<p><small class="range">对应课件第 133 页；这是课件作者选取的研究图景，不等于独立的实时行业排名</small></p>
+<p>课程最后把变化归纳为五个方向：</p>
+<ol>
+<li><strong>参数更大但激活更稀疏</strong>：MoE 让 Total Parameters 和 Per-token Active Parameters 分离，不能用“总参数量”直接推断每 Token 计算量。</li>
+<li><strong>Hybrid 更普遍</strong>：线性/SSM 状态负责低成本长序列，少量 Attention 层负责精确查找。</li>
+<li><strong>Attention 的实现更高效</strong>：Sparse 选择性读取，Flash 改进 GPU 访存和 Kernel；注意区分是否真的改变数学目标。</li>
+<li><strong>语言生成不止 Next-token</strong>：Diffusion 与新的状态空间模型提供不同的条件生成 / 去噪 / 记忆方案。</li>
+<li><strong>Reasoning、数据与训练效率</strong>：强化学习、低精度数值与模型结构共同影响成本与能力。</li>
+</ol>
+<div class="note"><b>如何复习这页？</b> 别只背某个模型使用了多少 Billion 参数。更重要的是能够回答“这一设计解决什么瓶颈？牺牲了什么能力？如果给出另一个任务，为什么会选择它而非 Full Attention？”</div>
+<h2 class="chapter-head" id="formula-sheet">一页掌握：关键公式与考点索引</h2>
+<div aria-label="可横向滚动的对照表" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>公式 / 原理</th>
+<th>要记住的含义</th>
+<th>最易错</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>X = Embedding + Position (+ Segment)</code></td>
+<td>Token 内容 + 位置 + 段落信息</td>
+<td>不同模型的 Position 方案不同</td>
+</tr>
+<tr>
+<td><code>Q=XW_Q, K=XW_K, V=XW_V</code></td>
+<td>可学习的三种角色投影</td>
+<td>Q 与 K 打分，V 被加权</td>
+</tr>
+<tr>
+<td><code>S=QKᵀ/√d_k</code></td>
+<td><code>n×n</code> 的配对分数</td>
+<td>别写成 <code>KQᵀ</code> 或除以 <code>√d_model</code></td>
+</tr>
+<tr>
+<td><code>A=softmax(S+M)</code></td>
+<td>对每一<strong>行</strong>归一化</td>
+<td>Mask 要在 Softmax 之前加</td>
+</tr>
+<tr>
+<td><code>Z=AV</code></td>
+<td><code>n×d_v</code> 的信息混合</td>
+<td>不是 <code>AK</code></td>
+</tr>
+<tr>
+<td><code>MHA=Concat(heads)W_O</code></td>
+<td>多 Head 合并，再投回模型宽度</td>
+<td><code>W_O</code> 的尺寸与拼接后宽度匹配</td>
+</tr>
+<tr>
+<td><code>LN(X+Sublayer(X))</code></td>
+<td>Post-Norm</td>
+<td>不等于 <code>X+Sublayer(LN(X))</code></td>
+</tr>
+<tr>
+<td><code>−ln P(correct)</code></td>
+<td>正确标签的 CE</td>
+<td>不取 Logits 的最大值来代替 Loss</td>
+</tr>
+<tr>
+<td><code>PE(i,2c)=sin(i/T_c)</code></td>
+<td>2017 正弦绝对位置编码</td>
+<td>偶数维 sin，奇数维 cos</td>
+</tr>
+<tr>
+<td><code>CrossAttn(Q_dec,K_enc,V_enc)</code></td>
+<td>目标看来源</td>
+<td>分数矩阵可以是矩形</td>
+</tr>
+<tr>
+<td><code>h_t=Ā_t h_{t−1}+B̄_t x_t</code></td>
+<td>SSM 状态更新</td>
+<td>Mamba 参数依赖 Token</td>
+</tr>
+<tr>
+<td><code>y=Σ_{e∈Top-k} w_e Expert_e(x)</code></td>
+<td>MoE 路由</td>
+<td>Total ≠ Active Parameters</td>
+</tr>
+<tr>
+<td><code>q′_i·k′_j=q_iᵀR((j−i)θ)k_j</code></td>
+<td>RoPE 编入相对距离</td>
+<td>旋转 Q/K；不自动降复杂度</td>
+</tr>
+<tr>
+<td><code>cos(q,d)=q·d/(‖q‖ ‖d‖)</code></td>
+<td>RAG 检索相似度</td>
+<td>是相似性，不是事实正确性</td>
+</tr>
+</tbody>
+</table></div>
+
+<div class="exercises-header" id="exercises"><h2>参考例题 · 28 道带解析练习</h2><p>按“概念辨析 → 维度与数值推导 → 架构应用”排序。根据课件内容自行编写，仅供备考参考；分值是练习建议，不代表真实考试配分。先独立做，再展开答案。</p></div>
+<div class="q-tools"><input id="qSearch" type="search" aria-label="搜索例题" placeholder="筛选例题关键词：如 Mask、MoE、RAG、维度……"><button id="openAll">展开全部答案</button><button id="closeAll">收起全部答案</button></div>
+<div id="q-count" style="font-size:12px;color:#748078;margin-bottom:15px">28 道题</div>
+<div id="questions"><article class="question" data-question="基础·架构辨析 你要分别完成：a 医疗文本疾病实体标注；b 根据中文摘要生成英文摘要；c 根据已有对话逐 token 生成回答。为 a/b/c 选择最典型的模型架构，并说明各自需要怎样的 attention 可见性。">
+      <div class="q-top"><span class="q-number">题 01</span><span class="q-type">基础·架构辨析</span><span class="q-points">4 分</span></div>
+      <div class="q-prompt"><p>你要分别完成：A 医疗文本疾病实体标注；B 根据中文摘要生成英文摘要；C 根据已有对话逐 Token 生成回答。为 A/B/C 选择最典型的模型架构，并说明各自需要怎样的 Attention 可见性。</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>A：Encoder-only（BERT/BioBERT），对每个 Token 输出上下文化向量并预测 NER 标签，需要左右文双向可见。B：Encoder–Decoder，Encoder 双向读中文原文，Decoder Causal 生成英文，并通过 Cross-Attention 查 Encoder。C：Decoder-only（GPT），因果 Self-Attention 只能读取过去上下文，逐 Token 生成。注意 B 也可能用 GPT 完成，但题目问的是最典型的对应结构。</p>
+</div></details>
+    </article>
+<article class="question" data-question="基础·rnn 与 attention 为什么在序列 `the dogs that the cat chased were ...` 中，标准 self-attention 比普通 rnn 更容易直接关联 `dogs` 与 `were`？这是否意味着生成时 transformer 一定能并行输出整个句子？">
+      <div class="q-top"><span class="q-number">题 02</span><span class="q-type">基础·RNN 与 Attention</span><span class="q-points">4 分</span></div>
+      <div class="q-prompt"><p>为什么在序列 <code>The dogs that the cat chased were ...</code> 中，标准 Self-Attention 比普通 RNN 更容易直接关联 <code>dogs</code> 与 <code>were</code>？这是否意味着生成时 Transformer 一定能并行输出整个句子？</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>RNN 沿隐藏状态逐时传递信息，远距离两个位置跨多次状态更新；Self-Attention 中后面位置的 Query 能直接与前面 <code>dogs</code> 的 Key 匹配，一层内有直接依赖。训练时同层位置可并行，但 <strong>自回归生成</strong> 的后一个 Token 依赖尚未生成的前一个 Token，因此不能简单同时输出未知序列的所有位置。</p>
+</div></details>
+    </article>
+<article class="question" data-question="计算·输入 embedding 课件中 `it` 的 token embedding 是 `[-0.2,-1.7,-1.5,2.2]`，segment 是 `[0.1,-0.1,0,0.1]`，position 是 `[-0.4,0.4,-0.1,-0.3]`。求其归一化前的输入向量。若同一 token 出现在另一个位置，为何输入可能不同？">
+      <div class="q-top"><span class="q-number">题 03</span><span class="q-type">计算·输入 Embedding</span><span class="q-points">4 分</span></div>
+      <div class="q-prompt"><p>课件中 <code>it</code> 的 Token Embedding 是 <code>[-0.2,-1.7,-1.5,2.2]</code>，Segment 是 <code>[0.1,-0.1,0,0.1]</code>，Position 是 <code>[-0.4,0.4,-0.1,-0.3]</code>。求其归一化前的输入向量。若同一 Token 出现在另一个位置，为何输入可能不同？</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>按维相加：<code>[-0.2+0.1-0.4, -1.7-0.1+0.4, -1.5+0-0.1, 2.2+0.1-0.3]</code> = <strong><code>[-0.5,-1.4,-1.6,2.0]</code></strong>。同一个 Token 的 Embedding 查同一行，但 Position Embedding 与位置有关；若跨句段 Segment 也可能不同，所以相加结果不同。</p>
+</div></details>
+    </article>
+<article class="question" data-question="计算·layernorm 对一个 token 的二维向量 `x=[1,3]`，忽略 ε、γ=1、β=0，算其 layernorm 输出；说明均值和标准差是沿哪个维度求的。">
+      <div class="q-top"><span class="q-number">题 04</span><span class="q-type">计算·LayerNorm</span><span class="q-points">4 分</span></div>
+      <div class="q-prompt"><p>对一个 Token 的二维向量 <code>x=[1,3]</code>，忽略 ε、γ=1、β=0，算其 LayerNorm 输出；说明均值和标准差是沿哪个维度求的。</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>均值 <code>μ=(1+3)/2=2</code>。方差 <code>[(1−2)²+(3−2)²]/2=1</code>，标准差 <code>σ=1</code>。输出是 <strong><code>[-1,1]</code></strong>。LayerNorm 对同一个 Token 的 Feature Dimensions 进行归一化，不是跨整个句子的 Token 取均值，也不是跨 Batch 取均值。</p>
+</div></details>
+    </article>
+<article class="question" data-question="计算·qkv 的矩阵尺寸 有 `n=10、d_model=64、h=4、d_k=d_v=16` 的 self-attention。写出单个 head 的 `w_q、q、kᵀ、qkᵀ、a、v、z` 尺寸；最后拼接后形状以及 `w_o` 尺寸。">
+      <div class="q-top"><span class="q-number">题 05</span><span class="q-type">计算·QKV 的矩阵尺寸</span><span class="q-points">7 分</span></div>
+      <div class="q-prompt"><p>有 <code>n=10、d_model=64、h=4、d_k=d_v=16</code> 的 Self-Attention。写出单个 Head 的 <code>W_Q、Q、Kᵀ、QKᵀ、A、V、Z</code> 尺寸；最后拼接后形状以及 <code>W_O</code> 尺寸。</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p><code>W_Q:64×16</code>；<code>Q:10×16</code>；<code>Kᵀ:16×10</code>；<code>QKᵀ:10×10</code>；<code>A:10×10</code>；<code>V:10×16</code>；<code>Z=A V:10×16</code>。4 个 Head 拼接 <code>10×64</code>，通常 <code>W_O:64×64</code>，得到 <code>10×64</code>，才能与输入做 Residual Addition。<code>W_K、W_V</code> 均为 <code>64×16</code>。</p>
+</div></details>
+    </article>
+<article class="question" data-question="计算·一次完整 attention 单个 head 中：`q₁=[1,0]`，`k₁=[1,0]`，`k₂=[0,1]`，`v₁=[2,0]`，`v₂=[0,4]`，`d_k=2`。无 mask。求第 1 个 token 的 scaled scores、softmax weights 和输出 `z₁`（三位小数）。">
+      <div class="q-top"><span class="q-number">题 06</span><span class="q-type">计算·一次完整 Attention</span><span class="q-points">8 分</span></div>
+      <div class="q-prompt"><p>单个 Head 中：<code>q₁=[1,0]</code>，<code>k₁=[1,0]</code>，<code>k₂=[0,1]</code>，<code>v₁=[2,0]</code>，<code>v₂=[0,4]</code>，<code>d_k=2</code>。无 Mask。求第 1 个 Token 的 Scaled Scores、Softmax Weights 和输出 <code>z₁</code>（三位小数）。</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>① <code>s₁₁=q₁·k₁/√2=1/√2≈0.707</code>；<code>s₁₂=0</code>。② Softmax：<code>exp(0.707)≈2.028</code>，<code>exp(0)=1</code>，故 <code>a₁₁≈2.028/3.028=0.670</code>，<code>a₁₂≈0.330</code>。③ 对 <strong>Value</strong> 加权：<code>z₁=0.670[2,0]+0.330[0,4]≈[1.340,1.321]</code>。若把 K 加权就是错误解法。</p>
+</div></details>
+    </article>
+<article class="question" data-question="计算·causal mask 第 2 个 token 对四个 key 的原始 logits 为 `[1,0,5,8]`。按 1-based 位置计算，使用 causal mask 后进行 softmax，求四个权重。说明第 3、4 个 token 是否能得到非零权重。">
+      <div class="q-top"><span class="q-number">题 07</span><span class="q-type">计算·Causal Mask</span><span class="q-points">6 分</span></div>
+      <div class="q-prompt"><p>第 2 个 Token 对四个 Key 的原始 Logits 为 <code>[1,0,5,8]</code>。按 1-based 位置计算，使用 Causal Mask 后进行 Softmax，求四个权重。说明第 3、4 个 Token 是否能得到非零权重。</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>第 2 个 Query 只能看 Key 1、2，Mask 后 <code>[1,0,−∞,−∞]</code>。Softmax 结果 <code>[e/(e+1),1/(e+1),0,0]≈[0.731,0.269,0,0]</code>。未来 Key 3、4 即使原分数高，Mask 后 <code>exp(−∞)=0</code>。</p>
+</div></details>
+    </article>
+<article class="question" data-question="解释·√d_k 的意义 为什么 scaled dot-product attention 要使用 `qkᵀ / √d_k`，如果不缩放且维度越来越大会发生什么？">
+      <div class="q-top"><span class="q-number">题 08</span><span class="q-type">解释·√d_k 的意义</span><span class="q-points">4 分</span></div>
+      <div class="q-prompt"><p>为什么 Scaled Dot-Product Attention 要使用 <code>QKᵀ / √d_k</code>，如果不缩放且维度越来越大会发生什么？</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>点积是 <code>d_k</code> 个分量乘积的和；在常见近似独立、相似尺度假设下，方差随 <code>d_k</code> 增长。未缩放的 Logits 易变得绝对值很大，使 Softmax 极度尖锐、许多梯度接近零。除以 <code>√d_k</code> 让分数尺度较稳定。注意不是为了保证结果在 <code>[−1,1]</code>，也不是在对向量求 Cosine。</p>
+</div></details>
+    </article>
+<article class="question" data-question="计算·multi-head 连接 课件玩具 bert 有两个 head，每个 head 输出 `13×3`，最终 `d_model=4`。为什么不是把两个 head 相加？应该如何组合，`w_o` 尺寸应是多少？">
+      <div class="q-top"><span class="q-number">题 09</span><span class="q-type">计算·Multi-Head 连接</span><span class="q-points">5 分</span></div>
+      <div class="q-prompt"><p>课件玩具 BERT 有两个 Head，每个 Head 输出 <code>13×3</code>，最终 <code>d_model=4</code>。为什么不是把两个 Head 相加？应该如何组合，<code>W_O</code> 尺寸应是多少？</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>把两组输出按<strong>特征维度拼接</strong>得 <code>13×6</code>；再乘 <code>W_O∈ℝ^{6×4}</code> 得 <code>13×4</code>，与原输入形状一致。拼接保留不同 Head 的各自特征；<code>W_O</code> 学习跨 Head 的组合。直接相加会过早混合不同特征，且不是课件定义的标准 Multi-Head 结构。</p>
+</div></details>
+    </article>
+<article class="question" data-question="概念·ffn 与 attention 在 encoder layer 中，ffn 是否让 token `i` 直接读取 token `j`？为什么需要 ffn 和 residual connection？">
+      <div class="q-top"><span class="q-number">题 10</span><span class="q-type">概念·FFN 与 Attention</span><span class="q-points">4 分</span></div>
+      <div class="q-prompt"><p>在 Encoder Layer 中，FFN 是否让 Token <code>i</code> 直接读取 Token <code>j</code>？为什么需要 FFN 和 Residual Connection？</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>标准逐位置 FFN 对每个 Token 的向量单独应用同一组 <code>W₁, W₂</code> 及激活函数；它混合<strong>同一 Token 内部的特征维度</strong>，不直接在不同 Token 之间传播信息。跨 Token 传播主要由 Attention 实现。Residual 保留原表示、给梯度提供较短路径，帮助训练深层模型。</p>
+</div></details>
+    </article>
+<article class="question" data-question="判断·pre-norm / post-norm 以下两式有何区别：a `ln(x+sublayer(x))`，b `x+sublayer(ln(x))`？课件分别把哪一个用于 bert 和 gpt-2 的示范？">
+      <div class="q-top"><span class="q-number">题 11</span><span class="q-type">判断·Pre-Norm / Post-Norm</span><span class="q-points">4 分</span></div>
+      <div class="q-prompt"><p>以下两式有何区别：A <code>LN(x+Sublayer(x))</code>，B <code>x+Sublayer(LN(x))</code>？课件分别把哪一个用于 BERT 和 GPT-2 的示范？</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>A 是 <strong>Post-Norm</strong>：先做子层输出与 Residual 相加，再归一化；课件 BERT Encoder 示例用此顺序。B 是 <strong>Pre-Norm</strong>：先归一化再进入子层，输出与未归一化的 Residual 相加；课件 GPT-2 Decoder 示例用此顺序。这是两个具体实现的对比，不能得出“所有 Encoder 必 Post、所有 Decoder 必 Pre”的结论。</p>
+</div></details>
+    </article>
+<article class="question" data-question="概念·mlm 与 next-token 解释 bert 的 mlm 与 gpt 的 next-token prediction：训练标签分别从何而来？两者为何通常拥有不同的 attention mask？">
+      <div class="q-top"><span class="q-number">题 12</span><span class="q-type">概念·MLM 与 Next-Token</span><span class="q-points">5 分</span></div>
+      <div class="q-prompt"><p>解释 BERT 的 MLM 与 GPT 的 Next-token Prediction：训练标签分别从何而来？两者为何通常拥有不同的 Attention Mask？</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>MLM 遮挡训练文本部分 Token，用该位置左右上下文预测被隐藏的原 Token，使用双向 Attention；GPT 对每个位置预测下一个 Token，由已知文本自动形成 <code>input-prefix→target-next</code> 的标签，使用 Causal Mask 避免读取目标答案。两者都可通过 Cross-Entropy 优化，但预训练目标、可见性和自然生成方式不同。</p>
+</div></details>
+    </article>
+<article class="question" data-question="计算·cross-entropy 模型在三个正确的下一 token 上给出的概率分别为 `0.8、0.5、0.25`，求平均 negative log likelihood（自然对数），并解释为什么不能用准确率代替。">
+      <div class="q-top"><span class="q-number">题 13</span><span class="q-type">计算·Cross-Entropy</span><span class="q-points">5 分</span></div>
+      <div class="q-prompt"><p>模型在三个正确的下一 Token 上给出的概率分别为 <code>0.8、0.5、0.25</code>，求平均 Negative Log Likelihood（自然对数），并解释为什么不能用准确率代替。</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p><code>L=−(ln0.8+ln0.5+ln0.25)/3≈−(−0.2231−0.6931−1.3863)/3≈**0.7675**</code>。即使三个位置的最大概率 Token 全部正确，不同置信度仍给出不同 Loss；Cross-Entropy 利用正确类别的概率强度而不只记录对/错。</p>
+</div></details>
+    </article>
+<article class="question" data-question="计算·cross-attention 尺寸 翻译模型有 7 个源语 token、4 个目标前缀位置、单 head `d_k=16,d_v=32`。求 cross-attention 的 q、k、v、score 和输出形状，并说明哪个矩阵的行来自目标端。">
+      <div class="q-top"><span class="q-number">题 14</span><span class="q-type">计算·Cross-Attention 尺寸</span><span class="q-points">6 分</span></div>
+      <div class="q-prompt"><p>翻译模型有 7 个源语 Token、4 个目标前缀位置、单 Head <code>d_k=16,d_v=32</code>。求 Cross-Attention 的 Q、K、V、Score 和输出形状，并说明哪个矩阵的行来自目标端。</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>Q 来自 Decoder：<code>4×16</code>；K 来自 Encoder：<code>7×16</code>；V 来自 Encoder：<code>7×32</code>。<code>QKᵀ</code> 是 <code>4×7</code>，Softmax 后仍是 <code>4×7</code>，乘 V 得 <code>4×32</code>。因此每<strong>行</strong>是一个法文/目标查询位置，每<strong>列</strong>是一个源语位置。Cross-Attention 不要求源和目标序列一样长。</p>
+</div></details>
+    </article>
+<article class="question" data-question="计算·sinusoidal encoding 原始 transformer 中 `d_model=4`。写出位置 `i` 的四维正弦位置向量，代入 `i=2`（三位有效数字）。它与 bert 学习式位置表有何本质区别？">
+      <div class="q-top"><span class="q-number">题 15</span><span class="q-type">计算·Sinusoidal Encoding</span><span class="q-points">5 分</span></div>
+      <div class="q-prompt"><p>原始 Transformer 中 <code>d_model=4</code>。写出位置 <code>i</code> 的四维正弦位置向量，代入 <code>i=2</code>（三位有效数字）。它与 BERT 学习式位置表有何本质区别？</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p><code>PE(i)=[sin(i),cos(i),sin(i/100),cos(i/100)]</code>。位置 2 的向量约为 <strong><code>[0.909,−0.416,0.0200,1.000]</code></strong>。原始论文按固定函数计算位置，无需学习每个位置一行；BERT 原版使用可学习的位置 Embedding 表。二者都在输入阶段提供顺序信息。</p>
+</div></details>
+    </article>
+<article class="question" data-question="概念·teacher forcing 已知翻译 `the black cat → le chat noir`，写出训练时 decoder 的输入与标签。为何训练可以并行三个位置而推理必须按步骤生成？">
+      <div class="q-top"><span class="q-number">题 16</span><span class="q-type">概念·Teacher Forcing</span><span class="q-points">5 分</span></div>
+      <div class="q-prompt"><p>已知翻译 <code>the black cat → le chat noir</code>，写出训练时 Decoder 的输入与标签。为何训练可以并行三个位置而推理必须按步骤生成？</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>输入为 <code>〈s〉 le chat</code>；标签为 <code>le chat noir</code>。训练时目标序列全部已知，三个位置可同时输入，Causal Mask 阻止位置看到未来的标签；推理时下一 Token 尚未知，先 <code>〈s〉→le</code>，接着 <code>〈s〉 le→chat</code>，再到 <code>noir</code>。Encoder 对源句的输出通常能被复用。</p>
+</div></details>
+    </article>
+<article class="question" data-question="判断·长上下文效率 判断并解释：a flashattention 把精确 self-attention 的核心算术从 `o(n²)` 变成 `o(n)`；b sparse attention 让每个 token 只与部分 token 建立直接关系；c linear attention 与 softmax attention 在数学上完全一致。">
+      <div class="q-top"><span class="q-number">题 17</span><span class="q-type">判断·长上下文效率</span><span class="q-points">6 分</span></div>
+      <div class="q-prompt"><p>判断并解释：A FlashAttention 把精确 Self-Attention 的核心算术从 <code>O(n²)</code> 变成 <code>O(n)</code>；B Sparse Attention 让每个 Token 只与部分 Token 建立直接关系；C Linear Attention 与 Softmax Attention 在数学上完全一致。</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>A <strong>错</strong>：FlashAttention 通过分块与在线 Softmax 减少 HBM 内存往返和 <code>n²</code> 中间表，通常仍计算二次量级的配对。B <strong>对</strong>：窗口、全局、随机、可学习选择都可减少直接配对。C <strong>错</strong>：Linear Attention 通过核特征改变相似性/归一化计算，通常不是原始 Softmax 的精确等价；其代价之一是固定状态中的记忆重叠。</p>
+</div></details>
+    </article>
+<article class="question" data-question="计算·复杂度增长 假设一个 head 的标准全注意力有效配对数按 `n²` 估算。序列长度由 1,000 增至 10,000，配对数增加多少倍？若每个位置只有固定 128 个邻近 key，则配对数增加多少倍？">
+      <div class="q-top"><span class="q-number">题 18</span><span class="q-type">计算·复杂度增长</span><span class="q-points">4 分</span></div>
+      <div class="q-prompt"><p>假设一个 Head 的标准全注意力有效配对数按 <code>n²</code> 估算。序列长度由 1,000 增至 10,000，配对数增加多少倍？若每个位置只有固定 128 个邻近 Key，则配对数增加多少倍？</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>密集注意力比值 <code>(10000²)/(1000²)=**100 倍**</code>。固定窗口近似 <code>n×128</code>，故比值 <code>10000/1000=**10 倍**</code>。这只是配对次数，不等于实际端到端运行时间必然恰好提高 100 倍或 10 倍，硬件利用率和其他算子也重要。</p>
+</div></details>
+    </article>
+<article class="question" data-question="原理·linear attention 为什么普通 softmax attention 不可以随意变成 `q(kᵀv)`？linear attention 如何利用结合律减少中间矩阵，可能牺牲什么能力？">
+      <div class="q-top"><span class="q-number">题 19</span><span class="q-type">原理·Linear Attention</span><span class="q-points">6 分</span></div>
+      <div class="q-prompt"><p>为什么普通 Softmax Attention 不可以随意变成 <code>Q(KᵀV)</code>？Linear Attention 如何利用结合律减少中间矩阵，可能牺牲什么能力？</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>标准 Attention 是 <code>softmax(QKᵀ/√d_k)V</code>，中间有按行非线性 Softmax，不能从乘积结构直接改成 <code>Q(KᵀV)</code>。线性 Attention 用 <code>φ(q)ᵀφ(k)</code> 等可分离特征形式，先累积 <code>S=Σ φ(k)vᵀ</code> 和归一化分母状态，使状态大小独立于文本长度。代价是不同 Key/Value 叠加，复杂的精确检索和 Copy 可能不如保留逐 Token KV 的 Softmax。</p>
+</div></details>
+    </article>
+<article class="question" data-question="计算·ssm 的递推 简化单维 ssm：`h_t = 0.9 h_{t−1}+0.1x_t`，初值 `h₀=0`，输入依次为 `[10,0,0]`。计算 `h₁,h₂,h₃`，并解释这与状态遗忘有什么关系。">
+      <div class="q-top"><span class="q-number">题 20</span><span class="q-type">计算·SSM 的递推</span><span class="q-points">5 分</span></div>
+      <div class="q-prompt"><p>简化单维 SSM：<code>h_t = 0.9 h_{t−1}+0.1x_t</code>，初值 <code>h₀=0</code>，输入依次为 <code>[10,0,0]</code>。计算 <code>h₁,h₂,h₃</code>，并解释这与状态遗忘有什么关系。</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p><code>h₁=0.9×0+0.1×10=1</code>；<code>h₂=0.9×1+0=0.9</code>；<code>h₃=0.9×0.9=0.81</code>。新输入为零时，记忆以 <code>0.9</code> 倍逐步衰减。Mamba 的关键不同之处是让保留/写入/读取参数能够随当前 Token 变化，而不是所有位置一直使用同一个 <code>0.9</code>。</p>
+</div></details>
+    </article>
+<article class="question" data-question="计算·rmsnorm 输入向量 `x=[2,−1,0,3]`，设 `g=1` 且忽略 ε。求 rmsnorm，并与 layernorm 的主要区别比较。">
+      <div class="q-top"><span class="q-number">题 21</span><span class="q-type">计算·RMSNorm</span><span class="q-points">5 分</span></div>
+      <div class="q-prompt"><p>输入向量 <code>x=[2,−1,0,3]</code>，设 <code>g=1</code> 且忽略 ε。求 RMSNorm，并与 LayerNorm 的主要区别比较。</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p><code>RMS=√((4+1+0+9)/4)=√3.5≈1.871</code>；输出约 <strong><code>[1.069,−0.535,0,1.604]</code></strong>。RMSNorm 仅除以均方根（再乘学习缩放系数），而 LayerNorm 还会先减去均值，并可使用学习偏置 β。课件示范的 LayerNorm 结果约 <code>[0.63,−1.27,−0.63,1.27]</code>。</p>
+</div></details>
+    </article>
+<article class="question" data-question="计算·moe top-2 八个 expert 的 logits 中只有 e3、e6 入选，logits 分别为 2、1。若 `e3(x)=[2,0]`、`e6(x)=[0,4]`，按入选两项重新 softmax 后求输出向量。">
+      <div class="q-top"><span class="q-number">题 22</span><span class="q-type">计算·MoE Top-2</span><span class="q-points">6 分</span></div>
+      <div class="q-prompt"><p>八个 Expert 的 Logits 中只有 E3、E6 入选，Logits 分别为 2、1。若 <code>E3(x)=[2,0]</code>、<code>E6(x)=[0,4]</code>，按入选两项重新 Softmax 后求输出向量。</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>路由概率 <code>w3=e²/(e²+e¹)≈0.7311</code>、<code>w6≈0.2689</code>。输出 <code>y=w3[2,0]+w6[0,4]≈**[1.462,1.076]**</code>。其余 6 个 Expert 没有参与此次 Token 的 FFN 计算。重点是 Top-k 选择、入选权重的归一化和加权混合。</p>
+</div></details>
+    </article>
+<article class="question" data-question="应用·mamba vs attention 任务 a：从非常长的文章中记住整体主题；任务 b：从前面 1000 组号码中精确复制第 413 组。为什么 mamba 与 full attention 可能各有优势？hybrid 如何兼顾？">
+      <div class="q-top"><span class="q-number">题 23</span><span class="q-type">应用·Mamba vs Attention</span><span class="q-points">6 分</span></div>
+      <div class="q-prompt"><p>任务 A：从非常长的文章中记住整体主题；任务 B：从前面 1000 组号码中精确复制第 413 组。为什么 Mamba 与 Full Attention 可能各有优势？Hybrid 如何兼顾？</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>A 是长期<strong>压缩摘要</strong>问题，SSM 的固定大小状态、线性序列处理和低缓存成本可能更有利；B 是随机<strong>精确查找</strong>问题，Full Attention 仍能用每个历史 Token 的 Key/Value 查询，通常更适合。Hybrid 主要用 Mamba/Linear 保留廉价长期状态，少量 Full Attention 提供必要的精确检索，但性能取决于任务和训练。</p>
+</div></details>
+    </article>
+<article class="question" data-question="概念·diffusion lm 比较 gpt 与 masked diffusion lm 的生成过程：假设输出有 8 个位置，为什么 diffusion lm 有可能 4 个步骤内得到完整句子？“4 步”是否意味着只运行一个前向过程？">
+      <div class="q-top"><span class="q-number">题 24</span><span class="q-type">概念·Diffusion LM</span><span class="q-points">5 分</span></div>
+      <div class="q-prompt"><p>比较 GPT 与 Masked Diffusion LM 的生成过程：假设输出有 8 个位置，为什么 Diffusion LM 有可能 4 个步骤内得到完整句子？“4 步”是否意味着只运行一个前向过程？</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>GPT 典型自回归生成通常每轮追加一个 Token；Masked Diffusion LM 可一轮同时预测多个 <code>[MASK]</code>，保留若干确定位置，多轮逐步修正，因此 8 个位置可能分 4 次完善。<strong>4 步通常意味着多轮模型计算</strong>，不是一次前向就生成全部内容，也不保证固定步数下品质优于 GPT。</p>
+</div></details>
+    </article>
+<article class="question" data-question="推导·rope 相对位置 用旋转矩阵性质说明，为什么对 query 和 key 分别转 `iθ`、`jθ`，其点积只通过 `j−i` 感知相对位置。若两个位置分别从 `(3,1)` 平移到 `(5,3)`，相对角改变了吗？">
+      <div class="q-top"><span class="q-number">题 25</span><span class="q-type">推导·RoPE 相对位置</span><span class="q-points">7 分</span></div>
+      <div class="q-prompt"><p>用旋转矩阵性质说明，为什么对 Query 和 Key 分别转 <code>iθ</code>、<code>jθ</code>，其点积只通过 <code>j−i</code> 感知相对位置。若两个位置分别从 <code>(3,1)</code> 平移到 <code>(5,3)</code>，相对角改变了吗？</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p><code>q′ᵢᵀk′ⱼ=qᵢᵀR(iθ)ᵀR(jθ)kⱼ</code>。因为旋转矩阵 <code>R(a)ᵀ=R(−a)</code> 且 <code>R(−a)R(b)=R(b−a)</code>，得到 <code>qᵢᵀR((j−i)θ)kⱼ</code>。两对位置 <code>(3,1)</code> 与 <code>(5,3)</code> 都有 <code>j−i=−2</code>，相对角相同。RoPE 改的是位置表示，不会自动把二次 Attention 变为线性。</p>
+</div></details>
+    </article>
+<article class="question" data-question="计算·rag cosine 问题向量 `q=[3,4]`，候选段落 a 的向量 `[6,8]`，候选 b 的向量 `[4,−3]`。分别算 cosine similarity，应该优先检索哪一段？相似度高是否代表段落事实一定正确？">
+      <div class="q-top"><span class="q-number">题 26</span><span class="q-type">计算·RAG Cosine</span><span class="q-points">6 分</span></div>
+      <div class="q-prompt"><p>问题向量 <code>q=[3,4]</code>，候选段落 A 的向量 <code>[6,8]</code>，候选 B 的向量 <code>[4,−3]</code>。分别算 Cosine Similarity，应该优先检索哪一段？相似度高是否代表段落事实一定正确？</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p><code>||q||=5</code>、<code>||A||=10</code>、<code>q·A=18+32=50</code>，<code>cos(q,A)=50/(5×10)=1</code>；<code>||B||=5</code>、<code>q·B=12−12=0</code>，<code>cos(q,B)=0</code>。A 排在 B 前。但 Cosine 只度量向量在 Embedding 空间中的方向接近程度，不能验证内容的真实性和时效性。</p>
+</div></details>
+    </article>
+<article class="question" data-question="综合·完整模型追踪 一个 decoder-only transformer 接收 `n=6` token，隐藏维 `d_model=12`，3 heads，各 `d_k=d_v=4`。请从输入到输出列出矩阵维度，并指出在哪一步阻止未来 token 被读取。">
+      <div class="q-top"><span class="q-number">题 27</span><span class="q-type">综合·完整模型追踪</span><span class="q-points">10 分</span></div>
+      <div class="q-prompt"><p>一个 Decoder-only Transformer 接收 <code>n=6</code> Token，隐藏维 <code>d_model=12</code>，3 Heads，各 <code>d_k=d_v=4</code>。请从输入到输出列出矩阵维度，并指出在哪一步阻止未来 Token 被读取。</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>输入 <code>X:6×12</code>。每 Head <code>W_Q/W_K/W_V:12×4</code>，<code>Q/K/V:6×4</code>；<code>QKᵀ:6×6</code>；在 Softmax 前为 <code>S</code> 添加 <code>6×6</code> 的<strong>Causal Mask</strong>，未来列设为 <code>−∞</code>；权重 <code>A:6×6</code>，<code>Z=AV:6×4</code>；拼接 3 Head 得 <code>6×12</code>，乘 <code>W_O:12×12</code> 回到 <code>6×12</code>；Add/Norm 与 FFN 后经 Output Projection 得 <code>6×|Vocab|</code> 的 Logits，训练时每行对齐下一 Token 标签。推理时只用末尾位置的概率选择下一 Token。</p>
+</div></details>
+    </article>
+<article class="question" data-question="综合·选架构与论证 你要设计一个可阅读 20 万 token 技术日志、回答精确行号问题、并生成较长总结的系统。比较 full attention、纯 mamba、hybrid、rag 四种方案的相对优缺点，并给出理由充分的组合方案。">
+      <div class="q-top"><span class="q-number">题 28</span><span class="q-type">综合·选架构与论证</span><span class="q-points">10 分</span></div>
+      <div class="q-prompt"><p>你要设计一个可阅读 20 万 Token 技术日志、回答精确行号问题、并生成较长总结的系统。比较 Full Attention、纯 Mamba、Hybrid、RAG 四种方案的相对优缺点，并给出理由充分的组合方案。</p>
+</div>
+      <details class="answer"><summary><span>展开参考答案与解题思路</span><span class="summary-arrow">⌄</span></summary><div class="answer-body"><p>Full Attention 可精确回看上下文，但 20 万 Token 的配对与 KV 成本高；纯 Mamba 高效维护压缩状态，精确行号/原文 Copy 可能丢失；Hybrid 以状态层降低成本、少量全局 Attention 处理精确查询；RAG 建索引后只检索相关日志片段，避免每次把整个日志放入上下文。<strong>可用方案</strong>：按行号与时间保留元数据，日志 Chunk 索引检索 + Rerank，Top-k 片段与明确行号作为证据送入 GPT/Hybrid Decoder，要求引用来源；长总结可分段聚合。此方案是依据课件原理做的设计推导，不是老师指定的唯一答案。</p>
+</div></details>
+    </article></div>
+<section class="references" id="references"><h2>课件来源与原始研究</h2>
+<p>本学习手册依据你上传的 <strong>COMP9444 Week 9: Sequence Modelling 2 — Transformers and beyond</strong>（Raymond Louie；课件注明 adapted from Alan Blair’s slides，共 133 页）整理。各章节开头已给出对应原始课件页码，建议配合 PDF 检查原图与数值表。</p>
+<p>课程中主要引用的研究包括（论文名沿用课件，不代表本文独立复核过课件里的 2026 年新闻与基准）：</p>
+<ul><li>Vaswani et al. (2017), <em>Attention Is All You Need</em> — Transformer；</li><li>Devlin et al. (2018/2019), <em>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</em>；</li><li>Radford et al. (2018/2019), GPT 与 GPT-2；Brown et al. (2020), GPT-3；</li><li>Raffel et al. (2019), T5；Clark et al. (2019), BERT Attention Heads；</li><li>Beltagy et al. (2020), Longformer；Zaheer et al. (2020), BigBird；</li><li>Dao et al. (2022), FlashAttention；Katharopoulos et al. (2020), Linear Attention；</li><li>Gu & Dao (2023), Mamba；Dao & Gu (2024), Mamba-2；</li><li>Shazeer et al. (2017), Sparsely-Gated Mixture of Experts；</li><li>Ho et al. (2020), DDPM；Austin et al. (2021), D3PM；Nie et al. (2025), LLaDA；</li><li>Su et al. (2021), RoPE；Lewis et al. (2020), RAG；Karpukhin et al. (2020), Dense Passage Retrieval。</li></ul>
+<p>说明：为便于课堂复习，部分公式使用简化记号并省略 Dropout、Padding Mask、偏置或实现相关优化；出现模型评测数字时，均以 PDF 课件的叙述为准。遇到真实考试，请以任课教师要求、Tutorial 及正式考试范围为准。</p>
+</section>
+<footer class="footer">COMP9444 · Week 9 · 中文学习讲义｜源于课堂 PPT，非教师官方答案｜自适应版面 · 可打印</footer>
+</article>
+</main></div>
+<button id="toTop" class="floating" aria-label="返回顶部">↑ 顶部</button>
+<script>
+(function(){
+const progress=document.querySelector('#progress'),sidebar=document.querySelector('#sidebar'),shade=document.querySelector('#shade'),menuBtn=document.querySelector('#menuBtn');
+function toggleMenu(force){const val=typeof force==='boolean'?force:!sidebar.classList.contains('visible');sidebar.classList.toggle('visible',val);shade.classList.toggle('visible',val);menuBtn.setAttribute('aria-expanded',String(val));}
+menuBtn?.addEventListener('click',()=>toggleMenu());shade?.addEventListener('click',()=>toggleMenu(false));document.querySelectorAll('#toc a').forEach(a=>a.addEventListener('click',()=>toggleMenu(false)));
+const links=[...document.querySelectorAll('#toc a')],sections=links.map(a=>document.getElementById(a.dataset.to)).filter(Boolean);
+let raf=false;
+function onScroll(){if(raf)return;raf=true;requestAnimationFrame(()=>{let max=document.documentElement.scrollHeight-window.innerHeight;progress.style.width=((max>0?scrollY/max:0)*100).toFixed(1)+'%';let active=sections[0]?.id;for(const s of sections){if(s.getBoundingClientRect().top<=window.innerHeight*.28)active=s.id;}links.forEach(a=>a.classList.toggle('active',a.dataset.to===active));raf=false;});}
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+const answers=[...document.querySelectorAll('.answer')];let printState=[];
+window.addEventListener('beforeprint',()=>{printState=answers.map(d=>d.open);answers.forEach(d=>d.open=true);});
+window.addEventListener('afterprint',()=>{if(printState.length===answers.length){answers.forEach((d,i)=>d.open=printState[i]);}});
+document.getElementById('printBtn').addEventListener('click',()=>window.print());function setOpen(state){answers.forEach(d=>d.open=state);document.querySelector('#showAnswers').textContent=state?'收起答案':'显示答案';}
+document.querySelector('#openAll').addEventListener('click',()=>setOpen(true));document.querySelector('#closeAll').addEventListener('click',()=>setOpen(false));document.querySelector('#showAnswers').addEventListener('click',()=>setOpen(!answers.every(d=>d.open)));
+const qSearch=document.querySelector('#qSearch'),cards=[...document.querySelectorAll('.question')];qSearch.addEventListener('input',()=>{const v=qSearch.value.trim().toLowerCase();let shown=0;cards.forEach(c=>{const ok=!v||c.textContent.toLowerCase().includes(v);c.hidden=!ok;if(ok)shown++;});document.querySelector('#q-count').textContent=`显示 ${shown} / ${cards.length} 道题`;});
+const toTop=document.querySelector('#toTop');toTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+})();
+</script>
+</body></html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Task Scheduling with Cooldown — 动态规划逐步讲解与 Formal Proof</title>
+<style>
+:root{--bg:#f7f7f5;--paper:#fff;--ink:#1d2524;--muted:#66716c;--line:#e4e8e4;--accent:#167461;--accent-light:#e9f6f0;--blue:#2e5b88;--blue-light:#eff5fb;--amber:#936218;--amber-light:#fff8e9;--red:#9b4439;--red-light:#fff2ef;--shadow:0 6px 28px rgba(16,31,26,.04);--sans:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft Yahei",sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--serif:Georgia,"Times New Roman",serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;-webkit-font-smoothing:antialiased}button,input{font:inherit}a{color:var(--accent);text-underline-offset:3px}.page{max-width:1110px;margin:0 auto;padding:0 28px 90px}.header{padding:64px 0 35px;border-bottom:1px solid var(--line)}.eyebrow{font-size:12px;font-weight:750;text-transform:uppercase;letter-spacing:.15em;color:var(--accent);margin-bottom:16px}.header h1{font-size:clamp(29px,4vw,46px);letter-spacing:-.035em;line-height:1.25;margin:0 0 16px;max-width:940px}.lead{max-width:840px;font-size:16px;color:#51605a;margin:0 0 19px}.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{border:1px solid #dce5dd;background:white;border-radius:8px;color:#49615a;padding:3px 11px;font-size:12px;font-weight:650}.layout{display:grid;grid-template-columns:214px minmax(0,1fr);gap:42px;padding-top:32px}.toc{position:sticky;top:16px;align-self:start}.toc-title{font-weight:800;letter-spacing:.04em;font-size:12px;color:#859087;margin:0 0 12px 12px}.toc a{display:block;border-radius:7px;padding:7px 11px;color:#61706a;font-size:13px;text-decoration:none;line-height:1.5}.toc a:hover{background:#e9eee9;color:#1b453a}.content{min-width:0}.section{padding:9px 0 26px;margin-bottom:30px;border-bottom:1px solid var(--line)}h2{font-size:24px;letter-spacing:-.025em;margin:10px 0 17px;line-height:1.35}h3{font-size:17px;letter-spacing:-.015em;margin:27px 0 9px;line-height:1.5}p{margin:8px 0 13px}strong{font-weight:740}.muted,.footnote{color:var(--muted)}.footnote{font-size:13px}.step{display:inline-flex;align-items:center;justify-content:center;color:var(--accent);background:var(--accent-light);border-radius:7px;font:700 12px var(--mono);padding:4px 9px;margin-bottom:9px}.card{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:20px 22px;box-shadow:var(--shadow);margin:17px 0}.card h3{margin-top:0}.callout{padding:13px 17px;margin:16px 0;border-radius:9px;border-left:3px solid var(--accent);background:var(--accent-light)}.callout.warn{border-left-color:var(--amber);background:var(--amber-light)}.callout.error{border-left-color:var(--red);background:var(--red-light)}.callout.blue{border-left-color:var(--blue);background:var(--blue-light)}.callout p:last-child{margin-bottom:0}.math{font-family:var(--serif);font-size:1.15em;letter-spacing:.01em;white-space:nowrap}.formula{background:#f8faf9;border:1px solid var(--line);border-radius:10px;padding:19px 17px;text-align:center;margin:18px 0;font:20px/2 var(--serif);overflow-x:auto;white-space:nowrap}.formula .sub{font:14px/1.5 var(--sans);color:#5e746a;display:block;white-space:normal}.formula .big{font-size:25px;font-weight:650}.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:18px 0}.choice{border:1px solid var(--line);border-radius:11px;background:white;padding:16px 18px}.choice .choice-name{font-weight:760;margin:0 0 5px}.choice:first-child{border-top:3px solid var(--blue)}.choice:last-child{border-top:3px solid var(--accent)}.choice p{font-size:14px;margin:5px 0}.numbered{padding-left:22px}.numbered li{padding-left:5px;margin-bottom:10px}.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:#506058}.dot{width:10px;height:10px;display:inline-block;border-radius:3px;vertical-align:middle;margin-right:6px}.svg-scroller{overflow:auto}.timeline{display:block;max-width:100%;height:auto;margin:12px auto}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:white;margin:14px 0}table{border-collapse:collapse;width:100%;min-width:460px;font-size:14px}th,td{padding:10px 12px;text-align:center;border-bottom:1px solid #e9eeea}th{background:#f5f8f5;font-weight:750;color:#4f6058}tbody tr:last-child td{border-bottom:0}td:first-child,th:first-child{text-align:left;font-weight:750}td[data-i][data-t]{cursor:pointer;transition:.15s}.table-wrap button{background:transparent;color:inherit;border:0;cursor:pointer;width:100%;padding:0;font-weight:650}.table-wrap button:focus-visible,.small-btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.current{background:#d8efe4!important;color:#155b4a!important;box-shadow:inset 0 0 0 2px var(--accent)}.ref-cell{background:#eef4fb;color:#204f7d}.label-ok{font-size:12px;color:var(--accent);font-weight:760}.controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:12px 0}.small-btn{border:1px solid #cad9d0;background:#fff;color:#315549;border-radius:7px;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:700}.small-btn:hover{background:#edf5ef}.state{margin:12px 0;border:1px solid #cbded3;background:#f7fbf8;border-radius:10px;padding:15px 18px}.state-title{font-weight:800;color:#206653}.state-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}.state-side{padding:11px;border-radius:8px;background:white;border:1px solid #e1ebe4}.state-side b{font-size:17px}.state-side.win{border-color:#71ab97;background:#eff8f3}.state-side small{display:block;font-size:12px;color:#68746b}.state .explain{font-size:13px;color:#52655b;margin:9px 0 0}.code{background:#202825;color:#ecf4ef;border-radius:10px;padding:20px 18px;margin:16px 0;overflow:auto;font:13.2px/1.8 var(--mono);white-space:pre}.code .comment{color:#a8c7b3}.faq{border:1px solid var(--line);border-radius:9px;margin:10px 0;background:#fff;overflow:hidden}.faq summary{padding:13px 17px;font-weight:720;cursor:pointer}.faq>div{padding:0 17px 15px;color:#526259;font-size:14px}.answer{background:#fff;border:1px solid var(--line);padding:26px 32px;border-radius:12px;font:16px/1.78 var(--serif);box-shadow:var(--shadow)}.answer h3{font:italic 20px/1.4 var(--serif);margin:0 0 16px}.answer p{margin:10px 0}.answer ul{padding-left:21px}.answer li{padding-left:4px;margin-bottom:17px}.answer li::marker{color:#515951}.answer li>strong{font-weight:700}.answer .display{font-size:17px;text-align:center;line-height:2.2;margin:14px 0;overflow:auto;white-space:nowrap}.answer .smallmath{font-size:14px}.answer .proof-body{padding-top:2px}.ending{font-family:var(--serif);text-align:right;margin:14px 0 0}.mobile-jump{display:none}.print-note{font-size:12px;color:#6b776f}.footer{border-top:1px solid var(--line);padding-top:19px;color:#7b8980;font-size:12px}
+@media(max-width:850px){.page{padding:0 18px 60px}.header{padding:37px 0 29px}.layout{display:block;padding-top:13px}.toc{display:none}.mobile-jump{display:block;margin:10px 0 24px}.mobile-jump a{display:inline-block;margin:5px 8px 5px 0;padding:6px 9px;border:1px solid var(--line);background:white;border-radius:7px;text-decoration:none;font-size:12px}.choice-grid{grid-template-columns:1fr}.card{padding:16px}.answer{padding:19px 20px}.section{margin-bottom:23px}.formula{font-size:17px}.formula .big{font-size:20px}}
+@media(max-width:440px){.header h1{font-size:29px}.state-values{grid-template-columns:1fr}.answer{font-size:15.5px}.code{font-size:11.5px;padding:15px 11px}.chip{font-size:11px}.section h2{font-size:21px}.formula{font-size:15px;padding:15px 8px}.formula .big{font-size:17px}}
+@media print{@page{size:A4;margin:14mm}body{background:white;color:black;font-size:12px}.page{max-width:none;padding:0}.header{padding:0 0 14px}.layout{display:block}.toc,.mobile-jump,.controls,.print-note{display:none!important}.section{break-inside:avoid-page}.answer{box-shadow:none;border-color:#aaa}.card{box-shadow:none}.code{white-space:pre-wrap;break-inside:avoid-page}.state{break-inside:avoid-page}.section#english{break-before:page}.table-wrap{overflow:visible}a{color:inherit}}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="header">
+<div class="eyebrow">COMP3821 · Extended Algorithm Design and Analysis</div>
+<h1>任务选择、冷却限制与最多 <i>k</i> 项：<br>从直觉到严格证明</h1>
+<p class="lead">一份可以从头读懂的动态规划讲义。先解释为什么这样设计状态、为什么转移正确，再用具体数字手推，最后给出仿照题目截图组织的 <strong>Formal English Solution</strong>。</p>
+<div class="chips"><span class="chip">Dynamic Programming</span><span class="chip">Suffix DP</span><span class="chip">Time O(nk)</span><span class="chip">Space O(nk)</span><span class="chip">正式英文证明附文末</span></div>
+</header>
+<div class="mobile-jump"><a href="#idea">基本思路</a><a href="#recurrence">递推式</a><a href="#example">实例演算</a><a href="#correctness">证明思路</a><a href="#english">Formal proof</a></div>
+<div class="layout">
+<nav class="toc" aria-label="目录">
+<p class="toc-title">目录 / CONTENTS</p>
+<a href="#problem">01 · 读懂题目</a>
+<a href="#idea">02 · 发现关键限制</a>
+<a href="#state">03 · 定义 DP 状态</a>
+<a href="#recurrence">04 · 推出递推式</a>
+<a href="#base">05 · 基础条件与顺序</a>
+<a href="#example">06 · 表格实例演算</a>
+<a href="#algorithm">07 · 算法与复杂度</a>
+<a href="#correctness">08 · 正确性证明思路</a>
+<a href="#pitfalls">09 · 常见误区</a>
+<a href="#english">10 · Formal English Answer</a>
+</nav>
+<main class="content">
+<section class="section" id="problem"><div class="step">STEP 01</div><h2>先把题目翻译成“能选哪些任务”</h2>
+<p>共有 <span class="math">n</span> 个按顺序排列的任务。对任务 <span class="math">i</span>，我们知道：</p>
+<div class="card"><p><strong><span class="math">V[i]</span>：</strong>选择任务 <span class="math">i</span> 得到的奖励。</p><p><strong><span class="math">W[i]</span>：</strong>做完任务 <span class="math">i</span> 后，接下来的 <span class="math">W[i]</span> 个任务都不能做。</p><p><strong><span class="math">k</span>：</strong>最多只能做 <span class="math">k</span> 个任务；可以做更少，也可以一个都不做。</p></div>
+<p>目标：选出一组合法任务 <span class="math">S</span>，让总奖励 <span class="math">∑<sub>i∈S</sub> V[i]</span> 最大。</p>
+<div class="callout blue"><strong>“最多”而不是“恰好”。</strong> 这意味着做 0、1、…、<span class="math">k</span> 个任务都允许。即使有负奖励的任务，我们也不必强迫自己选它。</div>
+</section>
+<section class="section" id="idea"><div class="step">STEP 02</div><h2>第一个直觉：看当前任务，只有两种选择</h2>
+<p>假设现在来到任务 <span class="math">i</span>，还允许做 <span class="math">t</span> 个任务。我们只需要决定：<strong>跳过 i，还是选择 i？</strong></p>
+<div class="choice-grid">
+<div class="choice"><p class="choice-name">A · Skip 跳过</p><p>任务 <span class="math">i</span> 不做，奖励 <strong>+0</strong>；接下来从 <span class="math">i+1</span> 开始，剩余名额仍为 <span class="math">t</span>。</p></div>
+<div class="choice"><p class="choice-name">B · Take 选择</p><p>立即获得 <span class="math">V[i]</span>；任务 <span class="math">i+1</span> 至 <span class="math">i+W[i]</span> 强制跳过；下一次从 <span class="math">i+W[i]+1</span> 开始，名额变成 <span class="math">t−1</span>。</p></div>
+</div>
+<h3>用时间线看一次冷却</h3>
+<p>例如 <span class="math">W[3]=1</span>。如果选择第 3 个任务，第 4 个任务不能选，但第 5 个任务重新变得可选。</p>
+<div class="card svg-scroller">
+<svg class="timeline" viewBox="0 0 660 158" role="img" aria-label="任务3被选后任务4被冷却阻止，任务5及之后重新可选"><defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6" fill="none" stroke="#167461" stroke-width="1.5"/></marker></defs>
+<g font-family="Arial,sans-serif" font-size="14" text-anchor="middle">
+<g><rect x="8" y="41" width="94" height="63" rx="9" fill="#f0f4f1" stroke="#cfdbd2"/><text x="55" y="68" fill="#587067">Task 1</text><text x="55" y="89" font-size="11" fill="#71857b">previous</text></g>
+<g><rect x="118" y="41" width="94" height="63" rx="9" fill="#f0f4f1" stroke="#cfdbd2"/><text x="165" y="68" fill="#587067">Task 2</text><text x="165" y="89" font-size="11" fill="#71857b">previous</text></g>
+<g><rect x="228" y="41" width="94" height="63" rx="9" fill="#ddefe6" stroke="#167461" stroke-width="2"/><text x="275" y="68" font-weight="bold" fill="#166c56">Task 3</text><text x="275" y="89" font-size="11" fill="#166c56">TAKE</text></g>
+<g><rect x="338" y="41" width="94" height="63" rx="9" fill="#fff0eb" stroke="#cb867c"/><text x="385" y="68" fill="#914f45">Task 4</text><text x="385" y="89" font-size="11" fill="#914f45">BLOCKED</text></g>
+<g><rect x="448" y="41" width="94" height="63" rx="9" fill="#eef5fc" stroke="#80a4c6"/><text x="495" y="68" fill="#315e87">Task 5</text><text x="495" y="89" font-size="11" fill="#315e87">available</text></g>
+<g><rect x="558" y="41" width="94" height="63" rx="9" fill="#eef5fc" stroke="#80a4c6"/><text x="605" y="68" fill="#315e87">Task 6</text><text x="605" y="89" font-size="11" fill="#315e87">available</text></g>
+</g><path d="M275 37 Q385 -3 491 37" stroke="#167461" fill="none" stroke-width="2" marker-end="url(#arrow)"/><text x="384" y="17" text-anchor="middle" font-size="12" fill="#167461" font-family="Arial,sans-serif">next i + W[i] + 1</text><text x="385" y="133" text-anchor="middle" fill="#9b4439" font-size="12" font-family="Arial,sans-serif">这里必须跳过</text></svg>
+</div>
+<div class="callout warn"><strong>一个非常重要的方向问题：</strong>由于 <span class="math">W[i]</span> 约束的是任务 <span class="math">i</span> <strong>后面</strong>的任务，因此从左往右作选择、把未来当作子问题的 <strong>suffix DP（后缀 DP）</strong> 最直接。不要误用“当前任务的 <span class="math">W[i]</span> 限制前面的任务”的前缀递推。</div>
+</section>
+<section class="section" id="state"><div class="step">STEP 03</div><h2>状态为什么要有两个参数？</h2>
+<p>要准确描述一个小问题，必须知道两件事：<strong>从哪个位置继续</strong>，以及<strong>还剩多少次选择机会</strong>。</p>
+<div class="formula"><span class="big">DP(i, t)</span><span class="sub">只考虑任务 i, i+1, …, n，最多选择 t 个合法任务所能获得的最大奖励。</span></div>
+<p>例如：</p><ul class="numbered"><li><span class="math">DP(3,2)</span>：只从任务 3 开始考虑，最多还能做 2 个。</li><li><span class="math">DP(5,1)</span>：从任务 5 开始，最多还能做 1 个。</li><li><span class="math">DP(1,k)</span>：从第一个任务开始且总共最多做 <span class="math">k</span> 个——<strong>这正是原问题</strong>。</li></ul>
+<div class="callout"><strong>关键理解：</strong>状态里不需要记“之前选了哪些任务”，因为一旦我们决定选择某项任务，就直接跳过它所禁止的区间。到达一个新的 <span class="math">i</span> 时，过去的影响已经由这个跳转处理完毕。</div>
+</section>
+<section class="section" id="recurrence"><div class="step">STEP 04</div><h2>正式推出状态转移：Skip 和 Take 取最大</h2>
+<p>对于 <span class="math">1 ≤ i ≤ n</span> 且 <span class="math">1 ≤ t ≤ k</span>：</p>
+<div class="formula"><span class="big">DP(i,t) = max {</span> DP(i+1,t), &nbsp; V[i] + DP(i+W[i]+1,t−1) <span class="big">}</span><span class="sub">越过 n 的后缀被视为空后缀（奖励为 0）。</span></div>
+<p>这不是“猜出”的公式，而是将前面的两个互斥选择转写成数学表达式：</p>
+<div class="card"><p><strong>第一项 <span class="math">DP(i+1,t)</span>：</strong>不做任务 <span class="math">i</span>，所以从下一个任务开始，名额不减少。</p><p><strong>第二项 <span class="math">V[i]+DP(i+W[i]+1,t−1)</span>：</strong>做任务 <span class="math">i</span>，先拿当前奖励，然后跳过冷却区，继续寻找剩余最多 <span class="math">t−1</span> 项。</p><p><strong>为什么取 <span class="math">max</span>？</strong> 每一个合法解都属于“选择 i”或者“不选择 i”之一。两种情况中只需保留奖励更高的。</p></div>
+<h3>为什么最后的位置不是 <span class="math">i+W[i]</span>？</h3>
+<p>因为禁止的是后面 <span class="math">W[i]</span> <em>个</em>任务，具体是 <span class="math">i+1,
+ i+2,
+ …,
+ i+W[i]</span>。所以<strong>首个可能再选择的任务</strong>是 <span class="math">i+W[i]+1</span>。</p>
+</section>
+<section class="section" id="base"><div class="step">STEP 05</div><h2>Base cases 和填表顺序</h2>
+<div class="formula">DP(n+1,t) = 0&nbsp; (0 ≤ t ≤ k) <span class="sub">没有任何任务了，最大收益是 0。</span></div>
+<div class="formula">DP(i,0) = 0&nbsp; (1 ≤ i ≤ n+1) <span class="sub">剩余最多可以做 0 个任务，只能全部跳过。</span></div>
+<p>即使 <span class="math">i+W[i]+1 &gt; n+1</span>，它代表的也只是“再没有任务可做”。实现时统一把后缀索引截断到 <span class="math">n+1</span>：</p>
+<div class="formula">next(i) = min(n+1, &nbsp;i+W[i]+1)</div>
+<p>为了计算 <span class="math">DP(i,t)</span>，我们会查找 <span class="math">DP(i+1,t)</span> 和 <span class="math">DP(next(i),t−1)</span>。由于 <span class="math">W[i] ≥ 0</span>，这两个状态的任务下标都<strong>严格大于 i</strong>。</p>
+<div class="callout"><strong>所以：</strong>从 <span class="math">i=n</span> 递减到 <span class="math">i=1</span>，对于每个 <span class="math">i</span> 遍历 <span class="math">t=1,
+ …,
+ k</span> 即可。最终答案为 <strong><span class="math">DP(1,k)</span></strong>。</div>
+</section>
+<section class="section" id="example"><div class="step">STEP 06</div><h2>完整算一个例子：表格可以点击</h2>
+<p>令 <span class="math">n=6,
+ k=2</span>。任务数据如下：</p>
+<div class="table-wrap"><table aria-label="六项任务的奖励和冷却长度"><thead><tr><th>Task i</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr></thead><tbody><tr><td>V[i]</td><td>7</td><td>4</td><td>9</td><td>6</td><td>8</td><td>5</td></tr><tr><td>W[i]</td><td>2</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr></tbody></table></div>
+<p>按 <span class="math">i=6→1</span> 递减的顺序填好二维表。<strong>点击任意一个非边界格子</strong>，可以看它是如何由两个子问题得到的：</p>
+<div class="table-wrap"><table id="dp-table" aria-label="动态规划计算表；点击数值查看具体转移"><thead><tr><th>i \ t</th><th>0 项</th><th>1 项</th><th>2 项</th></tr></thead><tbody>
+<tr><td>1</td><td>0</td><td data-i="1" data-t="1"><button type="button">9</button></td><td data-i="1" data-t="2"><button type="button">17</button></td></tr>
+<tr><td>2</td><td>0</td><td data-i="2" data-t="1"><button type="button">9</button></td><td data-i="2" data-t="2"><button type="button">17</button></td></tr>
+<tr><td>3</td><td>0</td><td data-i="3" data-t="1"><button type="button">9</button></td><td data-i="3" data-t="2"><button type="button">17</button></td></tr>
+<tr><td>4</td><td>0</td><td data-i="4" data-t="1"><button type="button">8</button></td><td data-i="4" data-t="2"><button type="button">14</button></td></tr>
+<tr><td>5</td><td>0</td><td data-i="5" data-t="1"><button type="button">8</button></td><td data-i="5" data-t="2"><button type="button">8</button></td></tr>
+<tr><td>6</td><td>0</td><td data-i="6" data-t="1"><button type="button">5</button></td><td data-i="6" data-t="2"><button type="button">5</button></td></tr>
+<tr><td>7（空后缀）</td><td>0</td><td>0</td><td>0</td></tr>
+</tbody></table></div>
+<div class="controls"><button class="small-btn" type="button" id="prev">← 上一步</button><button class="small-btn" type="button" id="next">下一步 →</button><button class="small-btn" type="button" id="focus">查看关键状态 DP(3,2)</button><span class="footnote">蓝色格为依赖项，绿色格为当前状态。</span></div>
+<div class="state" id="state-panel" aria-live="polite"><div class="state-title" id="state-title">DP(3,2) = 17</div><div class="state-values"><div class="state-side" id="skip-box"><small>Skip task 3</small><b id="skip-value">DP(4,2) = 14</b></div><div class="state-side win" id="take-box"><small>Take task 3</small><b id="take-value">V[3] + DP(5,1) = 9 + 8 = 17</b></div></div><p class="explain" id="state-explain">选择任务 3 时，第 4 项被冷却禁止，下一步只能从任务 5 开始。</p></div>
+<h3>从答案倒推，选了哪几个任务？</h3>
+<ol class="numbered"><li><strong>看 <span class="math">DP(1,2)=17</span>：</strong>跳过任务 1，能够获得 17；选择任务 1 只能得到 <span class="math">7+DP(4,1)=15</span>。所以跳过。</li><li><strong>看 <span class="math">DP(2,2)=17</span>：</strong>跳过任务 2，能够获得 17；选择任务 2 则是 <span class="math">4+DP(3,1)=13</span>。继续跳过。</li><li><strong>看 <span class="math">DP(3,2)=17</span>：</strong>跳过只得 14；选择任务 3 后可得 <span class="math">9+DP(5,1)=17</span>，因此选择 <strong>3</strong>，同时禁止任务 4。</li><li><strong>看 <span class="math">DP(5,1)=8</span>：</strong>选择任务 <strong>5</strong> 得到 8，任务 6 被禁止。</li></ol>
+<div class="callout"><strong>结果：</strong>选择任务集合 <span class="math">S = {3,5}</span>，收益 <strong>9 + 8 = 17</strong>，共做了 2 个任务，恰好不超过 <span class="math">k=2</span>，且两次选择不违反冷却约束。</div>
+</section>
+<section class="section" id="algorithm"><div class="step">STEP 07</div><h2>写成可交卷的算法，以及复杂度</h2>
+<p>以下代码假设 <span class="math">V</span> 和 <span class="math">W</span> 是 Python 的 0-based 数组，但数学上的任务编号仍为 <span class="math">1,…,n</span>。</p>
+<pre class="code"><code>def maximum_reward(V, W, k):
+    n = len(V)
+    k = min(k, n)  <span class="comment"># 最多也只能选 n 个任务</span>
+
+    <span class="comment"># dp[i][t] = 任务 i..n 中最多做 t 项的最大收益</span>
+    <span class="comment"># 第 n+1 行，以及第 0 列，初始全为 0</span>
+    dp = [[0] * (k + 1) for _ in range(n + 2)]
+
+    for i in range(n, 0, -1):
+        j = min(n + 1, i + W[i - 1] + 1)
+        for t in range(1, k + 1):
+            skip = dp[i + 1][t]
+            take = V[i - 1] + dp[j][t - 1]
+            dp[i][t] = max(skip, take)
+
+    return dp[1][k]</code></pre>
+<p class="footnote">测试用例：<code>V = [7,4,9,6,8,5]</code>，<code>W = [2,0,1,0,1,0]</code>，<code>k = 2</code>，结果为 <code>17</code>。</p>
+<div class="choice-grid"><div class="choice"><p class="choice-name">时间复杂度：O(nk)</p><p>一共最多 <span class="math">n(k+1)</span> 个状态。每个状态只计算 Skip、Take 两个常数时间的值，因此总时间为 <strong><span class="math">O(nk)</span></strong>。</p></div><div class="choice"><p class="choice-name">空间复杂度：O(nk)</p><p>二维 DP 表有 <span class="math">(n+2)(k+1)</span> 个位置，使用 <strong><span class="math">O(nk)</span></strong> 空间。不能随便只保存上一行，因为 Take 可能跳到许多行之后。</p></div></div>
+<p class="footnote">严格地讲，如果 <span class="math">k &gt; n</span>，实现中将其截断为 <span class="math">n</span>，时间和空间可表述为 <span class="math">O(n·min(k,n))</span>；统一写作 <span class="math">O(nk)</span> 也是正确的多项式上界（假设 <span class="math">k≥1</span>）。</p>
+</section>
+<section class="section" id="correctness"><div class="step">STEP 08</div><h2>正确性证明究竟要证明什么？</h2>
+<p>对于动态规划，不能只写“公式显然正确”。证明时最重要的是：<strong>为什么最优解一定落在 Skip 或 Take 的两个子问题中，而且这两种情况不会遗漏合法解。</strong></p>
+<div class="card"><h3>① 先假设子问题已经算对</h3><p>我们使用<strong>逆向归纳（backward induction）</strong>：从空后缀开始，假设任务下标比 <span class="math">i</span> 大的所有相关子问题都正确。</p><h3>② 对 DP(i,t) 的最优解分两类</h3><p>取一个在任务 <span class="math">i,…,n</span> 中最多选择 <span class="math">t</span> 项的最优合法解 <span class="math">S</span>。</p><p><strong>Case 1：</strong><span class="math">i∉S</span>。剩下只可能来自 <span class="math">i+1,…,n</span>，所以最优值为 Skip 分支的 <span class="math">DP(i+1,t)</span>。</p><p><strong>Case 2：</strong><span class="math">i∈S</span>。剩下不能包含 <span class="math">i+1,…,i+W[i]</span>，最多还能选 <span class="math">t−1</span> 项，所以最优值为 Take 分支的 <span class="math">V[i]+DP(next(i),t−1)</span>。</p><h3>③ 为什么子问题最优可以直接拼接？</h3><p>选 Skip 的任何合法后缀解，加入“跳过 i”的决策仍合法；选 Take 的任何合法后缀解，加上任务 i 也合法，因为冷却区已被跳过。若子问题解不是最优的，就可以换成更优的后缀，从而改进总解，与最优性矛盾。</p><h3>④ 收尾</h3><p>所有合法解都恰好属于两个 Case 的其中一个，因此取两者最大即为最优。用归纳推出所有状态正确，特别是 <span class="math">DP(1,k)</span>。</p></div>
+<div class="callout blue"><strong>写考试证明时建议记住的结构：</strong>定义状态 → 说明两种情况及合法性 → 归纳说明子问题最优 → 递推式成立 → 输出原问题状态。文末英文证明严格按照这条线展开。</div>
+</section>
+<section class="section" id="pitfalls"><div class="step">STEP 09</div><h2>最容易丢分的四个问题</h2>
+<details class="faq"><summary>误区 1：用 DP(i−W[i]−1, t−1) 回头找前一个任务</summary><div><strong>错误。</strong> 当前任务 <span class="math">i</span> 的 <span class="math">W[i]</span> 只决定它后面不可选择的任务，不能反推前面哪些任务和它兼容。反例：<span class="math">n=2,
+ k=2,
+ V=[10,9],
+ W=[1,0]</span>。任务 1 做了就不能做 2，正确最优值是 10；错误的前缀式公式可能算出 19。</div></details>
+<details class="faq"><summary>误区 2：选择任务 i 后，从 i+W[i] 继续</summary><div>少跳过了一个位置。被禁止的是 <span class="math">i+1</span> 到 <span class="math">i+W[i]</span>，所以必须从 <span class="math">i+W[i]+1</span> 继续。如果 <span class="math">W[i]=0</span>，才直接去 <span class="math">i+1</span>。</div></details>
+<details class="faq"><summary>误区 3：把“最多 k 项”写成“恰好 k 项”</summary><div>这会改变问题。用最多 <span class="math">t</span> 项的定义，<span class="math">DP(i,0)=0</span> 自然正确；即使奖励有负数，也允许直接跳过。若定义恰好选 <span class="math">t</span> 项，通常需要用不可行值 <span class="math">−∞</span> 来处理某些状态，复杂且没有必要。</div></details>
+<details class="faq"><summary>误区 4：复杂度写成 O(n²k)</summary><div>本题的下一位置 <span class="math">next(i)=i+W[i]+1</span> 可以在 <span class="math">O(1)</span> 时间算出，不需要枚举后续的每一个任务。因此每个 <span class="math">(i,t)</span> 状态只做常数次工作，总时间是 <span class="math">O(nk)</span>。</div></details>
+</section>
+<section class="section" id="english"><div class="step">FORMAL ANSWER</div><h2>Formal English Solution &amp; Proof</h2>
+<p class="muted">以下部分参照 sample answer 的组织方式：<em>Solution → Recurrence → Base cases → Final solution and order of evaluation → Time complexity → Correctness</em>。可作为作业/考试书面证明的参考版本。</p>
+<article class="answer" lang="en">
+<h3>Solution.</h3>
+<p>For each <span class="math">1 ≤ i ≤ n+1</span> and <span class="math">0 ≤ t ≤ k</span>, let <span class="math">DP(i,t)</span> denote the maximum total reward obtainable by performing at most <span class="math">t</span> tasks among tasks <span class="math">i,i+1,…,n</span>, subject to the cooldown constraints. If <span class="math">i=n+1</span>, the remaining set of tasks is empty.</p>
+<ul>
+<li><strong>Recurrence.</strong> For each <span class="math">1 ≤ i ≤ n</span> and <span class="math">1 ≤ t ≤ k</span>, consider whether task <span class="math">i</span> is performed. If task <span class="math">i</span> is skipped, the optimal reward is <span class="math">DP(i+1,t)</span>. If task <span class="math">i</span> is performed, we gain <span class="math">V[i]</span>, cannot perform any of the next <span class="math">W[i]</span> tasks, and may perform at most <span class="math">t−1</span> additional tasks starting from task <span class="math">i+W[i]+1</span>. Define <span class="math">next(i)=min{n+1,i+W[i]+1}</span>. Thus, the subproblem satisfies the recurrence
+<div class="display">DP(i,t) = max{DP(i+1,t), &nbsp;V[i] + DP(next(i),t−1)}.</div>
+</li>
+<li><strong>Base cases.</strong> Since no reward can be earned without selecting any tasks, or when no tasks remain, set
+<div class="display">DP(i,0)=0 &nbsp;for&nbsp; 1≤i≤n+1,</div>
+<div class="display">DP(n+1,t)=0 &nbsp;for&nbsp; 0≤t≤k.</div>
+</li>
+<li><strong>Final solution, order of evaluation.</strong> The required maximum reward is <span class="math">DP(1,k)</span>. Fill the two-dimensional table in decreasing order of <span class="math">i</span>, from <span class="math">n</span> down to <span class="math">1</span>, evaluating all <span class="math">t=1,…,k</span> for each <span class="math">i</span>. Both <span class="math">i+1</span> and <span class="math">next(i)</span> are strictly greater than <span class="math">i</span>, so all states needed by the recurrence have already been computed.</li>
+<li><strong>Time complexity.</strong> There are <span class="math">O(nk)</span> subproblems. Each subproblem is evaluated in <span class="math">O(1)</span> time using two table lookups and a constant number of arithmetic and comparison operations. Hence the total running time is <strong><span class="math">O(nk)</span></strong>, and the table occupies <strong><span class="math">O(nk)</span></strong> space. Therefore, the algorithm is polynomial in <span class="math">n</span> and <span class="math">k</span>.</li>
+<li><strong>Correctness.</strong> We prove by backward induction on <span class="math">i</span> that <span class="math">DP(i,t)</span> gives the maximum reward of a feasible selection of at most <span class="math">t</span> tasks from <span class="math">{i,…,n}</span>, for every <span class="math">0 ≤ t ≤ k</span>.
+<div class="proof-body">
+<p><em>Base cases.</em> If <span class="math">i=n+1</span>, no tasks remain, so the optimum is <span class="math">0</span>. If <span class="math">t=0</span>, no task may be selected, so the optimum is also <span class="math">0</span>. Thus the base cases are correct.</p>
+<p><em>Inductive step.</em> Fix <span class="math">1 ≤ i ≤ n</span> and <span class="math">t ≥ 1</span>. Assume that the values of all subproblems whose first task index is greater than <span class="math">i</span> have been computed correctly. Let <span class="math">S</span> be an optimal feasible selection from <span class="math">{i,…,n}</span> using at most <span class="math">t</span> tasks. There are two cases.</p>
+<p>If <span class="math">i∉S</span>, then <span class="math">S</span> is a feasible selection from <span class="math">{i+1,…,n}</span> using at most <span class="math">t</span> tasks. By the inductive hypothesis, the maximum reward obtainable in this case is <span class="math">DP(i+1,t)</span>.</p>
+<p>If <span class="math">i∈S</span>, then tasks <span class="math">i+1,…,i+W[i]</span> cannot be selected. Consequently, <span class="math">S\{i}</span> is a feasible selection from <span class="math">{next(i),…,n}</span> using at most <span class="math">t−1</span> tasks. By the inductive hypothesis, the maximum reward obtainable in this case is <span class="math">V[i]+DP(next(i),t−1)</span>. Conversely, combining task <span class="math">i</span> with any feasible solution to this suffix subproblem is valid, since all tasks prohibited by performing <span class="math">i</span> have been excluded.</p>
+<p>Every feasible selection either contains task <span class="math">i</span> or does not contain it. These two cases are exhaustive, and their optimal values are exactly the two terms in the recurrence. Therefore,</p>
+<div class="display">DP(i,t) = max{DP(i+1,t),&nbsp; V[i]+DP(next(i),t−1)}</div>
+<p>is optimal. The inductive step follows. By induction, all computed entries are correct, and in particular <span class="math">DP(1,k)</span> is the maximum total reward achievable under the given constraints.</p>
+</div>
+</li>
+</ul>
+<div class="ending">∎</div>
+</article>
+<p class="print-note">打印提示：可直接通过浏览器“打印 → 保存为 PDF”。英文答案在打印版中自动另起一页。</p>
+</section>
+<footer class="footer">Task Scheduling with Cooldown · 从原题出发的独立教学讲义 · 2026</footer>
+</main>
+</div>
+</div>
+<script>
+(function(){
+'use strict';
+const V=[7,4,9,6,8,5], W=[2,0,1,0,1,0], n=V.length, k=2;
+const dp=Array.from({length:n+2},()=>Array(k+1).fill(0));
+for(let i=n;i>=1;i--){const j=Math.min(n+1,i+W[i-1]+1);for(let t=1;t<=k;t++)dp[i][t]=Math.max(dp[i+1][t],V[i-1]+dp[j][t-1]);}
+const states=[];
+for(let i=n;i>=1;i--)for(let t=1;t<=k;t++)states.push([i,t]);
+let current=states.findIndex(s=>s[0]===3&&s[1]===2);
+const q=id=>document.getElementById(id);
+function render(){
+ const [i,t]=states[current], j=Math.min(n+1,i+W[i-1]+1), skip=dp[i+1][t], take=V[i-1]+dp[j][t-1];
+ document.querySelectorAll('#dp-table td').forEach(x=>x.classList.remove('current','ref-cell'));
+ const get=(ii,tt)=>document.querySelector('#dp-table td[data-i="'+ii+'"][data-t="'+tt+'"]');
+ const c=get(i,t), a=get(i+1,t), b=get(j,t-1);
+ if(a)a.classList.add('ref-cell');if(b)b.classList.add('ref-cell');if(c)c.classList.add('current');
+ q('state-title').textContent='DP('+i+','+t+') = '+dp[i][t];
+ q('skip-box').querySelector('small').textContent='Skip task '+i;
+ q('take-box').querySelector('small').textContent='Take task '+i;
+ q('skip-value').textContent='DP('+(i+1)+','+t+') = '+skip;
+ q('take-value').textContent='V['+i+'] + DP('+j+','+(t-1)+') = '+V[i-1]+' + '+dp[j][t-1]+' = '+take;
+ q('skip-box').classList.toggle('win',skip>=take);
+ q('take-box').classList.toggle('win',take>=skip);
+ let reason='';
+ if(skip===take)reason='两个选择奖励相同，都能达到当前最优值。';
+ else if(skip>take)reason='此状态选择跳过任务 '+i+' 更优。';
+ else reason='此状态选择任务 '+i+' 更优。';
+ if(W[i-1]>0)reason+=' 若选择它，任务 '+(i+1)+' 至 '+Math.min(n,i+W[i-1])+' 被禁止，下次从 '+j+' 开始。';
+ else reason+=' 此任务没有冷却，选择后可直接考虑下一项。';
+ q('state-explain').textContent=reason;
+}
+q('dp-table').addEventListener('click',e=>{let td=e.target.closest('td[data-i][data-t]');if(!td)return;const i=Number(td.dataset.i),t=Number(td.dataset.t);current=states.findIndex(x=>x[0]===i&&x[1]===t);render();});
+q('prev').addEventListener('click',()=>{current=(current-1+states.length)%states.length;render();});
+q('next').addEventListener('click',()=>{current=(current+1)%states.length;render();});
+q('focus').addEventListener('click',()=>{current=states.findIndex(s=>s[0]===3&&s[1]===2);render();});
+render();
+})();
+</script>
+</body>
+</html>
