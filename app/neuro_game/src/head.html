@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>神经视界</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Unbounded:wght@600&display=swap" rel="stylesheet">
+<style>
+/* layout: full-bleed 3D village at dusk; HUD pinned to corners; dialogue as a bottom sheet. Data elements use the viridis activation scale; the village itself is warm pastel. */
+:root{
+  color-scheme:dark;
+  --ink:#141a45;
+  --panel:rgba(20,22,58,.86);
+  --line:rgba(200,190,255,.28);
+  --text:#f1efff;
+  --muted:#b3add8;
+  --hot:#fde725;
+  --mid:#21918c;
+  --rose:#ff9bb0;
+  --display:"Unbounded","PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+  --body:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:var(--ink);color:var(--text);font-family:var(--body);overflow:hidden;
+  -webkit-user-select:none;user-select:none;overscroll-behavior:none}
+#view{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:manipulation}
+button:focus-visible{outline:2px solid var(--hot);outline-offset:2px}
+
+.hud{position:fixed;z-index:5;pointer-events:none}
+.hud>*{pointer-events:auto}
+#top{top:12px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+#brand{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;max-width:236px;backdrop-filter:blur(6px);text-align:left}
+#brand h1{font-family:var(--display);font-size:15px;letter-spacing:.06em;margin:0 0 4px;color:var(--hot);font-weight:600}
+#prog{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+#tasks{list-style:none;margin:8px 0 0;padding:0;display:none;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
+#brand.open #tasks{display:flex}
+#tasks li{display:flex;gap:6px;align-items:center}
+#tasks li::before{content:"";width:9px;height:9px;border:1.5px solid var(--muted);border-radius:2px;flex:none}
+#tasks li.done{color:var(--text)}
+#tasks li.done::before{background:var(--hot);border-color:var(--hot)}
+#right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+#map{width:96px;height:96px;border-radius:50%;border:2px solid var(--line);background:#234;display:block}
+#helpBtn{width:40px;height:40px;border-radius:50%;background:var(--panel);border:1px solid var(--line);font-family:var(--mono);font-weight:600;font-size:17px}
+
+#stick{position:fixed;left:18px;bottom:22px;width:118px;height:118px;border-radius:50%;z-index:6;
+  background:radial-gradient(circle,rgba(255,255,255,.14),rgba(255,255,255,.05));border:1.5px solid var(--line);touch-action:none;display:none}
+#knob{position:absolute;left:50%;top:50%;width:50px;height:50px;margin:-25px 0 0 -25px;border-radius:50%;
+  background:rgba(253,231,37,.88);box-shadow:0 0 18px rgba(253,231,37,.45)}
+body.touch #stick{display:block}
+
+#bar{right:16px;bottom:22px;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+#row{display:flex;gap:10px;align-items:center}
+#jump{width:54px;height:54px;border-radius:50%;background:var(--panel);border:1.5px solid var(--hot);color:var(--hot);font-weight:600;font-size:16px}
+#jump:active{background:var(--hot);color:#1a1630}
+#mode{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px;gap:2px}
+#mode button{min-width:64px;height:40px;border-radius:999px;font-size:14px;color:var(--muted)}
+#mode button[aria-pressed="true"]{background:var(--hot);color:#1a1630;font-weight:600}
+#palette{display:none;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px;gap:8px;align-items:center}
+body.build #palette{display:flex}
+body.touch #palette{flex-direction:column}
+.sw{width:34px;height:34px;border-radius:8px;border:2px solid transparent}
+.sw[aria-pressed="true"]{border-color:#fff;transform:scale(1.08)}
+#erase{height:34px;padding:0 10px;border-radius:8px;border:1px solid var(--line);font-size:13px;color:var(--muted)}
+#erase[aria-pressed="true"]{background:#e2557a;border-color:#e2557a;color:#fff}
+
+#talk{position:fixed;left:50%;bottom:98px;transform:translateX(-50%);z-index:6;display:none;
+  background:var(--hot);color:#1a1630;font-weight:600;font-size:15px;height:46px;padding:0 20px;border-radius:999px;
+  box-shadow:0 4px 24px rgba(253,231,37,.35);white-space:nowrap}
+#toast{position:fixed;left:50%;top:128px;transform:translateX(-50%);z-index:7;background:var(--panel);border:1px solid var(--line);
+  padding:8px 14px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none;max-width:86vw;text-align:center}
+#toast.on{opacity:1}
+
+.sheet{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;width:min(580px,calc(100vw - 32px));z-index:8;
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px 16px;backdrop-filter:blur(10px);display:none}
+.sheet.on{display:block}
+#dlgHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+#dlgName{font-family:var(--display);font-size:13px;color:var(--hot);letter-spacing:.05em}
+#dlgClose{width:36px;height:36px;border-radius:50%;color:var(--muted);font-size:18px}
+#dlgText{font-size:15px;line-height:1.7;margin:0 0 12px;text-wrap:pretty;-webkit-user-select:text;user-select:text;max-height:34vh;overflow-y:auto}
+#dlgChoices{display:flex;flex-direction:column;gap:7px;max-height:34vh;overflow-y:auto}
+#dlgChoices button{text-align:left;padding:9px 12px;min-height:42px;border-radius:10px;border:1px solid var(--line);font-size:14px;background:rgba(255,255,255,.06);flex:none}
+#dlgChoices button.seen{color:var(--muted)}
+#dlgChoices button:active{background:rgba(253,231,37,.18)}
+#intro h2{font-family:var(--display);font-size:18px;margin:0 0 8px;color:var(--hot);font-weight:600;text-wrap:balance}
+#intro p{font-size:14px;line-height:1.65;margin:0 0 8px;color:var(--text)}
+#intro .keys{font-family:var(--mono);font-size:12px;color:var(--muted)}
+#go{margin-top:6px;width:100%;height:46px;border-radius:12px;background:var(--hot);color:#1a1630;font-weight:600;font-size:15px}
+body.talking #bar,body.talking #stick,body.talking #talk{display:none!important}
+#err{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:24px;text-align:center;z-index:20;background:var(--ink)}
+</style>
+</head>
+<body>
+<canvas id="view" tabindex="0" aria-label="3D 村庄视图"></canvas>
+
+<div class="hud" id="top">
+  <button id="brand" aria-label="任务清单">
+    <h1>神经视界</h1>
+    <div id="prog"></div>
+    <ul id="tasks">
+      <li data-t="input">开关一个输入神经元</li>
+      <li data-t="kernel">换一个卷积核</li>
+      <li data-t="stride">改一次步幅或填充</li>
+      <li data-t="rcnn">切换 R-CNN 的代际</li>
+      <li data-t="thr">拨一次置信度阈值</li>
+      <li data-t="track">关掉运动预测看 ID 切换</li>
+      <li data-t="vlm">给 VLM 换一张图</li>
+      <li data-t="tower">搭一座被认出的“塔”</li>
+    </ul>
+  </button>
+  <div id="right">
+    <canvas id="map" width="192" height="192" aria-label="小地图"></canvas>
+    <button id="helpBtn" aria-label="操作说明">?</button>
+  </div>
+</div>
+
+<div id="stick" aria-hidden="true"><div id="knob"></div></div>
+
+<div class="hud" id="bar">
+  <div id="palette">
+    <button class="sw" data-c="0" aria-label="紫色方块"></button>
+    <button class="sw" data-c="1" aria-label="蓝色方块"></button>
+    <button class="sw" data-c="2" aria-label="青色方块"></button>
+    <button class="sw" data-c="3" aria-label="绿色方块"></button>
+    <button class="sw" data-c="4" aria-label="黄色方块"></button>
+    <button id="erase" aria-pressed="false">拆除</button>
+  </div>
+  <div id="row">
+    <button id="jump" aria-label="跳跃">跳</button>
+    <div id="mode" role="group" aria-label="模式">
+      <button id="mExplore" aria-pressed="true">探索</button>
+      <button id="mBuild" aria-pressed="false">搭建</button>
+    </div>
+  </div>
+</div>
+
+<button id="talk"></button>
+<div id="toast" role="status"></div>
+
+<div class="sheet" id="dlg" role="dialog" aria-labelledby="dlgName">
+  <div id="dlgHead"><span id="dlgName"></span><button id="dlgClose" aria-label="结束对话">✕</button></div>
+  <p id="dlgText"></p>
+  <div id="dlgChoices"></div>
+</div>
+
+<div class="sheet" id="intro" role="dialog" aria-labelledby="introT">
+  <h2 id="introT">欢迎来到神经视界村</h2>
+  <p>村里住着八位居民,各管一门手艺:神经网络、CNN、R-CNN、YOLO、阈值、运动追踪、VLM,还有一块可以自己搭方块的工地。每个展区都是真的在算,点一点就能改。村口两间挂着“请进”牌子的小屋可以走进去。</p>
+  <p class="keys" id="introKeys"></p>
+  <button id="go">进村</button>
+</div>
+
+<div id="err"><p>这个设备没能启动 WebGL,3D 世界无法显示。换一个浏览器或设备再试一次。</p></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
